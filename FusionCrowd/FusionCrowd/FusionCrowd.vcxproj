@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Agents\AgentGenerators\AgentGenerator.cpp" />
+    <ClCompile Include="Agents\AgentGenerators\AgentGeneratorDatabase.cpp" />
+    <ClCompile Include="Agents\AgentGenerators\AgentGeneratorFactory.cpp" />
+    <ClCompile Include="Agents\AgentGenerators\ExplicitAgentGenerator.cpp" />
+    <ClCompile Include="Agents\AgentGenerators\HexLatticeGenerator.cpp" />
+    <ClCompile Include="Agents\AgentGenerators\NavMeshAgentGenerator.cpp" />
+    <ClCompile Include="Agents\AgentGenerators\RectGridGenerator.cpp" />
+    <ClCompile Include="Agents\AgentInitializer.cpp" />
+    <ClCompile Include="Agents\AgentPropertyManipulator.cpp" />
+    <ClCompile Include="Agents\BaseAgent.cpp" />
+    <ClCompile Include="Agents\Elevations\ElevationDatabase.cpp" />
+    <ClCompile Include="Agents\Elevations\ElevationFlat.cpp" />
+    <ClCompile Include="Agents\Elevations\ElevationNavMesh.cpp" />
+    <ClCompile Include="Agents\Events\AgentEventEffect.cpp" />
+    <ClCompile Include="Agents\Events\Event.cpp" />
+    <ClCompile Include="Agents\Events\EventEffectAgentState.cpp" />
+    <ClCompile Include="Agents\Events\EventEffectDB.cpp" />
+    <ClCompile Include="Agents\Events\EventResponse.cpp" />
+    <ClCompile Include="Agents\Events\EventSystem.cpp" />
+    <ClCompile Include="Agents\Events\EventTarget.cpp" />
+    <ClCompile Include="Agents\Events\EventTargetDB.cpp" />
+    <ClCompile Include="Agents\Events\EventTargetFactory.cpp" />
+    <ClCompile Include="Agents\Events\EventTrigger.cpp" />
+    <ClCompile Include="Agents\Events\EventTriggerDB.cpp" />
+    <ClCompile Include="Agents\Events\EventTriggerExternal.cpp" />
+    <ClCompile Include="Agents\Events\EventTriggerFactory.cpp" />
+    <ClCompile Include="Agents\Events\StateEvtTrigger.cpp" />
+    <ClCompile Include="Agents\Events\StateMemberTarget.cpp" />
+    <ClCompile Include="Agents\Events\TargetAgentById.cpp" />
+    <ClCompile Include="Agents\Obstacle.cpp" />
+    <ClCompile Include="Agents\ObstacleSets\ExplicitObstacleSet.cpp" />
+    <ClCompile Include="Agents\ObstacleSets\ListObstacleSet.cpp" />
+    <ClCompile Include="Agents\ObstacleSets\NavMeshObstacleSet.cpp" />
+    <ClCompile Include="Agents\ObstacleSets\ObstacleSet.cpp" />
+    <ClCompile Include="Agents\ObstacleSets\ObstacleSetDatabase.cpp" />
+    <ClCompile Include="Agents\ObstacleSets\ObstacleSetFactory.cpp" />
+    <ClCompile Include="Agents\PrefVelocity.cpp" />
+    <ClCompile Include="Agents\ProfileSelectors\ConstProfileSelector.cpp" />
+    <ClCompile Include="Agents\ProfileSelectors\ProfileSelector.cpp" />
+    <ClCompile Include="Agents\ProfileSelectors\ProfileSelectorDatabase.cpp" />
+    <ClCompile Include="Agents\ProfileSelectors\profile_selector_random.cpp" />
+    <ClCompile Include="Agents\ProfileSelectors\profile_selector_weighted.cpp" />
+    <ClCompile Include="Agents\SCBWriter.cpp" />
+    <ClCompile Include="Agents\SimulatorInterface.cpp" />
+    <ClCompile Include="Agents\SimulatorState.cpp" />
+    <ClCompile Include="Agents\SimXMLLoader.cpp" />
+    <ClCompile Include="Agents\SpatialQueries\AgentKDTree.cpp" />
+    <ClCompile Include="Agents\SpatialQueries\KNearestQuery.cpp" />
+    <ClCompile Include="Agents\SpatialQueries\ObstacleKDTree.cpp" />
+    <ClCompile Include="Agents\SpatialQueries\SpatialQuery.cpp" />
+    <ClCompile Include="Agents\SpatialQueries\SpatialQueryDatabase.cpp" />
+    <ClCompile Include="Agents\SpatialQueries\SpatialQueryFactory.cpp" />
+    <ClCompile Include="Agents\SpatialQueries\SpatialQueryNavMesh.cpp" />
+    <ClCompile Include="Agents\StateSelectors\ConstStateSelector.cpp" />
+    <ClCompile Include="Agents\StateSelectors\StateSelector.cpp" />
+    <ClCompile Include="Agents\StateSelectors\StateSelectorDatabase.cpp" />
+    <ClCompile Include="Agents\XMLSimulatorBase.cpp" />
+    <ClCompile Include="BFSM\Actions\Action.cpp" />
+    <ClCompile Include="BFSM\Actions\ActionDatabase.cpp" />
+    <ClCompile Include="BFSM\Actions\ActionFactory.cpp" />
+    <ClCompile Include="BFSM\Actions\ObstacleAction.cpp" />
+    <ClCompile Include="BFSM\Actions\TeleportAction.cpp" />
+    <ClCompile Include="BFSM\buildFSM.cpp" />
+    <ClCompile Include="BFSM\FSM.cpp" />
+    <ClCompile Include="BFSM\fsmCommon.cpp" />
+    <ClCompile Include="BFSM\FSMDescrip.cpp" />
+    <ClCompile Include="BFSM\FSMEnumeration.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelector.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorDatabase.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorExplicit.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorFactory.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorFarthest.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorFarthestNM.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorIdentity.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorMirror.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorNearest.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorNearestNM.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorOffset.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorRandom.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorSet.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorShared.cpp" />
+    <ClCompile Include="BFSM\GoalSelectors\GoalSelectorWeighted.cpp" />
+    <ClCompile Include="BFSM\GoalSet.cpp" />
+    <ClCompile Include="BFSM\Goals\Goal.cpp" />
+    <ClCompile Include="BFSM\Goals\GoalAABB.cpp" />
+    <ClCompile Include="BFSM\Goals\GoalCircle.cpp" />
+    <ClCompile Include="BFSM\Goals\GoalDatabase.cpp" />
+    <ClCompile Include="BFSM\Goals\GoalFactory.cpp" />
+    <ClCompile Include="BFSM\Goals\GoalOBB.cpp" />
+    <ClCompile Include="BFSM\Goals\GoalPoint.cpp" />
+    <ClCompile Include="BFSM\State.cpp" />
+    <ClCompile Include="BFSM\StateDescrip.cpp" />
+    <ClCompile Include="BFSM\Tasks\NavMeshLocalizerTask.cpp" />
+    <ClCompile Include="BFSM\Tasks\Task.cpp" />
+    <ClCompile Include="BFSM\Tasks\TaskDatabase.cpp" />
+    <ClCompile Include="BFSM\Transitions\CondBoolean.cpp" />
+    <ClCompile Include="BFSM\Transitions\CondGoal.cpp" />
+    <ClCompile Include="BFSM\Transitions\ConditionDatabase.cpp" />
+    <ClCompile Include="BFSM\Transitions\CondSpace.cpp" />
+    <ClCompile Include="BFSM\Transitions\CondTimer.cpp" />
+    <ClCompile Include="BFSM\Transitions\Target.cpp" />
+    <ClCompile Include="BFSM\Transitions\TargetDatabase.cpp" />
+    <ClCompile Include="BFSM\Transitions\TargetProb.cpp" />
+    <ClCompile Include="BFSM\Transitions\TargetReturn.cpp" />
+    <ClCompile Include="BFSM\Transitions\Transition.cpp" />
+    <ClCompile Include="BFSM\VelocityComponents\VelCompConst.cpp" />
+    <ClCompile Include="BFSM\VelocityComponents\VelCompGoal.cpp" />
+    <ClCompile Include="BFSM\VelocityComponents\VelCompNavMesh.cpp" />
+    <ClCompile Include="BFSM\VelocityComponents\VelComponent.cpp" />
+    <ClCompile Include="BFSM\VelocityComponents\VelComponentDatabase.cpp" />
+    <ClCompile Include="BFSM\VelocityComponents\VelCompRoadMap.cpp" />
+    <ClCompile Include="BFSM\VelocityComponents\VelCompVF.cpp" />
+    <ClCompile Include="BFSM\VelocityModifiers\VelModContext.cpp" />
+    <ClCompile Include="BFSM\VelocityModifiers\VelModifier.cpp" />
+    <ClCompile Include="BFSM\VelocityModifiers\VelModifierDatabase.cpp" />
+    <ClCompile Include="BFSM\VelocityModifiers\VelModifierScale.cpp" />
+    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="Math\Geometry2D.cpp" />
+    <ClCompile Include="Math\geomQuery.cpp" />
+    <ClCompile Include="Math\Line.cpp" />
+    <ClCompile Include="Math\Matrix.cpp" />
+    <ClCompile Include="Math\RandGenerator.cpp" />
+    <ClCompile Include="Math\SimRandom.cpp" />
+    <ClCompile Include="menge_c_api.cpp" />
+    <ClCompile Include="Orca\ORCAAgent.cpp" />
+    <ClCompile Include="Orca\ORCADBEntry.cpp" />
+    <ClCompile Include="Orca\ORCAInitializer.cpp" />
+    <ClCompile Include="Orca\ORCASimulator.cpp" />
+    <ClCompile Include="PedVO\PedVOAgent.cpp" />
+    <ClCompile Include="PedVO\PedVODBEntry.cpp" />
+    <ClCompile Include="PedVO\PedVOInitializer.cpp" />
+    <ClCompile Include="PedVO\PedVOSimulator.cpp" />
+    <ClCompile Include="PluginEngine\Attribute.cpp" />
+    <ClCompile Include="PluginEngine\AttributeSet.cpp" />
+    <ClCompile Include="PluginEngine\CorePluginEngine.cpp" />
+    <ClCompile Include="PluginEngine\Plugin.cpp" />
+    <ClCompile Include="ProjectSpec.cpp" />
+    <ClCompile Include="resources\Funnel.cpp" />
+    <ClCompile Include="resources\Graph.cpp" />
+    <ClCompile Include="resources\GraphEdge.cpp" />
+    <ClCompile Include="resources\GraphVertex.cpp" />
+    <ClCompile Include="resources\MinHeap.cpp" />
+    <ClCompile Include="resources\NavMesh.cpp" />
+    <ClCompile Include="resources\NavMeshEdge.cpp" />
+    <ClCompile Include="resources\NavMeshLocalizer.cpp" />
+    <ClCompile Include="resources\NavMeshNode.cpp" />
+    <ClCompile Include="resources\NavMeshObstacle.cpp" />
+    <ClCompile Include="resources\NavMeshPoly.cpp" />
+    <ClCompile Include="resources\PathPlanner.cpp" />
+    <ClCompile Include="resources\Portal.cpp" />
+    <ClCompile Include="resources\PortalPath.cpp" />
+    <ClCompile Include="resources\Resource.cpp" />
+    <ClCompile Include="resources\ResourceManager.cpp" />
+    <ClCompile Include="resources\RoadMapPath.cpp" />
+    <ClCompile Include="resources\Route.cpp" />
+    <ClCompile Include="resources\VectorField.cpp" />
+    <ClCompile Include="resources\WayPortal.cpp" />
+    <ClCompile Include="Runtime\Logger.cpp" />
+    <ClCompile Include="Runtime\os.cpp" />
+    <ClCompile Include="Runtime\ReadersWriterLock.cpp" />
+    <ClCompile Include="Runtime\SimpleLock.cpp" />
+    <ClCompile Include="Runtime\SimulatorDB.cpp" />
+    <ClCompile Include="Runtime\SimulatorDBEntry.cpp" />
+    <ClCompile Include="Runtime\Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Agents\AgentGenerators\AgentGenerator.h" />
+    <ClInclude Include="Agents\AgentGenerators\AgentGeneratorDatabase.h" />
+    <ClInclude Include="Agents\AgentGenerators\AgentGeneratorFactory.h" />
+    <ClInclude Include="Agents\AgentGenerators\ExplicitAgentGenerator.h" />
+    <ClInclude Include="Agents\AgentGenerators\HexLatticeGenerator.h" />
+    <ClInclude Include="Agents\AgentGenerators\NavMeshAgentGenerator.h" />
+    <ClInclude Include="Agents\AgentGenerators\RectGridGenerator.h" />
+    <ClInclude Include="Agents\AgentInitializer.h" />
+    <ClInclude Include="Agents\AgentPropertyManipulator.h" />
+    <ClInclude Include="Agents\BaseAgent.h" />
+    <ClInclude Include="Agents\Elevations\Elevation.h" />
+    <ClInclude Include="Agents\Elevations\ElevationDatabase.h" />
+    <ClInclude Include="Agents\Elevations\ElevationFactory.h" />
+    <ClInclude Include="Agents\Elevations\ElevationFlat.h" />
+    <ClInclude Include="Agents\Elevations\ElevationNavMesh.h" />
+    <ClInclude Include="Agents\Events\AgentEventEffect.h" />
+    <ClInclude Include="Agents\Events\AgentEventTarget.h" />
+    <ClInclude Include="Agents\Events\AgentPropertyEffect.h" />
+    <ClInclude Include="Agents\Events\Event.h" />
+    <ClInclude Include="Agents\Events\EventEffect.h" />
+    <ClInclude Include="Agents\Events\EventEffectAgentState.h" />
+    <ClInclude Include="Agents\Events\EventEffectDB.h" />
+    <ClInclude Include="Agents\Events\EventEffectFactory.h" />
+    <ClInclude Include="Agents\Events\EventException.h" />
+    <ClInclude Include="Agents\Events\EventResponse.h" />
+    <ClInclude Include="Agents\Events\EventSystem.h" />
+    <ClInclude Include="Agents\Events\EventTarget.h" />
+    <ClInclude Include="Agents\Events\EventTargetDB.h" />
+    <ClInclude Include="Agents\Events\EventTargetFactory.h" />
+    <ClInclude Include="Agents\Events\EventTrigger.h" />
+    <ClInclude Include="Agents\Events\EventTriggerDB.h" />
+    <ClInclude Include="Agents\Events\EventTriggerExternal.h" />
+    <ClInclude Include="Agents\Events\EventTriggerFactory.h" />
+    <ClInclude Include="Agents\Events\StateEvtTrigger.h" />
+    <ClInclude Include="Agents\Events\StateMemberTarget.h" />
+    <ClInclude Include="Agents\Events\TargetAgentById.h" />
+    <ClInclude Include="Agents\Obstacle.h" />
+    <ClInclude Include="Agents\ObstacleSets\ExplicitObstacleSet.h" />
+    <ClInclude Include="Agents\ObstacleSets\ListObstacleSet.h" />
+    <ClInclude Include="Agents\ObstacleSets\NavMeshObstacleSet.h" />
+    <ClInclude Include="Agents\ObstacleSets\ObstacleSet.h" />
+    <ClInclude Include="Agents\ObstacleSets\ObstacleSetDatabase.h" />
+    <ClInclude Include="Agents\ObstacleSets\ObstacleSetFactory.h" />
+    <ClInclude Include="Agents\ObstacleSets\ObstacleVertexList.h" />
+    <ClInclude Include="Agents\PrefVelocity.h" />
+    <ClInclude Include="Agents\ProfileSelectors\ConstProfileSelector.h" />
+    <ClInclude Include="Agents\ProfileSelectors\ProfileSelector.h" />
+    <ClInclude Include="Agents\ProfileSelectors\ProfileSelectorDatabase.h" />
+    <ClInclude Include="Agents\ProfileSelectors\ProfileSelectorFactory.h" />
+    <ClInclude Include="Agents\ProfileSelectors\profile_selector_random.h" />
+    <ClInclude Include="Agents\ProfileSelectors\profile_selector_weighted.h" />
+    <ClInclude Include="Agents\SCBWriter.h" />
+    <ClInclude Include="Agents\SimulatorBase.h" />
+    <ClInclude Include="Agents\SimulatorInterface.h" />
+    <ClInclude Include="Agents\SimulatorState.h" />
+    <ClInclude Include="Agents\SimXMLLoader.h" />
+    <ClInclude Include="Agents\SpatialQueries\AgentKDTree.h" />
+    <ClInclude Include="Agents\SpatialQueries\KNearestQuery.h" />
+    <ClInclude Include="Agents\SpatialQueries\ObstacleKDTree.h" />
+    <ClInclude Include="Agents\SpatialQueries\ProximityQuery.h" />
+    <ClInclude Include="Agents\SpatialQueries\SpatialQuery.h" />
+    <ClInclude Include="Agents\SpatialQueries\SpatialQueryDatabase.h" />
+    <ClInclude Include="Agents\SpatialQueries\SpatialQueryFactory.h" />
+    <ClInclude Include="Agents\SpatialQueries\SpatialQueryKDTree.h" />
+    <ClInclude Include="Agents\SpatialQueries\SpatialQueryNavMesh.h" />
+    <ClInclude Include="Agents\SpatialQueries\SpatialQueryStructs.h" />
+    <ClInclude Include="Agents\StateSelectors\ConstStateSelector.h" />
+    <ClInclude Include="Agents\StateSelectors\StateSelector.h" />
+    <ClInclude Include="Agents\StateSelectors\StateSelectorDatabase.h" />
+    <ClInclude Include="Agents\StateSelectors\StateSelectorFactory.h" />
+    <ClInclude Include="Agents\XMLSimulatorBase.h" />
+    <ClInclude Include="BFSM\Actions\Action.h" />
+    <ClInclude Include="BFSM\Actions\ActionDatabase.h" />
+    <ClInclude Include="BFSM\Actions\ActionFactory.h" />
+    <ClInclude Include="BFSM\Actions\ObstacleAction.h" />
+    <ClInclude Include="BFSM\Actions\PropertyAction.h" />
+    <ClInclude Include="BFSM\Actions\TeleportAction.h" />
+    <ClInclude Include="BFSM\FSM.h" />
+    <ClInclude Include="BFSM\fsmCommon.h" />
+    <ClInclude Include="BFSM\FSMDescrip.h" />
+    <ClInclude Include="BFSM\FSMEnumeration.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelector.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorDatabase.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorExplicit.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorFactory.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorFarthest.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorFarthestNM.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorIdentity.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorMirror.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorNearest.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorNearestNM.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorOffset.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorRandom.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorSet.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorShared.h" />
+    <ClInclude Include="BFSM\GoalSelectors\GoalSelectorWeighted.h" />
+    <ClInclude Include="BFSM\GoalSet.h" />
+    <ClInclude Include="BFSM\Goals\Goal.h" />
+    <ClInclude Include="BFSM\Goals\GoalAABB.h" />
+    <ClInclude Include="BFSM\Goals\GoalCircle.h" />
+    <ClInclude Include="BFSM\Goals\GoalDatabase.h" />
+    <ClInclude Include="BFSM\Goals\GoalFactory.h" />
+    <ClInclude Include="BFSM\Goals\GoalOBB.h" />
+    <ClInclude Include="BFSM\Goals\GoalPoint.h" />
+    <ClInclude Include="BFSM\State.h" />
+    <ClInclude Include="BFSM\StateDescrip.h" />
+    <ClInclude Include="BFSM\Tasks\NavMeshLocalizerTask.h" />
+    <ClInclude Include="BFSM\Tasks\Task.h" />
+    <ClInclude Include="BFSM\Tasks\TaskDatabase.h" />
+    <ClInclude Include="BFSM\Tasks\TaskFactory.h" />
+    <ClInclude Include="BFSM\Transitions\CondAuto.h" />
+    <ClInclude Include="BFSM\Transitions\CondBoolean.h" />
+    <ClInclude Include="BFSM\Transitions\CondGoal.h" />
+    <ClInclude Include="BFSM\Transitions\Condition.h" />
+    <ClInclude Include="BFSM\Transitions\ConditionDatabase.h" />
+    <ClInclude Include="BFSM\Transitions\ConditionFactory.h" />
+    <ClInclude Include="BFSM\Transitions\CondSpace.h" />
+    <ClInclude Include="BFSM\Transitions\CondTimer.h" />
+    <ClInclude Include="BFSM\Transitions\Target.h" />
+    <ClInclude Include="BFSM\Transitions\TargetDatabase.h" />
+    <ClInclude Include="BFSM\Transitions\TargetFactory.h" />
+    <ClInclude Include="BFSM\Transitions\TargetProb.h" />
+    <ClInclude Include="BFSM\Transitions\TargetReturn.h" />
+    <ClInclude Include="BFSM\Transitions\Transition.h" />
+    <ClInclude Include="BFSM\VelocityComponents\VelCompConst.h" />
+    <ClInclude Include="BFSM\VelocityComponents\VelCompGoal.h" />
+    <ClInclude Include="BFSM\VelocityComponents\VelCompNavMesh.h" />
+    <ClInclude Include="BFSM\VelocityComponents\VelComponent.h" />
+    <ClInclude Include="BFSM\VelocityComponents\VelComponentDatabase.h" />
+    <ClInclude Include="BFSM\VelocityComponents\VelComponentFactory.h" />
+    <ClInclude Include="BFSM\VelocityComponents\VelCompRoadMap.h" />
+    <ClInclude Include="BFSM\VelocityComponents\VelCompVF.h" />
+    <ClInclude Include="BFSM\VelocityModifiers\VelModifier.h" />
+    <ClInclude Include="BFSM\VelocityModifiers\VelModifierContext.h" />
+    <ClInclude Include="BFSM\VelocityModifiers\VelModifierDatabase.h" />
+    <ClInclude Include="BFSM\VelocityModifiers\VelModifierFactory.h" />
+    <ClInclude Include="BFSM\VelocityModifiers\VelModifierScale.h" />
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="CoreConfig.h" />
+    <ClInclude Include="data_set_selector.h" />
+    <ClInclude Include="include\macros.h" />
+    <ClInclude Include="include\splinelib\CatmullRom.h" />
+    <ClInclude Include="include\splinelib\Hermite.h" />
+    <ClInclude Include="include\splinelib\HermitePoint.h" />
+    <ClInclude Include="Math\consts.h" />
+    <ClInclude Include="Math\Geometry2D.h" />
+    <ClInclude Include="Math\geomQuery.h" />
+    <ClInclude Include="Math\Line.h" />
+    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\RandGenerator.h" />
+    <ClInclude Include="Math\SimRandom.h" />
+    <ClInclude Include="Math\vector.h" />
+    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Math\Vector3.h" />
+    <ClInclude Include="mengeCommon.h" />
+    <ClInclude Include="MengeException.h" />
+    <ClInclude Include="menge_c_api.h" />
+    <ClInclude Include="Orca\ORCA.h" />
+    <ClInclude Include="Orca\ORCAAgent.h" />
+    <ClInclude Include="Orca\ORCADBEntry.h" />
+    <ClInclude Include="Orca\ORCAInitializer.h" />
+    <ClInclude Include="Orca\ORCASimulator.h" />
+    <ClInclude Include="PedVO\PedVO.h" />
+    <ClInclude Include="PedVO\PedVOAgent.h" />
+    <ClInclude Include="PedVO\PedVODBEntry.h" />
+    <ClInclude Include="PedVO\PedVOInitializer.h" />
+    <ClInclude Include="PedVO\PedVOSimulator.h" />
+    <ClInclude Include="PluginEngine\Attribute.h" />
+    <ClInclude Include="PluginEngine\AttributeSet.h" />
+    <ClInclude Include="PluginEngine\BasePluginEngine.h" />
+    <ClInclude Include="PluginEngine\CorePluginEngine.h" />
+    <ClInclude Include="PluginEngine\Element.h" />
+    <ClInclude Include="PluginEngine\ElementDatabase.h" />
+    <ClInclude Include="PluginEngine\ElementFactory.h" />
+    <ClInclude Include="PluginEngine\Plugin.h" />
+    <ClInclude Include="PluginEngine\SharedLibrary.h" />
+    <ClInclude Include="ProjectSpec.h" />
+    <ClInclude Include="resources\Funnel.h" />
+    <ClInclude Include="resources\Graph.h" />
+    <ClInclude Include="resources\GraphEdge.h" />
+    <ClInclude Include="resources\GraphVertex.h" />
+    <ClInclude Include="resources\MinHeap.h" />
+    <ClInclude Include="resources\NavMesh.h" />
+    <ClInclude Include="resources\NavMeshEdge.h" />
+    <ClInclude Include="resources\NavMeshLocalizer.h" />
+    <ClInclude Include="resources\NavMeshNode.h" />
+    <ClInclude Include="resources\NavMeshObstacle.h" />
+    <ClInclude Include="resources\NavMeshPoly.h" />
+    <ClInclude Include="resources\PathPlanner.h" />
+    <ClInclude Include="resources\Portal.h" />
+    <ClInclude Include="resources\PortalPath.h" />
+    <ClInclude Include="resources\Resource.h" />
+    <ClInclude Include="resources\ResourceManager.h" />
+    <ClInclude Include="resources\RoadMapPath.h" />
+    <ClInclude Include="resources\Route.h" />
+    <ClInclude Include="resources\VectorField.h" />
+    <ClInclude Include="resources\WayPortal.h" />
+    <ClInclude Include="Runtime\Logger.h" />
+    <ClInclude Include="Runtime\os.h" />
+    <ClInclude Include="Runtime\ReadersWriterLock.h" />
+    <ClInclude Include="Runtime\SimpleLock.h" />
+    <ClInclude Include="Runtime\SimulatorDB.h" />
+    <ClInclude Include="Runtime\SimulatorDBEntry.h" />
+    <ClInclude Include="Runtime\Utils.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{B891C234-7FCE-41BF-BBF0-3F2818482034}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>FusionCrowd</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MENGECORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\Lebin\PedestrianSimulation\menge\src;D:\Lebin\PedestrianSimulation\Menge-master\src\Menge\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>true</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>tinyxml_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Lebin\PedestrianSimulation\Menge-master\projects\VS2015\Menge\build\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;MENGECORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\Lebin\PedestrianSimulation\menge\src;D:\Lebin\PedestrianSimulation\Menge-master\src\Menge\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MENGECORE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\Lebin\PedestrianSimulation\menge\src;D:\Lebin\PedestrianSimulation\Menge-master\src\Menge\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
