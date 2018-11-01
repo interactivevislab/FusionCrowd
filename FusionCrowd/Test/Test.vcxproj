@@ -89,11 +89,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\FusionCrowd\FusionCrowd;D:\Lebin\PedestrianSimulation\Menge-master\src\Menge;D:\Lebin\PedestrianSimulation\Menge-master\src;D:\Lebin\PedestrianSimulation\Menge-master\src\thirdParty;D:\Lebin\PedestrianSimulation\FusionCrowd\FusionCrowd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>FusionCrowd_d.lib;tinyxml_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Lebin\PedestrianSimulation\FusionCrowd\x64\Debug;D:\Lebin\PedestrianSimulation\Menge-master\projects\VS2015\Menge\build\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>FusionCrowd_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
+      <SubSystem>NotSet</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

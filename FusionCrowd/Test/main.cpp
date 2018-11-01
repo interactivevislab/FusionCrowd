@@ -1,75 +1,73 @@
-#include "../Agents/SimulatorInterface.h"
-#include "../Math/RandGenerator.h"
-#include "../PluginEngine/CorePluginEngine.h"
-#include "../ProjectSpec.h"
-#include "../Runtime/Logger.h"
-#include "../Runtime/os.h"
-#include "../Runtime/SimulatorDB.h"
-#include "../Agents/BaseAgent.h"
+#include "Agents/SimulatorInterface.h"
+#include "Math/RandGenerator.h"
+#include "PluginEngine/CorePluginEngine.h"
+#include "ProjectSpec.h"
+#include "Runtime/Logger.h"
+#include "Runtime/os.h"
+#include "Runtime/SimulatorDB.h"
+#include "Agents/BaseAgent.h"
 
-#include "../Agents/AgentInitializer.h"
-#include "../Agents/SpatialQueries/SpatialQuery.h"
-#include "../Agents/SpatialQueries/SpatialQueryFactory.h"
-#include "../Agents/SpatialQueries/SpatialQueryKDTree.h"
-#include "../Agents/ObstacleSets/ObstacleSetDatabase.h"
-#include "../Runtime/SimulatorDBEntry.h"
-#include "../Orca/ORCADBEntry.h"
-#include "../Agents/ProfileSelectors/ProfileSelector.h"
-#include "../Agents/AgentGenerators/RectGridGenerator.h"
-#include "../Agents/StateSelectors/StateSelector.h"
-#include "../Agents/AgentGenerators/AgentGenerator.h"
-#include "../Agents/ProfileSelectors/ConstProfileSelector.h"
-#include "../Agents/StateSelectors/ConstStateSelector.h"
-#include "../Agents/XMLSimulatorBase.h"
-#include "../Agents/SimulatorState.h"
+#include "Agents/AgentInitializer.h"
+#include "Agents/SpatialQueries/SpatialQuery.h"
+#include "Agents/SpatialQueries/SpatialQueryFactory.h"
+#include "Agents/SpatialQueries/SpatialQueryKDTree.h"
+#include "Agents/ObstacleSets/ObstacleSetDatabase.h"
+#include "Runtime/SimulatorDBEntry.h"
+#include "Orca/ORCADBEntry.h"
+#include "Agents/ProfileSelectors/ProfileSelector.h"
+#include "Agents/AgentGenerators/RectGridGenerator.h"
+#include "Agents/StateSelectors/StateSelector.h"
+#include "Agents/AgentGenerators/AgentGenerator.h"
+#include "Agents/ProfileSelectors/ConstProfileSelector.h"
+#include "Agents/StateSelectors/ConstStateSelector.h"
+#include "Agents/XMLSimulatorBase.h"
+#include "Agents/SimulatorState.h"
 
-#include "../Core.h"
-#include "../Agents/BaseAgent.h"
-#include "../Agents/SimulatorState.h"
-#include "../Agents/XMLSimulatorBase.h"
-#include "../Agents/AgentGenerators/AgentGeneratorDatabase.h"
-#include "../Agents/Elevations/ElevationDatabase.h"
-#include "../Agents/ObstacleSets/ObstacleSetDatabase.h"
-#include "../Agents/ProfileSelectors/ProfileSelectorDatabase.h"
-#include "../Agents/SpatialQueries/SpatialQueryDatabase.h"
-#include "../Agents/StateSelectors/StateSelectorDatabase.h"
-#include "../Runtime/os.h"
-#include "../Agents/ObstacleSets/ExplicitObstacleSet.h"
-#include "../BFSM/FSM.h"
+#include "Core.h"
+#include "Agents/BaseAgent.h"
+#include "Agents/SimulatorState.h"
+#include "Agents/XMLSimulatorBase.h"
+#include "Agents/AgentGenerators/AgentGeneratorDatabase.h"
+#include "Agents/Elevations/ElevationDatabase.h"
+#include "Agents/ObstacleSets/ObstacleSetDatabase.h"
+#include "Agents/ProfileSelectors/ProfileSelectorDatabase.h"
+#include "Agents/SpatialQueries/SpatialQueryDatabase.h"
+#include "Agents/StateSelectors/StateSelectorDatabase.h"
+#include "Runtime/os.h"
+#include "Agents/ObstacleSets/ExplicitObstacleSet.h"
+#include "BFSM/FSM.h"
 
-#include "../BFSM/FSMDescrip.h"
-#include "../BFSM/StateDescrip.h"
-#include "../BFSM/GoalSet.h"
-#include "../BFSM/Actions/Action.h"
-#include "../BFSM//GoalSelectors/GoalSelectorMirror.h"
-#include "../BFSM/GoalSelectors/GoalSelectorIdentity.h"
-#include "../BFSM/VelocityComponents/VelCompGoal.h"
-#include "../BFSM/Transitions/Condition.h"
-#include "../BFSM/Transitions/Target.h"
-#include "../BFSM/Transitions/CondGoal.h"
-#include "../BFSM/Transitions/Transition.h"
-#include "../BFSM/FSM.h"
+#include "BFSM/FSMDescrip.h"
+#include "BFSM/StateDescrip.h"
+#include "BFSM/GoalSet.h"
+#include "BFSM/Actions/Action.h"
+#include "BFSM//GoalSelectors/GoalSelectorMirror.h"
+#include "BFSM/GoalSelectors/GoalSelectorIdentity.h"
+#include "BFSM/VelocityComponents/VelCompGoal.h"
+#include "BFSM/Transitions/Condition.h"
+#include "BFSM/Transitions/Target.h"
+#include "BFSM/Transitions/CondGoal.h"
+#include "BFSM/Transitions/Transition.h"
+#include "BFSM/FSM.h"
 
-#include "../Runtime/SimulatorDBEntry.h"
+#include "Runtime/SimulatorDBEntry.h"
 
-#include "../MengeException.h"
-#include "../Agents/SimulatorInterface.h"
-#include "../BFSM/FSM.h"
-#include "../BFSM/FSMDescrip.h"
-#include "../Runtime/Logger.h"
+#include "MengeException.h"
+#include "Agents/SimulatorInterface.h"
+#include "BFSM/FSM.h"
+#include "BFSM/FSMDescrip.h"
+#include "Runtime/Logger.h"
 
-#include "thirdParty/tclap/CmdLine.h"
+#include "Orca/ORCAInitializer.h"
 
-#include "../Orca/ORCAInitializer.h"
+#include "Math/RandGenerator.h"
+#include "Orca/ORCAAgent.h"
 
-#include "../Math/RandGenerator.h"
-#include "../Orca/ORCAAgent.h"
+#include "Agents/AgentInitializer.h"
 
-#include "../Agents/AgentInitializer.h"
-
-#include "../Agents/BaseAgent.h"
-#include "../Math/RandGenerator.h"
-#include "../Runtime/Utils.h"
+#include "Agents/BaseAgent.h"
+#include "Math/RandGenerator.h"
+#include "Runtime/Utils.h"
 
 
 #include <algorithm>
@@ -90,12 +88,11 @@ float SIM_DURATION = 800.f;
 bool VERBOSE = false;
 // The location of the executable - for basic executable resources
 std::string ROOT;
-
 SimulatorDB simDB;
 
-std::string getPluginPath() 
+std::string getPluginPath()
 {
-#ifdef _WIN32 
+#ifdef _WIN32
 #ifdef NDEBUG
 	return os::path::join(2, ROOT.c_str(), "plugins");
 #else	// NDEBUG
@@ -365,7 +362,7 @@ bool finalize(Agents::SimulatorInterface * sim, BFSM::FSM * fsm)
 	try {
 		sim->finalize();
 	}
-	catch (Menge::MengeException & e) 
+	catch (Menge::MengeException & e)
 	{
 		logger << Logger::ERR_MSG << "Problem in finalizing the simulator.\n";
 		logger << "\t" << e.what();
@@ -376,7 +373,7 @@ bool finalize(Agents::SimulatorInterface * sim, BFSM::FSM * fsm)
 	{
 		fsm->finalize();
 	}
-	catch (Menge::MengeFatalException & e) 
+	catch (Menge::MengeFatalException & e)
 	{
 		logger << Logger::ERR_MSG << "Fatal error finalizing the finite state machine!\n";
 		logger << "\t" << e.what();
@@ -460,7 +457,7 @@ int simMain(SimulatorDBEntry * dbEntry, const std::string & outFile) {
 	const size_t AGT_COUNT = generator->agentCount();
 	Vector2 zero;
 
-	for (size_t i = 0; i < AGT_COUNT; ++i) 
+	for (size_t i = 0; i < AGT_COUNT; ++i)
 	{
 		Agents::BaseAgent * agent = simTest->addAgent(zero, profileSel->getProfile());
 		generator->setAgentPosition(i, agent);
@@ -478,7 +475,7 @@ int simMain(SimulatorDBEntry * dbEntry, const std::string & outFile) {
 	obs.vertices.push_back(Vector2(5.333, 5.333));
 	obs.vertices.push_back(Vector2(1.333, 5.333));
 	obTest->addObstacle(obs);
-	
+
 	obs.vertices.clear();
 	obs.vertices.push_back(Vector2(-5.333, 1.333));
 	obs.vertices.push_back(Vector2(-1.333, 1.333));
@@ -556,7 +553,7 @@ int simMain(SimulatorDBEntry * dbEntry, const std::string & outFile) {
 		{
 			a = simTest->getAgent(i);
 			Menge::Math::Vector2 ac = a->_pos;
-			std::cout << i << " " << ac << "\n";
+			std::cout << i << " " << ac._x << " " << ac._y << "\n";
 		}
 	}
 
@@ -568,8 +565,8 @@ int simMain(SimulatorDBEntry * dbEntry, const std::string & outFile) {
 
 	//bool running = true;
 
-	//Menge::Agents::BaseAgent * a; 
-	//while (running) 
+	//Menge::Agents::BaseAgent * a;
+	//while (running)
 	//{
 	//	running = sim->step();
 	//	for (int i = 0; i < agentCount; i++)
@@ -592,7 +589,7 @@ int main()
 
 	std::string pluginPath = "";
 	plugins.loadPlugins(pluginPath);
-	if (simDB.modelCount() == 0) 
+	if (simDB.modelCount() == 0)
 	{
 		logger << Logger::INFO_MSG << "There were no pedestrian models in the plugins folder\n";
 		return 1;
@@ -619,10 +616,6 @@ int main()
 		logger.close();
 		return 1;
 	}
-
-	std::string b = "D:/Lebin/PedestrianSimulation/menge/examples/core/4square/4squareB.xml";
-	std::string s = "D:/Lebin/PedestrianSimulation/menge/examples/core/4square/4squareS.xml";
-	std::string v = "D:/Lebin/PedestrianSimulation/menge/examples/core/4square/4squareV.xml";
 
 	int result = simMain(simDBEntry, projSpec.getOutputName());
 
