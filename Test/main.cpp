@@ -410,6 +410,14 @@ int simMain(SimulatorDBEntry * dbEntry, const std::string & outFile) {
 
 
 	simXMLTest->setExpParam("time_step", "0.1");
+
+	// для GCF
+	//simXMLTest->setExpParam("reaction_time", "0.5");
+	//simXMLTest->setExpParam("max_agent_dist", "2");
+	//simXMLTest->setExpParam("max_agent_force", "3");
+	//simXMLTest->setExpParam("agent_interp_width", "0.1");
+	//simXMLTest->setExpParam("agent_force_strength", "0.35");
+
 	Agents::SpatialQuery * spQuery = new Agents::BergKDTree();
 	simXMLTest->setSpatialQuery(spQuery);
 
@@ -589,6 +597,7 @@ int main()
 
 	std::string pluginPath = "";
 	plugins.loadPlugins(pluginPath);
+	int modelCount = simDB.modelCount();
 	if (simDB.modelCount() == 0)
 	{
 		logger << Logger::INFO_MSG << "There were no pedestrian models in the plugins folder\n";
@@ -607,7 +616,7 @@ int main()
 
 	std::string viewCfgFile = projSpec.getView();
 	bool useVis = viewCfgFile != "";
-	std::string model = "orca";
+	std::string model = "gcf";
 
 	SimulatorDBEntry * simDBEntry = simDB.getDBEntry(model);
 	if (simDBEntry == 0x0)

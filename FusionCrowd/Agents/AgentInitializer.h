@@ -95,7 +95,7 @@ namespace Menge {
 			 *
 			 *	If a tag is deemed to be relevant, but the content of the tag is incorrect,
 			 *	such as a mal-formed property definition, then the parsing "fails".  However,
-			 *	unexpected property attributes or specifications will be ignored.  
+			 *	unexpected property attributes or specifications will be ignored.
 			 *	If the system is running in verbose mode, these unexpected attributes will be
 			 *	indicated on the console.
 			 *
@@ -111,7 +111,7 @@ namespace Menge {
 			 *			</Common>
 			 *
 			 *	@param		node		The xml node containing agent properties for an AgentSet.
-			 *	@param		sceneFldr	Since we now need access to resources at this stage, 
+			 *	@param		sceneFldr	Since we now need access to resources at this stage,
 			 *                          we pass the base folder for resource loading
 			 *	@returns	True if parsing was "successful", false otherwise.
 			 */
@@ -145,7 +145,7 @@ namespace Menge {
 			 *	@brief		Creates a copy of this AgentInitializer instance.
 			 *
 			 *	@returns	A pointer to a new AgentInitializer with all of the same values
-			 *				as this.  The caller is responsible for freeing up the 
+			 *				as this.  The caller is responsible for freeing up the
 			 *				new instance.
 			 */
 			virtual AgentInitializer * copy() const { return new AgentInitializer( *this ); }
@@ -164,7 +164,7 @@ namespace Menge {
 			 *	space.  Each pedestrian model which introduces new per-agent properties that
 			 *	must override this function.  However, the overriden function must, in turn,
 			 *	call the parent class if it doesn't consider the tag relevant, giving the
-			 *	parent class a chance to determine if the tag is relevant.  This is the 
+			 *	parent class a chance to determine if the tag is relevant.  This is the
 			 *	mechanism by which derived classes will also benefit from the `<Common>`
 			 *	parameter set.
 			 *
@@ -176,9 +176,9 @@ namespace Menge {
 			/*!
 			 *	@brief		Defines a constant value for an agent property as specified
 			 *				by the attribute of an agent property tag.
-			 *	
+			 *
 			 *	Derived classes should override this function, but possibly call the parent
-			 *	class's implementation.  First, it should test to see if the paramName is 
+			 *	class's implementation.  First, it should test to see if the paramName is
 			 *	expected by the derived class.  If so, the derived class can determine fail
 			 *	or accept.  If it is not expected, it should call the parent class's implementation
 			 *	and returns its value.
@@ -189,7 +189,7 @@ namespace Menge {
 			 */
 			virtual ParseResult setFromXMLAttribute( const ::std::string & paramName,
 													 const ::std::string & value );
-			
+
 			/*!
 			 *	@brief		Parses the Property tag that is the child of an AgentSet Parameter
 			 *				tag.
@@ -204,20 +204,20 @@ namespace Menge {
 			//bool parsePropertySpec( TiXmlElement * node );
 
 			/*!
-			 *	@brief		Process the given `<Property .../>` tag.  
+			 *	@brief		Process the given `<Property .../>` tag.
 			 *
 			 *	As a pre-condition to this function, the XML node contains a `<Property.../>`
 			 *	tag and has been confirmed to have, at least, a name attribute.  Nothing
-			 *	else about the tag has been validated.  
+			 *	else about the tag has been validated.
 			 *
-			 *	If the property name is unexpected, it will be ignored.  If it is expected, 
+			 *	If the property name is unexpected, it will be ignored.  If it is expected,
 			 *	this function will attempt to interpret the XML tag as a number distribution
 			 *	for a valid agent attribute.  If it can do so, it is successful, if it can't,
 			 *	it fails.
 			 *
 			 *	@param		propName		The extracted "name" attribute from the Property tag.
 			 *	@param		node			The XML node for the Property tag.
-			 *	@returns	The ParseResult indicating if the property was successful 
+			 *	@returns	The ParseResult indicating if the property was successful
 			 *				(IGNORED or ACCEPTED) or if it was a malformed tag (FAILURE).
 			 */
 			//virtual ParseResult processProperty( ::std::string propName, TiXmlElement * node );
@@ -226,16 +226,16 @@ namespace Menge {
 			 *	@brief		Helper function for setting a property from an xml attribute.
 			 *
 			 *	This is used to parse and create a value generator in the case where the
-			 *	attribute is defined on the main property tag: e.g., 
+			 *	attribute is defined on the main property tag: e.g.,
 			 *
 			 *			<Common property="value.../>
-			 *			
+			 *
 			 *	@param		gen			A reference to a pointer to a valid FloatGenerator.
 			 *							The new float generator will be put into this variable.
 			 *	@param		valueStr	The string representing the attribute value to convert
 			 *							to a const float generator.
 			 *	@param		scale		Optional argument for changing the units of the input value.
-			 *							(e.g., specification commonly describes angles as degrees, 
+			 *							(e.g., specification commonly describes angles as degrees,
 			 *							but internal representation is in radians).
 			 *	@returns	A parse result indicating either ACCEPTED or FAILURE.  IGNORED should
 			 *				never be a result, because it should only be called on expected
@@ -246,17 +246,17 @@ namespace Menge {
 
 			/*!
 			 *	@brief		Helper function for setting a property from an xml attribute.
-			 *			
+			 *
 			 *	This is used to parse and create a value generator in the case where the
-			 *	attribute is defined on the main property tag: e.g., 
+			 *	attribute is defined on the main property tag: e.g.,
 			 *
 			 *			<Common property="value.../>
-			 *			
+			 *
 			 *	@param		numValue	The new float will be put into this variable.
 			 *	@param		valueStr	The string representing the attribute value to convert
 			 *							to a const float generator.
 			 *	@param		scale		Optional argument for changing the units of the input value.
-			 *							(e.g., specification commonly describes angles as degrees, 
+			 *							(e.g., specification commonly describes angles as degrees,
 			 *							but internal representation is in radians).
 			 *	@returns	A parse result indicating either ACCEPTED or FAILURE.  IGNORED should
 			 *				never be a result, because it should only be called on expected
@@ -267,12 +267,12 @@ namespace Menge {
 
 			/*!
 			 *	@brief		Helper function for setting a property from an xml attribute.
-			 *			
+			 *
 			 *	This is used to parse and create a value generator in the case where the
-			 *	attribute is defined on the main property tag: e.g., 
+			 *	attribute is defined on the main property tag: e.g.,
 			 *
 			 *			<Common property="value.../>
-			 *			
+			 *
 			 *	@param		gen			A reference to a pointer to a valid IntGenerator.
 			 *							The new int generator will be put into this variable.
 			 *	@param		valueStr	The string representing the attribute value to convert
@@ -285,12 +285,12 @@ namespace Menge {
 
 			/*!
 			 *	@brief		Helper function for setting a property from an xml attribute.
-			 *			
+			 *
 			 *	This is used to parse and create a value generator in the case where the
-			 *	attribute is defined on the main property tag: e.g., 
+			 *	attribute is defined on the main property tag: e.g.,
 			 *
 			 *			<Common property="value.../>
-			 *			
+			 *
 			 *	@param		numValue	The new size_t will be put into this variable.
 			 *	@param		valueStr	The string representing the attribute value to convert
 			 *							to a const float generator.
@@ -305,10 +305,10 @@ namespace Menge {
 			 *
 			 *	This is used to parse and create a value generator in the case where the
 			 *	attribute is defined explicitly as a distribution on a Property tag, e.g.,
-			 *	
+			 *
 			 *			<Property name="property" dist="x".../>
 			 *
-			 *			
+			 *
 			 *	@param		gen			A reference to a pointer to a valid FloatGenerator.
 			 *							The new float generator will be put into this variable.
 			 *	@param		node		The xml node containing attributes for the distribution
@@ -320,17 +320,17 @@ namespace Menge {
 			 *				never be a result, because it should only be called on expected
 			 *				parameters, so it must either succed or fail.
 			 */
-			//ParseResult getFloatGenerator( FloatGenerator * & gen, TiXmlElement * node,
-			//							   float scale=1.f );
+			ParseResult getFloatGenerator( FloatGenerator * & gen, TiXmlElement * node,
+										   float scale=1.f );
 
 			/*!
 			 *	@brief		Helper function for setting a property from an xml Property node.
-			 *			
+			 *
 			 *	This is used to parse and create a value generator in the case where the
-			 *	attribute is defined on the main property tag: e.g., 
+			 *	attribute is defined on the main property tag: e.g.,
 			 *
 			 *			<Common property="value.../>
-			 *			
+			 *
 			 *	@param		gen			A reference to a pointer to a valid IntGenerator.
 			 *							The new int generator will be put into this variable.
 			 *	@param		node		The xml node containing attributes for the distribution
@@ -355,7 +355,7 @@ namespace Menge {
 			/*!
 			 *	@brief		The preferred speed of the agent
 			 */
-			FloatGenerator * _prefSpeed;	
+			FloatGenerator * _prefSpeed;
 
 			/*!
 			 *	@brief		The number of nearby agents used to plan dynamic respones.
@@ -363,7 +363,7 @@ namespace Menge {
 			IntGenerator * _maxNeighbors;
 
 			/*!
-			 *	@brief		The maximum distance at which another agent will be 
+			 *	@brief		The maximum distance at which another agent will be
 			 *				considered for a response.
 			 */
 			FloatGenerator * _neighborDist;
@@ -374,7 +374,7 @@ namespace Menge {
 			FloatGenerator * _radius;
 
 			/*!
-			 *	@brief		The agent's maximum angular velocity (in radians/sec) -- 
+			 *	@brief		The agent's maximum angular velocity (in radians/sec) --
 			 *				used for controlling the changes in agent orientation.
 			 */
 			FloatGenerator * _maxAngVel;
