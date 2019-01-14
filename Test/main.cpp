@@ -595,7 +595,7 @@ int main()
 
 	Menge::PluginEngine::CorePluginEngine plugins(&simDB);
 
-	std::string pluginPath = "";
+	std::string pluginPath = ".\\Plugins";
 	plugins.loadPlugins(pluginPath);
 	int modelCount = simDB.modelCount();
 	if (simDB.modelCount() == 0)
