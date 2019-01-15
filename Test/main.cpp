@@ -595,7 +595,7 @@ int main()
 
 	Menge::PluginEngine::CorePluginEngine plugins(&simDB);
 
-	std::string pluginPath = ".\\Plugins";
+	std::string pluginPath = "D:/Lebin/Project/FusionCrowd/x64/Debug//Plugins";
 	plugins.loadPlugins(pluginPath);
 	int modelCount = simDB.modelCount();
 	if (simDB.modelCount() == 0)

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowd", "FusionCrowd\FusionCrowd.vcxproj", "{B891C234-7FCE-41BF-BBF0-3F2818482034}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdMenge", "FusionCrowdMenge\FusionCrowdMenge.vcxproj", "{B891C234-7FCE-41BF-BBF0-3F2818482034}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{15E33B5E-7BEF-48DA-A96B-A3ADDC421895}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestMenge", "Test\Test.vcxproj", "{15E33B5E-7BEF-48DA-A96B-A3ADDC421895}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DLLConect", "DLLConect\DLLConect.vcxproj", "{5A6E3CF0-9A62-43A1-805C-035AD474709E}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AgtKaramouzas", "AgtKaramouzas\AgtKaramouzas.vcxproj", "{437AB7DA-E6FE-4C80-B668-446A2E175AB8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AgtZanlungo", "AgtZanlungo\AgtZanlungo.vcxproj", "{31499E80-B6A3-42CC-8F38-7BB6844BD413}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowd", "FusionCrowd\FusionCrowd.vcxproj", "{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,14 @@ Global
 		{31499E80-B6A3-42CC-8F38-7BB6844BD413}.Release|x64.Build.0 = Release|x64
 		{31499E80-B6A3-42CC-8F38-7BB6844BD413}.Release|x86.ActiveCfg = Release|Win32
 		{31499E80-B6A3-42CC-8F38-7BB6844BD413}.Release|x86.Build.0 = Release|Win32
+		{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}.Debug|x64.ActiveCfg = Debug|x64
+		{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}.Debug|x64.Build.0 = Debug|x64
+		{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}.Debug|x86.ActiveCfg = Debug|Win32
+		{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}.Debug|x86.Build.0 = Debug|Win32
+		{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}.Release|x64.ActiveCfg = Release|x64
+		{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}.Release|x64.Build.0 = Release|x64
+		{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}.Release|x86.ActiveCfg = Release|Win32
+		{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
