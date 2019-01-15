@@ -19,22 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Formations.cpp" />
-    <ClCompile Include="FormationsModifier.cpp" />
-    <ClCompile Include="FormationsTask.cpp" />
-    <ClCompile Include="FreeFormation.cpp" />
+    <ClCompile Include="FundamentalDiagram.cpp" />
+    <ClCompile Include="FundamentalDiagramModifier.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FormationsConfig.h" />
-    <ClInclude Include="FormationsModifier.h" />
-    <ClInclude Include="FormationsTask.h" />
-    <ClInclude Include="FreeFormation.h" />
+    <ClInclude Include="FundamentalDiagramConfig.h" />
+    <ClInclude Include="FundamentalDiagramModifier.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{B32A06A8-2F6F-4FCE-9C31-516CBC572EA7}</ProjectGuid>
+    <ProjectGuid>{D0DF6DDB-1200-4EDA-A555-2B66D8EDA85F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Formations</RootNamespace>
+    <RootNamespace>FundamentalDiagram</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -101,7 +97,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;LINKMENGECORE_EXPORTS;_WINDOWS;_USRDLL;FORMATIONS_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;LINKMENGECORE_EXPORTS;_WINDOWS;_USRDLL;FDMODIFIER_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowdMenge;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -118,7 +114,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;FORMATIONS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;FUNDAMENTALDIAGRAM_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -134,7 +130,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;FORMATIONS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;FUNDAMENTALDIAGRAM_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
@@ -152,7 +148,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;FORMATIONS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;FUNDAMENTALDIAGRAM_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>

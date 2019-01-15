@@ -6,6 +6,11 @@ NavSystem::NavSystem()
 {
 }
 
+void NavSystem::Update()
+{
+
+}
+
 
 NavSystem::~NavSystem()
 {
