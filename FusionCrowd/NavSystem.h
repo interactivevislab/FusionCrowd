@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#include "INavComponent.h"
+#include "NavComponents/INavComponent.h"
 
 class NavSystem
 {

@@ -20,15 +20,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
-    <ClInclude Include="INavComponent.h" />
+    <ClInclude Include="NavComponents\INavComponent.h" />
     <ClInclude Include="IOperComponent.h" />
     <ClInclude Include="IStrategyComponent.h" />
     <ClInclude Include="ITacticComponent.h" />
+    <ClInclude Include="NavComponents\NavMeshCompnent.h" />
+    <ClInclude Include="NavComponents\NavMesh\NavMesh.h" />
     <ClInclude Include="NavSystem.h" />
     <ClInclude Include="Simulator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agent.cpp" />
+    <ClCompile Include="NavComponents\NavMeshCompnent.cpp" />
+    <ClCompile Include="NavComponents\NavMesh\NavMesh.cpp" />
     <ClCompile Include="NavSystem.cpp" />
     <ClCompile Include="Simulator.cpp" />
   </ItemGroup>
@@ -104,7 +108,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;FUSIONCROWD_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowdMenge;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

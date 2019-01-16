@@ -2,5 +2,6 @@
 
 class IOperComponent
 {
+public:
 	virtual ~IOperComponent();
 };
