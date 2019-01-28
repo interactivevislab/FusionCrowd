@@ -20,20 +20,36 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
+    <ClInclude Include="Math\consts.h" />
+    <ClInclude Include="Math\geomQuery.h" />
+    <ClInclude Include="Math\vector.h" />
+    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="NavComponents\INavComponent.h" />
     <ClInclude Include="IOperComponent.h" />
     <ClInclude Include="IStrategyComponent.h" />
     <ClInclude Include="ITacticComponent.h" />
     <ClInclude Include="NavComponents\NavMeshCompnent.h" />
     <ClInclude Include="NavComponents\NavMesh\NavMesh.h" />
+    <ClInclude Include="NavComponents\NavMesh\NavMeshEdge.h" />
+    <ClInclude Include="NavComponents\NavMesh\NavMeshObstacle.h" />
+    <ClInclude Include="NavComponents\NavMesh\NavMeshNode.h" />
+    <ClInclude Include="NavComponents\NavMesh\NavMeshPoly.h" />
     <ClInclude Include="NavSystem.h" />
+    <ClInclude Include="NavComponents\Obstacle.h" />
     <ClInclude Include="Simulator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agent.cpp" />
+    <ClCompile Include="Math\geomQuery.cpp" />
     <ClCompile Include="NavComponents\NavMeshCompnent.cpp" />
     <ClCompile Include="NavComponents\NavMesh\NavMesh.cpp" />
+    <ClCompile Include="NavComponents\NavMesh\NavMeshEdge.cpp" />
+    <ClCompile Include="NavComponents\NavMesh\NavMeshObstacle.cpp" />
+    <ClCompile Include="NavComponents\NavMesh\NavMeshNode.cpp" />
+    <ClCompile Include="NavComponents\NavMesh\NavMeshPoly.cpp" />
     <ClCompile Include="NavSystem.cpp" />
+    <ClCompile Include="NavComponents\Obstacle.cpp" />
     <ClCompile Include="Simulator.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

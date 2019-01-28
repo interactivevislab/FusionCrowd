@@ -1,0 +1,54 @@
+
+#include "geomQuery.h"
+#include "consts.h"
+
+
+namespace FusionCrowd
+{
+	const float INFTY = 1e6f;
+	const float PI = (float)(asin(1.0f) * 2.f);
+	const float TWOPI = PI * 2.f;
+	const float HALFPI = PI * 0.5f;
+	const float DEG_TO_RAD = PI / 180.0f;
+	const float RAD_TO_DEG = 180.0f / PI;
+	const float EPS = 0.00001f;
+
+	namespace Math
+	{
+
+		////////////////////////////////////////////////////////////////
+
+		// determines the time to collision of a ray from the origin with a circle (center, radius)
+		//	Returns an "infinity" style number if no collision
+		float rayCircleTTC(const Vector2 & dir, const Vector2 & center, float radius) {
+			float a = absSq(dir);
+			float b = -2 * (dir * center);
+			float c = absSq(center) - (radius * radius);
+			float discr = b * b - 4 * a * c;
+			if (discr < 0.f) {
+				return INFTY;
+			}
+			const float sqrtDiscr = sqrtf(discr);
+			float t0 = (-b - sqrtDiscr) / (2.f * a);
+			float t1 = (-b + sqrtDiscr) / (2.f * a);
+			// If the points of collision have different signs, it means I'm already colliding
+			if ((t0 < 0.f && t1 > 0.f) ||
+				(t1 < 0.f && t0 > 0.f)) return 0.f;
+			if (t0 < t1 && t0 > 0.f) return t0;
+			else if (t1 > 0.f) return t1;
+			else return INFTY;
+		}
+
+		////////////////////////////////////////////////////////////////
+
+		// Computes the spherical linear interpolation between two vectors
+		//	the result is (conceptually) (1-t)*p0 + t*p1
+		//	sinTheta is the sine of the angle between p1 and p1
+		Vector2 slerp(float t, const Vector2 & p0, const Vector2 & p1, float sinTheta) {
+			float theta = asin(sinTheta);
+			float t0 = sin((1 - t) * theta) / sinTheta;
+			float t1 = sin(t * theta) / sinTheta;
+			return p0 * t0 + p1 * t1;
+		}
+	}	// namespace Math
+}

@@ -39,7 +39,37 @@
     <ClInclude Include="NavComponents\NavMeshCompnent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Math\consts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\geomQuery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="NavComponents\NavMesh\NavMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NavComponents\NavMesh\NavMeshEdge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NavComponents\NavMesh\NavMeshObstacle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NavComponents\NavMesh\NavMeshNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NavComponents\Obstacle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NavComponents\NavMesh\NavMeshPoly.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,7 +86,25 @@
     <ClCompile Include="NavComponents\NavMeshCompnent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Math\geomQuery.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="NavComponents\NavMesh\NavMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavComponents\NavMesh\NavMeshEdge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavComponents\NavMesh\NavMeshObstacle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavComponents\NavMesh\NavMeshNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavComponents\Obstacle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NavComponents\NavMesh\NavMeshPoly.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
