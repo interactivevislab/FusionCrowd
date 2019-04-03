@@ -3,7 +3,12 @@
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h";
 
-NavMesh::NavMesh()
+//const std::string NavMesh::LABEL = "navmesh";
+
+NavMesh::NavMesh(const std::string & name) : Resource(name), vCount(0), vertices(0x0),
+nCount(0), nodes(0x0), eCount(0),
+edges(0x0), obstCount(0), obstacles(0x0),
+nodeGroups()
 {
 }
 
@@ -96,57 +101,63 @@ bool NavMesh::finalize()
 #pragma warning( default : 4311 )
 #endif
 
-bool NavMesh::Load(const std::string FileName)
+Resource * NavMesh::Load(const std::string & FileName)
 {
+	// TODO: Change this to support comments.
 	std::ifstream f;
-	f.open(fileName.c_str(), std::ios::in);
+	f.open(FileName.c_str(), std::ios::in);
 
 	if (!f.is_open()) {
-		return false;
+		return NULL;
 	}
 
 	// load vertices
 	unsigned int vertCount;
 	if (!(f >> vertCount)) {
-		return false;
+		return NULL;
 	}
-	SetVertexCount(vertCount);
+
+	NavMesh * mesh = new NavMesh(FileName);
+	mesh->SetVertexCount(vertCount);
 	float x, y;
 	for (unsigned int v = 0; v < vertCount; ++v) {
 		if (!(f >> x >> y)) {
-			Destroy();
-			return false;
+			mesh->destroy();
+			return NULL;
 		}
-		SetVertex(v, x, y);
+		mesh->SetVertex(v, x, y);
 	}
+
 	// load edges
 	unsigned int edgeCount;
 	if (!(f >> edgeCount)) {
-		Destroy();
-		return false;
+		mesh->destroy();
+		return NULL;
 	}
-	SetEdgeCount(edgeCount);
+	mesh->SetEdgeCount(edgeCount);
 	for (unsigned int e = 0; e < edgeCount; ++e) {
-		NavMeshEdge & edge = GetEdge(e);
-		if (!edge.loadFromAscii(f, vertices)) {
-			Destroy();
-			return false;
+		NavMeshEdge & edge = mesh->GetEdge(e);
+		if (!edge.loadFromAscii(f, mesh->vertices)) {
+			mesh->destroy();
+			return NULL;
 		}
 	}
+
 	// load obstacles
 	unsigned int obstCount;
 	if (!(f >> obstCount)) {
-		Destroy();
-		return false;
+		mesh->destroy();
+		return NULL;
 	}
-	SetObstacleCount(obstCount);
+	mesh->SetObstacleCount(obstCount);
 	for (unsigned int o = 0; o < obstCount; ++o) {
-		NavMeshObstacle & obst = GetObstacle(o);
-		if (!obst.LoadFromAscii(f, vertices)) {
-			Destroy();
-			return false;
+		NavMeshObstacle & obst = mesh->GetObstacle(o);
+		if (!obst.LoadFromAscii(f, mesh->vertices)) {
+			mesh->destroy();
+			return NULL;
 		}
 	}
+
 	unsigned int totalN = 0;
 	unsigned int n = 0;
 	// load node group
@@ -157,37 +168,41 @@ bool NavMesh::Load(const std::string FileName)
 				break;
 			}
 			else {
-				Destroy();
+				mesh->destroy();
 				return 0x0;
 			}
 		}
 		// load nodes
 		unsigned int nCount;
 		if (!(f >> nCount)) {
-			Destroy();
-			return false;
+			mesh->destroy();
+			return 0x0;
 		}
 
 		totalN += nCount;
-		AddGroup(grpName, nCount);
+		mesh->AddGroup(grpName, nCount);
+		assert(totalN == mesh->getNodeCount() &&
+			"Data management problem -- tracked node count does not match "
+			"in-memory node count");
 
 		for (; n < totalN; ++n) {
-			NavMeshNode & node = GetNode(n);
+			NavMeshNode & node = mesh->GetNode(n);
 			if (!node.loadFromAscii(f)) {
-				Destroy();
-				return false;
+				mesh->destroy();
+				return 0x0;
 			}
 
 			node.setID(n);
-			node.setVertices(GetVertices());
+			node.setVertices(mesh->GetVertices());
 		}
 	}
 
-	if (finalize()) {
-		Destroy();
-		return 0x0;
+	if (!mesh->finalize()) {
+		mesh->destroy();
+		return NULL;
 	}
-	return true;
+
+	return mesh;
 }
 
 #pragma region  Vertex
@@ -269,8 +284,50 @@ NavMeshNode & NavMesh::GetNode(unsigned int i)
 {
 	return nodes[i];
 }
+
+const NMNodeGroup * NavMesh::getNodeGroup(const std::string & grpName) const
+{
+	std::map<const std::string, NMNodeGroup>::const_iterator itr = nodeGroups.find(grpName);
+	NMNodeGroup * grp = 0x0;
+	if (itr != nodeGroups.end()) {
+		return &(itr->second);
+	}
+	return grp;
+}
+
 #pragma endregion
+
+void NavMesh::clear()
+{
+	if (vCount) {
+		vCount = 0;
+		delete[] vertices;
+		vertices = 0x0;
+	}
+
+	if (nCount) {
+		nCount = 0;
+		delete[] nodes;
+		nodes = 0x0;
+	}
+
+	if (eCount) {
+		eCount = 0;
+		delete[] edges;
+		edges = 0x0;
+	}
+}
+
 
 NavMesh::~NavMesh()
 {
+	clear();
+}
+
+NavMeshPtr loadNavMesh(const std::string & fileName)
+{
+	Resource * rsrc = ResourceManager::getResource(fileName, &NavMesh::Load, NavMesh::LABEL);
+	NavMesh * nm = dynamic_cast<NavMesh *>(rsrc);
+
+	return NavMeshPtr(nm);
 }

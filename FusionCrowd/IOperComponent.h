@@ -1,7 +1,11 @@
 #pragma once
 
-class IOperComponent
+#include "Config.h"
+#include "Agent.h"
+
+class FUSION_CROWD_API IOperComponent
 {
 public:
-	virtual ~IOperComponent();
+	virtual void Update(FusionCrowd::Agent* agent, float timeStep) {}
+	virtual ~IOperComponent() {}
 };

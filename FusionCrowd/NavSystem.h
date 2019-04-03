@@ -2,18 +2,20 @@
 
 #include <map>
 #include <string>
+#include "Config.h"
 
 #include "NavComponents/INavComponent.h"
 
-class NavSystem
+class FUSION_CROWD_API NavSystem
 {
 public:
-	NavSystem();
+	NavSystem() {}
+	NavSystem(std::string name, INavComponent* namComponent);
+	void AddNavComponent(std::string name, INavComponent* namComponent);
+	~NavSystem();
 
 	void Update();
-
-	~NavSystem();
 private:
-	std::map<std::string, INavComponent> navComponent;
+	std::map<std::string, INavComponent *> navComponents;
 };
 

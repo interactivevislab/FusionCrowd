@@ -1,6 +1,7 @@
 #pragma once
 
 #include "consts.h"
+#include "../Config.h"
 
 #include <cmath>
 #include <ostream>
@@ -20,7 +21,7 @@ namespace FusionCrowd {
 		 *  @param			a               The float to be squared.
 		 *  @returns		The square of the float.
 		 */
-		inline float sqr(float a)
+		inline FUSION_CROWD_API float sqr(float a)
 		{
 			return a * a;
 		}
@@ -29,7 +30,7 @@ namespace FusionCrowd {
 		 *	@brief		Templated vector in R2
 		 */
 		template <class Type>
-		class Vector2d {
+		class FUSION_CROWD_API Vector2d {
 		public:
 			///////////////////////////    CONSTRUCTORS      ////////////////////////////
 			/*!
@@ -363,7 +364,7 @@ namespace FusionCrowd {
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template class Vector2d<float>;
+		template class FUSION_CROWD_API Vector2d<float>;
 
 		/*!
 		 *	@brief		Declaration of a floating point vector in R2.
@@ -384,7 +385,7 @@ namespace FusionCrowd {
 		 *              scalar value.
 		 */
 		template< class Type >
-		inline Vector2d<Type> operator*(Type s, const Vector2d<Type>& v) {
+		inline FUSION_CROWD_API Vector2d<Type> operator*(Type s, const Vector2d<Type>& v) {
 			return Vector2d<Type>(s * v._x, s * v._y);
 		}
 
@@ -392,7 +393,7 @@ namespace FusionCrowd {
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template Vector2d<float> operator*(float s,
+		template FUSION_CROWD_API Vector2d<float> operator*(float s,
 			const Vector2d<float>& v);
 
 
@@ -408,7 +409,7 @@ namespace FusionCrowd {
 		 *  @returns    A reference to the output stream.
 		 */
 		template< class Type >
-		inline std::ostream& operator<<(std::ostream& os, const Vector2d<Type>& v) {
+		inline FUSION_CROWD_API std::ostream& operator<<(std::ostream& os, const Vector2d<Type>& v) {
 			os << "(" << v.x() << "," << v.y() << ")";
 			return os;
 		}
@@ -421,7 +422,7 @@ namespace FusionCrowd {
 		 *  @returns    The length of the two-dimensional vector.
 		 */
 		template< class Type >
-		inline Type abs(const Vector2d<Type>& v) {
+		inline FUSION_CROWD_API Type abs(const Vector2d<Type>& v) {
 			return std::sqrt(v * v);
 		}
 
@@ -429,7 +430,7 @@ namespace FusionCrowd {
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template float abs(const Vector2d<float>& v);
+		template FUSION_CROWD_API float abs(const Vector2d<float>& v);
 
 		/*!
 		 *  @brief      Computes the squared length of a specified two-dimensional
@@ -440,7 +441,7 @@ namespace FusionCrowd {
 		 *  @returns    The squared length of the two-dimensional vector.
 		 */
 		template< class Type >
-		inline Type absSq(const Vector2d<Type>& v) {
+		inline FUSION_CROWD_API Type absSq(const Vector2d<Type>& v) {
 			return v * v;
 		}
 
@@ -448,7 +449,7 @@ namespace FusionCrowd {
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template float absSq(const Vector2d<float>& v);
+		template FUSION_CROWD_API float absSq(const Vector2d<float>& v);
 
 		/*!
 		 *  @brief      Computes the determinant of a two-dimensional square matrix with
@@ -461,7 +462,7 @@ namespace FusionCrowd {
 		 *  @returns    The determinant of the two-dimensional square matrix.
 		 */
 		template< class Type >
-		inline Type det(const Vector2d<Type>& v1, const Vector2d<Type>& v2) {
+		inline FUSION_CROWD_API Type det(const Vector2d<Type>& v1, const Vector2d<Type>& v2) {
 			return v1.x() * v2.y() - v1.y() * v2.x();
 		}
 
@@ -469,7 +470,7 @@ namespace FusionCrowd {
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template float det(const Vector2d<float>& v1,
+		template FUSION_CROWD_API float det(const Vector2d<float>& v1,
 			const Vector2d<float>& v2);
 
 		/*!
@@ -481,7 +482,7 @@ namespace FusionCrowd {
 		 *  @returns    The normalization of the two-dimensional vector.
 		 */
 		template< class Type >
-		inline Vector2d<Type> norm(const Vector2d<Type>& vector) {
+		inline FUSION_CROWD_API Vector2d<Type> norm(const Vector2d<Type>& vector) {
 			float mag = abs(vector);
 			if (mag < EPS) {
 				// This may not be the "right" behavior.  I do this because the "normalized" vector
@@ -498,7 +499,7 @@ namespace FusionCrowd {
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template Vector2d<float> norm(const Vector2d<float>& vector);
+		template FUSION_CROWD_API Vector2d<float> norm(const Vector2d<float>& vector);
 
 		/*!
 		 *  @brief	Determines if two vectors are equal to within a threshhold
@@ -511,7 +512,7 @@ namespace FusionCrowd {
 		 *            false otherwise.
 		 */
 		template< class Type >
-		inline bool equivalent(const Vector2d<Type> & v1, const Vector2d<Type> & v2,
+		inline FUSION_CROWD_API bool equivalent(const Vector2d<Type> & v1, const Vector2d<Type> & v2,
 			float threshSqd = 0.000001f) {
 			return absSq(v1 - v2) < threshSqd;
 		}
@@ -520,7 +521,7 @@ namespace FusionCrowd {
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template bool equivalent(const Vector2d<float> & v1,
+		template FUSION_CROWD_API bool equivalent(const Vector2d<float> & v1,
 			const Vector2d<float> & v2,
 			float threshSqd);
 
@@ -534,7 +535,7 @@ namespace FusionCrowd {
 		 *  @returns    Positive when the point c lies to the left of the line ab.
 		 */
 		template< class Type >
-		inline Type leftOf(const Vector2d<Type>& a, const Vector2d<Type>& b,
+		inline FUSION_CROWD_API Type leftOf(const Vector2d<Type>& a, const Vector2d<Type>& b,
 			const Vector2d<Type>& c) {
 			return det(a - c, b - a);
 		}
@@ -543,7 +544,7 @@ namespace FusionCrowd {
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template float leftOf(const Vector2d<float>& a,
+		template FUSION_CROWD_API float leftOf(const Vector2d<float>& a,
 			const Vector2d<float>& b,
 			const Vector2d<float>& c);
 	}	// namespace Math

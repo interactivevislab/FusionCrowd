@@ -5,14 +5,18 @@
 #include <vector>
 
 #include "../../Math/vector.h"
+#include "../../Config.h"
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h"
 #include "NavMeshNode.h"
+#include "Resource.h"
 
 // forward declarations
 class NavMesh;
 class NavMeshNode;
 class NavMeshEdge;
+class NavMeshLocalizer;
+class PathPlanner;
 
 class NMNodeGroup
 {
@@ -26,14 +30,15 @@ public:
 	unsigned int _last;
 };
 
-class NavMesh
+class FUSION_CROWD_API NavMesh: public Resource
 {
 public:
-	NavMesh();
+	NavMesh(const std::string & name);
 	~NavMesh();
 	//Load
-	bool Load(const std::string FileName);
+	static Resource * Load(const std::string & FileName);
 	void Destroy() { delete this; };
+	void clear();
 	bool finalize();
 	//Vertex
 	void SetVertexCount(size_t count);
@@ -45,11 +50,17 @@ public:
 	//Obstacle
 	void SetObstacleCount(size_t count);
 	NavMeshObstacle & GetObstacle(unsigned int i);
+	int getObstacleCount() { return obstCount; }
 	//Node
 	bool AddGroup(const std::string & grpName, size_t grpSize);
 	NavMeshNode & GetNode(unsigned int i);
+	inline size_t getNodeCount() const { return nCount; }
+	const NMNodeGroup * getNodeGroup(const std::string & grpName) const;
 
-private:
+	static constexpr const char* LABEL = "navmesh";
+
+	virtual const std::string & getLabel() const { return LABEL; }
+//protected:
 	std::string fileName;
 	size_t vCount;
 	FusionCrowd::Math::Vector2* vertices;
@@ -60,5 +71,11 @@ private:
 	int nCount;
 	NavMeshNode* nodes;
 	std::map<const std::string, NMNodeGroup> nodeGroups;
+
 };
+
+typedef ResourcePtr<NavMesh> NavMeshPtr;
+
+NavMeshPtr loadNavMesh(const std::string & fileName);
+
 

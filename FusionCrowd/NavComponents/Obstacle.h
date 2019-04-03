@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../Math/vector.h"
+#include "../Config.h"
 
-class Obstacle
+class FUSION_CROWD_API Obstacle
 {
 public:
 
@@ -70,7 +71,7 @@ public:
 	size_t _class;
 };
 
-inline float distSqPointLineSegment(const FusionCrowd::Math::Vector2& a,
+inline FUSION_CROWD_API float distSqPointLineSegment(const FusionCrowd::Math::Vector2& a,
 	const FusionCrowd::Math::Vector2& b,
 	const FusionCrowd::Math::Vector2& c)
 {

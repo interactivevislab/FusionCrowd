@@ -50,7 +50,7 @@ public:
 
 	friend class NavMesh;
 	friend class NavMeshEdge;
-protected:
+//protected:
 	NavMeshEdge **	_edges;
 	size_t	_edgeCount;
 	NavMeshObstacle ** _obstacles;

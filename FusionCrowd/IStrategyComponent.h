@@ -1,8 +1,10 @@
 #pragma once
 
-class IStrategyComponent
+#include "Config.h"
+
+class FUSION_CROWD_API IStrategyComponent
 {
 public:
 
-	virtual ~IStrategyComponent();
+	virtual ~IStrategyComponent() {};
 };

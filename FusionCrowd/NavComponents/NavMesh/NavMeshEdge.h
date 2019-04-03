@@ -2,14 +2,16 @@
 
 #include <fstream>
 
+#include "../../Config.h"
 #include "../../Math/vector.h"
+#include "../../Path/PrefVelocity.h"
 #include "NavMeshNode.h"
 
 // Forward declarations
 class NavMesh;
 class NavMeshNode;
 
-class NavMeshEdge
+class FUSION_CROWD_API NavMeshEdge
 {
 public:
 	NavMeshEdge();
@@ -37,8 +39,8 @@ public:
 	FusionCrowd::Math::Vector2 targetPoint(const FusionCrowd::Math::Vector2 & pos, float radius) const;
 	FusionCrowd::Math::Vector2	getClearDirection(const FusionCrowd::Math::Vector2 & pos, float radius,
 		const FusionCrowd::Math::Vector2 & dir) const;
-	//void setClearDirections(const FusionCrowd::Math::Vector2 & pos, float radius,
-	//	const FusionCrowd::Math::Vector2 & dir, Agents::PrefVelocity & pVel) const;
+	void setClearDirections(const FusionCrowd::Math::Vector2 & pos, float radius,
+		const FusionCrowd::Math::Vector2 & dir, Agents::PrefVelocity & pVel) const;
 	float getSqDist(const FusionCrowd::Math::Vector2 & pt) const;
 	float getSqDist(const FusionCrowd::Math::Vector2 & pt, FusionCrowd::Math::Vector2 & nearPt) const;
 	float getDist(const FusionCrowd::Math::Vector2 & pt) const { return FusionCrowd::Math::sqr(getSqDist(pt)); }

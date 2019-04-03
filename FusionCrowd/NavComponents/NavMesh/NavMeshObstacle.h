@@ -4,13 +4,14 @@
 
 #include "NavMeshNode.h"
 #include "../../Math/vector.h"
+#include "../../Config.h"
 #include "../Obstacle.h"
 
 // FORWARD DECLARATIONS
 class NavMeshNode;
 class NavMesh;
 
-class NavMeshObstacle : public Obstacle
+class FUSION_CROWD_API NavMeshObstacle : public Obstacle
 {
 public:
 	static size_t NO_NEIGHBOR_OBST;

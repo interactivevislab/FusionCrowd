@@ -1,6 +1,8 @@
 #pragma once
 
-class INavComponent
+#include "../Config.h"
+
+class FUSION_CROWD_API INavComponent
 {
 public:
 	INavComponent() {};

@@ -11,7 +11,7 @@ namespace FusionCrowd
 	const float HALFPI = PI * 0.5f;
 	const float DEG_TO_RAD = PI / 180.0f;
 	const float RAD_TO_DEG = 180.0f / PI;
-	const float EPS = 0.00001f;
+	//const float EPS = 0.00001f;
 
 	namespace Math
 	{

@@ -1,7 +1,9 @@
 #pragma once
 
-class ITacticComponent
+#include "Config.h"
+
+class FUSION_CROWD_API ITacticComponent
 {
 public:
-	virtual ~ITacticComponent();
+	virtual ~ITacticComponent() {};
 };

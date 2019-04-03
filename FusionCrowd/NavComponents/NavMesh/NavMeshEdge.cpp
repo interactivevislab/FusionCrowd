@@ -338,84 +338,84 @@ FusionCrowd::Math::Vector2	NavMeshEdge::getClearDirection(const FusionCrowd::Mat
 	}
 }
 
-//void NavMeshEdge::setClearDirections(const FusionCrowd::Math::Vector2 & pos, float radius, const FusionCrowd::Math::Vector2 & dir,
-//	Agents::PrefVelocity & pVel) const {
-//	/* See getClearDirections for how this works. */
-//
-//	// Directions towards portal's PHYSICAL endpoints
-//	FusionCrowd::Math::Vector2 d0 = _point - pos;
-//	FusionCrowd::Math::Vector2 p1 = _point + _dir * _width;
-//	FusionCrowd::Math::Vector2 d1 = p1 - pos;
-//	FusionCrowd::Math::Vector2 portalDir(_dir);
-//	if (det(d1, d0) < 0.f) {
-//		// make sure that d0 is on the left and d1 is on the right
-//		FusionCrowd::Math::Vector2 tmp(d0);
-//		d0.set(d1);
-//		d1.set(tmp);
-//		portalDir.negate();
-//	}
-//
-//	const float R2 = radius * radius;
-//	// compute left extent of passable cone
-//	float d2 = absSq(d0);
-//	if (d2 < R2) {
-//		// Already colliding with the left portal edge
-//		//	If the portal is wide enough to allow the agent through, I can't collide with
-//		//	both.  So, this is the only possible collision.
-//		// Simply move parallel with the portal (into the opening) to get out of collision
-//		pVel.setSingle(portalDir);
-//		return;
-//	}
-//	// This represents refactored algebra.
-//	float l = sqrtf(d2 - R2);
-//	float sinTheta0 = radius;
-//	float cosTheta0 = l;
-//	float dx = cosTheta0 * d0._x + sinTheta0 * d0._y;
-//	float dy = cosTheta0 * d0._y - sinTheta0 * d0._x;
-//	FusionCrowd::Math::Vector2 leftLimit(dx / d2, dy / d2);
-//
-//	// Compute right extent of passable cone
-//	d2 = absSq(d1);
-//	if (d2 <= R2) {
-//		pVel.setSingle(-portalDir);
-//		return;
-//	}
-//	l = sqrtf(d2 - R2);
-//	float cosTheta1 = l;
-//	float sinTheta1 = radius;
-//	dx = cosTheta1 * d1._x - sinTheta1 * d1._y;
-//	dy = cosTheta1 * d1._y + sinTheta1 * d1._x;
-//	FusionCrowd::Math::Vector2 rightLimit(dx / d2, dy / d2);
-//
-//	if (det(rightLimit, leftLimit) < 0) {
-//		// The cone spans no valid directions.
-//		// No direct path exists - simply clear the nearer endpoint
-//		if (leftLimit * portalDir >= 0.f) {
-//			// the left end point is the near goal
-//			pVel.setSingle(leftLimit);
-//		}
-//		else {
-//			// the right end point is the near goal
-//			pVel.setSingle(rightLimit);
-//		}
-//	}
-//	else {
-//		FusionCrowd::Math::Vector2 prefDir;
-//
-//		if (det(leftLimit, dir) > 0) {
-//			// The preferred direction lies left of the left extent the cone
-//			prefDir.set(leftLimit);
-//		}
-//		else if (det(dir, rightLimit) > 0) {
-//			// The preferred direction lies right of the right extent the cone
-//			prefDir.set(rightLimit);
-//		}
-//		else {
-//			prefDir.set(norm(dir));
-//		}
-//		pVel.setSpan(leftLimit, rightLimit, prefDir);
-//	}
-//}
+void NavMeshEdge::setClearDirections(const FusionCrowd::Math::Vector2 & pos, float radius, const FusionCrowd::Math::Vector2 & dir,
+	Agents::PrefVelocity & pVel) const {
+	/* See getClearDirections for how this works. */
+
+	// Directions towards portal's PHYSICAL endpoints
+	FusionCrowd::Math::Vector2 d0 = _point - pos;
+	FusionCrowd::Math::Vector2 p1 = _point + _dir * _width;
+	FusionCrowd::Math::Vector2 d1 = p1 - pos;
+	FusionCrowd::Math::Vector2 portalDir(_dir);
+	if (det(d1, d0) < 0.f) {
+		// make sure that d0 is on the left and d1 is on the right
+		FusionCrowd::Math::Vector2 tmp(d0);
+		d0.set(d1);
+		d1.set(tmp);
+		portalDir.negate();
+	}
+
+	const float R2 = radius * radius;
+	// compute left extent of passable cone
+	float d2 = absSq(d0);
+	if (d2 < R2) {
+		// Already colliding with the left portal edge
+		//	If the portal is wide enough to allow the agent through, I can't collide with
+		//	both.  So, this is the only possible collision.
+		// Simply move parallel with the portal (into the opening) to get out of collision
+		pVel.setSingle(portalDir);
+		return;
+	}
+	// This represents refactored algebra.
+	float l = sqrtf(d2 - R2);
+	float sinTheta0 = radius;
+	float cosTheta0 = l;
+	float dx = cosTheta0 * d0._x + sinTheta0 * d0._y;
+	float dy = cosTheta0 * d0._y - sinTheta0 * d0._x;
+	FusionCrowd::Math::Vector2 leftLimit(dx / d2, dy / d2);
+
+	// Compute right extent of passable cone
+	d2 = absSq(d1);
+	if (d2 <= R2) {
+		pVel.setSingle(-portalDir);
+		return;
+	}
+	l = sqrtf(d2 - R2);
+	float cosTheta1 = l;
+	float sinTheta1 = radius;
+	dx = cosTheta1 * d1._x - sinTheta1 * d1._y;
+	dy = cosTheta1 * d1._y + sinTheta1 * d1._x;
+	FusionCrowd::Math::Vector2 rightLimit(dx / d2, dy / d2);
+
+	if (det(rightLimit, leftLimit) < 0) {
+		// The cone spans no valid directions.
+		// No direct path exists - simply clear the nearer endpoint
+		if (leftLimit * portalDir >= 0.f) {
+			// the left end point is the near goal
+			pVel.setSingle(leftLimit);
+		}
+		else {
+			// the right end point is the near goal
+			pVel.setSingle(rightLimit);
+		}
+	}
+	else {
+		FusionCrowd::Math::Vector2 prefDir;
+
+		if (det(leftLimit, dir) > 0) {
+			// The preferred direction lies left of the left extent the cone
+			prefDir.set(leftLimit);
+		}
+		else if (det(dir, rightLimit) > 0) {
+			// The preferred direction lies right of the right extent the cone
+			prefDir.set(rightLimit);
+		}
+		else {
+			prefDir.set(norm(dir));
+		}
+		pVel.setSpan(leftLimit, rightLimit, prefDir);
+	}
+}
 
 bool NavMeshEdge::pointOnLeft(unsigned int id) const
 {

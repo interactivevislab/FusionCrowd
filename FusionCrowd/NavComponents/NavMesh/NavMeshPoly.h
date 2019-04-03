@@ -4,8 +4,9 @@
 #include <string>
 
 #include "../../Math/vector.h"
+#include "../../Config.h"
 
-class NavMeshPoly
+class FUSION_CROWD_API NavMeshPoly
 {
 public:
 	NavMeshPoly();

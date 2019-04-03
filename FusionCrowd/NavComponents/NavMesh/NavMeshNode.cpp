@@ -51,7 +51,7 @@ const NavMeshNode * NavMeshNode::getNeighbor(size_t i) const
 	return _edges[i]->getOtherByPtr(this);
 }
 
-NavMeshEdge * NavMeshNode::getConnection(unsigned int nodeID)
+NavMeshEdge * NavMeshNode::getConnection(unsigned nodeID)
 {
 	for (size_t e = 0; e < _edgeCount; ++e) {
 		NavMeshEdge * edge = _edges[e];
@@ -60,7 +60,7 @@ NavMeshEdge * NavMeshNode::getConnection(unsigned int nodeID)
 			return edge;
 		}
 	}
-	return 0x0;
+	return NULL;
 }
 
 #ifdef _WIN32

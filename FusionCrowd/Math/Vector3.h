@@ -5,6 +5,7 @@
 #include <cassert>
 
 #include "consts.h"
+#include "../Config.h"
 
 #ifdef _MSC_VER
 // To export templated classes and functions, requires declaring specializations
@@ -23,13 +24,13 @@ namespace FusionCrowd
 		class Vector3d;
 
 		template< class Type >
-		inline Type abs(const Vector3d<Type>& v);
+		inline FUSION_CROWD_API Type abs(const Vector3d<Type>& v);
 
 		/*!
 		 *	@brief		Templated vector in R3
 		 */
 		template <class Type>
-		class Vector3d {
+		class FUSION_CROWD_API Vector3d {
 
 		public:
 			/////////////////////////////    CONSTRUCTORS      ////////////////////////////
@@ -550,7 +551,7 @@ namespace FusionCrowd
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template class Vector3d<float>;
+		template class FUSION_CROWD_API Vector3d<float>;
 
 		/*!
 		 *	@brief		Declaration of a floating point vector in R3.
@@ -571,7 +572,7 @@ namespace FusionCrowd
 		 *              scalar value.
 		 */
 		template< class Type >
-		inline Vector3d<Type> operator*(Type s, const Vector3d<Type>& v) {
+		inline FUSION_CROWD_API Vector3d<Type> operator*(Type s, const Vector3d<Type>& v) {
 			return Vector3d<Type>(s * v._x, s * v._y, s * v._z);
 		}
 
@@ -579,7 +580,7 @@ namespace FusionCrowd
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template Vector3d<float> operator*(float s,
+		template FUSION_CROWD_API Vector3d<float> operator*(float s,
 			const Vector3d<float>& v);
 
 		/*!
@@ -593,7 +594,7 @@ namespace FusionCrowd
 		 *  @returns    A reference to the output stream.
 		 */
 		template< class Type >
-		inline std::ostream& operator<<(std::ostream& os, const Vector3d<Type>& v) {
+		inline FUSION_CROWD_API std::ostream& operator<<(std::ostream& os, const Vector3d<Type>& v) {
 			os << "(" << v.x() << "," << v.y() << ", " << v.z() << ")";
 			return os;
 		}
@@ -606,7 +607,7 @@ namespace FusionCrowd
 		 *  @returns    The length of the two-dimensional vector.
 		 */
 		template< class Type >
-		inline Type abs(const Vector3d<Type>& v) {
+		inline FUSION_CROWD_API Type abs(const Vector3d<Type>& v) {
 			return std::sqrt(v * v);
 		}
 
@@ -614,7 +615,7 @@ namespace FusionCrowd
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template float abs(const Vector3d<float>& v);
+		template float FUSION_CROWD_API abs(const Vector3d<float>& v);
 
 		/*!
 		 *  @brief      Computes the squared length of a specified two-dimensional
@@ -625,7 +626,7 @@ namespace FusionCrowd
 		 *  @returns    The squared length of the two-dimensional vector.
 		 */
 		template< class Type >
-		inline Type absSq(const Vector3d<Type>& v) {
+		inline FUSION_CROWD_API Type absSq(const Vector3d<Type>& v) {
 			return v * v;
 		}
 
@@ -633,7 +634,7 @@ namespace FusionCrowd
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		 template float absSq(const Vector3d<float>& v);
+		 template FUSION_CROWD_API float absSq(const Vector3d<float>& v);
 
 		/*!
 		 *  @brief      Computes the normalization of the specified two-dimensional
@@ -644,7 +645,7 @@ namespace FusionCrowd
 		 *  @returns    The normalization of the two-dimensional vector.
 		 */
 		template< class Type >
-		inline  Vector3d<Type> norm(const Vector3d<Type>& vector) {
+		inline FUSION_CROWD_API Vector3d<Type> norm(const Vector3d<Type>& vector) {
 			Type mag = abs(vector);
 			if (mag < EPS) {
 				// This may not be the "right" behavior.  I do this because the "normalized" vector
@@ -661,7 +662,7 @@ namespace FusionCrowd
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template  Vector3d<float> norm(const Vector3d<float>& vector);
+		template FUSION_CROWD_API  Vector3d<float> norm(const Vector3d<float>& vector);
 
 		/*!
 		 *  @brief	Determines if two vectors are equal to within a threshhold
@@ -674,7 +675,7 @@ namespace FusionCrowd
 		 *            false otherwise.
 		 */
 		template< class Type >
-		inline bool equivalent(const Vector3d<Type> & v1, const Vector3d<Type> & v2,
+		inline FUSION_CROWD_API bool equivalent(const Vector3d<Type> & v1, const Vector3d<Type> & v2,
 			float threshSqd = 0.000001f) {
 			return absSq(v1 - v2) < threshSqd;
 		}
@@ -683,7 +684,7 @@ namespace FusionCrowd
 		 *	@brief		Explicit specialization for shared library export.
 		 *	@internal
 		 */
-		template bool equivalent(const Vector3d<float> & v1,
+		template FUSION_CROWD_API bool equivalent(const Vector3d<float> & v1,
 			const Vector3d<float> & v2,
 			float threshSqd);
 

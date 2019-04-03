@@ -3,33 +3,33 @@
 License
 
 Menge
-Copyright © and trademark ™ 2012-14 University of North Carolina at Chapel Hill. 
+Copyright © and trademark ™ 2012-14 University of North Carolina at Chapel Hill.
 All rights reserved.
 
-Permission to use, copy, modify, and distribute this software and its documentation 
-for educational, research, and non-profit purposes, without fee, and without a 
-written agreement is hereby granted, provided that the above copyright notice, 
+Permission to use, copy, modify, and distribute this software and its documentation
+for educational, research, and non-profit purposes, without fee, and without a
+written agreement is hereby granted, provided that the above copyright notice,
 this paragraph, and the following four paragraphs appear in all copies.
 
-This software program and documentation are copyrighted by the University of North 
-Carolina at Chapel Hill. The software program and documentation are supplied "as is," 
-without any accompanying services from the University of North Carolina at Chapel 
-Hill or the authors. The University of North Carolina at Chapel Hill and the 
-authors do not warrant that the operation of the program will be uninterrupted 
-or error-free. The end-user understands that the program was developed for research 
+This software program and documentation are copyrighted by the University of North
+Carolina at Chapel Hill. The software program and documentation are supplied "as is,"
+without any accompanying services from the University of North Carolina at Chapel
+Hill or the authors. The University of North Carolina at Chapel Hill and the
+authors do not warrant that the operation of the program will be uninterrupted
+or error-free. The end-user understands that the program was developed for research
 purposes and is advised not to rely exclusively on the program for any reason.
 
-IN NO EVENT SHALL THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL OR THE AUTHORS 
-BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL 
-DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS 
-DOCUMENTATION, EVEN IF THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL OR THE 
+IN NO EVENT SHALL THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL OR THE AUTHORS
+BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
+DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS
+DOCUMENTATION, EVEN IF THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL OR THE
 AUTHORS HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL AND THE AUTHORS SPECIFICALLY 
-DISCLAIM ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
-OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE AND ANY STATUTORY WARRANTY 
-OF NON-INFRINGEMENT. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND 
-THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL AND THE AUTHORS HAVE NO OBLIGATIONS 
+THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL AND THE AUTHORS SPECIFICALLY
+DISCLAIM ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE AND ANY STATUTORY WARRANTY
+OF NON-INFRINGEMENT. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND
+THE UNIVERSITY OF NORTH CAROLINA AT CHAPEL HILL AND THE AUTHORS HAVE NO OBLIGATIONS
 TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 Any questions or comments should be sent to the authors {menge,geom}@cs.unc.edu
@@ -221,7 +221,7 @@ namespace Menge {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	 
+
 	bool NavMesh::addGroup( const std::string & grpName, size_t grpSize ) {
 		if ( _nodeGroups.find( grpName ) != _nodeGroups.end() ) {
 			logger << Logger::ERR_MSG << "NavMesh has two groups with the same name: " << grpName;
@@ -249,8 +249,8 @@ namespace Menge {
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	#ifdef _WIN32
-	// This disables a 64-bit compatibility warning - pushing a 64-bit value into a 32-bit value.  
-	//	In this case, I know the value in the pointers that are being re-interpreted as 
+	// This disables a 64-bit compatibility warning - pushing a 64-bit value into a 32-bit value.
+	//	In this case, I know the value in the pointers that are being re-interpreted as
 	//  unsigned ints are REALLY just unsigned ints, so it is safe.
 	#pragma warning( disable : 4311 )
 	#endif
@@ -260,7 +260,7 @@ namespace Menge {
 		for ( size_t n = 0; n < _nCount; ++n ) {
 			NavMeshNode & node = _nodes[ n ];
 			for ( size_t e = 0; e < node._edgeCount; ++e ) {
-				// TODO: This might not work in building 64-bit code.  
+				// TODO: This might not work in building 64-bit code.
 				//		The pointer will be larger than the unsigned int.  But as I'm pushing an
 				//		unsigned int into a pointer slot, it'll probably be safe.  Needs to be
 				//		tested.
@@ -285,7 +285,7 @@ namespace Menge {
 			size_t nID = reinterpret_cast< size_t >( edge._node0 );
 			assert( nID >= 0 && nID < _nCount && "Finalizing invalid node id from edge" );
 			edge._node0 = &_nodes[ nID ];
-			
+
 			nID = reinterpret_cast< size_t >( edge._node1 );
 			assert( nID >= 0 && nID < _nCount && "Finalizing invalid node id from edge" );
 			edge._node1 = &_nodes[ nID ];
@@ -344,7 +344,7 @@ namespace Menge {
 	#endif
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	 
+
 	//void NavMesh::addObstacles( Agents::SimulatorInterface * simulator ) {
 	//	// Construct each contiguous obstacle
 
@@ -354,13 +354,13 @@ namespace Menge {
 	//		if ( processed[ o ] ) continue;
 	//		Agents::Obstacle * start = &_obstacles[ o ];
 	//		Agents::Obstacle * curr = start;
-	//		
+	//
 	//		bool closed = true;
 	//		while ( curr != 0x0 && !processed[ curr->_id ] ) {
 	//			processed[ curr->_id ] = true;
 	//			curr = curr->_nextObstacle;
 	//		}
-	//		
+	//
 	//		vertices.clear();
 	//		// set open/closed
 	//		if ( curr == 0x0 ||
@@ -388,16 +388,16 @@ namespace Menge {
 	//		//	unless their obstacle set is set to 0.
 	//		const unsigned int ALL_OBST_CLASSES = 0xffffffff;
 	//		// Assume it's a loop
-	//		
+	//
 	//		//TODO: FIX THIS
 	//		//simulator->getSpatialQuery()->addObstacle( vertices, closed, ALL_OBST_CLASSES );
 	//	}
 	//}
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	 
+
 	std::vector<Agents::ObstacleVertexList> NavMesh::getObstacles() {
-		
+
 		//build a vector of obstaclevertexlists
 		std::vector<Agents::ObstacleVertexList> obsList;
 
@@ -410,13 +410,13 @@ namespace Menge {
 
 			Agents::Obstacle * start = &_obstacles[ o ];
 			Agents::Obstacle * curr = start;
-			
+
 			while ( curr != 0x0 && !processed[ curr->_id ] ) {
 				processed[ curr->_id ] = true;
 				curr = curr->_nextObstacle;
 			}
-			
-			
+
+
 			// set open/closed
 			if ( curr == 0x0 ||
 				curr != start ) {	// set open
@@ -464,7 +464,7 @@ namespace Menge {
 		if ( ! ( f >> vertCount ) ) {
 			logger << Logger::ERR_MSG << "Error in parsing nav mesh: file didn't start with an";
 			logger << " int( vertex count ).";
-			return 0x0; 
+			return 0x0;
 		}
 
 		NavMesh * mesh = new NavMesh( fileName );
@@ -486,7 +486,7 @@ namespace Menge {
 			logger << Logger::ERR_MSG << "Error in parsing nav mesh: didn't find edge count ";
 			logger << "where expected.";
 			mesh->destroy();
-			return 0x0; 
+			return 0x0;
 		}
 		mesh->setEdgeCount( edgeCount );
 		for ( unsigned int e = 0; e < edgeCount; ++e ) {
@@ -505,7 +505,7 @@ namespace Menge {
 			logger << Logger::ERR_MSG << "Error in parsing nav mesh: didn't find obstacle count ";
 			logger << "where expected.";
 			mesh->destroy();
-			return 0x0; 
+			return 0x0;
 		}
 		mesh->setObstacleCount( obstCount );
 		for ( unsigned int o = 0; o < obstCount; ++o ) {
@@ -532,14 +532,14 @@ namespace Menge {
 					mesh->destroy();
 					return 0x0;
 				}
-			} 
+			}
 			// load nodes
 			unsigned int nCount;
 			if ( ! ( f >> nCount ) ) {
 				logger << Logger::ERR_MSG << "Error in parsing nav mesh: Node group " << grpName;
 				logger << " doesn't specify node count.";
 				mesh->destroy();
-				return 0x0; 
+				return 0x0;
 			}
 
 			totalN += nCount;
@@ -557,7 +557,7 @@ namespace Menge {
 					mesh->destroy();
 					return 0x0;
 				}
-				
+
 				node.setID( n );
 				node.setVertices( mesh->getVertices() );
 			}
@@ -572,19 +572,17 @@ namespace Menge {
 
 	/////////////////////////////////////////////////////////////////////
 
-	NavMeshPtr loadNavMesh( const std::string & fileName ) throw ( ResourceException ) {
+	NavMeshPtr loadNavMesh( const std::string & fileName )
+	{
 		Resource * rsrc = ResourceManager::getResource( fileName, &NavMesh::load, NavMesh::LABEL );
 		if ( rsrc == 0x0 ) {
-			logger << Logger::ERR_MSG << "No resource available.";
 			throw ResourceException();
 		}
 		NavMesh * nm = dynamic_cast< NavMesh * >( rsrc );
 		if ( nm == 0x0 ) {
-			logger << Logger::ERR_MSG << "Resource with name " << fileName;
-			logger << " is not a navigation mesh.";
 			throw ResourceException();
 		}
-		
+
 		return NavMeshPtr( nm );
 	}
 }	// namespace Menge
