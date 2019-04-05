@@ -14,7 +14,7 @@ public:
 	LINKFUSIONCROWD_API FusionCrowdLinkUE4();
 	LINKFUSIONCROWD_API ~FusionCrowdLinkUE4();
 
-	LINKFUSIONCROWD_API void StartFusionCrowd();
+	LINKFUSIONCROWD_API void StartFusionCrowd(char* naVMeshDir);
 	LINKFUSIONCROWD_API int GetAgentCount();
 	LINKFUSIONCROWD_API void AddAgent(int agentsCount);
 	LINKFUSIONCROWD_API void GetPositionAgents(agentInfo* agentsPos);

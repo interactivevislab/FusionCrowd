@@ -22,14 +22,14 @@ FusionCrowdLinkUE4::~FusionCrowdLinkUE4()
 {
 }
 
-void FusionCrowdLinkUE4::StartFusionCrowd()
+void FusionCrowdLinkUE4::StartFusionCrowd(char* naVMeshDir)
 {
 	sim = new Simulator();
 	FusionCrowd::Helbing::HelbingComponent* hComponent = new FusionCrowd::Helbing::HelbingComponent();
 	FusionCrowd::NavMeshSpatialQuery* sq = new FusionCrowd::NavMeshSpatialQuery();
 
 	NavMeshCompnent nav;
-	nav._localizer = loadNavMeshLocalizer("D:/Lebin/Menge-master/examples/core/navMesh/simple.nav", true);
+	nav._localizer = loadNavMeshLocalizer(naVMeshDir, true);
 	sq->SetNavMeshLocalizer(nav._localizer);
 
 	IOperComponent* tes = hComponent;
