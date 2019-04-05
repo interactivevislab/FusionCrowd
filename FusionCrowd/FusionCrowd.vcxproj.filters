@@ -141,6 +141,9 @@
     <ClInclude Include="Math\Line.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="OperationComponent\KaramouzasComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simulator.cpp">
@@ -234,6 +237,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math\Line.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OperationComponent\KaramouzasComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
