@@ -5,6 +5,7 @@
 #include "NavMeshObstacle.h"
 #include "NavMeshPoly.h"
 #include "../../Math/vector.h"
+#include "../../Config.h"
 
 // Forward declarations
 class NavMesh;
@@ -12,7 +13,7 @@ class NavMeshEdge;
 class PathPlanner;
 class NavMeshObstacle;
 
-class NavMeshNode
+class  FUSION_CROWD_API NavMeshNode
 {
 public:
 	NavMeshNode();
