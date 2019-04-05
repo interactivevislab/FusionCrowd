@@ -30,7 +30,7 @@ public:
 	void AddNavComponent(std::string name, INavComponent* navComponent);
 	void ComputeNeighbors(FusionCrowd::Agent * agent);
 
-	void InitSimulator();
+	void InitSimulator(char* navMeshPath);
 
 //private:
 	NavSystem navSystem;

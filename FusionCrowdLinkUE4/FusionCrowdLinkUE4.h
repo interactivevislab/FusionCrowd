@@ -10,6 +10,7 @@ struct agentInfo
 
 class FusionCrowdLinkUE4
 {
+#pragma warning(disable : 4996)
 public:
 	LINKFUSIONCROWD_API FusionCrowdLinkUE4();
 	LINKFUSIONCROWD_API ~FusionCrowdLinkUE4();
@@ -22,4 +23,5 @@ public:
 private:
 	Simulator* sim;
 	int agentsCount;
+	char* navMeshPath;
 };

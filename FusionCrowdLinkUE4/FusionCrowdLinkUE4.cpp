@@ -12,6 +12,8 @@
 #include "NavComponents/NavMesh/NavMeshLocalizer.h"
 #include "NavComponents/NavMeshCompnent.h"
 
+#include <algorithm>
+
 
 FusionCrowdLinkUE4::FusionCrowdLinkUE4(): agentsCount(0)
 {
@@ -25,6 +27,9 @@ FusionCrowdLinkUE4::~FusionCrowdLinkUE4()
 void FusionCrowdLinkUE4::StartFusionCrowd(char* naVMeshDir)
 {
 	sim = new Simulator();
+	navMeshPath = (char*)malloc(strlen(naVMeshDir) + 1);
+	strcpy(navMeshPath, naVMeshDir);
+
 	FusionCrowd::Helbing::HelbingComponent* hComponent = new FusionCrowd::Helbing::HelbingComponent();
 	FusionCrowd::NavMeshSpatialQuery* sq = new FusionCrowd::NavMeshSpatialQuery();
 
@@ -52,7 +57,7 @@ void FusionCrowdLinkUE4::AddAgent(int agentsCount)
 	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(-0.5f, -1.1f));
 	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(0.3f, -1.1f));
 	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(0.3f, -1.5f));
-	sim->InitSimulator();
+	sim->InitSimulator(navMeshPath);
 }
 
 void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* agentsPos)

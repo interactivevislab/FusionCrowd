@@ -72,9 +72,9 @@ void Simulator::ComputeNeighbors(FusionCrowd::Agent * agent)
 	}
 }
 
-void Simulator::InitSimulator()
+void Simulator::InitSimulator(char* navMeshPath)
 {
-	nav._localizer = loadNavMeshLocalizer("D:/Lebin/Menge-master/examples/core/navMesh/simple.nav", true);
+	nav._localizer = loadNavMeshLocalizer(navMeshPath, true);
 	goal = new FusionCrowd::PointGoal(-3.0f, 5.0f);
 
 	for (int i = 0; i < agents.size(); i++) {
