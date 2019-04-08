@@ -20,12 +20,13 @@
 
 int main()
 {
+	std::string navPath = "Resources/simple.nav";
 	FusionCrowd::Helbing::HelbingComponent* hComponent = new FusionCrowd::Helbing::HelbingComponent();
 	FusionCrowd::Karamouzas::KaramouzasComponent* kComponent = new FusionCrowd::Karamouzas::KaramouzasComponent();
 	FusionCrowd::NavMeshSpatialQuery* sq = new FusionCrowd::NavMeshSpatialQuery();
 
 	NavMeshCompnent nav;
-	nav._localizer = loadNavMeshLocalizer("D:/Lebin/Menge-master/examples/core/navMesh/simple.nav", true);
+	nav._localizer = loadNavMeshLocalizer(navPath, true);
 	sq->SetNavMeshLocalizer(nav._localizer);
 
 	Simulator sim;
@@ -48,7 +49,7 @@ int main()
 	//kComponent->AddAgent(5, 0.69f, 8.0f); //5
 	//kComponent->AddAgent(6, 0.69f, 8.0f); //6
 
-	sim.InitSimulator();
+	sim.InitSimulator(navPath.c_str());
 
 
 	bool running = true;
