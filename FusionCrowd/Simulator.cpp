@@ -72,7 +72,7 @@ void Simulator::ComputeNeighbors(FusionCrowd::Agent * agent)
 	}
 }
 
-void Simulator::InitSimulator(char* navMeshPath)
+void Simulator::InitSimulator(const char* navMeshPath)
 {
 	nav._localizer = loadNavMeshLocalizer(navMeshPath, true);
 	goal = new FusionCrowd::PointGoal(-3.0f, 5.0f);
