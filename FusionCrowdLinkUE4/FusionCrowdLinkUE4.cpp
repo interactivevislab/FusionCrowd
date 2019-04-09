@@ -50,13 +50,13 @@ int FusionCrowdLinkUE4::GetAgentCount()
 
 void FusionCrowdLinkUE4::AddAgent(int agentsCount)
 {
-	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(-0.55f, 4.0f));
-	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(-0.50f, -1.5f));
-	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(-0.1f, -1.5f));
-	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(-0.1f, -1.1f));
-	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(-0.5f, -1.1f));
-	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(0.3f, -1.1f));
-	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, FusionCrowd::Math::Vector2(0.3f, -1.5f));
+	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, DirectX::SimpleMath::Vector2(-0.55f, 4.0f));
+	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, DirectX::SimpleMath::Vector2(-0.50f, -1.5f));
+	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, DirectX::SimpleMath::Vector2(-0.1f, -1.5f));
+	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, DirectX::SimpleMath::Vector2(-0.1f, -1.1f));
+	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, DirectX::SimpleMath::Vector2(-0.5f, -1.1f));
+	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, DirectX::SimpleMath::Vector2(0.3f, -1.1f));
+	sim->AddAgent(360, 10, 1, 5, 0.19f, 0.05f, 0.2f, 5, DirectX::SimpleMath::Vector2(0.3f, -1.5f));
 	sim->InitSimulator(navMeshPath);
 }
 
@@ -66,8 +66,8 @@ void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* agentsPos)
 	agentsCount = sim->agents.size();
 	for (int i = 0; i < agentsCount; i++){
 		agentsPos[i].pos = new float[2];
-		FusionCrowd::Math::Vector2 buf = sim->agents[i]._pos;
-		agentsPos[i].pos[0] = buf.x();
-		agentsPos[i].pos[1] = buf.y();
+		DirectX::SimpleMath::Vector2 buf = sim->agents[i]._pos;
+		agentsPos[i].pos[0] = buf.x;
+		agentsPos[i].pos[1] = buf.y;
 	}
 }
