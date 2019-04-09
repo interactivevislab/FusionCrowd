@@ -2,6 +2,7 @@
 #include "../../Config.h"
 #include "../../NavComponents/Obstacle.h"
 #include "ProximityQuery.h"
+#include "../../MathUtil.h"
 
 #include <vector>
 
@@ -23,7 +24,7 @@ namespace FusionCrowd
 		virtual void AgentQuery(ProximityQuery * query) const = 0;
 		virtual void ProcessObstacles() = 0;
 		virtual void ObstacleQuery(ProximityQuery * query) const = 0;
-		virtual bool QueryVisibility(const Math::Vector2 & q1, const Math::Vector2 & q2,
+		virtual bool QueryVisibility(const DirectX::SimpleMath::Vector2 & q1, const DirectX::SimpleMath::Vector2 & q2,
 			float radius) const = 0;
 		virtual void SetNeighborVisibleTest(bool state) {}
 		inline void SetTestVisibility(bool status) { _testVisibility = status; }

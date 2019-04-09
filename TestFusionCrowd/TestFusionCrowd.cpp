@@ -33,7 +33,7 @@ int main()
 	//sim.AddOperComponent(hComponent);
 	sim.AddOperComponent(kComponent);
 	sim.AddSpatialQuery(sq);
-	sim.AddAgent(360, 10, 1, 5, 0.19f, 1.04f, 2, 5, FusionCrowd::Math::Vector2(-0.55f, 4.0f)); //0
+	sim.AddAgent(360, 10, 1, 5, 0.19f, 1.04f, 2, 5, DirectX::SimpleMath::Vector2(-0.55f, 4.0f)); //0
 	//sim.AddAgent(360, 10, 1, 5, 0.19f, 1.04f, 2, 5, FusionCrowd::Math::Vector2(-0.50f, -1.5f));//1
 	//sim.AddAgent(360, 10, 1, 5, 0.19f, 1.04f, 2, 5, FusionCrowd::Math::Vector2(-0.1f, -1.5f)); //2
 	//sim.AddAgent(360, 10, 1, 5, 0.19f, 1.04f, 2, 5, FusionCrowd::Math::Vector2(-0.1f, -1.1f)); //3
@@ -55,7 +55,7 @@ int main()
 	bool running = true;
 	while (running) {
 		running = sim.DoStep();
-		std::cout << "0 " << sim.agents[0]._pos._x << " " << sim.agents[0]._pos._y << "\n";
+		std::cout << "0 " << sim.agents[0]._pos.x << " " << sim.agents[0]._pos.y << "\n";
 		//std::cout << "1 " << sim.agents[1]._pos._x << " " << sim.agents[1]._pos._y << "\n";
 		//std::cout << "2 " << sim.agents[2]._pos._x << " " << sim.agents[2]._pos._y << "\n";
 		//std::cout << "3 " << sim.agents[3]._pos._x << " " << sim.agents[3]._pos._y << "\n";

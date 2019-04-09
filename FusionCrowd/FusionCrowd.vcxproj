@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="MathUtil.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
@@ -37,9 +38,6 @@
     <ClInclude Include="Goal\Goal.h" />
     <ClInclude Include="Math\consts.h" />
     <ClInclude Include="Math\geomQuery.h" />
-    <ClInclude Include="Math\vector.h" />
-    <ClInclude Include="Math\Vector2.h" />
-    <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="NavComponents\INavComponent.h" />
     <ClInclude Include="IOperComponent.h" />
     <ClInclude Include="IStrategyComponent.h" />
@@ -96,6 +94,9 @@
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Path\WayPortal.cpp" />
     <ClCompile Include="OperationComponent\SpatialQuery\SpatialQuery.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -169,12 +170,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>
-      </AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\projects\Source\Repos\FusionCrowd\packages\directxtk_desktop_2015.2019.2.7.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>DirectXTK.lib;DirectXTKAudioWin8.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\projects\Source\Repos\FusionCrowd\packages\directxtk_desktop_2015.2019.2.7.1\lib\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -228,6 +230,4 @@
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
 </Project>

@@ -2,11 +2,12 @@
 
 #include "OperationComponent/SpatialQuery/SpatialQuery.h"
 #include "OperationComponent/SpatialQuery/SpatialQueryStructs.h"
-#include "Math/vector.h"
 #include "Path/PrefVelocity.h"
 #include "Config.h"
 
 #include <vector>
+
+using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
@@ -20,7 +21,7 @@ namespace FusionCrowd
 		void SetPreferredVelocity(Agents::PrefVelocity &velocity);
 
 		void StartQuery();
-		Math::Vector2 GetQueryPoint() { return _pos; };
+		Vector2 GetQueryPoint() { return _pos; };
 		float GetMaxAgentRange();
 		float GetMaxObstacleRange() { return _neighborDist * _neighborDist; };
 		void FilterAgent(const Agent *agent, float distance);
@@ -36,11 +37,11 @@ namespace FusionCrowd
 		float _maxSpeed;
 		float _maxAccel;
 		float _prefSpeed;
-		Math::Vector2 _pos;
-		Math::Vector2 _vel;
+		Vector2 _pos;
+		Vector2 _vel;
 		Agents::PrefVelocity _velPref;
-		Math::Vector2 _velNew;
-		Math::Vector2 _orient;
+		Vector2 _velNew;
+		Vector2 _orient;
 		float _radius;
 		float _priority;
 		float _neighborDist;

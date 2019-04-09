@@ -42,15 +42,6 @@
     <ClInclude Include="Math\consts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Math\vector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vector2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Math\Vector3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Math\geomQuery.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -142,6 +133,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OperationComponent\KaramouzasComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MathUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -242,5 +236,8 @@
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

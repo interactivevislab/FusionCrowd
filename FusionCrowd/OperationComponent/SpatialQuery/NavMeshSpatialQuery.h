@@ -3,8 +3,8 @@
 #include "../../NavComponents/Obstacle.h"
 #include "../../Agent.h"
 #include "../../NavComponents/NavMesh/NavMeshLocalizer.h"
-#include "../../Math/vector.h"
 #include "ProximityQuery.h"
+#include "../../MathUtil.h"
 
 #include <vector>
 
@@ -21,7 +21,7 @@ namespace FusionCrowd
 		virtual void ProcessObstacles();
 		virtual void ObstacleQuery(ProximityQuery *query) const;
 		virtual void ObstacleQuery(ProximityQuery *query, float rangeSq) const;
-		virtual bool QueryVisibility(const Math::Vector2& q1, const Math::Vector2& q2, float radius) const;
+		virtual bool QueryVisibility(const DirectX::SimpleMath::Vector2& q1, const DirectX::SimpleMath::Vector2& q2, float radius) const;
 		void SetNavMeshLocalizer(const NavMeshLocalizerPtr & nml) { _localizer = nml; }
 		//virtual BFSM::Task * getTask();
 

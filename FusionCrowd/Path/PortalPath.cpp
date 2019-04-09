@@ -5,11 +5,12 @@
 #include "../Agent.h"
 #include "../Math/consts.h"
 #include "../Goal/Goal.h"
+#include "../MathUtil.h"
+
+using namespace DirectX::SimpleMath;
 
 
-
-
-PortalPath::PortalPath(const FusionCrowd::Math::Vector2 & startPos, const Goal * goal,
+PortalPath::PortalPath(const Vector2 & startPos, const Goal * goal,
 	const PortalRoute * route, float agentRadius) :
 	_route(route), _goal(goal), _currPortal(0), _waypoints(0x0),
 	_headings(0x0)
@@ -26,16 +27,16 @@ PortalPath::~PortalPath()
 void PortalPath::setPreferredDirection(const FusionCrowd::Agent * agent, float headingCos,
 	Agents::PrefVelocity & pVel) {
 	const size_t PORTAL_COUNT = _route->getPortalCount();
-	FusionCrowd::Math::Vector2 dir;
+	Vector2 dir;
 	if (_currPortal >= PORTAL_COUNT) {
 		// assume that the path is clear
 		// TODO: See GoalVC
 		_goal->setDirections(agent->_pos, agent->_radius, pVel);
 
 		// speed
-		FusionCrowd::Math::Vector2 goalPoint = pVel.getTarget();
-		FusionCrowd::Math::Vector2 disp = goalPoint - agent->_pos;
-		const float distSq = absSq(disp);
+		Vector2 goalPoint = pVel.getTarget();
+		Vector2 disp = goalPoint - agent->_pos;
+		const float distSq = disp.LengthSquared();
 		float speed = agent->_prefSpeed;
 
 		if (distSq <= 0.0001f) {
@@ -55,8 +56,8 @@ void PortalPath::setPreferredDirection(const FusionCrowd::Agent * agent, float h
 	}
 	else {
 		const WayPortal * portal = _route->getPortal(_currPortal);
-		FusionCrowd::Math::Vector2 goalDir(_waypoints[_currPortal] - agent->_pos);
-		float dist = abs(goalDir);
+		Vector2 goalDir(_waypoints[_currPortal] - agent->_pos);
+		float dist = goalDir.Length();
 		// If the displacement to the next way point is large enough
 		//	(i.e., not essentially zero), use it, otherwise, peek
 		//	into the next waypoint.
@@ -66,12 +67,12 @@ void PortalPath::setPreferredDirection(const FusionCrowd::Agent * agent, float h
 		bool bigEnough = dist >= FusionCrowd::EPS;
 		if (bigEnough) {
 			goalDir /= dist;
-			if (goalDir * _headings[_currPortal] < headingCos) {
+			if (goalDir.Dot(_headings[_currPortal]) < headingCos) {
 				// Heading has deviated too far recompute crossing
 				FunnelPlanner planner;
 				planner.computeCrossing(agent->_radius, agent->_pos, this, _currPortal);
 				goalDir = _waypoints[_currPortal] - agent->_pos;
-				dist = abs(goalDir);
+				dist = goalDir.Length();
 				if ((bigEnough = (dist >= FusionCrowd::EPS))) {
 					goalDir /= dist;
 				}
@@ -82,13 +83,13 @@ void PortalPath::setPreferredDirection(const FusionCrowd::Agent * agent, float h
 			//goalDir.set( portal->getCrossingDir( agent->_pos ) );
 			if (_currPortal + 1 < getPortalCount()) {
 				// calculate w.r.t. next waypoint
-				goalDir = norm(_waypoints[_currPortal + 1] - agent->_pos);
+				(_waypoints[_currPortal + 1] - agent->_pos).Normalize(goalDir);
 			}
 			else {
 				// calculate w.r.t. goal
-				FusionCrowd::Math::Vector2 gp;
+				Vector2 gp;
 				_goal->getTargetPoint(gp, agent->_radius);
-				goalDir = norm(gp - agent->_pos);
+				(gp - agent->_pos).Normalize(goalDir);
 			}
 		}
 
@@ -107,7 +108,7 @@ unsigned int PortalPath::updateLocation(const FusionCrowd::Agent* agent,
 	unsigned int currNodeID = getNode();
 	const NavMeshNode * currNode = &(navMesh->GetNode(currNodeID));
 	// test current location
-	const FusionCrowd::Math::Vector2 & p = agent->_pos;
+	const Vector2 & p = agent->_pos;
 
 	const unsigned int PORTAL_COUNT = static_cast<unsigned int>(_route->getPortalCount());
 	if (!currNode->containsPoint(p)) {
@@ -243,19 +244,19 @@ unsigned int PortalPath::getNode() const {
 	}
 }
 
-void PortalPath::computeCrossing(const FusionCrowd::Math::Vector2 & startPos, float agentRadius) {
+void PortalPath::computeCrossing(const Vector2 & startPos, float agentRadius) {
 	const size_t PORTAL_COUNT = _route->getPortalCount();
 	if (PORTAL_COUNT > 0) {
 		assert(_waypoints == 0x0 && "Computing the crossing for a path that already exists");
 		_currPortal = 0;
-		_waypoints = new FusionCrowd::Math::Vector2[PORTAL_COUNT];
-		_headings = new FusionCrowd::Math::Vector2[PORTAL_COUNT];
+		_waypoints = new Vector2[PORTAL_COUNT];
+		_headings = new Vector2[PORTAL_COUNT];
 		FunnelPlanner planner;
 		planner.computeCrossing(agentRadius, startPos, this);
 	}
 }
 
-void PortalPath::replan(const FusionCrowd::Math::Vector2 & startPos, unsigned int startNode,
+void PortalPath::replan(const Vector2 & startPos, unsigned int startNode,
 	unsigned int endNode, float agentRadius, PathPlanner * planner) {
 	PortalRoute * route = planner->getRoute(startNode, _route->getEndNode(),
 		agentRadius * 2.f);
@@ -270,7 +271,7 @@ void PortalPath::replan(const FusionCrowd::Math::Vector2 & startPos, unsigned in
 	computeCrossing(startPos, agentRadius);
 }
 
-FusionCrowd::Math::Vector2 PortalPath::getWayPoint(size_t i) const {
+Vector2 PortalPath::getWayPoint(size_t i) const {
 	const size_t PORTAL_COUNT = _route->getPortalCount();
 	assert(i >= 0 && i < PORTAL_COUNT && "Invalid index into the path!");
 	return _waypoints[i];
@@ -287,11 +288,11 @@ unsigned int PortalPath::getNode(size_t i) const {
 	}
 }
 
-void PortalPath::setWaypoints(size_t start, size_t end, const FusionCrowd::Math::Vector2 & p0,
-	const FusionCrowd::Math::Vector2 & dir) {
+void PortalPath::setWaypoints(size_t start, size_t end, const Vector2 & p0,
+	const Vector2 & dir) {
 	for (size_t i = start; i < end; ++i) {
-		_waypoints[i].set(_route->getPortal(i)->intersectionPoint(p0, dir));
+		_waypoints[i] = _route->getPortal(i)->intersectionPoint(p0, dir);
 		//_waypoints[ i ].set( p0 );
-		_headings[i].set(dir);
+		_headings[i] = dir;
 	}
 }

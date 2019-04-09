@@ -1,14 +1,15 @@
 #include "NavMeshSpatialQuery.h"
 
+using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
 	class VisibilityCone
 	{
 	public:
-		VisibilityCone(const Math::Vector2 & dir0, const Math::Vector2 & dir1)
+		VisibilityCone(const Vector2 & dir0, const Vector2 & dir1)
 		{
-			if (det(dir0, dir1) > 0) {
+			if (MathUtil::det(dir0, dir1) > 0) {
 				_right = dir0;
 				_left = dir1;
 			}
@@ -18,42 +19,42 @@ namespace FusionCrowd
 			}
 		}
 
-		bool IsVisible(const Math::Vector2 & p0, const Math::Vector2 & p1) const
+		bool IsVisible(const Vector2 & p0, const Vector2 & p1) const
 		{
 			// if either point is visible, then it is true
-			float right0 = det(p0, _right);
-			float left0 = det(_left, p0);
+			float right0 = MathUtil::det(p0, _right);
+			float left0 = MathUtil::det(_left, p0);
 			if (right0 <= 0 && left0 <= 0) return true;
 
-			float right1 = det(p1, _right);
-			float left1 = det(_left, p1);
+			float right1 = MathUtil::det(p1, _right);
+			float left1 = MathUtil::det(_left, p1);
 			if (right1 <= 0 && left1 <= 0) return true;
 
 			// otherwise, if the two points lie outside the cone on opposite sides
 			//		then the cone intersects the center.
 			if (right0 > 0 && left1 > 0) {
-				return det(p1 - p0, -p0) > 0.f;
+				return MathUtil::det(p1 - p0, -p0) > 0.f;
 			}
 			else if (right1 > 0 && left0 > 0) {
-				return det(p0 - p1, -p1) > 0.f;
+				return MathUtil::det(p0 - p1, -p1) > 0.f;
 			}
 			return false;
 		}
 
-		bool IsVisible(const Math::Vector2 & p) const
+		bool IsVisible(const Vector2 & p) const
 		{
-			if (det(p, _right) > 0) return false;
-			if (det(_left, p) > 0) return false;
+			if (MathUtil::det(p, _right) > 0) return false;
+			if (MathUtil::det(_left, p) > 0) return false;
 			return true;
 		}
 
 		bool Intersect(const VisibilityCone & cone)
 		{
-			Math::Vector2 iRight(det(_right, cone._right) > 0 ? cone._right : _right);
-			Math::Vector2 iLeft(det(_left, cone._left) > 0 ? _left : cone._left);
-			if (det(iRight, iLeft) > 0) {
-				_right.set(iRight);
-				_left.set(iLeft);
+			Vector2 iRight(MathUtil::det(_right, cone._right) > 0 ? cone._right : _right);
+			Vector2 iLeft(MathUtil::det(_left, cone._left) > 0 ? _left : cone._left);
+			if (MathUtil::det(iRight, iLeft) > 0) {
+				_right = iRight;
+				_left = iLeft;
 				return true;
 			}
 			else {
@@ -61,8 +62,8 @@ namespace FusionCrowd
 			}
 		}
 
-		Math::Vector2 _left;
-		Math::Vector2 _right;
+		Vector2 _left;
+		Vector2 _right;
 	};
 
 	class NeighborEntry
@@ -99,7 +100,7 @@ namespace FusionCrowd
 
 	void NavMeshSpatialQuery::AgentQuery(ProximityQuery *filter, float &rangeSq) const
 	{
-		Math::Vector2 pt = filter->GetQueryPoint();
+		Vector2 pt = filter->GetQueryPoint();
 		unsigned int currNode = _localizer->getNode(pt);
 		assert(currNode != NavMeshLocation::NO_NODE &&
 			"Can't use NavMesh for spatial query if the point isn't on the mesh");
@@ -114,7 +115,7 @@ namespace FusionCrowd
 			for (; itr != occupants->end(); ++itr) {
 
 				const Agent * candidate = _agents[*itr];
-				float distSq = absSq(candidate->_pos - pt);
+				float distSq = (candidate->_pos - pt).LengthSquared();
 				if (distSq <= rangeSq) {
 					// NOTE: This call might change rangeSq; it may shrink based on the most
 					// distant neighbor
@@ -162,8 +163,8 @@ namespace FusionCrowd
 				OccupantSetCItr itr = occupants->begin();
 				for (; itr != occupants->end(); ++itr) {
 					const Agent * candidate = _agents[*itr];
-					Math::Vector2 disp(candidate->_pos - pt);
-					float distSq = absSq(disp);
+					Vector2 disp(candidate->_pos - pt);
+					float distSq = disp.LengthSquared();
 					if (distSq <= rangeSq) {
 						if (nbrEntry._cone.IsVisible(disp)) {
 							filter->FilterAgent(candidate, distSq);
@@ -187,8 +188,8 @@ namespace FusionCrowd
 
 				float distSq = edge->getSqDist(pt);
 				if (distSq <= rangeSq) {
-					Math::Vector2 disp1 = edge->getP0() - pt;
-					Math::Vector2 disp2 = edge->getP1() - pt;
+					Vector2 disp1 = edge->getP0() - pt;
+					Vector2 disp2 = edge->getP1() - pt;
 					VisibilityCone cone(disp1, disp2);
 					if (cone.Intersect(nbrEntry._cone)) {
 						queue.push_back(NeighborEntry(distSq, cone, otherNode->getID()));
@@ -198,7 +199,7 @@ namespace FusionCrowd
 		}
 	}
 
-	bool NavMeshSpatialQuery::QueryVisibility(const Math::Vector2& q1, const Math::Vector2& q2,
+	bool NavMeshSpatialQuery::QueryVisibility(const Vector2& q1, const Vector2& q2,
 		float radius) const
 	{
 		return true;
@@ -213,7 +214,7 @@ namespace FusionCrowd
 		for (unsigned int o = 0; o < OBST_COUNT; ++o) {
 			NavMeshObstacle & obst = navMesh->GetObstacle(o);
 			if (obst._prevObstacle) {
-				obst._isConvex = leftOf(obst._prevObstacle->getP0(),
+				obst._isConvex = MathUtil::leftOf(obst._prevObstacle->getP0(),
 					obst.getP0(), obst.getP1()) >= 0;
 			}
 			else {
@@ -230,7 +231,7 @@ namespace FusionCrowd
 
 	void NavMeshSpatialQuery::ObstacleQuery(ProximityQuery *filter, float rangeSq) const\
 	{
-		Math::Vector2 pt = filter->GetQueryPoint();
+		Vector2 pt = filter->GetQueryPoint();
 
 		Agent * agent = dynamic_cast<Agent*>(filter);
 		size_t currNode = NavMeshLocation::NO_NODE;

@@ -1,7 +1,7 @@
 #include "KaramouzasComponent.h"
-#include "../Math/vector.h"
 #include "../Math/consts.h"
 #include "../Math/geomQuery.h"
+#include "../MathUtil.h"
 
 #include <algorithm>
 #include <list>
@@ -39,7 +39,7 @@ namespace FusionCrowd
 		{
 			ComputeNewVelocity(agent);
 
-			float delV = abs(agent->_vel - agent->_velNew);
+			float delV = (agent->_vel - agent->_velNew).Length();
 
 			if (delV > agent->_maxAccel * timeStep) {
 				float w = agent->_maxAccel * timeStep / delV;
@@ -48,7 +48,7 @@ namespace FusionCrowd
 			else {
 				agent->_vel = agent->_velNew;
 			}
-			Math::Vector2 t = agent->_vel * timeStep;
+			Vector2 t = agent->_vel * timeStep;
 
 			agent->_pos += agent->_vel * timeStep;
 
@@ -61,7 +61,7 @@ namespace FusionCrowd
 			const float EPSILON = 0.01f; // this eps from Ioannis
 			const float FOV = _cosFOVAngle;
 
-			FusionCrowd::Math::Vector2 force((agent->_velPref.getPreferredVel() - agent->_vel) / _reactionTime);
+			Vector2 force((agent->_velPref.getPreferredVel() - agent->_vel) / _reactionTime);
 			const float SAFE_DIST = _wallDistance + agent->_radius;
 			const float SAFE_DIST2 = SAFE_DIST * SAFE_DIST;
 			for (size_t o = 0; o < agent->_nearObstacles.size(); ++o) {
@@ -70,7 +70,7 @@ namespace FusionCrowd
 				//	a force applied.  This may be too naive.
 				//	I'll have to investigate this.
 				const Obstacle * obst = agent->_nearObstacles[o].obstacle;
-				FusionCrowd::Math::Vector2 nearPt;		// set by distanceSqToPoint
+				Vector2 nearPt;		// set by distanceSqToPoint
 				float sqDist;		// set by distanceSqToPoint
 				if (obst->distanceSqToPoint(agent->_pos, nearPt, sqDist) == Obstacle::LAST) continue;
 				if (SAFE_DIST2 > sqDist) {
@@ -79,15 +79,16 @@ namespace FusionCrowd
 					float num = SAFE_DIST - dist;
 					float distMradius = (dist - agent->_radius) < EPSILON ? EPSILON : dist - agent->_radius;
 					float denom = powf(distMradius, _wallSteepness);
-					FusionCrowd::Math::Vector2 dir = norm(agent->_pos - nearPt);
+					Vector2 dir;
+					(agent->_pos - nearPt).Normalize(dir);
 					float mag = num / denom;
 					force += dir * mag;
 				}
 			}
 
-			FusionCrowd::Math::Vector2 desVel = agent->_vel + force * 0.1f;//Simulator::TIME_STEP;
-			float desSpeed = abs(desVel);
-			force.set(0.f, 0.f);
+			Vector2 desVel = agent->_vel + force * 0.1f;//Simulator::TIME_STEP;
+			float desSpeed = desVel.Length();
+			force = Vector2(0.f, 0.f);
 			//#if 0
 			//		// iteratively evaluate neighbors
 			//#else
@@ -102,10 +103,10 @@ namespace FusionCrowd
 				const FusionCrowd::Agent * otherBase = agent->_nearAgents[j].agent;
 				const Agent * const other = static_cast<const Agent *>(otherBase);
 				float circRadius = _agents[agent->_id]._perSpace + other->_radius;
-				FusionCrowd::Math::Vector2 relVel = desVel - other->_vel;
-				FusionCrowd::Math::Vector2 relPos = other->_pos - agent->_pos;
+				Vector2 relVel = desVel - other->_vel;
+				Vector2 relPos = other->_pos - agent->_pos;
 
-				if (absSq(relPos) < circRadius * circRadius) { ///collision!
+				if (relPos.LengthSquared() < circRadius * circRadius) { ///collision!
 					if (!colliding) {
 						colliding = true;
 						collidingSet.clear();
@@ -117,9 +118,10 @@ namespace FusionCrowd
 
 				// TODO: evalute field of view
 				//		If relPos is not within the field of view around preferred direction, continue
-				FusionCrowd::Math::Vector2 relDir = norm(relPos);
-				if ((relDir * agent->_orient) < FOV) continue;
-				float tc = rayCircleTTC(relVel, relPos, circRadius);
+				Vector2 relDir;
+				relPos.Normalize(relDir);
+				if (relDir.Dot(agent->_orient) < FOV) continue;
+				float tc = Math::rayCircleTTC(relVel, relPos, circRadius);
 				if (tc < _agents[agent->_id]._anticipation && !colliding) {
 					if (VERBOSE) std::cout << "\tAgent " << other->_id << " t_c: " << tc << "\n";
 					//totalTime += tc;
@@ -138,13 +140,13 @@ namespace FusionCrowd
 				const Agent * const other = itr->second;
 				float tc = itr->first;
 				// future positions
-				FusionCrowd::Math::Vector2 myPos = agent->_pos + desVel * tc;
-				FusionCrowd::Math::Vector2 hisPos = other->_pos + other->_vel * tc;
-				FusionCrowd::Math::Vector2 forceDir = myPos - hisPos;
+				Vector2 myPos = agent->_pos + desVel * tc;
+				Vector2 hisPos = other->_pos + other->_vel * tc;
+				Vector2 forceDir = myPos - hisPos;
 				//float futureDist = abs( forceDir );
 				//forceDir /= futureDist;
 				//float D = desSpeed * tc + futureDist - _radius - other->_radius;
-				float fDist = abs(forceDir);
+				float fDist = forceDir.Length();
 				forceDir /= fDist;
 				float collisionDist = fDist - agent->_radius - other->_radius;
 				float D = std::max(desSpeed * tc + (collisionDist < 0 ? 0 : collisionDist), EPSILON);
@@ -182,11 +184,14 @@ namespace FusionCrowd
 			//float angle = rand() * 2.0f * M_PI / RAND_MAX;
 			float angle = rand() * 2.0f * 3.1415f / RAND_MAX;
 			float dist = rand() * 0.001f / RAND_MAX;
-			force += dist * FusionCrowd::Math::Vector2(cos(angle), sin(angle));
+			force += dist * Vector2(cos(angle), sin(angle));
 			// do we need a drag force?
 
 			 // Cap the force to maxAccel
-			if (abs(force) > agent->_maxAccel) force = norm(force) * agent->_maxAccel;
+			if (force.Length() > agent->_maxAccel) {
+				force.Normalize();
+				force *= agent->_maxAccel;
+			}
 
 			agent->_velNew = desVel + force * 0.1f;//Simulator::TIME_STEP;	// assumes unit mass
 		}

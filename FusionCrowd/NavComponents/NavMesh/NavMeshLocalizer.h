@@ -5,7 +5,9 @@
 #include "Resource.h"
 #include "../../Agent.h"
 #include "../../Config.h"
+#include "../../MathUtil.h"
 #include <unordered_map>
+
 
 #include <map>
 #include <set>
@@ -52,7 +54,7 @@ public:
 	unsigned int getNode(const FusionCrowd::Agent * agent) const;
 	unsigned int getNode(const FusionCrowd::Agent * agent, const std::string & grpName,
 		bool searchAll = false);
-	unsigned int getNode(const FusionCrowd::Math::Vector2 & p) const;
+	unsigned int getNode(const DirectX::SimpleMath::Vector2 & p) const;
 	const NavMeshNode getNode(unsigned int i) { return _navMesh->GetNode(i); }
 	PortalPath * getPath(size_t id);
 	void setPath(size_t agentID, PortalPath * path);
@@ -78,12 +80,12 @@ public:
 	mutable  std::unordered_map< size_t, NavMeshLocation > _locations;
 
 	OccupantSet * _nodeOccupants;
-	unsigned int findNodeBlind(const FusionCrowd::Math::Vector2 & p, float tgtElev = 1e5f) const;
-	unsigned int findNodeInGroup(const FusionCrowd::Math::Vector2 & p, const std::string & grpName,
+	unsigned int findNodeBlind(const DirectX::SimpleMath::Vector2 & p, float tgtElev = 1e5f) const;
+	unsigned int findNodeInGroup(const DirectX::SimpleMath::Vector2 & p, const std::string & grpName,
 		bool searchAll) const;
-	unsigned int findNodeInRange(const FusionCrowd::Math::Vector2 & p, unsigned int start,
+	unsigned int findNodeInRange(const DirectX::SimpleMath::Vector2 & p, unsigned int start,
 		unsigned int stop) const;
-	unsigned int testNeighbors(const NavMeshNode & node, const FusionCrowd::Math::Vector2 & p) const;
+	unsigned int testNeighbors(const NavMeshNode & node, const DirectX::SimpleMath::Vector2 & p) const;
 
 };
 
@@ -91,5 +93,4 @@ typedef ResourcePtr< NavMeshLocalizer > NavMeshLocalizerPtr;
 
 NavMeshLocalizerPtr FUSION_CROWD_API loadNavMeshLocalizer(const std::string & fileName,
 	bool usePlanner);
-
 

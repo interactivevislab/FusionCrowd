@@ -6,7 +6,7 @@
 
 #include <limits>
 
-//const unsigned int NavMeshLocation::NO_NODE = std::numeric_limits< unsigned int >::max();
+using namespace DirectX::SimpleMath;
 
 void NavMeshLocation::setNode(unsigned int nodeID)
 {
@@ -90,7 +90,7 @@ unsigned int NavMeshLocalizer::getNode(const FusionCrowd::Agent * agent,
 	return node;
 }
 
-unsigned int NavMeshLocalizer::getNode(const FusionCrowd::Math::Vector2 & p) const
+unsigned int NavMeshLocalizer::getNode(const Vector2 & p) const
 {
 	return findNodeBlind(p);
 }
@@ -131,7 +131,7 @@ unsigned int NavMeshLocalizer::updateLocation(const FusionCrowd::Agent * agent,
 		newLoc = loc._path->updateLocation(agent, _navMesh, this, _planner);
 	}
 	else { //if ( _trackAll || force ) {
-		const FusionCrowd::Math::Vector2 & p = agent->_pos;
+		const Vector2 & p = agent->_pos;
 		unsigned int oldNode = (unsigned int)loc._nodeID;
 		if (loc._nodeID == NavMeshLocation::NO_NODE) {
 			loc._nodeID = findNodeBlind(p);
@@ -182,7 +182,7 @@ unsigned int NavMeshLocalizer::updateLocation(const FusionCrowd::Agent * agent,
 	return newLoc;
 }
 
-unsigned int NavMeshLocalizer::findNodeBlind(const FusionCrowd::Math::Vector2 & p, float tgtElev) const
+unsigned int NavMeshLocalizer::findNodeBlind(const Vector2 & p, float tgtElev) const
 {
 	// TODO(curds01) 10/1/2016 - This cast is bad because I can lose precision
 	//	(after I get 4 billion nodes...)
@@ -202,7 +202,7 @@ unsigned int NavMeshLocalizer::findNodeBlind(const FusionCrowd::Math::Vector2 & 
 	return maxNode;
 }
 
-unsigned int NavMeshLocalizer::findNodeInGroup(const FusionCrowd::Math::Vector2 & p, const std::string & grpName,
+unsigned int NavMeshLocalizer::findNodeInGroup(const Vector2 & p, const std::string & grpName,
 	bool searchAll) const {
 	unsigned int node = NavMeshLocation::NO_NODE;
 	const NMNodeGroup * grp = _navMesh->getNodeGroup(grpName);
@@ -223,7 +223,7 @@ unsigned int NavMeshLocalizer::findNodeInGroup(const FusionCrowd::Math::Vector2 
 	return node;
 }
 
-unsigned int NavMeshLocalizer::findNodeInRange(const FusionCrowd::Math::Vector2 & p, unsigned int start,
+unsigned int NavMeshLocalizer::findNodeInRange(const Vector2 & p, unsigned int start,
 	unsigned int stop) const
 {
 	for (unsigned int n = start; n < stop; ++n) {
@@ -236,7 +236,7 @@ unsigned int NavMeshLocalizer::findNodeInRange(const FusionCrowd::Math::Vector2 
 }
 
 unsigned int NavMeshLocalizer::testNeighbors(const NavMeshNode & node,
-	const FusionCrowd::Math::Vector2 & p) const
+	const Vector2 & p) const
 {
 	const unsigned int nCount = static_cast<unsigned int>(node.getNeighborCount());
 	for (unsigned int n = 0; n < nCount; ++n) {

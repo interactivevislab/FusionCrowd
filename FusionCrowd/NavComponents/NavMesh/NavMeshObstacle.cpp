@@ -2,8 +2,13 @@
 
 const float MIN_EDGE_WIDTH = 0.00001f;
 
+
+#pragma push_macro("max")
+#undef max
+
 size_t NavMeshObstacle::NO_NEIGHBOR_OBST = std::numeric_limits< size_t >::max();
 
+#pragma pop_macro("max")
 
 #ifdef _WIN32
 // This disables a 64-bit compatibility warning - pushing a 32-bit value into a 64-bit value.
@@ -14,7 +19,9 @@ size_t NavMeshObstacle::NO_NEIGHBOR_OBST = std::numeric_limits< size_t >::max();
 #pragma warning( disable : 4312 )
 #endif
 
-bool NavMeshObstacle::LoadFromAscii(std::ifstream & f, FusionCrowd::Math::Vector2 * vertices)
+using namespace DirectX::SimpleMath;
+
+bool NavMeshObstacle::LoadFromAscii(std::ifstream & f, Vector2 * vertices)
 {
 	size_t v0, v1, node;
 	long int nextObst;
@@ -22,13 +29,13 @@ bool NavMeshObstacle::LoadFromAscii(std::ifstream & f, FusionCrowd::Math::Vector
 		return false;
 	}
 	else {
-		_point.set(vertices[v0]);
-		FusionCrowd::Math::Vector2 disp = vertices[v1] - vertices[v0];
-		_length = abs(disp);
+		_point = vertices[v0];
+		Vector2 disp = vertices[v1] - vertices[v0];
+		_length = disp.Length();
 		if (_length <= MIN_EDGE_WIDTH) {
 			return false;
 		}
-		_unitDir.set(disp / _length);
+		_unitDir = disp / _length;
 		// Stash indices as pointers
 		if (nextObst >= 0) {
 			_nextObstacle = (Obstacle *)nextObst;

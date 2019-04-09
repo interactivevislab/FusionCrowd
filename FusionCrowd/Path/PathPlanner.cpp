@@ -13,6 +13,8 @@
 #include <omp.h>
 #endif
 
+using namespace DirectX::SimpleMath;
+
 RouteKey makeRouteKey(unsigned int start, unsigned int end)
 {
 	const int SHIFT = sizeof(size_t) * 4;	// size in bytes * 8 bits/byte / 2
@@ -77,7 +79,7 @@ PortalRoute * PathPlanner::computeRoute(unsigned int startID, unsigned int endID
 	AStarMinHeap heap(_HEAP, _DATA, _STATE, _PATH, N);
 #endif
 
-	const FusionCrowd::Math::Vector2 goalPos(_navMesh->GetNode(endID).getCenter());
+	const Vector2 goalPos(_navMesh->GetNode(endID).getCenter());
 
 	heap.g(startID, 0);
 	heap.h(startID, computeH(startID, goalPos));
@@ -193,10 +195,10 @@ void PathPlanner::initHeapMemory(size_t nodeCount) {
 	}
 }
 
-float PathPlanner::computeH(unsigned int node, const FusionCrowd::Math::Vector2 & goal) {
+float PathPlanner::computeH(unsigned int node, const Vector2 & goal) {
 	assert(node >= 0 && node < _navMesh->getNodeCount() &&
 		"Trying to compute h for invalid node id");
-	return abs(_navMesh->nodes[node]._center - goal);
+	return (_navMesh->nodes[node]._center - goal).Length();
 }
 
 PortalRoute * PathPlanner::cacheRoute(unsigned int startID, unsigned int endID,

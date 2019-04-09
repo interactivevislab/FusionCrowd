@@ -2,9 +2,9 @@
 
 #include "../Math/Geometry2D.h"
 #include "../Path/PrefVelocity.h"
-#include "../Math/vector.h"
 #include "../Agent.h"
 #include "../Config.h"
+#include "../MathUtil.h"
 
 // Forward declaration
 class GoalSet;
@@ -24,22 +24,22 @@ public:
 public:
 	virtual std::string getStringId() const = 0;
 
-	float squaredDistance(const FusionCrowd::Math::Vector2 & pt) const
+	float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const
 	{
 		return _geometry->squaredDistance(pt);
 	}
-	void setDirections(const FusionCrowd::Math::Vector2 & q, float r,
+	void setDirections(const DirectX::SimpleMath::Vector2 & q, float r,
 		Agents::PrefVelocity & directions) const
 	{
 		return _geometry->setDirections(q, r, directions);
 	}
 
-	FusionCrowd::Math::Vector2 getTargetPoint(const FusionCrowd::Math::Vector2 & q, float r) const
+	DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const
 	{
 		return _geometry->getTargetPoint(q, r);
 	}
 
-	FusionCrowd::Math::Vector2 getCentroid() const { return _geometry->getCentroid(); }
+	DirectX::SimpleMath::Vector2 getCentroid() const { return _geometry->getCentroid(); }
 
 	bool hasCapacity() const;
 	void assign(const FusionCrowd::Agent * agent);

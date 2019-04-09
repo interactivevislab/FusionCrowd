@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../NavComponents/NavMesh/NavMesh.h"
-#include "../Math/vector.h"
 #include "../Config.h"
+#include "../MathUtil.h"
 
 #include <list>
 #include <map>
@@ -29,7 +29,7 @@ public:
 	PortalRoute * getRoute(unsigned int startID, unsigned int endID, float minWidth);
 protected:
 	PortalRoute * computeRoute(unsigned int startID, unsigned int endID, float minWidth);
-	float computeH(unsigned int node, const FusionCrowd::Math::Vector2 & goal);
+	float computeH(unsigned int node, const DirectX::SimpleMath::Vector2 & goal);
 	PortalRoute * cacheRoute(unsigned int startID, unsigned int endID, PortalRoute * route);
 	PRouteMap _routes;
 	NavMeshPtr	_navMesh;

@@ -24,7 +24,7 @@ public:
 	bool DoStep();
 	void AddAgent(FusionCrowd::Agent agent);
 	void AddAgent(float maxAngleVel, float maxNeighbors, int obstacleSet,
-		float neighborDist, float radius, float prefSpeed, float maxSpeed, float maxAccel, FusionCrowd::Math::Vector2 pos);
+		float neighborDist, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos);
 	void AddOperComponent(IOperComponent* operComponent);
 	void AddSpatialQuery(FusionCrowd::SpatialQuery* spatialQuery);
 	void AddNavComponent(std::string name, INavComponent* navComponent);

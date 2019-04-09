@@ -1,7 +1,7 @@
 #include "NavMeshNode.h"
 #include "NavMeshObstacle.h"
 
-
+using namespace DirectX::SimpleMath;
 
 NavMeshNode::NavMeshNode() : _edges(0x0), _edgeCount(0), _obstacles(0x0), _obstCount(0),
 _center(), _poly() {
@@ -75,7 +75,7 @@ bool NavMeshNode::loadFromAscii(std::ifstream & f) {
 	// center
 	float cx, cy;
 	if ((f >> cx >> cy)) {
-		_center.set(cx, cy);
+		_center = Vector2(cx, cy);
 	}
 	else {
 		return false;

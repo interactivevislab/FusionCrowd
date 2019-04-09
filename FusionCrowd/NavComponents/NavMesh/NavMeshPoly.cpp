@@ -1,6 +1,7 @@
 #include "NavMeshPoly.h"
 
 using std::memcpy;
+using namespace DirectX::SimpleMath;
 
 NavMeshPoly::NavMeshPoly() : vertIDs(0x0), vertCount(0), A(0.f), B(0.f), C(0.f)
 {
@@ -27,16 +28,16 @@ NavMeshPoly & NavMeshPoly::operator=(const NavMeshPoly & p)
 	return *this;
 }
 
-bool NavMeshPoly::containsPoint(const FusionCrowd::Math::Vector2 & point) const
+bool NavMeshPoly::containsPoint(const Vector2 & point) const
 {
-	const float X = point.x();
-	const float Y = point.y();
+	const float X = point.x;
+	const float Y = point.y;
 
 	int count = 0;	// number of intersections
 	for (size_t e = 0; e < vertCount; ++e) {
-		const FusionCrowd::Math::Vector2 & p0 = vertices[vertIDs[e]];
+		const Vector2 & p0 = vertices[vertIDs[e]];
 
-		if (p0.y() == Y && p0.x() <= X) {
+		if (p0.y == Y && p0.x <= X) {
 			// There is a special case here where the line passes through the point
 			//	tangentially to the polygon (i.e. it doesn't cut into the polygon.
 			//
@@ -52,7 +53,7 @@ bool NavMeshPoly::containsPoint(const FusionCrowd::Math::Vector2 & point) const
 			//	sides of the line through x.  If they do, it counts
 			//
 			// However if the test point IS the vertex, then it DOES count.
-			if (p0.x() == X) {
+			if (p0.x == X) {
 				// the point is in the polygon
 				//	this is slightly fragile -- the point will register as inside any
 				//	polygon built on this point.
@@ -64,8 +65,8 @@ bool NavMeshPoly::containsPoint(const FusionCrowd::Math::Vector2 & point) const
 			else {
 				size_t prev = e == 0 ? (vertCount - 1) : (e - 1);
 				size_t next = e == (vertCount - 1) ? 0 : (e + 1);
-				float pY = vertices[vertIDs[prev]].y();
-				float nY = vertices[vertIDs[next]].y();
+				float pY = vertices[vertIDs[prev]].y;
+				float nY = vertices[vertIDs[next]].y;
 				// if both y-values lie on the same side of the line, it is incidental contact.
 				//	Don't count the contact
 				//	There can be problems with signed zero values.  Otherwise, probably safe.
@@ -77,21 +78,21 @@ bool NavMeshPoly::containsPoint(const FusionCrowd::Math::Vector2 & point) const
 		}
 
 		const size_t next = (e + 1) % vertCount;
-		const FusionCrowd::Math::Vector2 & p1 = vertices[vertIDs[next]];
+		const Vector2 & p1 = vertices[vertIDs[next]];
 		// simple cases in which there can be no intersection
-		if ((p0.y() > Y && p1.y() >= Y) ||		// polysegment above line
-			(p0.y() < Y && p1.y() <= Y) ||		// polysegment below line
-			(p0.x() > X && p1.x() > X)) {		// polysegment to right of test line
+		if ((p0.y > Y && p1.y >= Y) ||		// polysegment above line
+			(p0.y < Y && p1.y <= Y) ||		// polysegment below line
+			(p0.x > X && p1.x > X)) {		// polysegment to right of test line
 
 			continue;
 		}
 		// legitimate intersection test
 		// compute where, between y0 and y1, I'll find Y
-		float t = Y - p0.y();
-		float x0 = p0.x();
-		float dx = p1.x() - x0;
+		float t = Y - p0.y;
+		float x0 = p0.x;
+		float dx = p1.x - x0;
 
-		t /= p1.y() - p0.y();
+		t /= p1.y - p0.y;
 		float x = x0 + t * dx;
 		if (x <= X) {	// this includes if (X,Y) lies on the line between the two vertices
 			++count;
@@ -100,9 +101,9 @@ bool NavMeshPoly::containsPoint(const FusionCrowd::Math::Vector2 & point) const
 	return (count & 0x1) == 1;
 }
 
-float NavMeshPoly::getElevation(const FusionCrowd::Math::Vector2 & point) const
+float NavMeshPoly::getElevation(const Vector2 & point) const
 {
-	return A * point.x() + B * point.y() + C;
+	return A * point.x + B * point.y + C;
 }
 
 bool NavMeshPoly::loadFromAscii(std::ifstream & f)
@@ -166,15 +167,15 @@ void NavMeshPoly::initialize(size_t vCount, unsigned int * ids, float newA, floa
 	C = newC;
 }
 
-void NavMeshPoly::setBB(const FusionCrowd::Math::Vector2 *vertices)
+void NavMeshPoly::setBB(const Vector2 *vertices)
 {
 	minX = minY = 1e6f;
 	maxX = maxY = -minX;
 	for (size_t v = 0; v < vertCount; ++v) {
-		const FusionCrowd::Math::Vector2 & p0 = vertices[vertIDs[v]];
-		if (p0.x() < minX) minX = p0.x();
-		if (p0.x() > maxX) maxX = p0.x();
-		if (p0.y() < minY) minY = p0.y();
-		if (p0.y() > maxY) maxY = p0.y();
+		const Vector2 & p0 = vertices[vertIDs[v]];
+		if (p0.x < minX) minX = p0.x;
+		if (p0.x > maxX) maxX = p0.x;
+		if (p0.y < minY) minY = p0.y;
+		if (p0.y > maxY) maxY = p0.y;
 	}
 }

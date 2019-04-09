@@ -1,6 +1,8 @@
 #include "Agent.h"
 #include "OperationComponent/SpatialQuery/SpatialQueryStructs.h"
 
+using namespace DirectX::SimpleMath;
+
 namespace FusionCrowd
 {
 	Agent::Agent()
@@ -8,12 +10,12 @@ namespace FusionCrowd
 		_maxSpeed = 2.5f;
 		_maxAccel = 2.f;
 		_prefSpeed = 1.34f;
-		_pos = Math::Vector2(0.f, 0.f);
-		_vel = Math::Vector2(0.f, 0.f);
-		_velPref = Agents::PrefVelocity(Math::Vector2(1.f, 0.f), _prefSpeed, Math::Vector2(0.f, 0.f));
-		_velNew = Math::Vector2(0.f, 0.f);
-		_orient = Math::Vector2(1.f, 0.f);
-		_maxAngVel = TWOPI;	// 360 degrees/sec
+		_pos = Vector2(0.f, 0.f);
+		_vel = Vector2(0.f, 0.f);
+		_velPref = Agents::PrefVelocity(Vector2(1.f, 0.f), _prefSpeed, Vector2(0.f, 0.f));
+		_velNew = Vector2(0.f, 0.f);
+		_orient = Vector2(1.f, 0.f);
+		_maxAngVel = MathUtil::TWOPI;	// 360 degrees/sec
 		_maxNeighbors = 10;
 		_neighborDist = 5.f;
 		_nearAgents.clear();
@@ -93,43 +95,41 @@ namespace FusionCrowd
 
 	void Agent::UpdateOrient(float timeStep)
 	{
-		float speed = abs(_vel);
+		float speed = _vel.Length();
 		const float speedThresh = _prefSpeed / 3.f;
-		Math::Vector2 newOrient(_orient);	// by default new is old
-		Math::Vector2 moveDir = _vel / speed;
+		Vector2 newOrient(_orient);	// by default new is old
+		Vector2 moveDir = _vel / speed;
 		if (speed >= speedThresh) {
 			newOrient = moveDir;
 		}
 		else {
 			float frac = sqrtf(speed / speedThresh);
-			Math::Vector2 prefDir = _velPref.getPreferred();
+			Vector2 prefDir = _velPref.getPreferred();
 			// prefDir *can* be zero if we've arrived at goal.  Only use it if it's non-zero.
-			if (absSq(prefDir) > 0.000001f) {
+			if (prefDir.LengthSquared() > 0.000001f) {
 				newOrient = frac * moveDir + (1.f - frac) * prefDir;
-				newOrient.normalize();
+				newOrient.Normalize();
 			}
 		}
 
 		// Now limit angular velocity.
 		const float MAX_ANGLE_CHANGE = timeStep * _maxAngVel;
 		float maxCt = cos(MAX_ANGLE_CHANGE);
-		float ct = newOrient * _orient;
+		float ct = newOrient.Dot(_orient);
 		if (ct < maxCt) {
 			// changing direction at a rate greater than _maxAngVel
 			float maxSt = sin(MAX_ANGLE_CHANGE);
-			if (det(_orient, newOrient) > 0.f) {
+			if (MathUtil::det(_orient, newOrient) > 0.f) {
 				// rotate _orient left
-				_orient.set(maxCt * _orient._x - maxSt * _orient._y,
-					maxSt * _orient._x + maxCt * _orient._y);
+				_orient = Vector2(maxCt * _orient.x - maxSt * _orient.y, maxSt * _orient.x + maxCt * _orient.y);
 			}
 			else {
 				// rotate _orient right
-				_orient.set(maxCt * _orient._x + maxSt * _orient._y,
-					-maxSt * _orient._x + maxCt * _orient._y);
+				_orient = Vector2(maxCt * _orient.x + maxSt * _orient.y, -maxSt * _orient.x + maxCt * _orient.y);
 			}
 		}
 		else {
-			_orient.set(newOrient);
+			_orient = newOrient;
 		}
 	}
 }

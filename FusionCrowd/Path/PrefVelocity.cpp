@@ -1,5 +1,7 @@
 #include "PrefVelocity.h"
 
+using namespace DirectX::SimpleMath;
+
 namespace Agents
 {
 	PrefVelocity::PrefVelocity() : _left(1.f, 0.f), _right(1.f, 0.f), _speed(1.f),
@@ -7,13 +9,13 @@ namespace Agents
 	{
 	}
 
-	PrefVelocity::PrefVelocity(const FusionCrowd::Math::Vector2 & dir, float speed, const FusionCrowd::Math::Vector2 & target) :
+	PrefVelocity::PrefVelocity(const Vector2 & dir, float speed, const Vector2 & target) :
 		_left(dir), _right(dir), _speed(speed), _preferred(dir), _target(target)
 	{
 	}
 
-	PrefVelocity::PrefVelocity(const FusionCrowd::Math::Vector2 & left, const FusionCrowd::Math::Vector2 & right,
-		const FusionCrowd::Math::Vector2 & pref, float speed, const FusionCrowd::Math::Vector2 & target) :
+	PrefVelocity::PrefVelocity(const Vector2 & left, const Vector2 & right,
+		const Vector2 & pref, float speed, const Vector2 & target) :
 		_left(left), _right(right), _speed(speed),
 		_preferred(pref), _target(target)
 	{
@@ -42,8 +44,8 @@ namespace Agents
 		return (*this);
 	}
 
-	void PrefVelocity::setSpan(const FusionCrowd::Math::Vector2 & left, const FusionCrowd::Math::Vector2 & right,
-		const FusionCrowd::Math::Vector2 & preferred) {
+	void PrefVelocity::setSpan(const Vector2 & left, const Vector2 & right,
+		const Vector2 & preferred) {
 		_left = left;
 		_right = right;
 		_preferred = preferred;

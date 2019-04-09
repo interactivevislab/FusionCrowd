@@ -3,8 +3,8 @@
 #include <fstream>
 #include <string>
 
-#include "../../Math/vector.h"
 #include "../../Config.h"
+#include "../../MathUtil.h"
 
 class FUSION_CROWD_API NavMeshPoly
 {
@@ -13,9 +13,9 @@ public:
 	~NavMeshPoly();
 
 	NavMeshPoly & operator=(const NavMeshPoly & n);
-	bool containsPoint(const FusionCrowd::Math::Vector2 & point) const;
-	float getElevation(const FusionCrowd::Math::Vector2 & point) const;
-	FusionCrowd::Math::Vector2 getGradient() const { return FusionCrowd::Math::Vector2(A, B); }
+	bool containsPoint(const DirectX::SimpleMath::Vector2 & point) const;
+	float getElevation(const DirectX::SimpleMath::Vector2 & point) const;
+	DirectX::SimpleMath::Vector2 getGradient() const { return DirectX::SimpleMath::Vector2(A, B); }
 	bool loadFromAscii(std::ifstream & f);
 	bool loadFromBinary(std::ifstream & f);
 	void initialize(size_t vCount, unsigned int * ids, float A = 0.f, float B = 0.f,
@@ -23,12 +23,12 @@ public:
 
 	unsigned int * vertIDs;
 	size_t	 vertCount;
-	const FusionCrowd::Math::Vector2 * vertices;
+	const DirectX::SimpleMath::Vector2 * vertices;
 	float minX;
 	float maxX;
 	float minY;
 	float maxY;
-	void setBB(const FusionCrowd::Math::Vector2 * vertices);
+	void setBB(const DirectX::SimpleMath::Vector2 * vertices);
 	float	A;
 	float	B;
 	float	C;

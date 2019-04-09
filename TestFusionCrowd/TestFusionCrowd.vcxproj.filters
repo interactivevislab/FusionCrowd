@@ -31,5 +31,6 @@
     <None Include="Resources\simple.nav">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

@@ -8,7 +8,9 @@ FunnelPlanner::FunnelPlanner() {}
 
 FunnelPlanner::~FunnelPlanner() {}
 
-void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vector2 & startPos, PortalPath * path,
+using namespace DirectX::SimpleMath;
+
+void FunnelPlanner::computeCrossing(float radius, const Vector2 & startPos, PortalPath * path,
 	size_t startPortal)
 {
 	assert(path->getPortalCount() > 0 &&
@@ -17,10 +19,10 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 	FunnelApex apex(startPortal - 1, startPos);
 
 	const WayPortal * portal = path->getPortal(startPortal);
-	FusionCrowd::Math::Vector2 pLeft(portal->getLeft(radius));
-	FusionCrowd::Math::Vector2 pRight(portal->getRight(radius));
-	FusionCrowd::Math::Vector2 dirLeft(pLeft - apex._pos);
-	FusionCrowd::Math::Vector2 dirRight(pRight - apex._pos);
+	Vector2 pLeft(portal->getLeft(radius));
+	Vector2 pRight(portal->getRight(radius));
+	Vector2 dirLeft(pLeft - apex._pos);
+	Vector2 dirRight(pRight - apex._pos);
 #ifdef SIMPLE_FUNNEL
 	FunnelEdge funnelLeft(startPortal, dirLeft);
 	FunnelEdge funnelRight(startPortal, dirRight);
@@ -36,8 +38,8 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 		// test left side of the funnel
 		if (funnelRight.isOnRight(dirLeft)) {
 			// the portal's funnel is on the right of the current funnel
-			FusionCrowd::Math::Vector2 oldApex = apex._pos;
-			FusionCrowd::Math::Vector2 newApex = funnelRight._dir + apex._pos;
+			Vector2 oldApex = apex._pos;
+			Vector2 newApex = funnelRight._dir + apex._pos;
 			//if ( apex._id != -1 && apex._id < currPortal ) {
 			path->setWaypoints(apex._id + 1, funnelRight._id + 1, newApex,
 				norm(funnelRight._dir));
@@ -63,8 +65,8 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 		// test right side of the funnel
 		if (funnelLeft.isOnLeft(dirRight)) {
 			// the portal's funnel is on the left of the current funnel
-			FusionCrowd::Math::Vector2 oldApex = apex._pos;
-			FusionCrowd::Math::Vector2 newApex = funnelLeft._dir + apex._pos;
+			Vector2 oldApex = apex._pos;
+			Vector2 newApex = funnelLeft._dir + apex._pos;
 			//if ( apex._id != -1 && apex._id < currPortal ) {
 			path->setWaypoints(apex._id + 1, funnelLeft._id + 1, newApex,
 				norm(funnelLeft._dir));
@@ -90,8 +92,8 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 	}
 
 	// Now handle goal
-	const FusionCrowd::Math::Vector2 goalPt = path->getGoalCentroid();
-	FusionCrowd::Math::Vector2 goalDir(goalPt - apex._pos);
+	const Vector2 goalPt = path->getGoalCentroid();
+	Vector2 goalDir(goalPt - apex._pos);
 
 	if (funnelLeft.isOnLeft(goalDir)) {
 		// The goal point is on the left side of the funnel
@@ -121,17 +123,19 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 		portal = path->getPortal(i);
 
 		// investigate the left point
-		pLeft.set(portal->getLeft(radius));
+		pLeft = portal->getLeft(radius);
 		bool apexMoved = false;
 		while (!_right.empty()) {
 			std::list< FunnelEdge >::iterator itr = _right.begin();
-			FusionCrowd::Math::Vector2 dir = pLeft - itr->_origin;
+			Vector2 dir = pLeft - itr->_origin;
 			if (itr->isOnRight(dir)) {
 				apexMoved = true;
-				FusionCrowd::Math::Vector2 newApex = itr->_origin + itr->_dir;
-				path->setWaypoints(itr->_id + 1, itr->_endID + 1, newApex,
-					norm(itr->_dir));
+				Vector2 newApex = itr->_origin + itr->_dir;
 				apex.set(itr->_endID, newApex);
+
+				Vector2 normDir; itr->_dir.Normalize(normDir);
+				path->setWaypoints(itr->_id + 1, itr->_endID + 1, newApex, normDir);
+
 				_right.pop_front();
 			}
 			else {
@@ -145,7 +149,7 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 		else {
 			std::list< FunnelEdge >::reverse_iterator itr = _left.rbegin();
 			while (!_left.empty()) {
-				FusionCrowd::Math::Vector2 dir = pLeft - itr->_origin;
+				Vector2 dir = pLeft - itr->_origin;
 				if (itr->isOnRight(dir)) {
 					_left.pop_back();
 					itr = _left.rbegin();
@@ -158,22 +162,22 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 				_left.push_back(FunnelEdge(apex._id, i, pLeft - apex._pos, apex._pos));
 			}
 			else {
-				FusionCrowd::Math::Vector2 origin(itr->_origin + itr->_dir);
+				Vector2 origin(itr->_origin + itr->_dir);
 				_left.push_back(FunnelEdge(itr->_endID, i, pLeft - origin, origin));
 			}
 		}
 
 		// investigate the right point
-		pRight.set(portal->getRight(radius));
+		pRight = portal->getRight(radius);
 		apexMoved = false;
 		while (!_left.empty()) {
 			std::list< FunnelEdge >::iterator itr = _left.begin();
-			FusionCrowd::Math::Vector2 dir = pRight - itr->_origin;
+			Vector2 dir = pRight - itr->_origin;
 			if (itr->isOnLeft(dir)) {
 				apexMoved = true;
-				FusionCrowd::Math::Vector2 newApex = itr->_origin + itr->_dir;
-				path->setWaypoints(itr->_id + 1, itr->_endID + 1, newApex,
-					norm(itr->_dir));
+				Vector2 newApex = itr->_origin + itr->_dir;
+				Vector2 normDir; itr->_dir.Normalize(normDir);
+				path->setWaypoints(itr->_id + 1, itr->_endID + 1, newApex, normDir);
 				apex.set(itr->_endID, newApex);
 				_left.pop_front();
 			}
@@ -188,7 +192,7 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 		else {
 			std::list< FunnelEdge >::reverse_iterator itr = _right.rbegin();
 			while (!_right.empty()) {
-				FusionCrowd::Math::Vector2 dir = pRight - itr->_origin;
+				Vector2 dir = pRight - itr->_origin;
 				if (itr->isOnLeft(dir)) {
 					_right.pop_back();
 					itr = _right.rbegin();
@@ -201,24 +205,26 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 				_right.push_back(FunnelEdge(apex._id, i, pRight - apex._pos, apex._pos));
 			}
 			else {
-				FusionCrowd::Math::Vector2 origin(itr->_origin + itr->_dir);
+				Vector2 origin(itr->_origin + itr->_dir);
 				_right.push_back(FunnelEdge(itr->_endID, i, pRight - origin, origin));
 			}
 		}
 	}
 	// handle the goal
-	const FusionCrowd::Math::Vector2 goalPt = path->getGoalCentroid();
-	FusionCrowd::Math::Vector2 goalDir;
+	const Vector2 goalPt = path->getGoalCentroid();
+	Vector2 goalDir;
 
 	bool apexMoved = false;
 	while (!_left.empty()) {
 		std::list< FunnelEdge >::iterator itr = _left.begin();
-		goalDir.set(goalPt - itr->_origin);
+		goalDir = goalPt - itr->_origin;
 		if (itr->isOnLeft(goalDir)) {
 			apexMoved = true;
-			FusionCrowd::Math::Vector2 newApex = itr->_origin + itr->_dir;
+			Vector2 newApex = itr->_origin + itr->_dir;
 			apex.set(itr->_endID, newApex);
-			path->setWaypoints(itr->_id + 1, itr->_endID + 1, newApex, norm(itr->_dir));
+
+			Vector2 normDir; itr->_dir.Normalize(normDir);
+			path->setWaypoints(itr->_id + 1, itr->_endID + 1, newApex, normDir);
 			_left.pop_front();
 		}
 		else {
@@ -226,20 +232,21 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 		}
 	}
 	if (apexMoved) {
-		goalDir.set(goalPt - apex._pos);
-		path->setWaypoints(apex._id + 1, PORTAL_COUNT, goalPt, norm(goalDir));
+		(goalPt - apex._pos).Normalize(goalDir);
+		path->setWaypoints(apex._id + 1, PORTAL_COUNT, goalPt, goalDir);
 	}
 	else {
 		// apexMoved is already false -- it is the only way to reach this branch
 		while (!_right.empty()) {
 			std::list< FunnelEdge >::iterator itr = _right.begin();
-			goalDir.set(goalPt - itr->_origin);
+			goalDir = goalPt - itr->_origin;
 			if (itr->isOnRight(goalDir)) {
 				apexMoved = true;
-				FusionCrowd::Math::Vector2 newApex = itr->_origin + itr->_dir;
+				Vector2 newApex = itr->_origin + itr->_dir;
 				apex.set(itr->_endID, newApex);
-				path->setWaypoints(itr->_id + 1, itr->_endID + 1, newApex,
-					norm(itr->_dir));
+
+				Vector2 normDir; itr->_dir.Normalize(normDir);
+				path->setWaypoints(itr->_id + 1, itr->_endID + 1, newApex, normDir);
 				_right.pop_front();
 			}
 			else {
@@ -247,8 +254,9 @@ void FunnelPlanner::computeCrossing(float radius, const FusionCrowd::Math::Vecto
 			}
 		}
 
-		goalDir.set(goalPt - apex._pos);
-		path->setWaypoints(apex._id + 1, PORTAL_COUNT, goalPt, norm(goalDir));
+		(goalPt - apex._pos).Normalize(goalDir);
+
+		path->setWaypoints(apex._id + 1, PORTAL_COUNT, goalPt, goalDir);
 
 	}
 #endif	// SIMPLE_FUNNEL

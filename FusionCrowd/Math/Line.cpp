@@ -1,5 +1,7 @@
 #include "Line.h"
+#include "../MathUtil.h"
 
+using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
@@ -15,7 +17,7 @@ namespace FusionCrowd
 		}
 
 		Vector2 Line::NearestPt(const Vector2 & p) const {
-			float t = _direction * (p - _point);
+			float t = _direction.Dot(p - _point);
 			return _point + t * _direction;
 		}
 

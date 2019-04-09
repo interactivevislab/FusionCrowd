@@ -3,9 +3,9 @@
 #include <fstream>
 
 #include "NavMeshNode.h"
-#include "../../Math/vector.h"
 #include "../../Config.h"
 #include "../Obstacle.h"
+#include "../../MathUtil.h"
 
 // FORWARD DECLARATIONS
 class NavMeshNode;
@@ -18,7 +18,7 @@ public:
 
 	NavMeshObstacle() : Obstacle(), _node(0x0) {}
 
-	bool LoadFromAscii(std::ifstream & f, FusionCrowd::Math::Vector2 * vertices);
+	bool LoadFromAscii(std::ifstream & f, DirectX::SimpleMath::Vector2 * vertices);
 	inline const NavMeshNode * getNode() const { return _node; }
 
 	~NavMeshObstacle();

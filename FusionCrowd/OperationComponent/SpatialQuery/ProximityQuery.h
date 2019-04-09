@@ -1,7 +1,7 @@
 #pragma once
 #include "../../Config.h"
-#include "../../Math/vector.h"
 #include "../../NavComponents/Obstacle.h"
+#include "../../MathUtil.h"
 
 #include <vector>
 
@@ -17,7 +17,7 @@ namespace FusionCrowd
 		virtual ~ProximityQuery() {}
 
 		virtual void StartQuery() = 0;
-		virtual Math::Vector2 GetQueryPoint() = 0;
+		virtual DirectX::SimpleMath::Vector2 GetQueryPoint() = 0;
 		virtual float GetMaxAgentRange() = 0;
 		virtual float GetMaxObstacleRange() = 0;
 		virtual void FilterAgent(const Agent * agent, float distSq) = 0;

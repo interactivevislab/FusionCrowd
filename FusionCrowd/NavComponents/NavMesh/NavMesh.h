@@ -4,12 +4,12 @@
 #include <map>
 #include <vector>
 
-#include "../../Math/vector.h"
 #include "../../Config.h"
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h"
 #include "NavMeshNode.h"
 #include "Resource.h"
+#include "../../MathUtil.h"
 
 // forward declarations
 class NavMesh;
@@ -43,7 +43,7 @@ public:
 	//Vertex
 	void SetVertexCount(size_t count);
 	void SetVertex(unsigned int i, float x, float y);
-	inline FusionCrowd::Math::Vector2 * GetVertices() { return & vertices[0]; }
+	inline DirectX::SimpleMath::Vector2 * GetVertices() { return & vertices[0]; }
 	//Edge
 	void SetEdgeCount(size_t count);
 	NavMeshEdge & GetEdge(unsigned int i);
@@ -63,7 +63,7 @@ public:
 //protected:
 	std::string fileName;
 	size_t vCount;
-	FusionCrowd::Math::Vector2* vertices;
+	DirectX::SimpleMath::Vector2* vertices;
 	int eCount;
 	NavMeshEdge* edges;
 	int obstCount;

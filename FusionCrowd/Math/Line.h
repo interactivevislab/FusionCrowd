@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Config.h"
-#include "vector.h"
+#include "../MathUtil.h"
 
 namespace FusionCrowd
 {
@@ -12,12 +12,12 @@ namespace FusionCrowd
 		{
 		public:
 			Line();
-			Line(const Vector2 & p, const Vector2 & d);
+			Line(const DirectX::SimpleMath::Vector2 & p, const DirectX::SimpleMath::Vector2 & d);
 			~Line();
-			Vector2 NearestPt(const Vector2 & p) const;
+			DirectX::SimpleMath::Vector2 NearestPt(const DirectX::SimpleMath::Vector2 & p) const;
 
-			Vector2 _point;
-			Vector2 _direction;
+			DirectX::SimpleMath::Vector2 _point;
+			DirectX::SimpleMath::Vector2 _direction;
 		};
 	}
 }

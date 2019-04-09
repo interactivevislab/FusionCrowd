@@ -1,7 +1,8 @@
-
 #include "geomQuery.h"
 #include "consts.h"
+#include "../MathUtil.h"
 
+using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
@@ -21,9 +22,9 @@ namespace FusionCrowd
 		// determines the time to collision of a ray from the origin with a circle (center, radius)
 		//	Returns an "infinity" style number if no collision
 		float rayCircleTTC(const Vector2 & dir, const Vector2 & center, float radius) {
-			float a = absSq(dir);
-			float b = -2 * (dir * center);
-			float c = absSq(center) - (radius * radius);
+			float a = dir.LengthSquared();
+			float b = -2 * dir.Dot(center);
+			float c = center.LengthSquared() - (radius * radius);
 			float discr = b * b - 4 * a * c;
 			if (discr < 0.f) {
 				return INFTY;

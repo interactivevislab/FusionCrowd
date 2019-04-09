@@ -2,9 +2,8 @@
 #include "../Path/PortalPath.h"
 #include "../Path/PathPlanner.h"
 #include "../Path/Route.h"
-#include "../Math/vector.h"
 
-
+using namespace DirectX::SimpleMath;
 
 NavMeshCompnent::NavMeshCompnent()
 {
@@ -14,7 +13,7 @@ void NavMeshCompnent::SetPrefVelocity(const FusionCrowd::Agent* agent, const Goa
 {
 	PortalPath * path = _localizer->getPath(agent->_id);
 	if (path == NULL) {
-		FusionCrowd::Math::Vector2 goalPoint = goal->getCentroid();
+		Vector2 goalPoint = goal->getCentroid();
 		unsigned int goalNode = _localizer->getNode(goalPoint);
 		if (goalNode == NavMeshLocation::NO_NODE) {
 			return;

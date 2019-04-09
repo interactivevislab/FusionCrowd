@@ -31,7 +31,7 @@ void Simulator::AddAgent(FusionCrowd::Agent agent)
 }
 
 void Simulator::AddAgent(float maxAngleVel, float maxNeighbors, int obstacleSet, float neighborDist, float radius,
-	float prefSpeed, float maxSpeed, float maxAccel, FusionCrowd::Math::Vector2 pos)
+	float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos)
 {
 	FusionCrowd::Agent agent;
 	agent._id = agents.size();

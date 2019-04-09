@@ -5,6 +5,8 @@
 
 //const std::string NavMesh::LABEL = "navmesh";
 
+using namespace DirectX::SimpleMath;
+
 NavMesh::NavMesh(const std::string & name) : Resource(name), vCount(0), vertices(0x0),
 nCount(0), nodes(0x0), eCount(0),
 edges(0x0), obstCount(0), obstacles(0x0),
@@ -50,10 +52,10 @@ bool NavMesh::finalize()
 		nID = reinterpret_cast<size_t>(edge._node1);
 		edge._node1 = &nodes[nID];
 		// compute edge distance
-		edge._distance = abs(edge._node0->getCenter() - edge._node1->getCenter());
+		edge._distance = (edge._node0->getCenter() - edge._node1->getCenter()).Length();
 
 		// Confirm that point is on the left when looking from node0
-		if (det(edge._dir, edge._node0->_center - edge._point) > 0.f) {
+		if (FusionCrowd::MathUtil::det(edge._dir, edge._node0->_center - edge._point) > 0.f) {
 			NavMeshNode * tmp = edge._node0;
 			edge._node0 = edge._node1;
 			edge._node1 = tmp;
@@ -213,12 +215,12 @@ void NavMesh::SetVertexCount(size_t count)
 		delete[] vertices;
 	}
 	vCount = count;
-	vertices = new FusionCrowd::Math::Vector2[vCount];
+	vertices = new Vector2[vCount];
 }
 
 void NavMesh::SetVertex(unsigned int i, float x, float y)
 {
-	vertices[i].set(x, y);
+	vertices[i] = Vector2(x, y);
 }
 #pragma endregion
 
