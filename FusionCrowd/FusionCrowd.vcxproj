@@ -60,6 +60,7 @@
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="Path\WayPortal.h" />
     <ClInclude Include="OperationComponent\SpatialQuery\SpatialQuery.h" />
+    <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agent.cpp" />
@@ -94,6 +95,7 @@
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Path\WayPortal.cpp" />
     <ClCompile Include="OperationComponent\SpatialQuery\SpatialQuery.cpp" />
+    <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

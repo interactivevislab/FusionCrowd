@@ -135,7 +135,11 @@
     <ClInclude Include="OperationComponent\KaramouzasComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="MathUtil.h">
+=======
+    <ClInclude Include="OperationComponent\ZanlungoComponent.h">
+>>>>>>> 4b7d1e827f212d164b378ba9e57277824dc64afe
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -234,6 +238,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OperationComponent\ZanlungoComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
