@@ -24,6 +24,7 @@
     <ClInclude Include="MathUtil.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
+    <ClInclude Include="OperationComponent\PedVOComponent.h" />
     <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="OperationComponent\Helbing\HelbingParameters.h" />
     <ClInclude Include="OperationComponent\HelbingComponent.h" />
@@ -66,6 +67,7 @@
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="Math\Line.cpp" />
+    <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
     <ClCompile Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.cpp" />
     <ClCompile Include="OperationComponent\Helbing\HelbingParameters.cpp" />
     <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
