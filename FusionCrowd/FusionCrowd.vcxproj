@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="AgentShape\Ellipse.h" />
+    <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="MathUtil.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
@@ -65,6 +67,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Agent.cpp" />
+    <ClCompile Include="AgentShape\Ellipse.cpp" />
+    <ClCompile Include="OperationComponent\GCFComponent.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="Math\Line.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />

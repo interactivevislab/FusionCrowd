@@ -35,6 +35,8 @@
     <ClCompile Include="OperationComponent\SpatialQuery\SpatialQuery.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
+    <ClCompile Include="OperationComponent\GCFComponent.cpp" />
+    <ClCompile Include="AgentShape\Ellipse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -80,6 +82,8 @@
     <ClInclude Include="OperationComponent\SpatialQuery\SpatialQuery.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\PedVOComponent.h" />
+    <ClInclude Include="OperationComponent\GCFComponent.h" />
+    <ClInclude Include="AgentShape\Ellipse.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
