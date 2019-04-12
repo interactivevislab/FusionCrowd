@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Route.h"
-#include "../NavComponents/NavMesh/NavMesh.h"
-#include "../Goal/Goal.h"
-#include "../Agent.h"
-#include "../Config.h"
-#include "../MathUtil.h"
+#include "NavComponents/NavMesh/NavMesh.h"
+#include "Goal/Goal.h"
+#include "Agent.h"
+#include "Config.h"
+#include "Math/MathUtil.h"
 
 // Forward Declaration
 class NavMeshLocalizer;

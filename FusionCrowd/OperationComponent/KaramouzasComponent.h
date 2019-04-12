@@ -1,7 +1,7 @@
 #pragma once
-#include "../IOperComponent.h"
-#include "../Agent.h"
-#include "../Config.h"
+#include "IOperComponent.h"
+#include "Agent.h"
+#include "Config.h"
 
 #include <map>
 

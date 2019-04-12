@@ -1,6 +1,6 @@
 #pragma once
-#include "../../Config.h"
-#include "../../Agent.h"
+#include "Config.h"
+#include "Agent.h"
 
 #include <vector>
 

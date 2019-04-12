@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Config.h"
-#include "../MathUtil.h"
+#include "Config.h"
+#include "Math/MathUtil.h"
 
 class FUSION_CROWD_API Obstacle
 {

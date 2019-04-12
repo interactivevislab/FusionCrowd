@@ -1,7 +1,7 @@
 #pragma once
 
 #include <list>
-#include "../MathUtil.h"
+#include "Math/MathUtil.h"
 
 // FORWARD DECLARATION
 class PortalPath;

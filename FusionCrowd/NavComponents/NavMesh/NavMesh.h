@@ -4,12 +4,12 @@
 #include <map>
 #include <vector>
 
-#include "../../Config.h"
+#include "Config.h"
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h"
 #include "NavMeshNode.h"
 #include "Resource.h"
-#include "../../MathUtil.h"
+#include "Math/MathUtil.h"
 
 // forward declarations
 class NavMesh;

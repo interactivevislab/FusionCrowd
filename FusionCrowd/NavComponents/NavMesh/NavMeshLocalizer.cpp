@@ -1,8 +1,8 @@
 #include "NavMeshLocalizer.h"
 
 #include "NavMeshNode.h"
-#include "../../Path/PathPlanner.h"
-#include "../../Path/PortalPath.h"
+#include "Path/PathPlanner.h"
+#include "Path/PortalPath.h"
 
 #include <limits>
 

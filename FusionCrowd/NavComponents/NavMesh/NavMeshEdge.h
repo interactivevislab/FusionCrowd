@@ -2,10 +2,10 @@
 
 #include <fstream>
 
-#include "../../Config.h"
-#include "../../Path/PrefVelocity.h"
+#include "Config.h"
+#include "Path/PrefVelocity.h"
 #include "NavMeshNode.h"
-#include "../../MathUtil.h"
+#include "Math/MathUtil.h"
 
 // Forward declarations
 class NavMesh;

@@ -2,8 +2,8 @@
 #include "MinHeap.h"
 #include "Route.h"
 
-#include "../NavComponents/NavMesh/NavMesh.h"
-#include "../NavComponents/NavMesh/NavMeshNode.h"
+#include "NavComponents/NavMesh/NavMesh.h"
+#include "NavComponents/NavMesh/NavMeshNode.h"
 
 #include <iostream>
 #include <cassert>

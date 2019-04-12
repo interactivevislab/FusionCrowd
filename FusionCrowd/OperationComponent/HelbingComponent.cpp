@@ -1,6 +1,6 @@
 #include "HelbingComponent.h"
 #include "Helbing/HelbingParameters.h"
-#include "../Math/geomQuery.h"
+#include "Math/geomQuery.h"
 
 using namespace DirectX::SimpleMath;
 

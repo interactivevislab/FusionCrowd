@@ -3,9 +3,9 @@
 #include "NavMesh.h"
 #include "NavMeshNode.h"
 #include "Resource.h"
-#include "../../Agent.h"
-#include "../../Config.h"
-#include "../../MathUtil.h"
+#include "Agent.h"
+#include "Config.h"
+#include "Math/MathUtil.h"
 #include <unordered_map>
 
 

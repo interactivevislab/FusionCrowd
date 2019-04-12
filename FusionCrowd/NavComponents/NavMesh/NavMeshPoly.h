@@ -3,8 +3,8 @@
 #include <fstream>
 #include <string>
 
-#include "../../Config.h"
-#include "../../MathUtil.h"
+#include "Config.h"
+#include "Math/MathUtil.h"
 
 class FUSION_CROWD_API NavMeshPoly
 {

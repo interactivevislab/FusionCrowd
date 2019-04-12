@@ -1,5 +1,5 @@
 #include "Goal.h"
-#include "GoalSet.h"
+#include "Goal/GoalSet.h"
 
 Goal::~Goal()
 {

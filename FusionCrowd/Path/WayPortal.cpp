@@ -1,5 +1,5 @@
 #include "WayPortal.h"
-#include "../MathUtil.h"
+#include "Math/MathUtil.h"
 
 using namespace DirectX::SimpleMath;
 

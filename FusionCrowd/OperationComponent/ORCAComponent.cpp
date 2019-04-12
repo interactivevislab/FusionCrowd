@@ -1,5 +1,5 @@
 #include "ORCAComponent.h"
-#include "../NavComponents/Obstacle.h"
+#include "NavComponents/Obstacle.h"
 
 #include <algorithm>
 #include <cassert>

@@ -1,8 +1,8 @@
 #pragma once
-#include "../../Config.h"
-#include "../../NavComponents/Obstacle.h"
+#include "Config.h"
+#include "NavComponents/Obstacle.h"
 #include "ProximityQuery.h"
-#include "../../MathUtil.h"
+#include "Math/MathUtil.h"
 
 #include <vector>
 

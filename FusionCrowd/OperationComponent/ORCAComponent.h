@@ -1,8 +1,8 @@
 #pragma once
-#include "../IOperComponent.h"
-#include "../Agent.h"
-#include "../Config.h"
-#include "../Math/Line.h"
+#include "IOperComponent.h"
+#include "Agent.h"
+#include "Config.h"
+#include "Math/Line.h"
 
 namespace FusionCrowd
 {

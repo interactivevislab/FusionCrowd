@@ -1,11 +1,11 @@
 #include "PortalPath.h"
 #include "Funnel.h"
 #include "PathPlanner.h"
-#include "../NavComponents/NavMesh/NavMeshLocalizer.h"
-#include "../Agent.h"
-#include "../Math/consts.h"
-#include "../Goal/Goal.h"
-#include "../MathUtil.h"
+#include "NavComponents/NavMesh/NavMeshLocalizer.h"
+#include "Agent.h"
+#include "Math/consts.h"
+#include "Goal/Goal.h"
+#include "Math/MathUtil.h"
 
 using namespace DirectX::SimpleMath;
 

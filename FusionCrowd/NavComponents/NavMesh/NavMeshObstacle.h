@@ -3,9 +3,9 @@
 #include <fstream>
 
 #include "NavMeshNode.h"
-#include "../../Config.h"
-#include "../Obstacle.h"
-#include "../../MathUtil.h"
+#include "Config.h"
+#include "NavComponents/Obstacle.h"
+#include "Math/MathUtil.h"
 
 // FORWARD DECLARATIONS
 class NavMeshNode;

@@ -1,7 +1,7 @@
 #include "NavMeshCompnent.h"
-#include "../Path/PortalPath.h"
-#include "../Path/PathPlanner.h"
-#include "../Path/Route.h"
+#include "Path/PortalPath.h"
+#include "Path/PathPlanner.h"
+#include "Path/Route.h"
 
 using namespace DirectX::SimpleMath;
 

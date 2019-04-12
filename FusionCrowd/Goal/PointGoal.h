@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Goal.h"
-#include "../Config.h"
+#include "Goal/Goal.h"
+#include "Config.h"
 
 namespace FusionCrowd
 {

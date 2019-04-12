@@ -1,7 +1,7 @@
 #include "PointGoal.h"
-#include "../Path/PrefVelocity.h"
-#include "../Math/Geometry2D.h"
-#include "../MathUtil.h"
+#include "Path/PrefVelocity.h"
+#include "Math/Geometry2D.h"
+#include "Math/MathUtil.h"
 
 namespace FusionCrowd
 {

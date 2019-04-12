@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../NavComponents/NavMesh/NavMesh.h"
-#include "../Config.h"
-#include "../MathUtil.h"
+#include "NavComponents/NavMesh/NavMesh.h"
+#include "Config.h"
+#include "Math/MathUtil.h"
 
 #include <list>
 #include <map>

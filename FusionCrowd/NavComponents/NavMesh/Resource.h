@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ResourceManager.h"
-#include "../../Config.h"
+#include "Config.h"
 
 #include <string>
 

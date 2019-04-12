@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../Math/Geometry2D.h"
-#include "../Path/PrefVelocity.h"
-#include "../Agent.h"
-#include "../Config.h"
-#include "../MathUtil.h"
+#include "Math/Geometry2D.h"
+#include "Path/PrefVelocity.h"
+#include "Agent.h"
+#include "Config.h"
+#include "Math/MathUtil.h"
 
 // Forward declaration
 class GoalSet;

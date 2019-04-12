@@ -5,7 +5,7 @@
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h"
 #include "NavMeshPoly.h"
-#include "../../Config.h"
+#include "Config.h"
 
 
 // Forward declarations

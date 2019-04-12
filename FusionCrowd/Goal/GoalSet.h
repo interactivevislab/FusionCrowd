@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 
-#include "../Config.h"
+#include "Config.h"
 
 // Forward declaration
 class Goal;

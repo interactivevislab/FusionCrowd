@@ -1,5 +1,5 @@
 #include "GoalSet.h"
-#include "Goal.h"
+#include "Goal/Goal.h"
 
 
 

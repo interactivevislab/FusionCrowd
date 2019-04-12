@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../NavComponents/NavMesh/NavMeshEdge.h"
-#include "../Config.h"
+#include "NavComponents/NavMesh/NavMeshEdge.h"
+#include "Config.h"
 #include "PrefVelocity.h"
-#include "../MathUtil.h"
+#include "Math/MathUtil.h"
 
 class PortalRoute;
 class PortalPath;

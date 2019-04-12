@@ -1,9 +1,9 @@
 #pragma once
-#include "../IOperComponent.h"
-#include "../NavComponents/Obstacle.h"
-#include "../Agent.h"
-#include "../Config.h"
-#include "../MathUtil.h"
+#include "IOperComponent.h"
+#include "NavComponents/Obstacle.h"
+#include "Agent.h"
+#include "Config.h"
+#include "Math/MathUtil.h"
 
 namespace FusionCrowd
 {

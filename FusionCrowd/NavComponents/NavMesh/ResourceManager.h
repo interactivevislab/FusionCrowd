@@ -3,7 +3,7 @@
 #include <map>
 #include <string>
 
-#include "../../Config.h"
+#include "Config.h"
 
 // Forward declaration
 class Resource;

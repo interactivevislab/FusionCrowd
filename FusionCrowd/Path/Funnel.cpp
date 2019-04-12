@@ -1,5 +1,5 @@
 #include "Funnel.h"
-#include "PortalPath.h"
+#include "Path/PortalPath.h"
 
 #include <cassert>
 #include <iostream>

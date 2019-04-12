@@ -1,7 +1,7 @@
 #include "KaramouzasComponent.h"
-#include "../Math/consts.h"
-#include "../Math/geomQuery.h"
-#include "../MathUtil.h"
+#include "Math/consts.h"
+#include "Math/geomQuery.h"
+#include "Math/MathUtil.h"
 
 #include <algorithm>
 #include <list>

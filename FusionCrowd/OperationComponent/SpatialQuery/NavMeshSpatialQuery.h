@@ -1,10 +1,10 @@
 #pragma once
-#include "../../Config.h"
-#include "../../NavComponents/Obstacle.h"
-#include "../../Agent.h"
-#include "../../NavComponents/NavMesh/NavMeshLocalizer.h"
+#include "Config.h"
+#include "NavComponents/Obstacle.h"
+#include "Agent.h"
+#include "NavComponents/NavMesh/NavMeshLocalizer.h"
 #include "ProximityQuery.h"
-#include "../../MathUtil.h"
+#include "Math/MathUtil.h"
 
 #include <vector>
 
