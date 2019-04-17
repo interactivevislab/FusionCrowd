@@ -20,9 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
+    <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Math\Util.h" />
     <ClInclude Include="Navigation\INavComponent.h" />
+    <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
@@ -65,42 +67,42 @@
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Simulator.cpp" />  
+    <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />
-	<ClCompile Include="Math\Line.cpp" />
+    <ClCompile Include="Math\Line.cpp" />
     <ClCompile Include="Math\Geometry2D.cpp" />
-    <ClCompile Include="Math\geomQuery.cpp" />	
+    <ClCompile Include="Math\geomQuery.cpp" />
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
-    <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />     
+    <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
     <ClCompile Include="OperationComponent\Helbing\HelbingParameters.cpp" />
     <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
-    <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />	
+    <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="TacticComponent\Path\MinHeap.cpp" />
     <ClCompile Include="TacticComponent\Path\Funnel.cpp" />
     <ClCompile Include="TacticComponent\Path\PathPlanner.cpp" />
     <ClCompile Include="TacticComponent\Path\PortalPath.cpp" />
     <ClCompile Include="TacticComponent\Path\Route.cpp" />
-    <ClCompile Include="TacticComponent\Path\PrefVelocity.cpp" />	
-    <ClCompile Include="TacticComponent\Path\WayPortal.cpp" />	
-	<ClCompile Include="TacticComponent\NavMeshComponent.cpp" />
-    <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />	
+    <ClCompile Include="TacticComponent\Path\PrefVelocity.cpp" />
+    <ClCompile Include="TacticComponent\Path\WayPortal.cpp" />
+    <ClCompile Include="TacticComponent\NavMeshComponent.cpp" />
+    <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
     <ClCompile Include="Navigation\SpatialQuery\SpatialQuery.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMesh.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshEdge.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshObstacle.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshNode.cpp" />
-    <ClCompile Include="Navigation\NavMesh\NavMeshPoly.cpp" />		
+    <ClCompile Include="Navigation\NavMesh\NavMeshPoly.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshLocalizer.cpp" />
     <ClCompile Include="Navigation\NavMesh\Resource.cpp" />
-    <ClCompile Include="Navigation\NavMesh\ResourceManager.cpp" />    
+    <ClCompile Include="Navigation\NavMesh\ResourceManager.cpp" />
     <ClCompile Include="Navigation\NavSystem.cpp" />
-    <ClCompile Include="Navigation\Obstacle.cpp" />	
+    <ClCompile Include="Navigation\Obstacle.cpp" />
     <ClCompile Include="StrategyComponent\Goal\PointGoal.cpp" />
-    <ClCompile Include="StrategyComponent\Goal\GoalSet.cpp" />	
-    <ClCompile Include="StrategyComponent\Goal\Goal.cpp" />	
+    <ClCompile Include="StrategyComponent\Goal\GoalSet.cpp" />
+    <ClCompile Include="StrategyComponent\Goal\Goal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

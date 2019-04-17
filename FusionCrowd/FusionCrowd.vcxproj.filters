@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Simulator.cpp" />  
+    <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
-	<ClCompile Include="Math\Geometry2D.cpp" />
+    <ClCompile Include="Math\Geometry2D.cpp" />
     <ClCompile Include="Math\geomQuery.cpp" />
     <ClCompile Include="Math\Line.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />
@@ -13,10 +13,10 @@
     <ClCompile Include="OperationComponent\Helbing\HelbingParameters.cpp" />
     <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
-	<ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
-	<ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />  
-	<ClCompile Include="OperationComponent\PedVOComponent.cpp" />
-    <ClCompile Include="OperationComponent\GCFComponent.cpp" />	
+    <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
+    <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
+    <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
+    <ClCompile Include="OperationComponent\GCFComponent.cpp" />
     <ClCompile Include="TacticComponent\Path\Funnel.cpp" />
     <ClCompile Include="TacticComponent\Path\MinHeap.cpp" />
     <ClCompile Include="TacticComponent\Path\PathPlanner.cpp" />
@@ -24,7 +24,7 @@
     <ClCompile Include="TacticComponent\Path\PrefVelocity.cpp" />
     <ClCompile Include="TacticComponent\Path\Route.cpp" />
     <ClCompile Include="TacticComponent\Path\WayPortal.cpp" />
-	<ClCompile Include="TacticComponent\NavMeshComponent.cpp" />
+    <ClCompile Include="TacticComponent\NavMeshComponent.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMesh.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshEdge.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshLocalizer.cpp" />
@@ -41,13 +41,12 @@
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Config.h" />
-	<ClInclude Include="Simulator.h" />
+    <ClInclude Include="Simulator.h" />
     <ClInclude Include="Math\Geometry2D.h" />
     <ClInclude Include="Math\consts.h" />
     <ClInclude Include="Math\geomQuery.h" />
-	<ClInclude Include="Math\Util.h" />
-	<ClInclude Include="Math\Line.h" />
-    <ClInclude Include="AgentShape\Ellipse.h" />
+    <ClInclude Include="Math\Util.h" />
+    <ClInclude Include="Math\Line.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="OperationComponent\Helbing\HelbingParameters.h" />
     <ClInclude Include="OperationComponent\HelbingComponent.h" />
@@ -55,7 +54,6 @@
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\IOperationComponent.h" />
     <ClInclude Include="OperationComponent\PedVOComponent.h" />
-    <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="StrategyComponent\Goal\Goal.h" />
     <ClInclude Include="StrategyComponent\Goal\GoalSet.h" />
     <ClInclude Include="StrategyComponent\Goal\PointGoal.h" />
@@ -84,6 +82,9 @@
     <ClInclude Include="Navigation\NavSystem.h" />
     <ClInclude Include="Navigation\Obstacle.h" />
     <ClInclude Include="Navigation\INavComponent.h" />
+    <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
+    <ClInclude Include="AgentShape\Ellipse.h" />
+    <ClInclude Include="OperationComponent\GCFComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
