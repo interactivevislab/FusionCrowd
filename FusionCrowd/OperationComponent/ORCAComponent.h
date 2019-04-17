@@ -1,5 +1,5 @@
 #pragma once
-#include "IOperComponent.h"
+#include "IOperationComponent.h"
 #include "Agent.h"
 #include "Config.h"
 #include "Math/Line.h"
@@ -9,7 +9,7 @@ namespace FusionCrowd
 	namespace ORCA
 	{
 		class FUSION_CROWD_API ORCAComponent :
-			public IOperComponent
+			public IOperationComponent
 		{
 		public:
 			ORCAComponent();

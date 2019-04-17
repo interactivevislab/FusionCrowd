@@ -1,7 +1,7 @@
 #pragma once
 #include "Agent.h"
 #include "Config.h"
-#include "IOperComponent.h"
+#include "IOperationComponent.h"
 
 #include <map>
 
@@ -22,7 +22,7 @@ namespace FusionCrowd
 		};
 
 		class FUSION_CROWD_API ZanlungoComponent :
-			public IOperComponent
+			public IOperationComponent
 		{
 		public:
 			ZanlungoComponent();

@@ -1,5 +1,5 @@
 #include "Line.h"
-#include "Math/MathUtil.h"
+#include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;
 

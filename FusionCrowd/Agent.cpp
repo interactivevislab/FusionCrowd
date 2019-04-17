@@ -1,5 +1,5 @@
 #include "Agent.h"
-#include "OperationComponent/SpatialQuery/SpatialQueryStructs.h"
+#include "Navigation/SpatialQuery/SpatialQueryStructs.h"
 
 using namespace DirectX::SimpleMath;
 

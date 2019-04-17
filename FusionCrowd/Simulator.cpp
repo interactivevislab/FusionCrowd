@@ -1,8 +1,7 @@
 #include "Simulator.h"
-#include "NavComponents/NavMeshCompnent.h"
-#include "Goal/PointGoal.h"
-#include "NavComponents/NavMesh/NavMeshLocalizer.h"
-#include "NavComponents/NavMeshCompnent.h"
+#include "Navigation/NavMesh/NavMeshLocalizer.h"
+#include "TacticComponent/NavMeshComponent.h"
+#include "StrategyComponent/Goal/PointGoal.h"
 #include "OperationComponent/HelbingComponent.h"
 
 Simulator::Simulator()
@@ -47,9 +46,14 @@ void Simulator::AddAgent(float maxAngleVel, float maxNeighbors, int obstacleSet,
 	agents.push_back(agent);
 }
 
-void Simulator::AddOperComponent(IOperComponent* operComponent)
+void Simulator::AddOperComponent(IOperationComponent* operComponent)
 {
 	operComponents.push_back(operComponent);
+}
+
+void Simulator::AddTacticComponent(ITacticComponent* tacticComponent)
+{
+	tacticComponents.push_back(tacticComponent);
 }
 
 void Simulator::AddSpatialQuery(FusionCrowd::SpatialQuery* spatialQuery)

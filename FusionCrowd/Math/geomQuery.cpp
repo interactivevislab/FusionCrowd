@@ -1,6 +1,6 @@
 #include "geomQuery.h"
 #include "Math/consts.h"
-#include "Math/MathUtil.h"
+#include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;
 

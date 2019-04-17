@@ -1,6 +1,6 @@
 #include "ZanlungoComponent.h"
 #include "Math/geomQuery.h"
-#include "Math/MathUtil.h"
+#include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "IOperComponent.h"
+#include "IOperationComponent.h"
 #include "Agent.h"
 #include "Config.h"
 
@@ -23,7 +23,7 @@ namespace FusionCrowd
 		};
 
 		class FUSION_CROWD_API KaramouzasComponent :
-			public IOperComponent
+			public IOperationComponent
 		{
 		public:
 			KaramouzasComponent();

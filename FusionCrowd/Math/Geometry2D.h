@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Config.h"
-#include "Path/PrefVelocity.h"
-#include "Math/MathUtil.h"
+#include "TacticComponent/Path/PrefVelocity.h"
+#include "Math/Util.h"
 
 namespace FusionCrowd
 {

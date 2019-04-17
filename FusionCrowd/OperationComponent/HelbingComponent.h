@@ -1,16 +1,16 @@
 #pragma once
-#include "IOperComponent.h"
-#include "NavComponents/Obstacle.h"
+#include "OperationComponent/IOperationComponent.h"
+#include "Navigation/Obstacle.h"
 #include "Agent.h"
 #include "Config.h"
-#include "Math/MathUtil.h"
+#include "Math/Util.h"
 
 namespace FusionCrowd
 {
 	namespace Helbing
 	{
 		class FUSION_CROWD_API HelbingComponent :
-			public IOperComponent
+			public IOperationComponent
 		{
 		public:
 			HelbingComponent();

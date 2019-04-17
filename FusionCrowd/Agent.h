@@ -1,8 +1,8 @@
 #pragma once
 
-#include "OperationComponent/SpatialQuery/SpatialQuery.h"
-#include "OperationComponent/SpatialQuery/SpatialQueryStructs.h"
-#include "Path/PrefVelocity.h"
+#include "Navigation/SpatialQuery/SpatialQuery.h"
+#include "Navigation/SpatialQuery/SpatialQueryStructs.h"
+#include "TacticComponent/Path/PrefVelocity.h"
 #include "Config.h"
 
 #include <vector>
