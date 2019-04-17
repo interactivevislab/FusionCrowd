@@ -5,19 +5,20 @@
 
 #include <iostream>
 
+#include "Agent.h"
+#include "Simulator.h"
 #include "Math/consts.h"
 #include "StrategyComponent/Goal/GoalSet.h"
 #include "StrategyComponent/Goal/Goal.h"
 #include "StrategyComponent/Goal/PointGoal.h"
-#include "Simulator.h"
-#include "Agent.h"
+#include "TacticComponent/NavMeshComponent.h"
 #include "OperationComponent/IOperationComponent.h"
 #include "OperationComponent/HelbingComponent.h"
 #include "OperationComponent/KaramouzasComponent.h"
 #include "OperationComponent/ZanlungoComponent.h"
+#include "OperationComponent/PedVOComponent.h"
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
-#include "TacticComponent/NavMeshComponent.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -25,7 +26,7 @@ int main()
 {
 	std::string navPath = "Resources/simple.nav";
 	FusionCrowd::Helbing::HelbingComponent* hComponent = new FusionCrowd::Helbing::HelbingComponent();
-	FusionCrowd::Zanlungo::ZanlungoComponent* zComponent = new FusionCrowd::Zanlungo::ZanlungoComponent();
+	FusionCrowd::PedVO::PedVOComponent* zComponent = new FusionCrowd::PedVO::PedVOComponent();
 	FusionCrowd::NavMeshSpatialQuery* sq = new FusionCrowd::NavMeshSpatialQuery();
 
 	NavMeshComponent nav;
@@ -36,7 +37,7 @@ int main()
 	sim.AddOperComponent(zComponent);
 	sim.AddSpatialQuery(sq);
 
-	const int agentsCount = 6;
+	const int agentsCount = 1;
 
 	for(int i = 0; i < agentsCount; i++)
 	{
@@ -45,7 +46,7 @@ int main()
 	}
 
 	for(int i = 0; i < agentsCount; i++)
-		zComponent->AddAgent(i, 80.0f);
+		zComponent->AddAgent(i,3.0f, 0.1f, 1.0, true, 1.57f, 0.9f);
 
 	sim.InitSimulator(navPath.c_str());
 
