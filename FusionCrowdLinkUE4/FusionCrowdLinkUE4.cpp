@@ -1,18 +1,18 @@
 #include "FusionCrowdLinkUE4.h"
 
 #include "Math/consts.h"
-#include "Goal/GoalSet.h"
-#include "Goal/Goal.h"
-#include "Goal/PointGoal.h"
+#include "StrategyComponent/Goal/GoalSet.h"
+#include "StrategyComponent/Goal/Goal.h"
+#include "StrategyComponent/Goal/PointGoal.h"
 #include "Simulator.h"
 #include "Agent.h"
-#include "IOperComponent.h"
+#include "OperationComponent/IOperationComponent.h"
 #include "OperationComponent/HelbingComponent.h"
 #include "OperationComponent/KaramouzasComponent.h"
 #include "OperationComponent/ZanlungoComponent.h"
-#include "OperationComponent/SpatialQuery/NavMeshSpatialQuery.h"
-#include "NavComponents/NavMesh/NavMeshLocalizer.h"
-#include "NavComponents/NavMeshCompnent.h"
+#include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
+#include "Navigation/NavMesh/NavMeshLocalizer.h"
+#include "TacticComponent/NavMeshComponent.h"
 
 #include <algorithm>
 
@@ -36,7 +36,7 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* naVMeshDir)
 	FusionCrowd::Zanlungo::ZanlungoComponent* zComponent = new FusionCrowd::Zanlungo::ZanlungoComponent();
 	FusionCrowd::NavMeshSpatialQuery* sq = new FusionCrowd::NavMeshSpatialQuery();
 
-	NavMeshCompnent nav;
+	NavMeshComponent nav;
 	nav._localizer = loadNavMeshLocalizer(naVMeshDir, true);
 	sq->SetNavMeshLocalizer(nav._localizer);
 
