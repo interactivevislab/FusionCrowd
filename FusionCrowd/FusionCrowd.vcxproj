@@ -30,7 +30,6 @@
     <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="OperationComponent\PedVOComponent.h" />
     <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
-    <ClInclude Include="OperationComponent\Helbing\HelbingParameters.h" />
     <ClInclude Include="OperationComponent\HelbingComponent.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshLocalizer.h" />
     <ClInclude Include="OperationComponent\ORCAComponent.h" />
@@ -76,7 +75,6 @@
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
-    <ClCompile Include="OperationComponent\Helbing\HelbingParameters.cpp" />
     <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />

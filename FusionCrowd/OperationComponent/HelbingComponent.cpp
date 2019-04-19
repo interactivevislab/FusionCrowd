@@ -1,5 +1,4 @@
 #include "HelbingComponent.h"
-#include "Helbing/HelbingParameters.h"
 #include "Math/geomQuery.h"
 
 using namespace DirectX::SimpleMath;
@@ -8,10 +7,16 @@ namespace FusionCrowd
 {
 	namespace Helbing
 	{
-		HelbingComponent::HelbingComponent() : _mass(80)
+		HelbingComponent::HelbingComponent() :_agentScale(2000.f), _obstScale(2000.f), _reactionTime(0.5f), _bodyForce(1.2e5f), _friction(2.4e5f), _forceDistance(0.08f)
 		{
+
 		}
 
+		HelbingComponent::HelbingComponent(float agentScale, float obstScale, float reactionTime, float bodyForce, float friction, float forceDistance) :
+			_agentScale(2000.f), _obstScale(2000.f), _reactionTime(0.5f), _bodyForce(1.2e5f), _friction(2.4e5f), _forceDistance(0.08f)
+		{
+
+		}
 
 		HelbingComponent::~HelbingComponent()
 		{
@@ -33,7 +38,7 @@ namespace FusionCrowd
 				force += ObstacleForce(agent, obst);
 			}
 
-			Vector2 acc = force / _mass;
+			Vector2 acc = force / _agents[agent->_id]._mass;
 			Vector2 r1Test = acc * 0.1f;
 			agent->_velNew = agent->_vel + acc * 0.1f;
 		}
@@ -46,13 +51,13 @@ namespace FusionCrowd
 				rightOfWay = 1.f;
 			}
 
-			const float D = HelbingParameters::FORCE_DISTANCE;
+			const float D = _forceDistance;
 			Vector2 normal_ij = agent->_pos - other->_pos;
 			float distance_ij = normal_ij.Length();
 			normal_ij /= distance_ij;
 			float Radii_ij = agent->_radius + other->_radius;
 
-			float AGENT_SCALE = HelbingParameters::AGENT_SCALE;
+			float AGENT_SCALE = _agentScale;
 			float D_AGT = D;
 
 			// Right of way-dependent calculations
@@ -108,8 +113,8 @@ namespace FusionCrowd
 				// pushing
 				Vector2 tangent_ij(normal_ij.y, -normal_ij.x);
 
-				f_pushing = normal_ij * (HelbingParameters::BODY_FORCE * (Radii_ij - distance_ij));
-				f_friction = tangent_ij * (HelbingParameters::FRICTION * (Radii_ij - distance_ij)) * fabs((other->_vel - agent->_vel).Dot(tangent_ij));// / distance_ij;
+				f_pushing = normal_ij * (_bodyForce * (Radii_ij - distance_ij));
+				f_friction = tangent_ij * (_friction * (Radii_ij - distance_ij)) * fabs((other->_vel - agent->_vel).Dot(tangent_ij));// / distance_ij;
 				force += f_pushing + f_friction;
 			}
 			return force;
@@ -117,8 +122,8 @@ namespace FusionCrowd
 
 		Vector2 HelbingComponent::ObstacleForce(FusionCrowd::Agent* agent, const Obstacle * obst) const
 		{
-			const float D = HelbingParameters::FORCE_DISTANCE;
-			const float OBST_MAG = HelbingParameters::OBST_SCALE;
+			const float D = _forceDistance;
+			const float OBST_MAG = _obstScale;
 			Vector2 nearPt;	// set by distanceSqToPoint
 			float distSq;	// set by distanceSqToPoint
 			if (obst->distanceSqToPoint(agent->_pos, nearPt, distSq) ==
@@ -140,10 +145,10 @@ namespace FusionCrowd
 					tangent_io *= -1;
 				}
 
-				f_pushing = forceDir * (HelbingParameters::BODY_FORCE * (agent->_radius - dist));
+				f_pushing = forceDir * (_bodyForce * (agent->_radius - dist));
 
 				// friction
-				f_friction = tangent_io * HelbingParameters::FRICTION * (agent->_radius - dist) * (agent->_vel * tangent_io);
+				f_friction = tangent_io * _friction * (agent->_radius - dist) * (agent->_vel * tangent_io);
 				force += f_pushing - f_friction;
 			}
 			return force;
@@ -151,7 +156,7 @@ namespace FusionCrowd
 
 		Vector2 HelbingComponent::DrivingForce(FusionCrowd::Agent* agent) const
 		{
-			return (agent->_velPref.getPreferredVel() - agent->_vel) * (_mass / HelbingParameters::REACTION_TIME);
+			return (agent->_velPref.getPreferredVel() - agent->_vel) * (_agents.at(agent->_id)._mass / _reactionTime);
 		}
 
 		void HelbingComponent::Update(FusionCrowd::Agent* agent, float timeStep)
@@ -173,6 +178,16 @@ namespace FusionCrowd
 
 			agent->UpdateOrient(timeStep);
 			agent->PostUpdate();
+		}
+
+		void HelbingComponent::AddAgent(int idAgent, float mass)
+		{
+			_agents[idAgent] = AgentParamentrs(mass);
+		}
+
+		void HelbingComponent::DeleteAgent(int idAgent)
+		{
+			_agents.erase(idAgent);
 		}
 	}
 }
