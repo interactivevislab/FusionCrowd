@@ -38,7 +38,8 @@ namespace FusionCrowd
 
 		};
 
-		class FUSION_CROWD_API GCFComponent
+		class FUSION_CROWD_API GCFComponent :
+			public IOperationComponent
 		{
 		public:
 			GCFComponent();
