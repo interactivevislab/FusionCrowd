@@ -147,6 +147,11 @@ namespace FusionCrowd
 				//forceDir /= futureDist;
 				//float D = desSpeed * tc + futureDist - _radius - other->_radius;
 				float fDist = forceDir.Length();
+				if (fDist == 0)
+				{
+					fDist = 0.00001f;
+				}
+
 				forceDir /= fDist;
 				float collisionDist = fDist - agent->_radius - other->_radius;
 				float D = std::max(desSpeed * tc + (collisionDist < 0 ? 0 : collisionDist), EPSILON);

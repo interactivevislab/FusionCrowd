@@ -104,7 +104,9 @@ namespace FusionCrowd
 		unsigned int currNode = _localizer->getNode(pt);
 		assert(currNode != NavMeshLocation::NO_NODE &&
 			"Can't use NavMesh for spatial query if the point isn't on the mesh");
-
+		if (currNode == NavMeshLocation::NO_NODE) {
+			return;
+		}
 		// This does not need any synchronization elements
 		//	The writing and the reading happen in two, independent computational
 		//	stages.  (i.e., the writing to the node occupancy happens in a task.)
@@ -255,12 +257,5 @@ namespace FusionCrowd
 				filter->FilterObstacle(obst, distance);
 			}
 		}
-
 	}
-
-	//BFSM::Task * NavMeshSpatialQuery::getTask()
-	//{
-	//	return new BFSM::NavMeshLocalizerTask(_localizer->getNavMesh()->getName(),
-	//		false /*usePlanner*/);
-	//}
 }

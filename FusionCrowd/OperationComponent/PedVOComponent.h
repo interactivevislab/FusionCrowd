@@ -30,7 +30,7 @@ namespace FusionCrowd
 
 				_timeHorizon = 2.5f;
 				_timeHorizonObst = 0.15f;
-				_turningBias = 1.0f;;
+				_turningBias = 1.0f;
 				_denseAware = true;
 				SetStrideParameters(STRIDE_FACTOR, STRIDE_BUFFER);
 			}

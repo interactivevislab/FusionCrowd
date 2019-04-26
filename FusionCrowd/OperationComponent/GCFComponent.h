@@ -12,7 +12,7 @@ namespace FusionCrowd
 {
 	namespace GCF
 	{
-		struct FUSION_CROWD_API AgentParamentrs
+		struct FUSION_CROWD_API AgentParameters
 		{
 			AgentShape::Ellipse _ellipse;
 			float _aMin;
@@ -20,7 +20,7 @@ namespace FusionCrowd
 			float _bMax;
 			float _bGrowth;
 
-			AgentParamentrs(): _ellipse()
+			AgentParameters(): _ellipse()
 			{
 				_aMin = 0.18f;
 				_aRate = 0.53f;
@@ -28,7 +28,7 @@ namespace FusionCrowd
 				_bGrowth = 0.05f;
 			}
 
-			AgentParamentrs(float aMin, float aRate, float bMax, float bGrowth) : _ellipse()
+			AgentParameters(float aMin, float aRate, float bMax, float bGrowth) : _ellipse()
 			{
 				_aMin = aMin;
 				_aRate = aRate;
@@ -61,7 +61,7 @@ namespace FusionCrowd
 			float ComputeDistanceResponse(float effDist) const;
 
 		private:
-			std::map<int, AgentParamentrs> _agents;
+			std::map<int, AgentParameters> _agents;
 			float _timeStep;
 
 			float _reactionTime;

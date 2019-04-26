@@ -47,6 +47,7 @@ namespace FusionCrowd
 		float _neighborDist;
 		float _maxAngVel;
 		size_t _obstacleSet;
+		int _operationComponent;
 
 		std::vector<NearAgent> _nearAgents;
 		std::vector<NearObstacle> _nearObstacles;

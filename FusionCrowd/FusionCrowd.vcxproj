@@ -22,6 +22,7 @@
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Scenarios\DemoScenarios.h" />
     <ClInclude Include="Math\Util.h" />
     <ClInclude Include="Navigation\INavComponent.h" />
     <ClInclude Include="OperationComponent\GCFComponent.h" />
@@ -64,8 +65,10 @@
     <ClInclude Include="TacticComponent\Path\WayPortal.h" />
     <ClInclude Include="Navigation\SpatialQuery\SpatialQuery.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
+    <ClInclude Include="StrategyComponent\TestStrategyComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Scenarios\DemoScenarios.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />
@@ -101,6 +104,7 @@
     <ClCompile Include="StrategyComponent\Goal\PointGoal.cpp" />
     <ClCompile Include="StrategyComponent\Goal\GoalSet.cpp" />
     <ClCompile Include="StrategyComponent\Goal\Goal.cpp" />
+    <ClCompile Include="StrategyComponent\TestStrategyComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

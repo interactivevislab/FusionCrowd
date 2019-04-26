@@ -23,6 +23,7 @@ namespace FusionCrowd
 		_priority = 0.f;
 		_id = 0;
 		_radius = 0.19f;
+		_operationComponent = -1;
 	}
 
 	Agent::~Agent()

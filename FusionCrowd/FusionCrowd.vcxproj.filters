@@ -36,6 +36,8 @@
     <ClCompile Include="Navigation\SpatialQuery\SpatialQuery.cpp" />
     <ClCompile Include="Navigation\NavSystem.cpp" />
     <ClCompile Include="Navigation\Obstacle.cpp" />
+    <ClCompile Include="Scenarios\DemoScenarios.cpp" />
+    <ClCompile Include="StrategyComponent\TestStrategyComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -83,6 +85,8 @@
     <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="OperationComponent\GCFComponent.h" />
+    <ClInclude Include="Scenarios\DemoScenarios.h" />
+    <ClInclude Include="StrategyComponent\TestStrategyComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -26,6 +26,7 @@ public:
 		float neighborDist, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos);
 	void AddOperComponent(IOperationComponent* operComponent);
 	void AddTacticComponent(ITacticComponent* tacticComponent);
+	void AddStrategyComponent(IStrategyComponent* strategyComponent);
 	void AddNavComponent(std::string name, INavComponent* navComponent);
 
 	void AddSpatialQuery(FusionCrowd::SpatialQuery* spatialQuery);
@@ -40,7 +41,7 @@ public:
 
 	std::vector<FusionCrowd::SpatialQuery*> spatialQuerys;
 	std::vector<FusionCrowd::Agent> agents;
-	std::vector<IStrategyComponent> strategyComponents;
+	std::vector<IStrategyComponent*> strategyComponents;
 	std::vector<ITacticComponent*> tacticComponents;
 	std::vector<IOperationComponent*> operComponents;
 	Goal* goal;

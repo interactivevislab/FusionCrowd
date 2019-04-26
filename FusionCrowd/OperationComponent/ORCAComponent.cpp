@@ -20,6 +20,17 @@ namespace FusionCrowd
 		{
 		}
 
+		void ORCAComponent::AddAgent(int idAgent)
+		{
+			_agents.push_back(idAgent);
+		}
+
+		void ORCAComponent::DeleteAgent(int idAgent)
+		{
+			auto  element = std::find(_agents.begin(), _agents.end(), idAgent);
+			_agents.erase(element);
+		}
+
 		void ORCAComponent::ComputeNewVelocity(FusionCrowd::Agent* agent)
 		{
 			const size_t numObstLines = ComputeORCALines(agent);
@@ -545,6 +556,19 @@ namespace FusionCrowd
 		void ORCAComponent::Update(FusionCrowd::Agent* agent, float timeStep)
 		{
 			ComputeNewVelocity(agent);
+
+			float delV = (agent->_vel - agent->_velNew).Length();
+
+			if (delV > agent->_maxAccel * timeStep) {
+				float w = agent->_maxAccel * timeStep / delV;
+				agent->_vel = (1.f - w) *  agent->_vel + w * agent->_velNew;
+			}
+			else {
+				agent->_vel = agent->_velNew;
+			}
+			Vector2 t = agent->_vel * timeStep;
+
+			agent->_pos += agent->_vel * timeStep;
 
 			agent->UpdateOrient(timeStep);
 			agent->PostUpdate();

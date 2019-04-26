@@ -12,13 +12,61 @@ bool Simulator::DoStep()
 {
 	Agents::PrefVelocity newVel;
 
+	for (int i = 0; i < strategyComponents.size(); i++)
+	{
+		strategyComponents[i]->Update();
+	}
+
 	for (int i = 0; i < agents.size(); i++)
 	{
-		nav.SetPrefVelocity(&agents[i], goal, newVel);
+		for (int j = 0; j < strategyComponents.size(); j++)
+		{
+			if (strategyComponents[j]->GetGoal(i) != NULL)
+			{
+				nav.SetPrefVelocity(&agents[i], strategyComponents[0]->GetGoal(i), newVel);
+			}
+		}
+
 		agents[i]._velPref = newVel;
 
 		ComputeNeighbors(&agents[i]);
-		operComponents[0]->Update(&agents[i], 0.1f);
+
+		switch (agents[i]._operationComponent)
+		{
+		case 0:
+		{
+			operComponents[0]->Update(&agents[i], 0.1f);
+			break;
+		}
+		case 1:
+		{
+			operComponents[1]->Update(&agents[i], 0.1f);
+			break;
+		}
+		case 2:
+		{
+			operComponents[2]->Update(&agents[i], 0.1f);
+			break;
+		}
+		case 3:
+		{
+			operComponents[3]->Update(&agents[i], 0.1f);
+			break;
+		}
+		case 4:
+		{
+			operComponents[4]->Update(&agents[i], 0.1f);
+			break;
+		}
+		case 5:
+		{
+			operComponents[5]->Update(&agents[i], 0.1f);
+			break;
+		}
+		default:
+			break;
+		}
+
 		nav._localizer->updateLocation(&agents[i]);
 	}
 	return true;
@@ -59,6 +107,11 @@ void Simulator::AddTacticComponent(ITacticComponent* tacticComponent)
 void Simulator::AddSpatialQuery(FusionCrowd::SpatialQuery* spatialQuery)
 {
 	spatialQuerys.push_back(spatialQuery);
+}
+
+void Simulator::AddStrategyComponent(IStrategyComponent* strategyComponent)
+{
+	strategyComponents.push_back(strategyComponent);
 }
 
 void Simulator::AddNavComponent(std::string name, INavComponent* navComponent)

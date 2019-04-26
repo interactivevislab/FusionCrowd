@@ -237,6 +237,10 @@ namespace FusionCrowd
 			// If the relative velocity is divergent do nothing
 			if (D_ij.Dot(agent->_vel - other->_vel) > 0.f) return Vector2(0.f, 0.f);
 			float dist = D_ij.Length();
+			if (dist == 0)
+			{
+				dist = 0.0001f;
+			}
 			D_ij /= dist;
 			if (weight > 1.f) {
 				// Other agent has right of way

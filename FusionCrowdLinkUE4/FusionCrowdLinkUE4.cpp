@@ -14,6 +14,8 @@
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 #include "TacticComponent/NavMeshComponent.h"
 
+#include "Scenarios/DemoScenarios.h"
+
 #include <algorithm>
 
 
@@ -52,6 +54,15 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* naVMeshDir)
 	sim->AddSpatialQuery(sq);
 }
 
+void FusionCrowdLinkUE4::StartSochiDemoScenario(char* naVMeshDir)
+{
+	sim = new Simulator();
+	navMeshPath = (char*)malloc(strlen(naVMeshDir) + 1);
+	strcpy(navMeshPath, naVMeshDir);
+	agentsCount = 50;
+	FusionCrowd::Scenarios::DemoScenarios::RunSochiDemoScenarioInitialize(sim, naVMeshDir, agentsCount);
+}
+
 int FusionCrowdLinkUE4::GetAgentCount()
 {
 	return sim->agents.size();
@@ -75,7 +86,6 @@ void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* agentsPos)
 	bool info = sim->DoStep();
 	agentsCount = sim->agents.size();
 	for (int i = 0; i < agentsCount; i++){
-		agentsPos[i].pos = new float[2];
 		DirectX::SimpleMath::Vector2 buf = sim->agents[i]._pos;
 		agentsPos[i].pos[0] = buf.x;
 		agentsPos[i].pos[1] = buf.y;

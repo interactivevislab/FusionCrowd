@@ -30,7 +30,11 @@ namespace FusionCrowd
 			void Update(FusionCrowd::Agent* agent, float timeStep);
 			~ORCAComponent();
 
+			void AddAgent(int idAgent);
+			void DeleteAgent(int idAgent);
+
 		private:
+			std::vector<int> _agents;
 			float _timeHorizon;
 			float _timeHorizonObst;
 

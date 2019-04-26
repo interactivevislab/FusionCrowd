@@ -54,6 +54,10 @@ namespace FusionCrowd
 			const float D = _forceDistance;
 			Vector2 normal_ij = agent->_pos - other->_pos;
 			float distance_ij = normal_ij.Length();
+			if (distance_ij == 0)
+			{
+				distance_ij = 0.00001f;
+			}
 			normal_ij /= distance_ij;
 			float Radii_ij = agent->_radius + other->_radius;
 
