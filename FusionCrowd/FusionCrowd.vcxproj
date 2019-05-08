@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,7 +21,14 @@
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
+    <ClInclude Include="Scenarios\FSMScenarios.h" />
+    <ClInclude Include="StrategyComponent\FSM\State.h" />
+    <ClInclude Include="StrategyComponent\FSM\ConditionGoal.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="StrategyComponent\FSM\IFsmCondition.h" />
+    <ClInclude Include="StrategyComponent\FSM\IFsmTransition.h" />
+    <ClInclude Include="StrategyComponent\FSM\FsmStrategy.h" />
+    <ClInclude Include="StrategyComponent\FSM\IFsmState.h" />
     <ClInclude Include="Scenarios\DemoScenarios.h" />
     <ClInclude Include="Math\Util.h" />
     <ClInclude Include="Navigation\INavComponent.h" />
@@ -66,8 +73,13 @@
     <ClInclude Include="Navigation\SpatialQuery\SpatialQuery.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="StrategyComponent\TestStrategyComponent.h" />
+    <ClInclude Include="StrategyComponent\FSM\Transition.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Scenarios\FSMScenarios.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\State.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\ConditionGoal.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
     <ClCompile Include="Scenarios\DemoScenarios.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
@@ -105,6 +117,7 @@
     <ClCompile Include="StrategyComponent\Goal\GoalSet.cpp" />
     <ClCompile Include="StrategyComponent\Goal\Goal.cpp" />
     <ClCompile Include="StrategyComponent\TestStrategyComponent.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\Transition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

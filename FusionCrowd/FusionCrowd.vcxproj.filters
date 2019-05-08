@@ -38,6 +38,11 @@
     <ClCompile Include="Navigation\Obstacle.cpp" />
     <ClCompile Include="Scenarios\DemoScenarios.cpp" />
     <ClCompile Include="StrategyComponent\TestStrategyComponent.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\ConditionGoal.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\Transition.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\State.cpp" />
+    <ClCompile Include="Scenarios\FSMScenarios.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -87,6 +92,14 @@
     <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="Scenarios\DemoScenarios.h" />
     <ClInclude Include="StrategyComponent\TestStrategyComponent.h" />
+    <ClInclude Include="StrategyComponent\FSM\IFsmCondition.h" />
+    <ClInclude Include="StrategyComponent\FSM\IFsmState.h" />
+    <ClInclude Include="StrategyComponent\FSM\IFsmTransition.h" />
+    <ClInclude Include="StrategyComponent\FSM\ConditionGoal.h" />
+    <ClInclude Include="StrategyComponent\FSM\Transition.h" />
+    <ClInclude Include="StrategyComponent\FSM\State.h" />
+    <ClInclude Include="StrategyComponent\FSM\FsmStrategy.h" />
+    <ClInclude Include="Scenarios\FSMScenarios.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
