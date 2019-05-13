@@ -1,8 +1,6 @@
 #include "Resource.h"
 
-
-
-void Resource::destroy()
+void FusionCrowd::Resource::destroy()
 {
 	delete this;
 }

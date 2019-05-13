@@ -2,9 +2,17 @@
 
 #include "Config.h"
 
-class FUSION_CROWD_API IStrategyComponent
+namespace FusionCrowd
 {
-public:
+	class FUSION_CROWD_API IStrategyComponent
+	{
+	public:
+		virtual void Update(float timeStep)
+		{
+		};
 
-	virtual ~IStrategyComponent() {};
-};
+		virtual ~IStrategyComponent()
+		{
+		};
+	};
+}

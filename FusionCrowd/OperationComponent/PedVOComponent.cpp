@@ -1,4 +1,4 @@
-#include "PedVOComponent.h"
+/*#include "PedVOComponent.h"
 #include "Math/consts.h"
 #include "Math/geomQuery.h"
 #include "Math/Util.h"
@@ -796,3 +796,4 @@ namespace FusionCrowd
 		}
 	}
 }
+*/

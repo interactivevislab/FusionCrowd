@@ -24,16 +24,11 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Math\Util.h" />
     <ClInclude Include="Navigation\INavComponent.h" />
-    <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
-    <ClInclude Include="OperationComponent\PedVOComponent.h" />
     <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
-    <ClInclude Include="OperationComponent\Helbing\HelbingParameters.h" />
-    <ClInclude Include="OperationComponent\HelbingComponent.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshLocalizer.h" />
-    <ClInclude Include="OperationComponent\ORCAComponent.h" />
     <ClInclude Include="Navigation\SpatialQuery\ProximityQuery.h" />
     <ClInclude Include="Navigation\SpatialQuery\SpatialQueryStructs.h" />
     <ClInclude Include="TacticComponent\Path\MinHeap.h" />
@@ -64,7 +59,6 @@
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="TacticComponent\Path\WayPortal.h" />
     <ClInclude Include="Navigation\SpatialQuery\SpatialQuery.h" />
-    <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Simulator.cpp" />
@@ -73,13 +67,6 @@
     <ClCompile Include="Math\Line.cpp" />
     <ClCompile Include="Math\Geometry2D.cpp" />
     <ClCompile Include="Math\geomQuery.cpp" />
-    <ClCompile Include="OperationComponent\GCFComponent.cpp" />
-    <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
-    <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
-    <ClCompile Include="OperationComponent\Helbing\HelbingParameters.cpp" />
-    <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
-    <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
-    <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="TacticComponent\Path\MinHeap.cpp" />
     <ClCompile Include="TacticComponent\Path\Funnel.cpp" />
     <ClCompile Include="TacticComponent\Path\PathPlanner.cpp" />

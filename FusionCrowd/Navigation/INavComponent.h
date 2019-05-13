@@ -2,9 +2,11 @@
 
 #include "Config.h"
 
-class FUSION_CROWD_API INavComponent
+namespace FusionCrowd
 {
-public:
-	INavComponent() {};
-};
+	class FUSION_CROWD_API INavComponent
+	{
 
+
+	};
+}

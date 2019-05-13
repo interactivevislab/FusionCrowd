@@ -115,7 +115,7 @@ namespace FusionCrowd
 			for (; itr != occupants->end(); ++itr) {
 
 				const Agent * candidate = _agents[*itr];
-				float distSq = (candidate->_pos - pt).LengthSquared();
+				float distSq = (candidate->pos - pt).LengthSquared();
 				if (distSq <= rangeSq) {
 					// NOTE: This call might change rangeSq; it may shrink based on the most
 					// distant neighbor
@@ -163,7 +163,7 @@ namespace FusionCrowd
 				OccupantSetCItr itr = occupants->begin();
 				for (; itr != occupants->end(); ++itr) {
 					const Agent * candidate = _agents[*itr];
-					Vector2 disp(candidate->_pos - pt);
+					Vector2 disp(candidate->pos - pt);
 					float distSq = disp.LengthSquared();
 					if (distSq <= rangeSq) {
 						if (nbrEntry._cone.IsVisible(disp)) {
@@ -229,14 +229,14 @@ namespace FusionCrowd
 		ObstacleQuery(filter, range);
 	}
 
-	void NavMeshSpatialQuery::ObstacleQuery(ProximityQuery *filter, float rangeSq) const\
+	void NavMeshSpatialQuery::ObstacleQuery(ProximityQuery *filter, float rangeSq) const
 	{
 		Vector2 pt = filter->GetQueryPoint();
 
 		Agent * agent = dynamic_cast<Agent*>(filter);
 		size_t currNode = NavMeshLocation::NO_NODE;
 		if (agent != 0x0) {
-			currNode = _localizer->getNode(agent);
+			currNode = _localizer->getNode(agent->pos);
 		}
 		else {
 			size_t currNode = _localizer->getNode(pt);

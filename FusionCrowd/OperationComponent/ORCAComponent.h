@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "IOperationComponent.h"
 #include "Agent.h"
 #include "Config.h"
@@ -39,3 +39,4 @@ namespace FusionCrowd
 		};
 	}
 }
+*/

@@ -7,38 +7,38 @@ namespace FusionCrowd
 {
 	Agent::Agent()
 	{
-		_maxSpeed = 2.5f;
-		_maxAccel = 2.f;
-		_prefSpeed = 1.34f;
-		_pos = Vector2(0.f, 0.f);
-		_vel = Vector2(0.f, 0.f);
-		_velPref = Agents::PrefVelocity(Vector2(1.f, 0.f), _prefSpeed, Vector2(0.f, 0.f));
-		_velNew = Vector2(0.f, 0.f);
-		_orient = Vector2(1.f, 0.f);
-		_maxAngVel = MathUtil::TWOPI;	// 360 degrees/sec
-		_maxNeighbors = 10;
-		_neighborDist = 5.f;
-		_nearAgents.clear();
-		_nearObstacles.clear();
-		_priority = 0.f;
-		_id = 0;
-		_radius = 0.19f;
+		id = 0;
+		maxSpeed = 2.5f;
+		maxAccel = 2.f;
+		prefSpeed = 1.34f;
+		pos = Vector2(0.f, 0.f);
+		vel = Vector2(0.f, 0.f);
+
+		prefVelocity = Agents::PrefVelocity(Vector2(1.f, 0.f), prefSpeed, Vector2(0.f, 0.f));
+
+		velNew = Vector2(0.f, 0.f);
+		orient = Vector2(1.f, 0.f);
+		maxAngVel = MathUtil::TWOPI;	// 360 degrees/sec
+		/*
+		maxNeighbors = 10;
+		neighborDist = 5.f;
+		nearAgents.clear();
+		nearObstacles.clear();
+		priority = 0.f;
+		*/
+
+		radius = 0.19f;
 	}
 
 	Agent::~Agent()
 	{
 	}
 
+	/*
 	void Agent::StartQuery() {
 		_nearAgents.clear();
 		_nearObstacles.clear();
 	};
-
-	void Agent::SetPreferredVelocity(Agents::PrefVelocity &velocity)
-	{
-		//set my velocity to be the given one
-		_velPref = velocity;
-	}
 
 	float Agent::GetMaxAgentRange()
 	{
@@ -92,19 +92,22 @@ namespace FusionCrowd
 			}
 		}
 	}
+	*/
+
+
 
 	void Agent::UpdateOrient(float timeStep)
 	{
-		float speed = _vel.Length();
-		const float speedThresh = _prefSpeed / 3.f;
-		Vector2 newOrient(_orient);	// by default new is old
-		Vector2 moveDir = _vel / speed;
+		float speed = vel.Length();
+		const float speedThresh = prefSpeed / 3.f;
+		Vector2 newOrient(orient);	// by default new is old
+		Vector2 moveDir = vel / speed;
 		if (speed >= speedThresh) {
 			newOrient = moveDir;
 		}
 		else {
 			float frac = sqrtf(speed / speedThresh);
-			Vector2 prefDir = _velPref.getPreferred();
+			Vector2 prefDir = prefVelocity.getPreferred();
 			// prefDir *can* be zero if we've arrived at goal.  Only use it if it's non-zero.
 			if (prefDir.LengthSquared() > 0.000001f) {
 				newOrient = frac * moveDir + (1.f - frac) * prefDir;
@@ -113,23 +116,48 @@ namespace FusionCrowd
 		}
 
 		// Now limit angular velocity.
-		const float MAX_ANGLE_CHANGE = timeStep * _maxAngVel;
+		const float MAX_ANGLE_CHANGE = timeStep * maxAngVel;
 		float maxCt = cos(MAX_ANGLE_CHANGE);
-		float ct = newOrient.Dot(_orient);
+		float ct = newOrient.Dot(orient);
 		if (ct < maxCt) {
 			// changing direction at a rate greater than _maxAngVel
 			float maxSt = sin(MAX_ANGLE_CHANGE);
-			if (MathUtil::det(_orient, newOrient) > 0.f) {
+			if (MathUtil::det(orient, newOrient) > 0.f) {
 				// rotate _orient left
-				_orient = Vector2(maxCt * _orient.x - maxSt * _orient.y, maxSt * _orient.x + maxCt * _orient.y);
+				orient = Vector2(maxCt * orient.x - maxSt * orient.y, maxSt * orient.x + maxCt * orient.y);
 			}
 			else {
 				// rotate _orient right
-				_orient = Vector2(maxCt * _orient.x + maxSt * _orient.y, -maxSt * _orient.x + maxCt * _orient.y);
+				orient = Vector2(maxCt * orient.x + maxSt * orient.y, -maxSt * orient.x + maxCt * orient.y);
 			}
 		}
 		else {
-			_orient = newOrient;
+			orient = newOrient;
 		}
+	}
+
+	Goal * Agent::getCurrentGoal() const
+	{
+		return _currentGoal;
+	}
+
+	INavComponent* Agent::getNavComponent() const
+	{
+		return _navComponent;
+	}
+
+	IOperationComponent* Agent::getOperationComponent() const
+	{
+		return _operationComponent;
+	}
+
+	IStrategyComponent* Agent::getStrategyComponent() const
+	{
+		return _strategyComponent;
+	}
+
+	ITacticComponent* Agent::getTacticComponent() const
+	{
+		return _tacticComponent;
 	}
 }

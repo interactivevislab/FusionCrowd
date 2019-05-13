@@ -5,29 +5,30 @@
 
 #include "Config.h"
 
-// Forward declaration
-class Resource;
-
-typedef std::map< std::string, Resource * > ResourceMap;
-
-class FUSION_CROWD_API ResourceManager
+namespace FusionCrowd
 {
-public:
-	ResourceManager();
-	~ResourceManager();
+	// Forward declaration
+	class Resource;
 
-	static Resource * getResource(const std::string & fileName,
-		Resource * (*reader)(const std::string &),
-		const std::string & suffix);
+	typedef std::map<std::string, Resource *> ResourceMap;
 
-	static void cleanup();
-	static bool removeResource(Resource * rsrc);
+	class FUSION_CROWD_API ResourceManager
+	{
+	public:
+		ResourceManager();
+		~ResourceManager();
 
-//protected:
-	static ResourceMap	_resources;
+		static Resource* getResource(const std::string& fileName,
+		                             Resource* (*reader)(const std::string&),
+		                             const std::string& suffix);
 
-//private:
-	static const std::string CAT_SYMBOL;
+		static void cleanup();
+		static bool removeResource(Resource* rsrc);
 
-};
+		//protected:
+		static ResourceMap _resources;
 
+		//private:
+		static const std::string CAT_SYMBOL;
+	};
+}

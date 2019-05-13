@@ -1,22 +1,25 @@
 #include "NavSystem.h"
 
-
-
-NavSystem::NavSystem(std::string name, INavComponent* namComponent)
+namespace FusionCrowd
 {
-	AddNavComponent(name, namComponent);
-}
+	NavSystem::NavSystem()
+	{
+	}
 
-void NavSystem::AddNavComponent(std::string name, INavComponent* namComponent)
-{
-	navComponents.insert(std::pair<std::string, INavComponent*>(name, namComponent));
-}
+	void NavSystem::AddNavComponent(std::string name, INavComponent* namComponent)
+	{
+		_navComponents.insert({name, namComponent});
+	}
 
-void NavSystem::Update()
-{
+	void NavSystem::Update(float timeStep)
+	{
+		for (const auto& pair : _navComponents)
+		{
+			INavComponent* component = pair.second;
+		}
+	}
 
-}
-
-NavSystem::~NavSystem()
-{
+	NavSystem::~NavSystem()
+	{
+	}
 }
