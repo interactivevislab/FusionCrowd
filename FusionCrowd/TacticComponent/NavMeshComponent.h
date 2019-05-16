@@ -18,7 +18,7 @@ namespace FusionCrowd
 	class FUSION_CROWD_API NavMeshComponent : public ITacticComponent
 	{
 	public:
-		NavMeshComponent(Simulator* simulator, const char* navMeshPath);
+		NavMeshComponent(Simulator & simulator, const char* navMeshPath);
 
 		void Update(float timeStep);
 
@@ -47,7 +47,7 @@ namespace FusionCrowd
 		void setNode(size_t agentID, unsigned int nodeID);
 		*/
 
-		Simulator* _simulator;
+		Simulator & _simulator;
 
 		float _headingDevCos;
 		NavMeshPtr _navMesh;

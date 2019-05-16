@@ -7,9 +7,8 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	NavMeshComponent::NavMeshComponent(Simulator* simulator, const char* navMeshPath)
+	NavMeshComponent::NavMeshComponent(Simulator & simulator, const char* navMeshPath) : _simulator(simulator)
 	{
-		_simulator = simulator;
 		_localizer = loadNavMeshLocalizer(navMeshPath, true);
 	}
 
@@ -17,7 +16,7 @@ namespace FusionCrowd
 	{
 		for (auto agtStruct : _agents)
 		{
-			auto agent = _simulator->getById(agtStruct.id);
+			auto agent = _simulator.getById(agtStruct.id);
 			setPrefVelocity(agent, agtStruct);
 			updateLocation(agent, agtStruct, false);
 		}

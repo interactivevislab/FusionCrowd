@@ -61,6 +61,7 @@
     <ClInclude Include="Navigation\SpatialQuery\SpatialQuery.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />

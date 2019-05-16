@@ -2,6 +2,7 @@
 #include "IOperationComponent.h"
 #include "Agent.h"
 #include "Config.h"
+#include "Navigation/NavSystem.h"
 
 #include <map>
 
@@ -22,12 +23,11 @@ namespace FusionCrowd
 			}
 		};
 
-		class FUSION_CROWD_API KaramouzasComponent :
-			public IOperationComponent
+		class FUSION_CROWD_API KaramouzasComponent : public IOperationComponent
 		{
 		public:
-			KaramouzasComponent();
-			KaramouzasComponent(float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
+			KaramouzasComponent(NavSystem & navSystem);
+			KaramouzasComponent(NavSystem & navSystem, float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
 				float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE);
 			~KaramouzasComponent();
 			void ComputeNewVelocity(FusionCrowd::Agent* agent);
@@ -36,6 +36,7 @@ namespace FusionCrowd
 			void Update(FusionCrowd::Agent* agent, float timeStep);
 
 		private:
+			NavSystem & _navSystem;
 			std::map<int, AgentParamentrs> _agents;
 			float _orientWeight;
 			float _cosFOVAngle;

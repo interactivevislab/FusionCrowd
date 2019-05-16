@@ -30,6 +30,7 @@
     <ClCompile Include="Navigation\SpatialQuery\SpatialQuery.cpp" />
     <ClCompile Include="Navigation\NavSystem.cpp" />
     <ClCompile Include="Navigation\Obstacle.cpp" />
+    <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />

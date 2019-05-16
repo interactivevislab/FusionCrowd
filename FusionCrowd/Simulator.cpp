@@ -14,19 +14,19 @@ namespace FusionCrowd
 	bool Simulator::DoStep()
 	{
 		const float timeStep = 0.1f;
-		for (const auto strategy : strategyComponents)
+		for (IStrategyComponent & strategy : strategyComponents)
 		{
-			strategy->Update(timeStep);
+			strategy.Update(timeStep);
 		}
 
-		for (const auto tactic : tacticComponents)
+		for (ITacticComponent & tactic : tacticComponents)
 		{
-			tactic->Update(timeStep);
+			tactic.Update(timeStep);
 		}
 
-		for (const auto oper : operComponents)
+		for (IOperationComponent & oper : operComponents)
 		{
-			oper->Update(timeStep);
+			oper.Update(timeStep);
 		}
 
 		navSystem.Update(timeStep);
@@ -65,14 +65,19 @@ namespace FusionCrowd
 		agents.push_back(agent);
 	}
 
-	void Simulator::AddOperComponent(IOperationComponent* operComponent)
+	void Simulator::AddOperComponent(IOperationComponent & component)
 	{
-		operComponents.push_back(operComponent);
+		operComponents.push_back(component);
 	}
 
-	void Simulator::AddTacticComponent(ITacticComponent* tacticComponent)
+	void Simulator::AddTacticComponent(ITacticComponent & component)
 	{
-		tacticComponents.push_back(tacticComponent);
+		tacticComponents.push_back(component);
+	}
+
+	void Simulator::AddStrategyComponent(IStrategyComponent& component)
+	{
+		strategyComponents.push_back(component);
 	}
 
 	/*

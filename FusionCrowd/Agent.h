@@ -42,7 +42,7 @@ namespace FusionCrowd
 		FusionCrowd::Goal* getCurrentGoal() const;
 
 		INavComponent* getNavComponent() const;
-		IOperationComponent* getOperationComponent() const;
+		FusionCrowd::IOperationComponent* getOperationComponent() const;
 		ITacticComponent* getTacticComponent() const;
 		IStrategyComponent* getStrategyComponent() const;
 

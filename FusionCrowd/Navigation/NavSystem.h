@@ -31,8 +31,10 @@ namespace FusionCrowd
 
 		void AddAgent(AgentSpatialInfo spatialInfo, INavComponent* navComponent);
 
+		std::vector<Agent> GetNeighbours(FusionCrowd::Agent & agent) const;
+		std::vector<Obstacle> GetClosestObstacles(FusionCrowd::Agent & agent) const;
+
 		void AddSpatialQuery(FusionCrowd::SpatialQuery* spatialQuery);
-		void ComputeNeighbors(FusionCrowd::Agent* agent);
 
 		void Update(float timeStep);
 	private:
