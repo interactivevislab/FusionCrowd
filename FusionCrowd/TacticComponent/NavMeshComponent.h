@@ -20,10 +20,13 @@ namespace FusionCrowd
 	public:
 		NavMeshComponent(Simulator & simulator, const char* navMeshPath);
 
+		void AddAgent(size_t id);
+		bool RemoveAgent(size_t id);
+
 		void Update(float timeStep);
 
 		unsigned int getNode(size_t agentId) const;
-		unsigned int getNode(const FusionCrowd::Agent* agent, const std::string& grpName, bool searchAll = false);
+		unsigned int getNode(size_t agentId, const std::string& grpName, bool searchAll = false);
 
 		~NavMeshComponent();
 
@@ -32,13 +35,11 @@ namespace FusionCrowd
 		{
 		public:
 			unsigned int id;
-			float radius;
 			NavMeshLocation location;
-			Agents::PrefVelocity prefVelocity;
 		};
 
-		void setPrefVelocity(FusionCrowd::Agent* agent, AgentStruct& agentStruct);
-		unsigned int updateLocation(const FusionCrowd::Agent* agent, const AgentStruct& agentStruct, bool force) const;
+		void setPrefVelocity(Agent & agent, AgentStruct& agentStruct);
+		unsigned int updateLocation(Agent & agent, const AgentStruct& agentStruct, bool force) const;
 
 		/*
 		PortalPath * getPath(size_t id);

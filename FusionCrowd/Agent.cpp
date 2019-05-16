@@ -5,7 +5,7 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	Agent::Agent()
+	Agent::Agent(Goal& goal) : _currentGoal(goal)
 	{
 		id = 0;
 		maxSpeed = 2.5f;
@@ -18,14 +18,7 @@ namespace FusionCrowd
 
 		velNew = Vector2(0.f, 0.f);
 		orient = Vector2(1.f, 0.f);
-		maxAngVel = MathUtil::TWOPI;	// 360 degrees/sec
-		/*
-		maxNeighbors = 10;
-		neighborDist = 5.f;
-		nearAgents.clear();
-		nearObstacles.clear();
-		priority = 0.f;
-		*/
+		maxAngVel = MathUtil::TWOPI; // 360 degrees/sec
 
 		radius = 0.19f;
 	}
@@ -95,21 +88,23 @@ namespace FusionCrowd
 	*/
 
 
-
 	void Agent::UpdateOrient(float timeStep)
 	{
 		float speed = vel.Length();
 		const float speedThresh = prefSpeed / 3.f;
-		Vector2 newOrient(orient);	// by default new is old
+		Vector2 newOrient(orient); // by default new is old
 		Vector2 moveDir = vel / speed;
-		if (speed >= speedThresh) {
+		if (speed >= speedThresh)
+		{
 			newOrient = moveDir;
 		}
-		else {
+		else
+		{
 			float frac = sqrtf(speed / speedThresh);
 			Vector2 prefDir = prefVelocity.getPreferred();
 			// prefDir *can* be zero if we've arrived at goal.  Only use it if it's non-zero.
-			if (prefDir.LengthSquared() > 0.000001f) {
+			if (prefDir.LengthSquared() > 0.000001f)
+			{
 				newOrient = frac * moveDir + (1.f - frac) * prefDir;
 				newOrient.Normalize();
 			}
@@ -119,45 +114,29 @@ namespace FusionCrowd
 		const float MAX_ANGLE_CHANGE = timeStep * maxAngVel;
 		float maxCt = cos(MAX_ANGLE_CHANGE);
 		float ct = newOrient.Dot(orient);
-		if (ct < maxCt) {
+		if (ct < maxCt)
+		{
 			// changing direction at a rate greater than _maxAngVel
 			float maxSt = sin(MAX_ANGLE_CHANGE);
-			if (MathUtil::det(orient, newOrient) > 0.f) {
+			if (MathUtil::det(orient, newOrient) > 0.f)
+			{
 				// rotate _orient left
 				orient = Vector2(maxCt * orient.x - maxSt * orient.y, maxSt * orient.x + maxCt * orient.y);
 			}
-			else {
+			else
+			{
 				// rotate _orient right
 				orient = Vector2(maxCt * orient.x + maxSt * orient.y, -maxSt * orient.x + maxCt * orient.y);
 			}
 		}
-		else {
+		else
+		{
 			orient = newOrient;
 		}
 	}
 
-	Goal * Agent::getCurrentGoal() const
+	Goal& Agent::getCurrentGoal() const
 	{
 		return _currentGoal;
-	}
-
-	INavComponent* Agent::getNavComponent() const
-	{
-		return _navComponent;
-	}
-
-	IOperationComponent* Agent::getOperationComponent() const
-	{
-		return _operationComponent;
-	}
-
-	IStrategyComponent* Agent::getStrategyComponent() const
-	{
-		return _strategyComponent;
-	}
-
-	ITacticComponent* Agent::getTacticComponent() const
-	{
-		return _tacticComponent;
 	}
 }

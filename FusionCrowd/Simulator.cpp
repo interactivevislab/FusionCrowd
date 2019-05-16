@@ -9,6 +9,7 @@ namespace FusionCrowd
 {
 	Simulator::Simulator()
 	{
+		_navSystem = NavSystem();
 	}
 
 	bool Simulator::DoStep()
@@ -29,26 +30,25 @@ namespace FusionCrowd
 			oper.Update(timeStep);
 		}
 
-		navSystem.Update(timeStep);
+		_navSystem.Update(timeStep);
 
 		return true;
 	}
 
-	FusionCrowd::Agent * Simulator::getById(size_t id)
+	Agent & Simulator::getById(size_t id)
 	{
-		return &(agents.at(id)); // !!!!!!!!!!!!!!!!!!!!!!!
+		return _agents.at(id);
 	}
 
-	void Simulator::AddAgent(FusionCrowd::Agent agent)
+	NavSystem & Simulator::GetNavSystem()
 	{
-		agents.push_back(agent);
+		return _navSystem;
 	}
 
-	void Simulator::AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel,
-	                         Vector2 pos)
+	void Simulator::AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, Goal & g)
 	{
-		FusionCrowd::Agent agent;
-		agent.id = agents.size();
+		Agent agent(g);
+		agent.id = _agents.size();
 		agent.maxAngVel = maxAngleVel;
 
 		/*
@@ -62,7 +62,7 @@ namespace FusionCrowd
 		agent.maxSpeed = maxSpeed;
 		agent.maxAccel = maxAccel;
 		agent.pos = pos;
-		agents.push_back(agent);
+		_agents.push_back(agent);
 	}
 
 	void Simulator::AddOperComponent(IOperationComponent & component)
@@ -99,10 +99,10 @@ namespace FusionCrowd
 
 	void Simulator::InitSimulator()
 	{
-		std::vector<FusionCrowd::Agent *> agtPointers(agents.size());
-		for (size_t a = 0; a < agents.size(); ++a)
+		std::vector<FusionCrowd::Agent *> agtPointers(_agents.size());
+		for (size_t a = 0; a < _agents.size(); ++a)
 		{
-			agtPointers[a] = &agents[a];
+			agtPointers[a] = &_agents[a];
 		}
 
 		//spatialQuerys[0]->SetAgents(agtPointers);

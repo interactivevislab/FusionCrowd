@@ -6,7 +6,5 @@ namespace FusionCrowd
 {
 	class FUSION_CROWD_API INavComponent
 	{
-
-
 	};
 }

@@ -68,7 +68,7 @@ namespace FusionCrowd
 		const NavMeshNode getNode(unsigned int i) { return _navMesh->GetNode(i); }
 
 		void setTrackAll() { _trackAll = true; }
-		void updateAgentPosition(const FusionCrowd::Agent* agent, const unsigned int oldLoc, unsigned int newLoc);
+		void updateAgentPosition(size_t agentId, const unsigned int oldLoc, unsigned int newLoc);
 
 		PathPlanner* getPlanner() { return _planner; }
 		void setPlanner(PathPlanner* planner) { _planner = planner; }

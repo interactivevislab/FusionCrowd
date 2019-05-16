@@ -27,10 +27,10 @@ namespace FusionCrowd
 
 		bool DoStep();
 
-		FusionCrowd::Agent* getById(size_t id);
+		Agent & getById(size_t id);
+		NavSystem & GetNavSystem();
 
-		void AddAgent(FusionCrowd::Agent agent);
-	    void AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos);
+	    void AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, Goal & g);
 		//void AddAgent(float maxAngleVel, float maxNeighbors, int obstacleSet, float neighborDist, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos);
 
 		void AddOperComponent(IOperationComponent & operComponent);
@@ -38,14 +38,12 @@ namespace FusionCrowd
 		void AddStrategyComponent(IStrategyComponent & strategyComponent);
 
 		void InitSimulator();
-
-	//private:
-		NavSystem navSystem;
+	private:
+		NavSystem _navSystem;
 
 		//std::vector<FusionCrowd::SpatialQuery*> spatialQuerys;
 
-
-		std::vector<FusionCrowd::Agent> agents;
+		std::vector<FusionCrowd::Agent> _agents;
 
 		std::vector<std::reference_wrapper<IStrategyComponent>> strategyComponents;
 		std::vector<std::reference_wrapper<ITacticComponent>> tacticComponents;

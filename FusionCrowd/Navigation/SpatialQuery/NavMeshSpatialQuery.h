@@ -4,6 +4,7 @@
 #include "Agent.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 #include "ProximityQuery.h"
+#include "SpatialQuery.h"
 #include "Math/Util.h"
 
 #include <vector>

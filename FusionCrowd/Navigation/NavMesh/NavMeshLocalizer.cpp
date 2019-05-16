@@ -65,8 +65,7 @@ namespace FusionCrowd
 	//
 	//
 
-	void NavMeshLocalizer::updateAgentPosition(const FusionCrowd::Agent* agent, const unsigned int oldLoc,
-	                                           unsigned int newLoc)
+	void NavMeshLocalizer::updateAgentPosition(size_t agentId, const unsigned int oldLoc, unsigned int newLoc)
 	{
 		if (newLoc != oldLoc)
 		{
@@ -80,7 +79,7 @@ namespace FusionCrowd
 			{
 				if (oldLoc != NavMeshLocation::NO_NODE)
 				{
-					OccupantSetItr fromItr = _nodeOccupants[oldLoc].find(agent->id);
+					OccupantSetItr fromItr = _nodeOccupants[oldLoc].find(agentId);
 					if (fromItr != _nodeOccupants[oldLoc].end())
 					{
 						_nodeOccupants[oldLoc].erase(fromItr);
@@ -90,7 +89,7 @@ namespace FusionCrowd
 						const size_t NCOUNT = _navMesh->getNodeCount();
 						for (size_t i = 0; i < NCOUNT; ++i)
 						{
-							fromItr = _nodeOccupants[i].find(agent->id);
+							fromItr = _nodeOccupants[i].find(agentId);
 							if (fromItr != _nodeOccupants[i].end())
 							{
 								_nodeOccupants[i].erase(fromItr);
@@ -99,7 +98,7 @@ namespace FusionCrowd
 						}
 					}
 				}
-				_nodeOccupants[newLoc].insert(agent->id);
+				_nodeOccupants[newLoc].insert(agentId);
 			}
 		}
 	}

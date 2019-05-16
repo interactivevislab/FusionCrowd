@@ -15,11 +15,10 @@ namespace FusionCrowd
 	class FUSION_CROWD_API PortalPath
 	{
 	public:
-		PortalPath(const DirectX::SimpleMath::Vector2& startPos, const Goal* goal, const PortalRoute* route,
-		           float agentRadius);
+		PortalPath(const DirectX::SimpleMath::Vector2 & startPos, const Goal* goal, const PortalRoute* route, float agentRadius);
 		~PortalPath();
-		void setPreferredDirection(Agent* agent, float headingCos);
-		unsigned int updateLocation(const Agent* agent, const NavMeshPtr& navMesh,
+		void setPreferredDirection(Agent & agent, float headingCos);
+		unsigned int updateLocation(const Agent & agent, const NavMeshPtr& navMesh,
 		                            const NavMeshLocalizer* localizer, PathPlanner* planner);
 		unsigned int getNode() const;
 		inline size_t getWayPointCount() const { return _route->getPortalCount(); }

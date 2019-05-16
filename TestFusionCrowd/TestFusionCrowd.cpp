@@ -27,22 +27,21 @@ int main()
 	std::string navPath = "Resources/simple.nav";
 
 	FusionCrowd::Simulator sim;
-	FusionCrowd::NavSystem nav;
 	FusionCrowd::NavMeshComponent navMeshTactic(sim, navPath.c_str());
-	FusionCrowd::Karamouzas::KaramouzasComponent kComponent(nav);
+	FusionCrowd::Karamouzas::KaramouzasComponent kComponent(sim);
 
+	sim.AddTacticComponent(navMeshTactic);
 	sim.AddOperComponent(kComponent);
 
 	const int agentsCount = 10;
+	FusionCrowd::PointGoal goal(50, 50);
 
 	for(int i = 0; i < agentsCount; i++)
 	{
 		DirectX::SimpleMath::Vector2 pos(-0.5f + i * 0.25f, -1.0f  + i * 0.15f);
-		sim.AddAgent(360, 10, 1, 5, 0.19f, pos);
-	}
-
-	for(int i = 0; i < agentsCount; i++)
+		sim.AddAgent(360, 10, 1, 5, 0.19f, pos, goal);
 		kComponent.AddAgent(i, 0.1f, 0.1f);
+	}
 
 	sim.InitSimulator();
 
@@ -50,7 +49,7 @@ int main()
 	{
 		for(size_t i = 0; i < agentsCount; i++)
 		{
-			std::cout << i << " " << sim.agents[i].pos.x << " " << sim.agents[i].pos.y << std::endl;
+			std::cout << i << " " << sim.getById(i).pos.x << " " << sim.getById(i).pos.y << std::endl;
 		}
 	}
 }

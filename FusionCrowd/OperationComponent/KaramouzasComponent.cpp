@@ -11,13 +11,13 @@ namespace FusionCrowd
 {
 	namespace Karamouzas
 	{
-		KaramouzasComponent::KaramouzasComponent(NavSystem & navSystem) : _navSystem(navSystem), _orientWeight(0.8f), _cosFOVAngle(cos(100.f * DEG_TO_RAD)), _reactionTime(0.4f), _wallSteepness(2.f),
+		KaramouzasComponent::KaramouzasComponent(Simulator & simulator) : _simulator(simulator), _navSystem(simulator.GetNavSystem()), _orientWeight(0.8f), _cosFOVAngle(cos(100.f * DEG_TO_RAD)), _reactionTime(0.4f), _wallSteepness(2.f),
 			_wallDistance(2.f), _collidingCount(5), _dMin(1.f), _dMid(8.f), _dMax(10.f), _agentForce(3.f)
 		{
 		}
 
-		KaramouzasComponent::KaramouzasComponent(NavSystem & navSystem, float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
-			float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE) : _navSystem(navSystem)
+		KaramouzasComponent::KaramouzasComponent(Simulator & simulator, float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
+			float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE) : _simulator(simulator), _navSystem(simulator.GetNavSystem())
 		{
 			_orientWeight = ORIENT_WEIGHT;
 			_cosFOVAngle = COS_FOV_ANGLE;
@@ -35,58 +35,68 @@ namespace FusionCrowd
 		{
 		}
 
-		void KaramouzasComponent::Update(FusionCrowd::Agent* agent, float timeStep)
+		void KaramouzasComponent::Update(float timeStep)
+		{
+			for(auto p : _agents)
+			{
+				auto id = p.first;
+				Agent & agent = _simulator.getById(id);
+				Update(agent, timeStep);
+			}
+		}
+
+		void KaramouzasComponent::Update(Agent & agent, float timeStep)
 		{
 			ComputeNewVelocity(agent);
 
-			float delV = (agent->vel - agent->velNew).Length();
+			float delV = (agent.vel - agent.velNew).Length();
 
-			if (delV > agent->maxAccel * timeStep) {
-				float w = agent->maxAccel * timeStep / delV;
-				agent->vel = (1.f - w) * agent->vel + w * agent->velNew;
+			if (delV > agent.maxAccel * timeStep) {
+				float w = agent.maxAccel * timeStep / delV;
+				agent.vel = (1.f - w) * agent.vel + w * agent.velNew;
 			}
 			else {
-				agent->vel = agent->velNew;
+				agent.vel = agent.velNew;
 			}
-			Vector2 t = agent->vel * timeStep;
+			Vector2 t = agent.vel * timeStep;
 
-			agent->pos += agent->vel * timeStep;
+			agent.pos += agent.vel * timeStep;
 
-			agent->UpdateOrient(timeStep);
-			agent->PostUpdate();
+			agent.UpdateOrient(timeStep);
+			agent.PostUpdate();
 		}
 
-		void KaramouzasComponent::ComputeNewVelocity(FusionCrowd::Agent* agent)
+		void KaramouzasComponent::ComputeNewVelocity(Agent & agent)
 		{
 			const float EPSILON = 0.01f; // this eps from Ioannis
 			const float FOV = _cosFOVAngle;
 
-			Vector2 force((agent->prefVelocity.getPreferredVel() - agent->vel) / _reactionTime);
-			const float SAFE_DIST = _wallDistance + agent->radius;
+			Vector2 force((agent.prefVelocity.getPreferredVel() - agent.vel) / _reactionTime);
+			const float SAFE_DIST = _wallDistance + agent.radius;
 			const float SAFE_DIST2 = SAFE_DIST * SAFE_DIST;
 
-			for (auto obst : _navSystem.GetClosestObstacles(*agent)) {
+			for (auto obst : _navSystem.GetClosestObstacles(agent)) {
 				// TODO: Interaction with obstacles is, currently, defined strictly
 				//	by COLLISIONS.  Only if I'm going to collide with an obstacle is
 				//	a force applied.  This may be too naive.
 				//	I'll have to investigate this.
 				Vector2 nearPt;		// set by distanceSqToPoint
 				float sqDist;		// set by distanceSqToPoint
-				if (obst.distanceSqToPoint(agent->pos, nearPt, sqDist) == Obstacle::LAST) continue;
+				if (obst.distanceSqToPoint(agent.pos, nearPt, sqDist) == Obstacle::LAST) continue;
 				if (SAFE_DIST2 > sqDist) {
 					// A repulsive force is actually possible
 					float dist = sqrtf(sqDist);
 					float num = SAFE_DIST - dist;
-					float distMradius = (dist - agent->radius) < EPSILON ? EPSILON : dist - agent->radius;
+					float distMradius = (dist - agent.radius) < EPSILON ? EPSILON : dist - agent.radius;
 					float denom = powf(distMradius, _wallSteepness);
 					Vector2 dir;
-					(agent->pos - nearPt).Normalize(dir);
+					(agent.pos - nearPt).Normalize(dir);
 					float mag = num / denom;
 					force += dir * mag;
 				}
 			}
 
-			Vector2 desVel = agent->vel + force * 0.1f;//Simulator::TIME_STEP;
+			Vector2 desVel = agent.vel + force * 0.1f;//Simulator::TIME_STEP;
 			float desSpeed = desVel.Length();
 			force = Vector2(0.f, 0.f);
 			//#if 0
@@ -96,13 +106,13 @@ namespace FusionCrowd
 			bool colliding = false;
 			int collidingCount = _collidingCount;
 			bool VERBOSE = false; // _id == 1;
-			if (VERBOSE) std::cout << "Agent " << agent->id << "\n";
+			if (VERBOSE) std::cout << "Agent " << agent.id << "\n";
 			float totalTime = 1.f;
 			std::list< std::pair< float, const Agent &> > collidingSet;
-			for (auto other : _navSystem.GetNeighbours(*agent)) {
-				float circRadius = _agents[agent->id]._perSpace + other.radius;
+			for (auto other : _navSystem.GetNeighbours(agent)) {
+				float circRadius = _agents[agent.id]._perSpace + other.radius;
 				Vector2 relVel = desVel - other.vel;
-				Vector2 relPos = other.pos - agent->pos;
+				Vector2 relPos = other.pos - agent.pos;
 
 				if (relPos.LengthSquared() < circRadius * circRadius) { ///collision!
 					if (!colliding) {
@@ -118,9 +128,9 @@ namespace FusionCrowd
 				//		If relPos is not within the field of view around preferred direction, continue
 				Vector2 relDir;
 				relPos.Normalize(relDir);
-				if (relDir.Dot(agent->orient) < FOV) continue;
+				if (relDir.Dot(agent.orient) < FOV) continue;
 				float tc = Math::rayCircleTTC(relVel, relPos, circRadius);
-				if (tc < _agents[agent->id]._anticipation && !colliding) {
+				if (tc < _agents[agent.id]._anticipation && !colliding) {
 					if (VERBOSE) std::cout << "\tAgent " << other.id << " t_c: " << tc << "\n";
 					//totalTime += tc;
 					// insert into colliding set (in order)
@@ -136,7 +146,7 @@ namespace FusionCrowd
 				const Agent & const other = itr->second;
 				float tc = itr->first;
 				// future positions
-				Vector2 myPos = agent->pos + desVel * tc;
+				Vector2 myPos = agent.pos + desVel * tc;
 				Vector2 hisPos = other.pos + other.vel * tc;
 				Vector2 forceDir = myPos - hisPos;
 				//float futureDist = abs( forceDir );
@@ -144,7 +154,7 @@ namespace FusionCrowd
 				//float D = desSpeed * tc + futureDist - _radius - other->_radius;
 				float fDist = forceDir.Length();
 				forceDir /= fDist;
-				float collisionDist = fDist - agent->radius - other.radius;
+				float collisionDist = fDist - agent.radius - other.radius;
 				float D = std::max(desSpeed * tc + (collisionDist < 0 ? 0 : collisionDist), EPSILON);
 
 				// determine magnitude
@@ -184,22 +194,28 @@ namespace FusionCrowd
 			// do we need a drag force?
 
 			 // Cap the force to maxAccel
-			if (force.Length() > agent->maxAccel) {
+			if (force.Length() > agent.maxAccel) {
 				force.Normalize();
-				force *= agent->maxAccel;
+				force *= agent.maxAccel;
 			}
 
-			agent->velNew = desVel + force * 0.1f;//Simulator::TIME_STEP;	// assumes unit mass
+			agent.velNew = desVel + force * 0.1f;//Simulator::TIME_STEP;	// assumes unit mass
 		}
 
-		void KaramouzasComponent::AddAgent(int idAgent, float perSpace, float anticipation)
+		void KaramouzasComponent::AddAgent(size_t id, float perSpace, float anticipation)
 		{
-			_agents[idAgent] = AgentParamentrs(perSpace, anticipation);
+			_agents[id] = AgentParamentrs(perSpace, anticipation);
 		}
 
-		void KaramouzasComponent::DeleteAgent(int idAgent)
+		void KaramouzasComponent::AddAgent(size_t id)
 		{
-			_agents.erase(idAgent);
+			AddAgent(id, 0.1f, 0.1f);
+		}
+
+		bool KaramouzasComponent::DeleteAgent(size_t id)
+		{
+			_agents.erase(id);
+			return true;
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace FusionCrowd
 		if (_headings) delete[] _headings;
 	}
 
-	void PortalPath::setPreferredDirection(FusionCrowd::Agent* agent, float headingCos)
+	void PortalPath::setPreferredDirection(Agent & agent, float headingCos)
 	{
 		const size_t PORTAL_COUNT = _route->getPortalCount();
 		Vector2 dir;
@@ -33,13 +33,13 @@ namespace FusionCrowd
 		{
 			// assume that the path is clear
 			// TODO: See GoalVC
-			_goal->setDirections(agent->pos, agent->radius, agent->prefVelocity);
+			_goal->setDirections(agent.pos, agent.radius, agent.prefVelocity);
 
 			// speed
-			Vector2 goalPoint = agent->prefVelocity.getTarget();
-			Vector2 disp = goalPoint - agent->pos;
+			Vector2 goalPoint = agent.prefVelocity.getTarget();
+			Vector2 disp = goalPoint - agent.pos;
 			const float distSq = disp.LengthSquared();
-			float speed = agent->prefSpeed;
+			float speed = agent.prefSpeed;
 
 			if (distSq <= 0.0001f)
 			{
@@ -57,12 +57,12 @@ namespace FusionCrowd
 					speed = sqrtf(distSq) / SIM_TIME_STEP;
 				}
 			}
-			agent->prefVelocity.setSpeed(speed);
+			agent.prefVelocity.setSpeed(speed);
 		}
 		else
 		{
 			const WayPortal* portal = _route->getPortal(_currPortal);
-			Vector2 goalDir(_waypoints[_currPortal] - agent->pos);
+			Vector2 goalDir(_waypoints[_currPortal] - agent.pos);
 			float dist = goalDir.Length();
 			// If the displacement to the next way point is large enough
 			//	(i.e., not essentially zero), use it, otherwise, peek
@@ -78,8 +78,8 @@ namespace FusionCrowd
 				{
 					// Heading has deviated too far recompute crossing
 					FunnelPlanner planner;
-					planner.computeCrossing(agent->radius, agent->pos, this, _currPortal);
-					goalDir = _waypoints[_currPortal] - agent->pos;
+					planner.computeCrossing(agent.radius, agent.pos, this, _currPortal);
+					goalDir = _waypoints[_currPortal] - agent.pos;
 					dist = goalDir.Length();
 					if ((bigEnough = (dist >= FusionCrowd::EPS)))
 					{
@@ -94,23 +94,23 @@ namespace FusionCrowd
 				if (_currPortal + 1 < getPortalCount())
 				{
 					// calculate w.r.t. next waypoint
-					(_waypoints[_currPortal + 1] - agent->pos).Normalize(goalDir);
+					(_waypoints[_currPortal + 1] - agent.pos).Normalize(goalDir);
 				}
 				else
 				{
 					// calculate w.r.t. goal
 					Vector2 gp;
-					_goal->getTargetPoint(gp, agent->radius);
-					(gp - agent->pos).Normalize(goalDir);
+					_goal->getTargetPoint(gp, agent.radius);
+					(gp - agent.pos).Normalize(goalDir);
 				}
 			}
 
-			agent->prefVelocity.setTarget(_waypoints[_currPortal]);
-			portal->setPreferredDirection(agent->pos, agent->radius, goalDir, agent->prefVelocity);
+			agent.prefVelocity.setTarget(_waypoints[_currPortal]);
+			portal->setPreferredDirection(agent.pos, agent.radius, goalDir, agent.prefVelocity);
 		}
 	}
 
-	unsigned int PortalPath::updateLocation(const FusionCrowd::Agent* agent,
+	unsigned int PortalPath::updateLocation(const FusionCrowd::Agent & agent,
 	                                        const NavMeshPtr& navMesh,
 	                                        const NavMeshLocalizer* localizer,
 	                                        PathPlanner* planner)
@@ -121,7 +121,7 @@ namespace FusionCrowd
 		unsigned int currNodeID = getNode();
 		const NavMeshNode* currNode = &(navMesh->GetNode(currNodeID));
 		// test current location
-		const Vector2& p = agent->pos;
+		const Vector2& p = agent.pos;
 
 		const unsigned int PORTAL_COUNT = static_cast<unsigned int>(_route->getPortalCount());
 		if (!currNode->containsPoint(p))
@@ -185,8 +185,7 @@ namespace FusionCrowd
 						if (node->containsPoint(p))
 						{
 							// find a new path from this node to the goal
-							replan(p, node->getID(), _route->getEndNode(),
-							       agent->radius, planner);
+							replan(p, node->getID(), _route->getEndNode(), agent.radius, planner);
 							changed = true;
 						}
 					}
@@ -241,7 +240,7 @@ namespace FusionCrowd
 						unsigned int nodeID = localizer->findNodeBlind(p, lastElevation);
 						if (nodeID != NavMeshLocation::NO_NODE)
 						{
-							replan(p, nodeID, _route->getEndNode(), agent->radius, planner);
+							replan(p, nodeID, _route->getEndNode(), agent.radius, planner);
 						}
 						changed = true;
 					}

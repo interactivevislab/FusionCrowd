@@ -2,17 +2,7 @@
 
 #include "Config.h"
 
-#include "Navigation/INavComponent.h"
-#include "Navigation/SpatialQuery/SpatialQuery.h"
-#include "Navigation/SpatialQuery/SpatialQueryStructs.h"
-
-#include "OperationComponent/IOperationComponent.h"
-
-#include "TacticComponent/ITacticComponent.h"
 #include "TacticComponent/Path/PrefVelocity.h"
-
-#include "StrategyComponent/IStrategyComponent.h"
-#include "StrategyComponent/Goal/Goal.h"
 
 #include <vector>
 
@@ -25,7 +15,7 @@ namespace FusionCrowd
 	class FUSION_CROWD_API Agent
 	{
 	public:
-		Agent();
+		Agent(Goal & goal);
 		~Agent();
 
 		size_t id;
@@ -39,12 +29,8 @@ namespace FusionCrowd
 		Vector2 velNew;
 		Vector2 orient;
 		Agents::PrefVelocity prefVelocity;
-		FusionCrowd::Goal* getCurrentGoal() const;
 
-		INavComponent* getNavComponent() const;
-		FusionCrowd::IOperationComponent* getOperationComponent() const;
-		ITacticComponent* getTacticComponent() const;
-		IStrategyComponent* getStrategyComponent() const;
+		Goal & getCurrentGoal() const;
 
 		void UpdateOrient(float timeStep);
 		void PostUpdate() { };
@@ -71,11 +57,6 @@ namespace FusionCrowd
 		*/
 
 	private:
-		INavComponent* _navComponent;
-		IOperationComponent* _operationComponent;
-		ITacticComponent* _tacticComponent;
-		IStrategyComponent* _strategyComponent;
-
-		Goal* _currentGoal;
+		std::reference_wrapper<Goal> _currentGoal;
 	};
 }
