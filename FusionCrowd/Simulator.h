@@ -30,7 +30,7 @@ namespace FusionCrowd
 		Agent & getById(size_t id);
 		NavSystem & GetNavSystem();
 
-	    void AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, Goal & g);
+	    size_t AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, Goal & g);
 		//void AddAgent(float maxAngleVel, float maxNeighbors, int obstacleSet, float neighborDist, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos);
 
 		void AddOperComponent(IOperationComponent & operComponent);

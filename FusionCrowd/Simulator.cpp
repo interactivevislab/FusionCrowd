@@ -45,7 +45,7 @@ namespace FusionCrowd
 		return _navSystem;
 	}
 
-	void Simulator::AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, Goal & g)
+	size_t Simulator::AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, Goal & g)
 	{
 		Agent agent(g);
 		agent.id = _agents.size();
@@ -63,6 +63,8 @@ namespace FusionCrowd
 		agent.maxAccel = maxAccel;
 		agent.pos = pos;
 		_agents.push_back(agent);
+
+		return agent.id;
 	}
 
 	void Simulator::AddOperComponent(IOperationComponent & component)

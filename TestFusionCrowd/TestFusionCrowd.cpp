@@ -33,23 +33,33 @@ int main()
 	sim.AddTacticComponent(navMeshTactic);
 	sim.AddOperComponent(kComponent);
 
-	const int agentsCount = 10;
-	FusionCrowd::PointGoal goal(50, 50);
+	const int agentsCount = 5;
+	FusionCrowd::PointGoal goal(-3.0f, 5.0f);
 
 	for(int i = 0; i < agentsCount; i++)
 	{
 		DirectX::SimpleMath::Vector2 pos(-0.5f + i * 0.25f, -1.0f  + i * 0.15f);
-		sim.AddAgent(360, 10, 1, 5, 0.19f, pos, goal);
-		kComponent.AddAgent(i, 0.1f, 0.1f);
+		size_t id = sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, pos, goal);
+
+		kComponent.AddAgent(id, 0.69f, 8.0f);
+		navMeshTactic.AddAgent(id);
 	}
 
 	sim.InitSimulator();
 
-	while (sim.DoStep())
+	std::ofstream myfile;
+    myfile.open ("traj.csv");
+	size_t steps = 400;
+	while (sim.DoStep() && steps--)
 	{
 		for(size_t i = 0; i < agentsCount; i++)
 		{
-			std::cout << i << " " << sim.getById(i).pos.x << " " << sim.getById(i).pos.y << std::endl;
+			if(i > 0) myfile << ",";
+
+			myfile << sim.getById(i).pos.x << "," << sim.getById(i).pos.y;
 		}
+		myfile << std::endl;
 	}
+
+	myfile.close();
 }

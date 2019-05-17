@@ -10,14 +10,25 @@ namespace FusionCrowd
 	NavMeshComponent::NavMeshComponent(Simulator & simulator, const char* navMeshPath) : _simulator(simulator)
 	{
 		_localizer = loadNavMeshLocalizer(navMeshPath, true);
+		_navMesh = _localizer->getNavMesh();
 	}
 
 	void NavMeshComponent::AddAgent(size_t id)
 	{
 		Agent & agent = _simulator.getById(id);
+
+		PathPlanner * planner = _localizer->getPlanner();
+		unsigned int from = _localizer->getNode(agent.pos);
+		unsigned int to = _localizer->getNode(agent.getCurrentGoal().getCentroid());
+		PortalRoute * route = planner->getRoute(from, to, agent.radius);
+		PortalPath * path = new PortalPath(agent.pos, &agent.getCurrentGoal(), route, agent.radius);
+
+		NavMeshLocation location(_localizer->getNode(agent.pos));
+		location.setPath(path);
+
 		AgentStruct agtStruct;
 		agtStruct.id = id;
-		agtStruct.location = NavMeshLocation(_localizer->getNode(agent.pos));
+		agtStruct.location = location;
 
 		_agents.push_back(agtStruct);
 	}
@@ -40,7 +51,7 @@ namespace FusionCrowd
 	void NavMeshComponent::setPrefVelocity(Agent & agent, AgentStruct& agentStruct)
 	{
 		PortalPath * path = agentStruct.location.getPath();
-		if (path == NULL)
+		if (path == nullptr)
 		{
 			Vector2 goalPoint = agent.getCurrentGoal().getCentroid();
 			unsigned int goalNode = _localizer->getNode(goalPoint);
