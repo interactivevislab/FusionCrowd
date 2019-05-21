@@ -55,8 +55,8 @@ namespace FusionCrowd
 		agent._maxNeighbors = maxNeighbors;
 		agent._obstacleSet = 1;
 		agent._neighborDist = neighborDist;
-
 		*/
+
 		agent.radius = radius;
 		agent.prefSpeed = prefSpeed;
 		agent.maxSpeed = maxSpeed;

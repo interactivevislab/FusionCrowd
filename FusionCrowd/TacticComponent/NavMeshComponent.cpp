@@ -42,7 +42,7 @@ namespace FusionCrowd
 	{
 		for (auto agtStruct : _agents)
 		{
-			auto agent = _simulator.getById(agtStruct.id);
+			Agent & agent = _simulator.getById(agtStruct.id);
 			setPrefVelocity(agent, agtStruct);
 			updateLocation(agent, agtStruct, false);
 		}

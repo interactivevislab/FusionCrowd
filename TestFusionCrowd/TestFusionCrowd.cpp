@@ -49,7 +49,7 @@ int main()
 
 	std::ofstream myfile;
     myfile.open ("traj.csv");
-	size_t steps = 400;
+	size_t steps = 4000;
 	while (sim.DoStep() && steps--)
 	{
 		for(size_t i = 0; i < agentsCount; i++)
