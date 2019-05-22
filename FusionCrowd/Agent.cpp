@@ -5,22 +5,9 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	Agent::Agent(Goal& goal) : _currentGoal(goal)
+	Agent::Agent(size_t agentId, Goal& goal) : _currentGoal(goal)
 	{
-		id = 0;
-		maxSpeed = 2.5f;
-		maxAccel = 2.f;
-		prefSpeed = 1.34f;
-		pos = Vector2(0.f, 0.f);
-		vel = Vector2(0.f, 0.f);
-
-		prefVelocity = Agents::PrefVelocity(Vector2(1.f, 0.f), prefSpeed, Vector2(0.f, 0.f));
-
-		velNew = Vector2(0.f, 0.f);
-		orient = Vector2(1.f, 0.f);
-		maxAngVel = MathUtil::TWOPI; // 360 degrees/sec
-
-		radius = 0.19f;
+		id = agentId;
 	}
 
 	Agent::~Agent()
@@ -87,53 +74,6 @@ namespace FusionCrowd
 	}
 	*/
 
-
-	void Agent::UpdateOrient(float timeStep)
-	{
-		float speed = vel.Length();
-		const float speedThresh = prefSpeed / 3.f;
-		Vector2 newOrient(orient); // by default new is old
-		Vector2 moveDir = vel / speed;
-		if (speed >= speedThresh)
-		{
-			newOrient = moveDir;
-		}
-		else
-		{
-			float frac = sqrtf(speed / speedThresh);
-			Vector2 prefDir = prefVelocity.getPreferred();
-			// prefDir *can* be zero if we've arrived at goal.  Only use it if it's non-zero.
-			if (prefDir.LengthSquared() > 0.000001f)
-			{
-				newOrient = frac * moveDir + (1.f - frac) * prefDir;
-				newOrient.Normalize();
-			}
-		}
-
-		// Now limit angular velocity.
-		const float MAX_ANGLE_CHANGE = timeStep * maxAngVel;
-		float maxCt = cos(MAX_ANGLE_CHANGE);
-		float ct = newOrient.Dot(orient);
-		if (ct < maxCt)
-		{
-			// changing direction at a rate greater than _maxAngVel
-			float maxSt = sin(MAX_ANGLE_CHANGE);
-			if (MathUtil::det(orient, newOrient) > 0.f)
-			{
-				// rotate _orient left
-				orient = Vector2(maxCt * orient.x - maxSt * orient.y, maxSt * orient.x + maxCt * orient.y);
-			}
-			else
-			{
-				// rotate _orient right
-				orient = Vector2(maxCt * orient.x + maxSt * orient.y, -maxSt * orient.x + maxCt * orient.y);
-			}
-		}
-		else
-		{
-			orient = newOrient;
-		}
-	}
 
 	Goal& Agent::getCurrentGoal() const
 	{

@@ -1,10 +1,10 @@
 #include "PortalPath.h"
 #include "Funnel.h"
 #include "PathPlanner.h"
+#include "Navigation/NavSystem.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
-#include "Agent.h"
-#include "Math/consts.h"
 #include "StrategyComponent/Goal/Goal.h"
+#include "Math/consts.h"
 #include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;
@@ -25,7 +25,7 @@ namespace FusionCrowd
 		if (_headings) delete[] _headings;
 	}
 
-	void PortalPath::setPreferredDirection(Agent & agent, float headingCos)
+	void PortalPath::setPreferredDirection(AgentSpatialInfo & agent, float headingCos)
 	{
 		const size_t PORTAL_COUNT = _route->getPortalCount();
 		Vector2 dir;
@@ -110,7 +110,7 @@ namespace FusionCrowd
 		}
 	}
 
-	unsigned int PortalPath::updateLocation(const FusionCrowd::Agent & agent,
+	unsigned int PortalPath::updateLocation(const AgentSpatialInfo & agent,
 	                                        const NavMeshPtr& navMesh,
 	                                        const NavMeshLocalizer* localizer,
 	                                        PathPlanner* planner)
@@ -329,8 +329,7 @@ namespace FusionCrowd
 		}
 	}
 
-	void PortalPath::setWaypoints(size_t start, size_t end, const Vector2& p0,
-	                              const Vector2& dir)
+	void PortalPath::setWaypoints(size_t start, size_t end, const Vector2& p0, const Vector2& dir)
 	{
 		for (size_t i = start; i < end; ++i)
 		{

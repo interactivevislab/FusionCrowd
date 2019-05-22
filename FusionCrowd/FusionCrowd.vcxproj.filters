@@ -26,8 +26,6 @@
     <ClCompile Include="Navigation\NavMesh\NavMeshPoly.cpp" />
     <ClCompile Include="Navigation\NavMesh\Resource.cpp" />
     <ClCompile Include="Navigation\NavMesh\ResourceManager.cpp" />
-    <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
-    <ClCompile Include="Navigation\SpatialQuery\SpatialQuery.cpp" />
     <ClCompile Include="Navigation\NavSystem.cpp" />
     <ClCompile Include="Navigation\Obstacle.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
@@ -64,15 +62,12 @@
     <ClInclude Include="Navigation\NavMesh\NavMeshPoly.h" />
     <ClInclude Include="Navigation\NavMesh\Resource.h" />
     <ClInclude Include="Navigation\NavMesh\ResourceManager.h" />
-    <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
-    <ClInclude Include="Navigation\SpatialQuery\ProximityQuery.h" />
-    <ClInclude Include="Navigation\SpatialQuery\SpatialQuery.h" />
-    <ClInclude Include="Navigation\SpatialQuery\SpatialQueryStructs.h" />
     <ClInclude Include="Navigation\NavSystem.h" />
     <ClInclude Include="Navigation\Obstacle.h" />
     <ClInclude Include="Navigation\INavComponent.h" />
     <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
+    <ClInclude Include="Navigation\AgentSpatialInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

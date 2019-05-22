@@ -2,43 +2,39 @@
 
 #include <map>
 #include <string>
-#include "Config.h"
-
-#include "Agent.h"
-#include "Navigation/INavComponent.h"
-#include "Navigation/SpatialQuery/SpatialQuery.h"
-#include "Math/Util.h"
 #include <vector>
+
+#include "Config.h"
+#include "Math/Util.h"
+#include "Navigation/INavComponent.h"
+#include "Navigation/Obstacle.h"
+#include "Navigation/AgentSpatialInfo.h"
 
 namespace FusionCrowd
 {
-	struct FUSION_CROWD_API AgentSpatialInfo
-	{
-		DirectX::SimpleMath::Vector2 orientation;
-		DirectX::SimpleMath::Vector2 position;
-		DirectX::SimpleMath::Vector2 velocity;
-		float radius;
-	};
-
 	class FUSION_CROWD_API NavSystem
 	{
 	public:
 		NavSystem();
 		~NavSystem();
 
-		void AddNavComponent(std::string name, INavComponent* navComponent);
-		INavComponent* GetNavComponent(std::string name);
+		void AddNavComponent(std::string name, INavComponent navComponent);
+		INavComponent & GetNavComponent(std::string name);
 
-		void AddAgent(AgentSpatialInfo spatialInfo, INavComponent* navComponent);
+		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
+		void AddAgent(size_t agentId, AgentSpatialInfo spatialInfo);
+		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 
-		std::vector<Agent> GetNeighbours(FusionCrowd::Agent & agent) const;
-		std::vector<Obstacle> GetClosestObstacles(FusionCrowd::Agent & agent) const;
-
-		void AddSpatialQuery(FusionCrowd::SpatialQuery* spatialQuery);
+		std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const;
+		std::vector<Obstacle> GetClosestObstacles(size_t agentId) const;
 
 		void Update(float timeStep);
+
 	private:
-		std::map<std::string, INavComponent *> _navComponents;
-		std::vector<AgentSpatialInfo> _agentSpatialInfos;
+		void UpdatePos(AgentSpatialInfo & agent, float timeStep);
+		void UpdateOrient(AgentSpatialInfo & agent, float timeStep);
+
+		std::map<std::string, INavComponent> _navComponents;
+		std::map<size_t, AgentSpatialInfo> _agentSpatialInfos;
 	};
 }

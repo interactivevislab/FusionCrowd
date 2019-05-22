@@ -3,6 +3,7 @@
 #include "Agent.h"
 #include "Config.h"
 #include "Simulator.h"
+#include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
 
@@ -38,10 +39,10 @@ namespace FusionCrowd
 			bool DeleteAgent(size_t id);
 
 			void Update(float timeStep);
-			void Update(Agent & agent, float timeStep);
-			void ComputeNewVelocity(Agent & agent);
-
 		private:
+			void Update(AgentSpatialInfo & agent, float timeStep);
+			void ComputeNewVelocity(AgentSpatialInfo & agent);
+
 			Simulator & _simulator;
 			NavSystem & _navSystem;
 			std::map<int, AgentParamentrs> _agents;

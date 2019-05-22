@@ -170,8 +170,7 @@ namespace FusionCrowd
 		return node;
 	}
 
-	unsigned int NavMeshLocalizer::findNodeInRange(const Vector2& p, unsigned int start,
-	                                               unsigned int stop) const
+	unsigned int NavMeshLocalizer::findNodeInRange(const Vector2& p, unsigned int start, unsigned int stop) const
 	{
 		for (unsigned int n = start; n < stop; ++n)
 		{
@@ -184,8 +183,7 @@ namespace FusionCrowd
 		return NavMeshLocation::NO_NODE;
 	}
 
-	unsigned int NavMeshLocalizer::testNeighbors(const NavMeshNode& node,
-	                                             const Vector2& p) const
+	unsigned int NavMeshLocalizer::testNeighbors(const NavMeshNode& node, const Vector2& p) const
 	{
 		const unsigned int nCount = static_cast<unsigned int>(node.getNeighborCount());
 		for (unsigned int n = 0; n < nCount; ++n)
@@ -212,9 +210,7 @@ namespace FusionCrowd
 
 	NavMeshLocalizerPtr loadNavMeshLocalizer(const std::string& fileName, bool usePlanner)
 	{
-		Resource* rsrc = ResourceManager::getResource(fileName,
-		                                              &NavMeshLocalizer::load,
-		                                              NavMeshLocalizer::LABEL);
+		Resource* rsrc = ResourceManager::getResource(fileName, &NavMeshLocalizer::load, NavMeshLocalizer::LABEL);
 		if (rsrc == 0x0)
 		{
 			return NULL;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Route.h"
+#include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NavMesh/NavMesh.h"
 #include "StrategyComponent/Goal/Goal.h"
 #include "Agent.h"
@@ -17,8 +18,8 @@ namespace FusionCrowd
 	public:
 		PortalPath(const DirectX::SimpleMath::Vector2 & startPos, const Goal* goal, const PortalRoute* route, float agentRadius);
 		~PortalPath();
-		void setPreferredDirection(Agent & agent, float headingCos);
-		unsigned int updateLocation(const Agent & agent, const NavMeshPtr& navMesh,
+		void setPreferredDirection(AgentSpatialInfo & agent, float headingCos);
+		unsigned int updateLocation(const AgentSpatialInfo & agent, const NavMeshPtr& navMesh,
 		                            const NavMeshLocalizer* localizer, PathPlanner* planner);
 		unsigned int getNode() const;
 		inline size_t getWayPointCount() const { return _route->getPortalCount(); }

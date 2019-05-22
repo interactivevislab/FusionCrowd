@@ -171,9 +171,7 @@ namespace FusionCrowd
 						}
 
 						rangeSq = filter->GetMaxAgentRange();
-
 					}
-
 				}
 			}
 
@@ -199,8 +197,7 @@ namespace FusionCrowd
 		}
 	}
 
-	bool NavMeshSpatialQuery::QueryVisibility(const Vector2& q1, const Vector2& q2,
-		float radius) const
+	bool NavMeshSpatialQuery::QueryVisibility(const Vector2& q1, const Vector2& q2, float radius) const
 	{
 		return true;
 	}
@@ -209,8 +206,7 @@ namespace FusionCrowd
 	{
 		// Compute obstacle convexity -- this assumes all closed polygons
 		NavMeshPtr navMesh = _localizer->getNavMesh();
-		const unsigned int OBST_COUNT =
-			static_cast<unsigned int>(navMesh->getObstacleCount());
+		const unsigned int OBST_COUNT = static_cast<unsigned int>(navMesh->getObstacleCount());
 		for (unsigned int o = 0; o < OBST_COUNT; ++o) {
 			NavMeshObstacle & obst = navMesh->GetObstacle(o);
 			if (obst._prevObstacle) {
@@ -257,10 +253,4 @@ namespace FusionCrowd
 		}
 
 	}
-
-	//BFSM::Task * NavMeshSpatialQuery::getTask()
-	//{
-	//	return new BFSM::NavMeshLocalizerTask(_localizer->getNavMesh()->getName(),
-	//		false /*usePlanner*/);
-	//}
 }

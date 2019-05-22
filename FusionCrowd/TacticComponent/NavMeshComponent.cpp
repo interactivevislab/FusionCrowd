@@ -16,14 +16,19 @@ namespace FusionCrowd
 	void NavMeshComponent::AddAgent(size_t id)
 	{
 		Agent & agent = _simulator.getById(id);
+		AgentSpatialInfo & agentInfo = _simulator.GetNavSystem().GetSpatialInfo(id);
+
+		unsigned int from = _localizer->getNode(agentInfo.pos);
+		unsigned int to = _localizer->getNode(agent.getCurrentGoal().getCentroid());
+
+		assert(from != NavMeshLocation::NO_NODE && "Agent is not on the nav mesh");
+		assert(to != NavMeshLocation::NO_NODE && "Agent goal is not on the nav mesh");
 
 		PathPlanner * planner = _localizer->getPlanner();
-		unsigned int from = _localizer->getNode(agent.pos);
-		unsigned int to = _localizer->getNode(agent.getCurrentGoal().getCentroid());
-		PortalRoute * route = planner->getRoute(from, to, agent.radius);
-		PortalPath * path = new PortalPath(agent.pos, &agent.getCurrentGoal(), route, agent.radius);
+		PortalRoute * route = planner->getRoute(from, to, agentInfo.radius);
+		PortalPath * path = new PortalPath(agentInfo.pos, &agent.getCurrentGoal(), route, agentInfo.radius);
 
-		NavMeshLocation location(_localizer->getNode(agent.pos));
+		NavMeshLocation location(_localizer->getNode(agentInfo.pos));
 		location.setPath(path);
 
 		AgentStruct agtStruct;
@@ -43,12 +48,13 @@ namespace FusionCrowd
 		for (auto agtStruct : _agents)
 		{
 			Agent & agent = _simulator.getById(agtStruct.id);
-			setPrefVelocity(agent, agtStruct);
-			updateLocation(agent, agtStruct, false);
+			AgentSpatialInfo & info = _simulator.GetNavSystem().GetSpatialInfo(agtStruct.id);
+			setPrefVelocity(agent, info, agtStruct);
+			updateLocation(agent, info, agtStruct, false);
 		}
 	}
 
-	void NavMeshComponent::setPrefVelocity(Agent & agent, AgentStruct& agentStruct)
+	void NavMeshComponent::setPrefVelocity(Agent & agent, AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
 	{
 		PortalPath * path = agentStruct.location.getPath();
 		if (path == nullptr)
@@ -62,17 +68,17 @@ namespace FusionCrowd
 
 			unsigned int agtNode = agentStruct.location.getNode();
 
-			PortalRoute* route = _localizer->getPlanner()->getRoute(agtNode, goalNode, agent.radius * 2.f);
+			PortalRoute* route = _localizer->getPlanner()->getRoute(agtNode, goalNode, agentInfo.radius * 2.f);
 
-			path = new PortalPath(agent.pos, &(agent.getCurrentGoal()), route, agent.radius);
+			path = new PortalPath(agentInfo.pos, &(agent.getCurrentGoal()), route, agentInfo.radius);
 			// assign it to the localizer
 			agentStruct.location.setPath(path);
 		}
-		agent.prefVelocity.setSpeed(agent.prefSpeed);
-		path->setPreferredDirection(agent, _headingDevCos);
+		agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
+		path->setPreferredDirection(agentInfo, _headingDevCos);
 	}
 
-	unsigned int NavMeshComponent::updateLocation(Agent & agent, const AgentStruct& agentStruct, bool force) const
+	unsigned int NavMeshComponent::updateLocation(Agent & agent, AgentSpatialInfo & agentInfo, const AgentStruct& agentStruct, bool force) const
 	{
 		const size_t ID = agent.id;
 		// NOTE: This will create a default location instance if the agent didn't already
@@ -83,12 +89,12 @@ namespace FusionCrowd
 		unsigned int newLoc = oldLoc;
 		if (loc._hasPath)
 		{
-			newLoc = loc._path->updateLocation(agent, _navMesh, _localizer._data, _localizer->getPlanner());
+			newLoc = loc._path->updateLocation(agentInfo, _navMesh, _localizer._data, _localizer->getPlanner());
 		}
 		else
 		{
 			//if ( _trackAll || force ) {
-			const Vector2 & p = agent.pos;
+			const Vector2 & p = agentInfo.pos;
 			unsigned int oldNode = (unsigned int)loc._nodeID;
 			if (loc._nodeID == NavMeshLocation::NO_NODE)
 			{

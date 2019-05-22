@@ -3,6 +3,7 @@
 #include <string>
 
 #include "ITacticComponent.h"
+#include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 #include "TacticComponent/Path/PrefVelocity.h"
@@ -38,8 +39,8 @@ namespace FusionCrowd
 			NavMeshLocation location;
 		};
 
-		void setPrefVelocity(Agent & agent, AgentStruct& agentStruct);
-		unsigned int updateLocation(Agent & agent, const AgentStruct& agentStruct, bool force) const;
+		void setPrefVelocity(Agent & agent, AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
+		unsigned int updateLocation(Agent & agent, AgentSpatialInfo & agentInfo, const AgentStruct& agentStruct, bool force) const;
 
 		/*
 		PortalPath * getPath(size_t id);

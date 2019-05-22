@@ -1,4 +1,5 @@
 #include "KaramouzasComponent.h"
+
 #include "Math/consts.h"
 #include "Math/geomQuery.h"
 #include "Math/Util.h"
@@ -40,12 +41,14 @@ namespace FusionCrowd
 			for(auto p : _agents)
 			{
 				auto id = p.first;
-				Agent & agent = _simulator.getById(id);
-				Update(agent, timeStep);
+				AgentSpatialInfo & agent = _simulator.GetNavSystem().GetSpatialInfo(id);
+				ComputeNewVelocity(agent);
+
+				//Update(agent, timeStep);
 			}
 		}
 
-		void KaramouzasComponent::Update(Agent & agent, float timeStep)
+		void KaramouzasComponent::Update(AgentSpatialInfo & agent, float timeStep)
 		{
 			ComputeNewVelocity(agent);
 
@@ -62,11 +65,13 @@ namespace FusionCrowd
 
 			agent.pos += agent.vel * timeStep;
 
+			/*
 			agent.UpdateOrient(timeStep);
 			agent.PostUpdate();
+			*/
 		}
 
-		void KaramouzasComponent::ComputeNewVelocity(Agent & agent)
+		void KaramouzasComponent::ComputeNewVelocity(AgentSpatialInfo & agent)
 		{
 			const float EPSILON = 0.01f; // this eps from Ioannis
 			const float FOV = _cosFOVAngle;
@@ -75,7 +80,7 @@ namespace FusionCrowd
 			const float SAFE_DIST = _wallDistance + agent.radius;
 			const float SAFE_DIST2 = SAFE_DIST * SAFE_DIST;
 
-			for (auto obst : _navSystem.GetClosestObstacles(agent)) {
+			for (auto obst : _navSystem.GetClosestObstacles(agent.id)) {
 				// TODO: Interaction with obstacles is, currently, defined strictly
 				//	by COLLISIONS.  Only if I'm going to collide with an obstacle is
 				//	a force applied.  This may be too naive.
@@ -108,8 +113,8 @@ namespace FusionCrowd
 			bool VERBOSE = false; // _id == 1;
 			if (VERBOSE) std::cout << "Agent " << agent.id << "\n";
 			float totalTime = 1.f;
-			std::list< std::pair< float, const Agent &> > collidingSet;
-			for (auto other : _navSystem.GetNeighbours(agent)) {
+			std::list< std::pair< float, const AgentSpatialInfo & const> > collidingSet;
+			for (const AgentSpatialInfo other : _navSystem.GetNeighbours(agent.id)) {
 				float circRadius = _agents[agent.id]._perSpace + other.radius;
 				Vector2 relVel = desVel - other.vel;
 				Vector2 relPos = other.pos - agent.pos;
@@ -143,7 +148,7 @@ namespace FusionCrowd
 			int count = 0;
 
 			for (auto itr = collidingSet.begin(); itr != collidingSet.end(); ++itr) {
-				const Agent & const other = itr->second;
+				const AgentSpatialInfo & const other = itr->second;
 				float tc = itr->first;
 				// future positions
 				Vector2 myPos = agent.pos + desVel * tc;

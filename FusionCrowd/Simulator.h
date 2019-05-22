@@ -7,15 +7,11 @@
 
 #include "StrategyComponent/IStrategyComponent.h"
 #include "StrategyComponent/Goal/PointGoal.h"
-
 #include "TacticComponent/NavMeshComponent.h"
 #include "TacticComponent/ITacticComponent.h"
-
 #include "OperationComponent/IOperationComponent.h"
 
 #include "Navigation/NavSystem.h"
-#include "Navigation/SpatialQuery/SpatialQuery.h"
-#include "Navigation/NavMesh/NavMeshLocalizer.h"
 
 namespace FusionCrowd
 {

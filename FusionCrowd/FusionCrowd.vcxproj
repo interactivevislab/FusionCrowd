@@ -23,14 +23,12 @@
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Math\Util.h" />
+    <ClInclude Include="Navigation\AgentSpatialInfo.h" />
     <ClInclude Include="Navigation\INavComponent.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
-    <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshLocalizer.h" />
-    <ClInclude Include="Navigation\SpatialQuery\ProximityQuery.h" />
-    <ClInclude Include="Navigation\SpatialQuery\SpatialQueryStructs.h" />
     <ClInclude Include="TacticComponent\Path\MinHeap.h" />
     <ClInclude Include="TacticComponent\Path\Funnel.h" />
     <ClInclude Include="StrategyComponent\Goal\GoalSet.h" />
@@ -58,7 +56,6 @@
     <ClInclude Include="StrategyComponent\Goal\PointGoal.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="TacticComponent\Path\WayPortal.h" />
-    <ClInclude Include="Navigation\SpatialQuery\SpatialQuery.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
@@ -76,8 +73,6 @@
     <ClCompile Include="TacticComponent\Path\PrefVelocity.cpp" />
     <ClCompile Include="TacticComponent\Path\WayPortal.cpp" />
     <ClCompile Include="TacticComponent\NavMeshComponent.cpp" />
-    <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
-    <ClCompile Include="Navigation\SpatialQuery\SpatialQuery.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMesh.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshEdge.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshObstacle.cpp" />

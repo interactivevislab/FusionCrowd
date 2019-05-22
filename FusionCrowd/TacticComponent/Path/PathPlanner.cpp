@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cassert>
 #include <sstream>
+#include "Navigation/NavMesh/NavMeshLocalizer.h"
 
 #ifdef _OPENMP
 #include <omp.h>
