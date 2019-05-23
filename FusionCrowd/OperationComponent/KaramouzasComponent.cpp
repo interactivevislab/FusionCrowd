@@ -42,36 +42,11 @@ namespace FusionCrowd
 			{
 				auto id = p.first;
 				AgentSpatialInfo & agent = _simulator.GetNavSystem().GetSpatialInfo(id);
-				ComputeNewVelocity(agent);
-
-				//Update(agent, timeStep);
+				ComputeNewVelocity(agent, timeStep);
 			}
 		}
 
-		void KaramouzasComponent::Update(AgentSpatialInfo & agent, float timeStep)
-		{
-			ComputeNewVelocity(agent);
-
-			float delV = (agent.vel - agent.velNew).Length();
-
-			if (delV > agent.maxAccel * timeStep) {
-				float w = agent.maxAccel * timeStep / delV;
-				agent.vel = (1.f - w) * agent.vel + w * agent.velNew;
-			}
-			else {
-				agent.vel = agent.velNew;
-			}
-			Vector2 t = agent.vel * timeStep;
-
-			agent.pos += agent.vel * timeStep;
-
-			/*
-			agent.UpdateOrient(timeStep);
-			agent.PostUpdate();
-			*/
-		}
-
-		void KaramouzasComponent::ComputeNewVelocity(AgentSpatialInfo & agent)
+		void KaramouzasComponent::ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep)
 		{
 			const float EPSILON = 0.01f; // this eps from Ioannis
 			const float FOV = _cosFOVAngle;
@@ -101,7 +76,7 @@ namespace FusionCrowd
 				}
 			}
 
-			Vector2 desVel = agent.vel + force * 0.1f;//Simulator::TIME_STEP;
+			Vector2 desVel = agent.vel + force * timeStep;
 			float desSpeed = desVel.Length();
 			force = Vector2(0.f, 0.f);
 			//#if 0
@@ -174,8 +149,7 @@ namespace FusionCrowd
 				else if (D < _dMax) {
 					//D -= Simulator::D_MID;
 					//mag =  D * Simulator::AGENT_FORCE / ( Simulator::D_MAX - Simulator::D_MID ) + Simulator::D_MID ;
-					mag = _agentForce * (_dMax - D) /
-						(_dMax - _dMin);
+					mag = _agentForce * (_dMax - D) / (_dMax - _dMin);
 				}
 				else {
 					continue;	// magnitude is zero

@@ -41,7 +41,7 @@ namespace FusionCrowd
 			void Update(float timeStep);
 		private:
 			void Update(AgentSpatialInfo & agent, float timeStep);
-			void ComputeNewVelocity(AgentSpatialInfo & agent);
+			void ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep);
 
 			Simulator & _simulator;
 			NavSystem & _navSystem;

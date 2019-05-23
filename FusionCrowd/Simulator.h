@@ -23,6 +23,7 @@ namespace FusionCrowd
 
 		bool DoStep();
 
+		size_t GetAgentCount() const { return _agents.size(); }
 		Agent & getById(size_t id);
 		NavSystem & GetNavSystem();
 
