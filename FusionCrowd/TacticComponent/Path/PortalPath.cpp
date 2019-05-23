@@ -111,9 +111,9 @@ namespace FusionCrowd
 	}
 
 	unsigned int PortalPath::updateLocation(const AgentSpatialInfo & agent,
-	                                        const NavMeshPtr& navMesh,
-	                                        const NavMeshLocalizer* localizer,
-	                                        PathPlanner* planner)
+	                                        const std::shared_ptr<NavMesh> navMesh,
+	                                        const std::shared_ptr<NavMeshLocalizer> localizer,
+	                                        const std::shared_ptr<PathPlanner> planner)
 	{
 		// If off path, replan get a new route
 		// TODO: If off "approach" vector, recompute crossing
@@ -293,7 +293,7 @@ namespace FusionCrowd
 	}
 
 	void PortalPath::replan(const Vector2& startPos, unsigned int startNode,
-	                        unsigned int endNode, float agentRadius, PathPlanner* planner)
+	                        unsigned int endNode, float agentRadius, const std::shared_ptr<PathPlanner> planner)
 	{
 		PortalRoute* route = planner->getRoute(startNode, _route->getEndNode(), agentRadius * 2.f);
 		if (_waypoints != 0x0)

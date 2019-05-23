@@ -24,8 +24,6 @@
     <ClCompile Include="Navigation\NavMesh\NavMeshNode.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshObstacle.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshPoly.cpp" />
-    <ClCompile Include="Navigation\NavMesh\Resource.cpp" />
-    <ClCompile Include="Navigation\NavMesh\ResourceManager.cpp" />
     <ClCompile Include="Navigation\NavSystem.cpp" />
     <ClCompile Include="Navigation\Obstacle.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
@@ -60,8 +58,6 @@
     <ClInclude Include="Navigation\NavMesh\NavMeshNode.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshObstacle.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshPoly.h" />
-    <ClInclude Include="Navigation\NavMesh\Resource.h" />
-    <ClInclude Include="Navigation\NavMesh\ResourceManager.h" />
     <ClInclude Include="Navigation\NavSystem.h" />
     <ClInclude Include="Navigation\Obstacle.h" />
     <ClInclude Include="Navigation\INavComponent.h" />

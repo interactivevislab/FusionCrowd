@@ -9,9 +9,10 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	NavMesh::NavMesh(const std::string& name) : Resource(name), vCount(0), vertices(0x0),
-	                                            nCount(0), nodes(0x0), eCount(0),
-	                                            edges(0x0), obstCount(0), obstacles(0x0),
+	NavMesh::NavMesh(const std::string& name) : vCount(0), vertices(0x0),
+	                                            nCount(0), nodes(0x0),
+												eCount(0), edges(0x0),
+												obstCount(0), obstacles(0x0),
 	                                            nodeGroups()
 	{
 	}
@@ -117,7 +118,7 @@ namespace FusionCrowd
 #pragma warning( default : 4311 )
 #endif
 
-	Resource* NavMesh::Load(const std::string& FileName)
+	std::shared_ptr<NavMesh> NavMesh::Load(const std::string& FileName)
 	{
 		// TODO: Change this to support comments.
 		std::ifstream f;
@@ -135,14 +136,13 @@ namespace FusionCrowd
 			return NULL;
 		}
 
-		NavMesh* mesh = new NavMesh(FileName);
+		std::shared_ptr<NavMesh> mesh = std::make_shared<NavMesh>(FileName);
 		mesh->SetVertexCount(vertCount);
 		float x, y;
 		for (unsigned int v = 0; v < vertCount; ++v)
 		{
 			if (!(f >> x >> y))
 			{
-				mesh->destroy();
 				return NULL;
 			}
 			mesh->SetVertex(v, x, y);
@@ -152,7 +152,6 @@ namespace FusionCrowd
 		unsigned int edgeCount;
 		if (!(f >> edgeCount))
 		{
-			mesh->destroy();
 			return NULL;
 		}
 		mesh->SetEdgeCount(edgeCount);
@@ -161,7 +160,6 @@ namespace FusionCrowd
 			NavMeshEdge& edge = mesh->GetEdge(e);
 			if (!edge.loadFromAscii(f, mesh->vertices))
 			{
-				mesh->destroy();
 				return NULL;
 			}
 		}
@@ -170,7 +168,6 @@ namespace FusionCrowd
 		unsigned int obstCount;
 		if (!(f >> obstCount))
 		{
-			mesh->destroy();
 			return NULL;
 		}
 		mesh->SetObstacleCount(obstCount);
@@ -179,7 +176,6 @@ namespace FusionCrowd
 			NavMeshObstacle& obst = mesh->GetObstacle(o);
 			if (!obst.LoadFromAscii(f, mesh->vertices))
 			{
-				mesh->destroy();
 				return NULL;
 			}
 		}
@@ -198,7 +194,6 @@ namespace FusionCrowd
 				}
 				else
 				{
-					mesh->destroy();
 					return 0x0;
 				}
 			}
@@ -206,7 +201,6 @@ namespace FusionCrowd
 			unsigned int nCount;
 			if (!(f >> nCount))
 			{
-				mesh->destroy();
 				return 0x0;
 			}
 
@@ -221,7 +215,6 @@ namespace FusionCrowd
 				NavMeshNode& node = mesh->GetNode(n);
 				if (!node.loadFromAscii(f))
 				{
-					mesh->destroy();
 					return 0x0;
 				}
 
@@ -232,7 +225,6 @@ namespace FusionCrowd
 
 		if (!mesh->finalize())
 		{
-			mesh->destroy();
 			return NULL;
 		}
 
@@ -363,13 +355,5 @@ namespace FusionCrowd
 	NavMesh::~NavMesh()
 	{
 		clear();
-	}
-
-	NavMeshPtr loadNavMesh(const std::string& fileName)
-	{
-		Resource* rsrc = ResourceManager::getResource(fileName, &NavMesh::Load, NavMesh::LABEL);
-		NavMesh* nm = dynamic_cast<NavMesh *>(rsrc);
-
-		return NavMeshPtr(nm);
 	}
 }

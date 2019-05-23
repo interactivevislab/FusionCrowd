@@ -2,13 +2,10 @@
 
 #include "NavMesh.h"
 #include "NavMeshNode.h"
-#include "Resource.h"
 #include "Agent.h"
 #include "Config.h"
 #include "Math/Util.h"
-#include <unordered_map>
 
-#include <map>
 #include <set>
 
 namespace FusionCrowd
@@ -57,12 +54,11 @@ namespace FusionCrowd
 	typedef OccupantSet::const_iterator OccupantSetCItr;
 
 
-	class FUSION_CROWD_API NavMeshLocalizer : public Resource
+	class FUSION_CROWD_API NavMeshLocalizer
 	{
 	public:
-		NavMeshLocalizer(const std::string& name);
+		NavMeshLocalizer(const std::string& fileName, bool usePlanner);
 		~NavMeshLocalizer();
-		virtual const std::string& getLabel() const { return LABEL; }
 
 		unsigned int getNode(const DirectX::SimpleMath::Vector2& p) const;
 		const NavMeshNode getNode(unsigned int i) { return _navMesh->GetNode(i); }
@@ -70,19 +66,16 @@ namespace FusionCrowd
 		void setTrackAll() { _trackAll = true; }
 		void updateAgentPosition(size_t agentId, const unsigned int oldLoc, unsigned int newLoc);
 
-		PathPlanner* getPlanner() { return _planner; }
-		void setPlanner(PathPlanner* planner) { _planner = planner; }
+		std::shared_ptr<PathPlanner> getPlanner() { return _planner; }
+		void setPlanner(std::shared_ptr<PathPlanner> planner) { _planner = planner; }
 
 		const OccupantSet* getNodeOccupants(unsigned int nodeID) const
 		{
 			return &_nodeOccupants[nodeID];
 		}
 
-		const NavMeshPtr getNavMesh() const { return _navMesh; }
-		NavMeshPtr getNavMesh() { return _navMesh; }
-
-		static Resource* load(const std::string& fileName);
-		static constexpr const char* LABEL = "navmesh_localizer";
+		const std::shared_ptr<NavMesh> getNavMesh() const { return _navMesh; }
+		std::shared_ptr<NavMesh> getNavMesh() { return _navMesh; }
 
 		OccupantSet* _nodeOccupants;
 		unsigned int findNodeBlind(const DirectX::SimpleMath::Vector2& p, float tgtElev = 1e5f) const;
@@ -91,12 +84,8 @@ namespace FusionCrowd
 		unsigned int testNeighbors(const NavMeshNode& node, const DirectX::SimpleMath::Vector2& p) const;
 
 	private:
-		PathPlanner* _planner;
-		NavMeshPtr _navMesh;
+		std::shared_ptr<PathPlanner> _planner;
+		std::shared_ptr<NavMesh> _navMesh;
 		bool _trackAll;
 	};
-
-	typedef ResourcePtr<NavMeshLocalizer> NavMeshLocalizerPtr;
-
-	NavMeshLocalizerPtr FUSION_CROWD_API loadNavMeshLocalizer(const std::string& fileName, bool usePlanner);
 }

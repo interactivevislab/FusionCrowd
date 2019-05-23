@@ -52,8 +52,8 @@ namespace FusionCrowd
 		Simulator & _simulator;
 
 		float _headingDevCos;
-		NavMeshPtr _navMesh;
-		NavMeshLocalizerPtr _localizer;
+		std::shared_ptr<NavMesh> _navMesh;
+		std::shared_ptr<NavMeshLocalizer> _localizer;
 		std::vector<AgentStruct> _agents;
 	};
 }

@@ -8,7 +8,6 @@
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h"
 #include "NavMeshNode.h"
-#include "Resource.h"
 #include "Math/Util.h"
 
 namespace FusionCrowd
@@ -27,25 +26,28 @@ namespace FusionCrowd
 		{
 		}
 
-		NMNodeGroup(unsigned int first, unsigned int last) : _first(first), _last(last)
+		NMNodeGroup(size_t first, size_t last) : _first(first), _last(last)
 		{
 		}
 
+		inline size_t getFirst() const { return _first; }
+		inline size_t getLast() const { return _last; }
 		inline size_t getGlobalId(unsigned int i) const { return _first + i; }
 		inline size_t groupSize() const { return static_cast<size_t>(_last - _first + 1); }
 
-		unsigned int _first;
-		unsigned int _last;
+	private:
+		size_t _first;
+		size_t _last;
 	};
 
-	class FUSION_CROWD_API NavMesh : public Resource
+	class FUSION_CROWD_API NavMesh
 	{
 	public:
 		NavMesh(const std::string& name);
 		~NavMesh();
 		//Load
-		static Resource* Load(const std::string& FileName);
-		void Destroy() { delete this; };
+		static std::shared_ptr<NavMesh> Load(const std::string& FileName);
+
 		void clear();
 		bool finalize();
 		//Vertex
@@ -65,10 +67,7 @@ namespace FusionCrowd
 		inline size_t getNodeCount() const { return nCount; }
 		const NMNodeGroup* getNodeGroup(const std::string& grpName) const;
 
-		static constexpr const char* LABEL = "navmesh";
-
-		virtual const std::string& getLabel() const { return LABEL; }
-		//protected:
+	protected:
 		std::string fileName;
 		size_t vCount;
 		DirectX::SimpleMath::Vector2* vertices;
@@ -80,8 +79,4 @@ namespace FusionCrowd
 		NavMeshNode* nodes;
 		std::map<const std::string, NMNodeGroup> nodeGroups;
 	};
-
-	typedef ResourcePtr<NavMesh> NavMeshPtr;
-
-	NavMeshPtr loadNavMesh(const std::string& fileName);
 }

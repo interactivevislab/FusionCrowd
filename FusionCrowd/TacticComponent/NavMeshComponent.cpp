@@ -9,7 +9,7 @@ namespace FusionCrowd
 {
 	NavMeshComponent::NavMeshComponent(Simulator & simulator, const char* navMeshPath) : _simulator(simulator)
 	{
-		_localizer = loadNavMeshLocalizer(navMeshPath, true);
+		_localizer = std::make_shared<NavMeshLocalizer>(navMeshPath, true);
 		_navMesh = _localizer->getNavMesh();
 	}
 
@@ -24,7 +24,7 @@ namespace FusionCrowd
 		assert(from != NavMeshLocation::NO_NODE && "Agent is not on the nav mesh");
 		assert(to != NavMeshLocation::NO_NODE && "Agent goal is not on the nav mesh");
 
-		PathPlanner * planner = _localizer->getPlanner();
+		std::shared_ptr<PathPlanner> planner = _localizer->getPlanner();
 		PortalRoute * route = planner->getRoute(from, to, agentInfo.radius);
 		PortalPath * path = new PortalPath(agentInfo.pos, &agent.getCurrentGoal(), route, agentInfo.radius);
 
@@ -89,7 +89,7 @@ namespace FusionCrowd
 		unsigned int newLoc = oldLoc;
 		if (loc._hasPath)
 		{
-			newLoc = loc._path->updateLocation(agentInfo, _navMesh, _localizer._data, _localizer->getPlanner());
+			newLoc = loc._path->updateLocation(agentInfo, _navMesh, _localizer, _localizer->getPlanner());
 		}
 		else
 		{

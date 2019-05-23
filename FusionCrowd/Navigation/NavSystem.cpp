@@ -41,7 +41,12 @@ namespace FusionCrowd
 
 	std::vector<AgentSpatialInfo> NavSystem::GetNeighbours(size_t agentId) const
 	{
-		return std::vector<AgentSpatialInfo>();
+		std::vector<AgentSpatialInfo> result;
+		for(auto & pair : _agentSpatialInfos)
+			if(pair.first != agentId)
+				result.push_back(pair.second);
+
+		return result;
 	}
 
 	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId) const

@@ -51,8 +51,6 @@
     <ClInclude Include="TacticComponent\Path\PortalPath.h" />
     <ClInclude Include="TacticComponent\Path\Route.h" />
     <ClInclude Include="TacticComponent\Path\PrefVelocity.h" />
-    <ClInclude Include="Navigation\NavMesh\Resource.h" />
-    <ClInclude Include="Navigation\NavMesh\ResourceManager.h" />
     <ClInclude Include="StrategyComponent\Goal\PointGoal.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="TacticComponent\Path\WayPortal.h" />
@@ -79,8 +77,6 @@
     <ClCompile Include="Navigation\NavMesh\NavMeshNode.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshPoly.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshLocalizer.cpp" />
-    <ClCompile Include="Navigation\NavMesh\Resource.cpp" />
-    <ClCompile Include="Navigation\NavMesh\ResourceManager.cpp" />
     <ClCompile Include="Navigation\NavSystem.cpp" />
     <ClCompile Include="Navigation\Obstacle.cpp" />
     <ClCompile Include="StrategyComponent\Goal\PointGoal.cpp" />

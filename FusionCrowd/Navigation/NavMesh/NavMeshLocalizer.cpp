@@ -103,15 +103,18 @@ namespace FusionCrowd
 		}
 	}
 
-	//const std::string NavMeshLocalizer::LABEL ="navmesh_localizer";
-
-	NavMeshLocalizer::NavMeshLocalizer(const std::string& name) : Resource(name), _navMesh(0x0),
-	                                                              _trackAll(false), _planner(0x0)
+	NavMeshLocalizer::NavMeshLocalizer(const std::string& name, bool usePlanner) : _navMesh(0x0), _trackAll(false), _planner(0x0)
 	{
-		_navMesh = loadNavMesh(name);
+		_navMesh = NavMesh::Load(name);
 
 		const size_t NODE_COUNT = _navMesh->getNodeCount();
 		_nodeOccupants = new OccupantSet[NODE_COUNT + 1];
+
+		if (usePlanner)
+		{
+			std::shared_ptr<PathPlanner> planner = std::make_shared<PathPlanner>(_navMesh);
+			setPlanner(planner);
+		}
 	}
 
 	NavMeshLocalizer::~NavMeshLocalizer()
@@ -153,17 +156,17 @@ namespace FusionCrowd
 		const NMNodeGroup* grp = _navMesh->getNodeGroup(grpName);
 		if (grp != 0x0)
 		{
-			node = findNodeInRange(p, grp->_first, grp->_last + 1);
+			node = findNodeInRange(p, grp->getFirst(), grp->getLast() + 1);
 
 			if (node == NavMeshLocation::NO_NODE && searchAll)
 			{
-				node = findNodeInRange(p, 0, grp->_first);
+				node = findNodeInRange(p, 0, grp->getFirst());
 				if (node == NavMeshLocation::NO_NODE)
 				{
 					// TODO(curds01) 10/1/2016 - This cast is bad because I can lose precision
 					// (after I get 4 billion nodes...)
 					const unsigned int TOTAL_NODES = static_cast<unsigned int>(_navMesh->getNodeCount());
-					node = findNodeInRange(p, grp->_first + 1, TOTAL_NODES);
+					node = findNodeInRange(p, grp->getFirst() + 1, TOTAL_NODES);
 				}
 			}
 		}
@@ -195,41 +198,5 @@ namespace FusionCrowd
 			}
 		}
 		return NavMeshLocation::NO_NODE;
-	}
-
-	Resource* NavMeshLocalizer::load(const std::string& fileName)
-	{
-		NavMeshPtr mesh;
-
-		mesh = loadNavMesh(fileName);
-
-		NavMeshLocalizer* nml = new NavMeshLocalizer(fileName);
-		nml->_navMesh = mesh;
-		return nml;
-	}
-
-	NavMeshLocalizerPtr loadNavMeshLocalizer(const std::string& fileName, bool usePlanner)
-	{
-		Resource* rsrc = ResourceManager::getResource(fileName, &NavMeshLocalizer::load, NavMeshLocalizer::LABEL);
-		if (rsrc == 0x0)
-		{
-			return NULL;
-		}
-		NavMeshLocalizer* nml = dynamic_cast<NavMeshLocalizer *>(rsrc);
-		if (nml == 0x0)
-		{
-			return NULL;
-		}
-
-		if (usePlanner)
-		{
-			if (nml->getPlanner() == 0x0)
-			{
-				PathPlanner* planner = new PathPlanner(nml->getNavMesh());
-				nml->setPlanner(planner);
-			}
-		}
-
-		return NavMeshLocalizerPtr(nml);
 	}
 }

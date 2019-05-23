@@ -19,8 +19,8 @@ namespace FusionCrowd
 		PortalPath(const DirectX::SimpleMath::Vector2 & startPos, const Goal* goal, const PortalRoute* route, float agentRadius);
 		~PortalPath();
 		void setPreferredDirection(AgentSpatialInfo & agent, float headingCos);
-		unsigned int updateLocation(const AgentSpatialInfo & agent, const NavMeshPtr& navMesh,
-		                            const NavMeshLocalizer* localizer, PathPlanner* planner);
+		unsigned int updateLocation(const AgentSpatialInfo & agent, const std::shared_ptr<NavMesh> navMesh,
+		                            const std::shared_ptr<NavMeshLocalizer> localizer, const std::shared_ptr<PathPlanner> planner);
 		unsigned int getNode() const;
 		inline size_t getWayPointCount() const { return _route->getPortalCount(); }
 		DirectX::SimpleMath::Vector2 getWayPoint(size_t i) const;
@@ -41,6 +41,6 @@ namespace FusionCrowd
 		DirectX::SimpleMath::Vector2* _waypoints;
 		DirectX::SimpleMath::Vector2* _headings;
 		void replan(const DirectX::SimpleMath::Vector2& startPos, unsigned int startNode, unsigned int endNode,
-		            float minWidth, PathPlanner* planner);
+		            float minWidth, const std::shared_ptr<PathPlanner> planner);
 	};
 }
