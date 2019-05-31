@@ -60,8 +60,7 @@ namespace FusionCrowd
 		NavMeshLocalizer(const std::string& fileName, bool usePlanner);
 		~NavMeshLocalizer();
 
-		unsigned int getNode(const DirectX::SimpleMath::Vector2& p) const;
-		const NavMeshNode getNode(unsigned int i) { return _navMesh->GetNode(i); }
+		unsigned int getNodeId(const DirectX::SimpleMath::Vector2& p) const;
 
 		void setTrackAll() { _trackAll = true; }
 		void updateAgentPosition(size_t agentId, const unsigned int oldLoc, unsigned int newLoc);

@@ -6,23 +6,23 @@
 
 #include "Config.h"
 #include "Math/Util.h"
-#include "Navigation/INavComponent.h"
-#include "Navigation/Obstacle.h"
 #include "Navigation/AgentSpatialInfo.h"
+#include "Navigation/Obstacle.h"
+#include "Navigation/NavMesh/NavMesh.h"
+#include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
 
 namespace FusionCrowd
 {
+	class NavMeshComponent;
+
 	class FUSION_CROWD_API NavSystem
 	{
 	public:
-		NavSystem();
+		NavSystem(NavMeshComponent & component);
 		~NavSystem();
 
-		void AddNavComponent(std::string name, INavComponent navComponent);
-		INavComponent & GetNavComponent(std::string name);
-
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
-		void AddAgent(size_t agentId, AgentSpatialInfo spatialInfo);
+		void AddAgent(AgentSpatialInfo spatialInfo);
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 
 		std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const;
@@ -34,7 +34,8 @@ namespace FusionCrowd
 		void UpdatePos(AgentSpatialInfo & agent, float timeStep);
 		void UpdateOrient(AgentSpatialInfo & agent, float timeStep);
 
-		std::map<std::string, INavComponent> _navComponents;
 		std::map<size_t, AgentSpatialInfo> _agentSpatialInfos;
+		NavMeshSpatialQuery _navMeshQuery;
+		std::shared_ptr<NavMesh> _navMesh;
 	};
 }

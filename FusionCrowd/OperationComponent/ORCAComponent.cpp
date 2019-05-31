@@ -11,29 +11,43 @@ namespace FusionCrowd
 {
 	namespace ORCA
 	{
-		ORCAComponent::ORCAComponent() : _timeHorizon(2.5f), _timeHorizonObst(0.15f)
-		{
-
-		}
-
-		ORCAComponent::ORCAComponent(float timeHorizon, float timeHorizonObst) : _timeHorizon(timeHorizon), _timeHorizonObst(timeHorizonObst)
+		ORCAComponent::ORCAComponent(Simulator & simulator) :
+			_simulator(simulator), _timeHorizon(2.5f), _timeHorizonObst(0.15f)
 		{
 		}
 
-		void ORCAComponent::ComputeNewVelocity(FusionCrowd::Agent* agent)
+		ORCAComponent::ORCAComponent(Simulator & simulator, float timeHorizon, float timeHorizonObst) :
+			_simulator(simulator), _timeHorizon(timeHorizon), _timeHorizonObst(timeHorizonObst)
 		{
-			const size_t numObstLines = ComputeORCALines(agent);
+		}
 
-			Vector2 velPref(agent->_velPref.getPreferredVel());
+		void ORCAComponent::AddAgent(size_t id)
+		{
+			_agents.insert(id);
+		}
 
-			size_t lineFail = LinearProgram2(_orcaLines, agent->_maxSpeed, velPref, false, agent->_velNew);
+		bool ORCAComponent::DeleteAgent(size_t id)
+		{
+			_agents.erase(id);
+
+			return true;
+		}
+
+		void ORCAComponent::ComputeNewVelocity(size_t agentId)
+		{
+			const size_t numObstLines = ComputeORCALines(agentId);
+			auto & agentInfo = _simulator.GetNavSystem().GetSpatialInfo(agentId);
+
+			Vector2 velPref(agentInfo.prefVelocity.getPreferredVel());
+
+			size_t lineFail = LinearProgram2(_orcaLines, agentInfo.maxSpeed, velPref, false, agentInfo.velNew);
 
 			if (lineFail < _orcaLines.size()) {
-				LinearProgram3(_orcaLines, numObstLines, lineFail, agent->_maxSpeed, agent->_velNew);
+				LinearProgram3(_orcaLines, numObstLines, lineFail, agentInfo.maxSpeed, agentInfo.velNew);
 			}
 		}
 
-		bool  ORCAComponent::LinearProgram1(const std::vector<FusionCrowd::Math::Line>& lines, size_t lineNo,
+		bool ORCAComponent::LinearProgram1(const std::vector<FusionCrowd::Math::Line>& lines, size_t lineNo,
 			float radius, const Vector2 & optVelocity,
 			bool directionOpt, Vector2& result)
 		{
@@ -197,30 +211,30 @@ namespace FusionCrowd
 			}
 		}
 
-		void ORCAComponent::ObstacleLine(size_t obstNbrID, const float invTau, bool flip, FusionCrowd::Agent* agent)
+		void ORCAComponent::ObstacleLine(Obstacle & obst, const float invTau, bool flip, size_t agentId)
 		{
-			const Obstacle* obst = agent->_nearObstacles[obstNbrID].obstacle;
-			const float LENGTH = obst->length();
-			const Vector2 P0 = flip ? obst->getP1() : obst->getP0();
-			const Vector2 P1 = flip ? obst->getP0() : obst->getP1();
-			const Vector2 obstDir = flip ? -obst->_unitDir : obst->_unitDir;
-			const bool p0Convex = flip ? obst->p1Convex(true) : obst->p0Convex(true);
-			const bool p1Convex = flip ? obst->p0Convex(true) : obst->p1Convex(true);
+			auto & agentInfo = _simulator.GetNavSystem().GetSpatialInfo(agentId);
+			const float LENGTH = obst.length();
+			const Vector2 P0 = flip ? obst.getP1() : obst.getP0();
+			const Vector2 P1 = flip ? obst.getP0() : obst.getP1();
+			const Vector2 obstDir = flip ? -obst._unitDir : obst._unitDir;
+			const bool p0Convex = flip ? obst.p1Convex(true) : obst.p0Convex(true);
+			const bool p1Convex = flip ? obst.p0Convex(true) : obst.p1Convex(true);
 			const Obstacle* const leftNeighbor =
-				flip ? obst->_nextObstacle : obst->_prevObstacle;
+				flip ? obst._nextObstacle : obst._prevObstacle;
 			const Obstacle* const rightNeighbor =
-				flip ? obst->_prevObstacle : obst->_nextObstacle;
+				flip ? obst._prevObstacle : obst._nextObstacle;
 
-			const Vector2 relativePosition1 = P0 - agent->_pos;
-			const Vector2 relativePosition2 = P1 - agent->_pos;
+			const Vector2 relativePosition1 = P0 - agentInfo.pos;
+			const Vector2 relativePosition2 = P1 - agentInfo.pos;
 
 			bool alreadyCovered = false;
 
 			for (size_t j = 0; j < _orcaLines.size(); ++j) {
 				if (MathUtil::det(invTau * relativePosition1 - _orcaLines[j]._point,
-					_orcaLines[j]._direction) - invTau * agent->_radius >=
+					_orcaLines[j]._direction) - invTau * agentInfo.radius >=
 					-FusionCrowd::MathUtil::EPS && MathUtil::det(invTau * relativePosition2 - _orcaLines[j]._point,
-						_orcaLines[j]._direction) - invTau * agent->_radius >= -FusionCrowd::MathUtil::EPS) {
+						_orcaLines[j]._direction) - invTau * agentInfo.radius >= -FusionCrowd::MathUtil::EPS) {
 					alreadyCovered = true;
 					break;
 				}
@@ -233,7 +247,7 @@ namespace FusionCrowd
 			const float distSq1 = relativePosition1.LengthSquared();
 			const float distSq2 = relativePosition2.LengthSquared();
 
-			const float radiusSq = agent->_radius * agent->_radius;
+			const float radiusSq = agentInfo.radius * agentInfo.radius;
 
 			const float s = -(relativePosition1.Dot(obstDir));
 			const float distSqLine = (relativePosition1 + s * obstDir).LengthSquared();
@@ -252,8 +266,8 @@ namespace FusionCrowd
 			else if (s > LENGTH && distSq2 <= radiusSq) {
 				/* Collision with right vertex. Ignore if non-convex
 				* or if it will be taken care of by neighoring obstace */
-				if ((obst->_nextObstacle == 0x0) || (p1Convex && MathUtil::det(relativePosition2,
-					obst->_nextObstacle->_unitDir) >= 0)) {
+				if ((obst._nextObstacle == 0x0) || (p1Convex && MathUtil::det(relativePosition2,
+					obst._nextObstacle->_unitDir) >= 0)) {
 					line._point = Vector2(0.f, 0.f);
 					Vector2(-relativePosition2.y, relativePosition2.x).Normalize(line._direction);
 
@@ -286,12 +300,12 @@ namespace FusionCrowd
 
 				const float leg1 = std::sqrt(distSq1 - radiusSq);
 				leftLegDirection = Vector2(relativePosition1.x * leg1 -
-					relativePosition1.y * agent->_radius,
-					relativePosition1.x * agent->_radius +
+					relativePosition1.y * agentInfo.radius,
+					relativePosition1.x * agentInfo.radius +
 					relativePosition1.y * leg1) / distSq1;
 				rightLegDirection = Vector2(relativePosition1.x * leg1 +
-					relativePosition1.y * agent->_radius,
-					-relativePosition1.x * agent->_radius +
+					relativePosition1.y * agentInfo.radius,
+					-relativePosition1.x * agentInfo.radius +
 					relativePosition1.y * leg1) / distSq1;
 			}
 			else if (s > LENGTH && distSqLine <= radiusSq) {
@@ -307,12 +321,12 @@ namespace FusionCrowd
 
 				const float leg2 = std::sqrt(distSq2 - radiusSq);
 				leftLegDirection = Vector2(relativePosition2.x * leg2 -
-					relativePosition2.y * agent->_radius,
-					relativePosition2.x * agent->_radius +
+					relativePosition2.y * agentInfo.radius,
+					relativePosition2.x * agentInfo.radius +
 					relativePosition2.y * leg2) / distSq2;
 				rightLegDirection = Vector2(relativePosition2.x * leg2 +
-					relativePosition2.y * agent->_radius,
-					-relativePosition2.x * agent->_radius +
+					relativePosition2.y * agentInfo.radius,
+					-relativePosition2.x * agentInfo.radius +
 					relativePosition2.y * leg2) / distSq2;
 			}
 			else {
@@ -320,8 +334,8 @@ namespace FusionCrowd
 				if (p0Convex) {
 					const float leg1 = std::sqrt(distSq1 - radiusSq);
 					leftLegDirection = Vector2(relativePosition1.x * leg1 -
-						relativePosition1.y * agent->_radius,
-						relativePosition1.x * agent->_radius +
+						relativePosition1.y * agentInfo.radius,
+						relativePosition1.x * agentInfo.radius +
 						relativePosition1.y * leg1) / distSq1;
 				}
 				else {
@@ -332,8 +346,8 @@ namespace FusionCrowd
 				if (p1Convex) {
 					const float leg2 = std::sqrt(distSq2 - radiusSq);
 					rightLegDirection = Vector2(relativePosition2.x * leg2 +
-						relativePosition2.y * agent->_radius,
-						-relativePosition2.x * agent->_radius +
+						relativePosition2.y * agentInfo.radius,
+						-relativePosition2.x * agentInfo.radius +
 						relativePosition2.y * leg2) / distSq2;
 				}
 				else {
@@ -381,25 +395,25 @@ namespace FusionCrowd
 			/* Project current velocity on velocity obstacle. */
 			/* Check if current velocity is projected on cutoff circles. */
 			const float t = obstaclesSame ?
-				0.5f : (agent->_vel - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared());
-			const float tLeft = (agent->_vel - leftCutoff).Dot(leftLegDirection);
-			const float tRight = (agent->_vel - rightCutoff).Dot(rightLegDirection);
+				0.5f : (agentInfo.vel - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared());
+			const float tLeft = (agentInfo.vel - leftCutoff).Dot(leftLegDirection);
+			const float tRight = (agentInfo.vel - rightCutoff).Dot(rightLegDirection);
 
 			if ((t < 0.0f && tLeft < 0.0f) || (obstaclesSame && tLeft < 0.0f && tRight < 0.0f)) {
 				/* Project on left cut-off circle. */
 				Vector2 unitW;
-				(agent->_vel - leftCutoff).Normalize(unitW);
+				(agentInfo.vel - leftCutoff).Normalize(unitW);
 				line._direction = Vector2(unitW.y, -unitW.x);
-				line._point = leftCutoff + agent->_radius * invTau * unitW;
+				line._point = leftCutoff + agentInfo.radius * invTau * unitW;
 				_orcaLines.push_back(line);
 				return;
 			}
 			else if (t > 1.0f && tRight < 0.0f) {
 				/* Project on right cut-off circle. */
 				Vector2 unitW;
-				(agent->_vel - rightCutoff).Normalize(unitW);
+				(agentInfo.vel - rightCutoff).Normalize(unitW);
 				line._direction = Vector2(unitW.y, -unitW.x);
-				line._point = rightCutoff + agent->_radius * invTau * unitW;
+				line._point = rightCutoff + agentInfo.radius * invTau * unitW;
 				_orcaLines.push_back(line);
 				return;
 			}
@@ -410,18 +424,18 @@ namespace FusionCrowd
 			*/
 			const float distSqCutoff = ((t < 0.0f || t > 1.0f || obstaclesSame) ?
 				std::numeric_limits<float>::infinity() :
-				(agent->_vel - (leftCutoff + t * cutoffVec)).LengthSquared());
+				(agentInfo.vel - (leftCutoff + t * cutoffVec)).LengthSquared());
 			const float distSqLeft = ((tLeft < 0.0f) ?
 				std::numeric_limits<float>::infinity() :
-				(agent->_vel - (leftCutoff + tLeft * leftLegDirection)).LengthSquared());
+				(agentInfo.vel - (leftCutoff + tLeft * leftLegDirection)).LengthSquared());
 			const float distSqRight = ((tRight < 0.0f) ?
 				std::numeric_limits<float>::infinity() :
-				(agent->_vel - (rightCutoff + tRight * rightLegDirection)).LengthSquared());
+				(agentInfo.vel - (rightCutoff + tRight * rightLegDirection)).LengthSquared());
 
 			if (distSqCutoff <= distSqLeft && distSqCutoff <= distSqRight) {
 				/* Project on cut-off line. */
 				line._direction = -obstDir;
-				line._point = leftCutoff + agent->_radius * invTau * Vector2(-line._direction.y,
+				line._point = leftCutoff + agentInfo.radius * invTau * Vector2(-line._direction.y,
 					line._direction.x);
 				_orcaLines.push_back(line);
 			}
@@ -429,7 +443,7 @@ namespace FusionCrowd
 				/* Project on left leg. */
 				if (!isLeftLegForeign) {
 					line._direction = leftLegDirection;
-					line._point = leftCutoff + agent->_radius * invTau * Vector2(-line._direction.y,
+					line._point = leftCutoff + agentInfo.radius * invTau * Vector2(-line._direction.y,
 						line._direction.x);
 					_orcaLines.push_back(line);
 				}
@@ -438,27 +452,29 @@ namespace FusionCrowd
 				/* Project on right leg. */
 				if (!isRightLegForeign) {
 					line._direction = -rightLegDirection;
-					line._point = rightCutoff + agent->_radius * invTau * Vector2(-line._direction.y,
+					line._point = rightCutoff + agentInfo.radius * invTau * Vector2(-line._direction.y,
 						line._direction.x);
 					_orcaLines.push_back(line);
 				}
 			}
 		}
 
-		size_t ORCAComponent::ComputeORCALines(FusionCrowd::Agent* agent)
+		size_t ORCAComponent::ComputeORCALines(size_t agentId)
 		{
 			_orcaLines.clear();
+			auto & nav = _simulator.GetNavSystem();
+
+			auto & agentInfo = nav.GetSpatialInfo(agentId);
 
 			const float invTimeHorizonObst = 1.0f / _timeHorizonObst;
 
 			/* Create obstacle ORCA lines. */
-			for (size_t i = 0; i < agent->_nearObstacles.size(); ++i) {
 
-				const Obstacle* obst = agent->_nearObstacles[i].obstacle;
-				const Vector2 P0 = obst->getP0();
-				const Vector2 P1 = obst->getP1();
-				const bool agtOnRight = FusionCrowd::MathUtil::leftOf(P0, P1, agent->_pos) < 0.f;
-				ObstacleLine(i, invTimeHorizonObst, !agtOnRight && obst->_doubleSided, agent);
+			for (Obstacle & obst : nav.GetClosestObstacles(agentId)) {
+				const Vector2 P0 = obst.getP0();
+				const Vector2 P1 = obst.getP1();
+				const bool agtOnRight = FusionCrowd::MathUtil::leftOf(P0, P1, agentInfo.pos) < 0.f;
+				ObstacleLine(obst, invTimeHorizonObst, !agtOnRight && obst._doubleSided, agentId);
 			}
 
 			const size_t numObstLines = _orcaLines.size();
@@ -466,14 +482,12 @@ namespace FusionCrowd
 			const float invTimeHorizon = 1.0f / _timeHorizon;
 
 			/* Create agent ORCA lines. */
-			for (size_t i = 0; i < agent->_nearAgents.size(); ++i) {
-				const Agent* const other = static_cast<const Agent *>(agent->_nearAgents[i].agent);
-
-				const Vector2 relativePosition = other->_pos - agent->_pos;
-				const Vector2 relativeVelocity = agent->_vel - other->_vel;
+			for (auto & other : nav.GetNeighbours(agentId)) {
+				const Vector2 relativePosition = other.pos - agentInfo.pos;
+				const Vector2 relativeVelocity = agentInfo.vel - other.vel;
 
 				const float distSq = relativePosition.LengthSquared();
-				const float combinedRadius = agent->_radius + other->_radius;
+				const float combinedRadius = agentInfo.radius + other.radius;
 				const float combinedRadiusSq = combinedRadius * combinedRadius;
 
 				FusionCrowd::Math::Line line;
@@ -519,7 +533,7 @@ namespace FusionCrowd
 						u = dotProduct2 * line._direction - relativeVelocity;
 					}
 
-					line._point = agent->_vel + 0.5f * u;
+					line._point = agentInfo.vel + 0.5f * u;
 				}
 				else {
 					/* Collision. Project on cut-off circle of time timeStep. */
@@ -534,7 +548,7 @@ namespace FusionCrowd
 					line._direction = Vector2(unitW.y, -unitW.x);
 					u = (combinedRadius * invTimeStep - wLength) * unitW;
 					float coopWeight = 0.5f;
-					line._point = agent->_vel + coopWeight * u;
+					line._point = agentInfo.vel + coopWeight * u;
 				}
 
 				_orcaLines.push_back(line);
@@ -542,14 +556,13 @@ namespace FusionCrowd
 			return numObstLines;
 		}
 
-		void ORCAComponent::Update(FusionCrowd::Agent* agent, float timeStep)
+		void ORCAComponent::Update(float timeStep)
 		{
-			ComputeNewVelocity(agent);
-
-			agent->UpdateOrient(timeStep);
-			agent->PostUpdate();
+			for(size_t agentId : _agents)
+			{
+				ComputeNewVelocity(agentId);
+			}
 		}
-
 
 		ORCAComponent::~ORCAComponent()
 		{

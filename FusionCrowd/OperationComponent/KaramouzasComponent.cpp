@@ -119,9 +119,8 @@ namespace FusionCrowd
 					collidingSet.insert(itr, {tc, other});
 				}
 			}
-			//if ( collidingSet.size() > 0 ) {
-			int count = 0;
 
+			int count = 0;
 			for (auto itr = collidingSet.begin(); itr != collidingSet.end(); ++itr) {
 				const AgentSpatialInfo & const other = itr->second;
 				float tc = itr->first;
@@ -129,19 +128,17 @@ namespace FusionCrowd
 				Vector2 myPos = agent.pos + desVel * tc;
 				Vector2 hisPos = other.pos + other.vel * tc;
 				Vector2 forceDir = myPos - hisPos;
-				//float futureDist = abs( forceDir );
-				//forceDir /= futureDist;
-				//float D = desSpeed * tc + futureDist - _radius - other->_radius;
-				float fDist = forceDir.Length();
-				forceDir /= fDist;
-				float collisionDist = fDist - agent.radius - other.radius;
+
+				float futureDist = forceDir.Length();
+				forceDir /= futureDist;
+				float collisionDist = futureDist - agent.radius - other.radius;
 				float D = std::max(desSpeed * tc + (collisionDist < 0 ? 0 : collisionDist), EPSILON);
 
 				// determine magnitude
 
-				float mag;
+				float mag = 0;
 				if (D < _dMin) {
-					mag = _agentForce * _dMid / D;
+					mag = _agentForce * _dMin / D;
 				}
 				else if (D < _dMid) {
 					mag = _agentForce;
@@ -149,7 +146,7 @@ namespace FusionCrowd
 				else if (D < _dMax) {
 					//D -= Simulator::D_MID;
 					//mag =  D * Simulator::AGENT_FORCE / ( Simulator::D_MAX - Simulator::D_MID ) + Simulator::D_MID ;
-					mag = _agentForce * (_dMax - D) / (_dMax - _dMin);
+					mag = _agentForce * (_dMax - D) / (_dMax - _dMid);
 				}
 				else {
 					continue;	// magnitude is zero
@@ -173,12 +170,13 @@ namespace FusionCrowd
 			// do we need a drag force?
 
 			 // Cap the force to maxAccel
-			if (force.Length() > agent.maxAccel) {
-				force.Normalize();
+			float forceL = force.Length();
+			if (forceL > agent.maxAccel) {
+				force /= forceL;
 				force *= agent.maxAccel;
 			}
 
-			agent.velNew = desVel + force * 0.1f;//Simulator::TIME_STEP;	// assumes unit mass
+			agent.velNew = desVel + force * timeStep;	// assumes unit mass
 		}
 
 		void KaramouzasComponent::AddAgent(size_t id, float perSpace, float anticipation)

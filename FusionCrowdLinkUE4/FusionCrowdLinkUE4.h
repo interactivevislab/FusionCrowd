@@ -9,11 +9,19 @@ namespace FusionCrowd
 	{
 		class KaramouzasComponent;
 	}
+	namespace ORCA
+	{
+		class ORCAComponent;
+	}
 }
 
 struct agentInfo
 {
+	size_t id;
 	float* pos;
+	float* orient;
+	float* vel;
+	float radius;
 };
 
 class FusionCrowdLinkUE4
@@ -31,6 +39,7 @@ public:
 private:
 	FusionCrowd::Simulator* sim;
 	FusionCrowd::Karamouzas::KaramouzasComponent* kComponent;
+	FusionCrowd::ORCA::ORCAComponent* orcaComponent;
 	FusionCrowd::NavMeshComponent* navMeshTactic;
 	int agentsCount;
 	char* navMeshPath;

@@ -27,6 +27,8 @@
     <ClCompile Include="Navigation\NavSystem.cpp" />
     <ClCompile Include="Navigation\Obstacle.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
+    <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
+    <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -60,10 +62,11 @@
     <ClInclude Include="Navigation\NavMesh\NavMeshPoly.h" />
     <ClInclude Include="Navigation\NavSystem.h" />
     <ClInclude Include="Navigation\Obstacle.h" />
-    <ClInclude Include="Navigation\INavComponent.h" />
     <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Navigation\AgentSpatialInfo.h" />
+    <ClInclude Include="OperationComponent\ORCAComponent.h" />
+    <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

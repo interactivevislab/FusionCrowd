@@ -24,10 +24,13 @@ namespace FusionCrowd
 		void AddAgent(size_t id);
 		bool RemoveAgent(size_t id);
 
+		std::shared_ptr<NavMesh> GetNavMesh() { return _localizer->getNavMesh(); };
+		std::shared_ptr<NavMeshLocalizer> GetLocalizer();
+
 		void Update(float timeStep);
 
-		unsigned int getNode(size_t agentId) const;
-		unsigned int getNode(size_t agentId, const std::string& grpName, bool searchAll = false);
+		unsigned int getNodeId(size_t agentId) const;
+		unsigned int getNodeId(size_t agentId, const std::string& grpName, bool searchAll = false);
 
 		~NavMeshComponent();
 
@@ -40,7 +43,7 @@ namespace FusionCrowd
 		};
 
 		void setPrefVelocity(Agent & agent, AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
-		unsigned int updateLocation(Agent & agent, AgentSpatialInfo & agentInfo, const AgentStruct& agentStruct, bool force) const;
+		unsigned int updateLocation(Agent & agent, AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const;
 
 		/*
 		PortalPath * getPath(size_t id);

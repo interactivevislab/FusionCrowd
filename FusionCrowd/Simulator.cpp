@@ -5,9 +5,13 @@
 
 namespace FusionCrowd
 {
-	Simulator::Simulator()
+	Simulator::Simulator(const char* navMeshPath)
 	{
-		_navSystem = NavSystem();
+		_navMeshTactic = new NavMeshComponent(*this, navMeshPath);
+
+		AddTacticComponent(*_navMeshTactic);
+
+		_navSystem = new NavSystem(*_navMeshTactic);
 	}
 
 	bool Simulator::DoStep()
@@ -28,19 +32,19 @@ namespace FusionCrowd
 			oper.Update(timeStep);
 		}
 
-		_navSystem.Update(timeStep);
+		_navSystem->Update(timeStep);
 
 		return true;
 	}
 
 	NavSystem & Simulator::GetNavSystem()
 	{
-		return _navSystem;
+		return *_navSystem;
 	}
 
-	Agent & Simulator::getById(size_t id)
+	Agent & Simulator::GetById(size_t agentId)
 	{
-		return _agents.at(id);
+		return _agents[agentId];
 	}
 
 	size_t Simulator::AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, Goal & g)
@@ -48,6 +52,7 @@ namespace FusionCrowd
 		size_t id = _agents.size();
 
 		AgentSpatialInfo info;
+		info.id = id;
 		info.pos = pos;
 		info.radius = radius;
 		info.maxAngVel = maxAngleVel;
@@ -55,8 +60,11 @@ namespace FusionCrowd
 		info.maxSpeed = maxSpeed;
 		info.maxAccel = maxAccel;
 
-		_navSystem.AddAgent(id, info);
+		_navSystem->AddAgent(info);
 		_agents.push_back(Agent(id, g));
+
+		//TEMPORARY
+		_navMeshTactic->AddAgent(id);
 
 		return id;
 	}
@@ -82,5 +90,7 @@ namespace FusionCrowd
 
 	Simulator::~Simulator()
 	{
+		delete _navSystem;
+		delete _navMeshTactic;
 	}
 }

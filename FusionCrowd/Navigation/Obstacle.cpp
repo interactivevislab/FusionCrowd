@@ -49,6 +49,7 @@ Obstacle::NearTypeEnum Obstacle::distanceSqToPoint(const Vector2 & pt, Vector2 &
 		return MIDDLE;
 	}
 }
+
 float Obstacle::circleIntersection(const Vector2 & dir, const Vector2 & start,
 	float radius) const {
 	const float radSqd = radius * radius;

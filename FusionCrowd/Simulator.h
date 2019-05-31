@@ -18,17 +18,24 @@ namespace FusionCrowd
 	class FUSION_CROWD_API Simulator
 	{
 	public:
-		Simulator();
+		Simulator(const char* navMeshPath);
 		~Simulator();
 
 		bool DoStep();
 
 		size_t GetAgentCount() const { return _agents.size(); }
-		Agent & getById(size_t id);
+		Agent & GetById(size_t agentId);
 		NavSystem & GetNavSystem();
 
-	    size_t AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, Goal & g);
-		//void AddAgent(float maxAngleVel, float maxNeighbors, int obstacleSet, float neighborDist, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos);
+	    size_t AddAgent(
+			float maxAngleVel,
+			float radius,
+			float prefSpeed,
+			float maxSpeed,
+			float maxAccel,
+			Vector2 pos,
+			Goal & g
+		);
 
 		void AddOperComponent(IOperationComponent & operComponent);
 		void AddTacticComponent(ITacticComponent & tacticComponent);
@@ -36,12 +43,14 @@ namespace FusionCrowd
 
 		void InitSimulator();
 	private:
-		NavSystem _navSystem;
+		size_t GetNextId() const { return GetAgentCount(); }
 
-		//std::vector<FusionCrowd::SpatialQuery*> spatialQuerys;
+		NavSystem * _navSystem;
+
+		// TEMPORARY SOLUTION
+		NavMeshComponent * _navMeshTactic;
 
 		std::vector<FusionCrowd::Agent> _agents;
-
 		std::vector<std::reference_wrapper<IStrategyComponent>> strategyComponents;
 		std::vector<std::reference_wrapper<ITacticComponent>> tacticComponents;
 		std::vector<std::reference_wrapper<IOperationComponent>> operComponents;

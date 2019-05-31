@@ -1,18 +1,21 @@
 #include "FusionCrowdLinkUE4.h"
 
+#include "Simulator.h"
+#include "Agent.h"
+
 #include "Math/consts.h"
 #include "Math/Util.h"
+
 #include "StrategyComponent/Goal/GoalSet.h"
 #include "StrategyComponent/Goal/Goal.h"
 #include "StrategyComponent/Goal/PointGoal.h"
-#include "Simulator.h"
-#include "Agent.h"
+
 #include "OperationComponent/IOperationComponent.h"
-#include "OperationComponent/HelbingComponent.h"
 #include "OperationComponent/KaramouzasComponent.h"
-#include "OperationComponent/ZanlungoComponent.h"
-#include "Navigation/NavMesh/NavMeshLocalizer.h"
+#include "OperationComponent/ORCAComponent.h"
+
 #include "TacticComponent/NavMeshComponent.h"
+
 
 #include <algorithm>
 
@@ -31,12 +34,14 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 	navMeshPath = (char*)malloc(strlen(navMeshDir) + 1);
 	strcpy(navMeshPath, navMeshDir);
 
-	sim = new FusionCrowd::Simulator();
-	navMeshTactic = new FusionCrowd::NavMeshComponent(*sim, navMeshPath);
+	sim = new FusionCrowd::Simulator(navMeshPath);
+//	navMeshTactic = new FusionCrowd::NavMeshComponent(*sim, );
 	kComponent = new FusionCrowd::Karamouzas::KaramouzasComponent(*sim);
+	orcaComponent = new FusionCrowd::ORCA::ORCAComponent(*sim);
 
 	sim->AddOperComponent(*kComponent);
-	sim->AddTacticComponent(*navMeshTactic);
+	//sim->AddTacticComponent(*navMeshTactic);
+	sim->AddOperComponent(*orcaComponent);
 }
 
 int FusionCrowdLinkUE4::GetAgentCount()
@@ -60,15 +65,18 @@ void FusionCrowdLinkUE4::AddAgents(int agentsCount)
 	for(Vector2 pos : positions)
 	{
 		size_t id = sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, pos, *goal);
+		if(id % 2 == 0)
+			kComponent->AddAgent(id, 0.69f, 8.0f);
+		else
+			orcaComponent->AddAgent(id);
 
-		kComponent->AddAgent(id, 0.69f, 8.0f);
-		navMeshTactic->AddAgent(id);
+		//navMeshTactic->AddAgent(id);
 	}
 
 	sim->InitSimulator();
 }
 
-void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* agentsPos)
+void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* ueAgentInfo)
 {
 	FusionCrowd::NavSystem & nav = sim->GetNavSystem();
 	bool info = sim->DoStep();
@@ -76,11 +84,22 @@ void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* agentsPos)
 
 	for (int i = 0; i < agentsCount; i++)
 	{
-		agentsPos[i].pos = new float[2];
+		auto spatialInfo = nav.GetSpatialInfo(i);
 
-		Vector2 buf = nav.GetSpatialInfo(i).pos;
+		ueAgentInfo[i].id = spatialInfo.id;
 
-		agentsPos[i].pos[0] = buf.x;
-		agentsPos[i].pos[1] = buf.y;
+		ueAgentInfo[i].pos = new float[2];
+		ueAgentInfo[i].pos[0] = spatialInfo.pos.x;
+		ueAgentInfo[i].pos[1] = spatialInfo.pos.y;
+
+		ueAgentInfo[i].vel = new float[2];
+		ueAgentInfo[i].vel[0] = spatialInfo.vel.x;
+		ueAgentInfo[i].vel[1] = spatialInfo.vel.y;
+
+		ueAgentInfo[i].orient = new float[2];
+		ueAgentInfo[i].orient[0] = spatialInfo.orient.x;
+		ueAgentInfo[i].orient[1] = spatialInfo.orient.y;
+
+		ueAgentInfo[i].radius = spatialInfo.radius;
 	}
 }

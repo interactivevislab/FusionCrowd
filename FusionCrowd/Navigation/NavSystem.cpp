@@ -1,22 +1,15 @@
 #include "NavSystem.h"
 #include "Math/Util.h"
+#include "TacticComponent/NavMeshComponent.h"
 
 using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	NavSystem::NavSystem()
+	NavSystem::NavSystem(NavMeshComponent & component) :
+		_navMeshQuery(NavMeshSpatialQuery(component.GetLocalizer()))
 	{
-	}
-
-	void NavSystem::AddNavComponent(std::string name, INavComponent navComponent)
-	{
-		_navComponents.insert({name, navComponent});
-	}
-
-	INavComponent & NavSystem::GetNavComponent(std::string name)
-	{
-		return _navComponents[name];
+		_navMesh = component.GetNavMesh();
 	}
 
 	void NavSystem::AddAgent(size_t agentId, Vector2 position)
@@ -28,10 +21,9 @@ namespace FusionCrowd
 		_agentSpatialInfos.insert({agentId, info});
 	}
 
-	void NavSystem::AddAgent(size_t agentId, AgentSpatialInfo spatialInfo)
+	void NavSystem::AddAgent(AgentSpatialInfo spatialInfo)
 	{
-		spatialInfo.id = agentId;
-		_agentSpatialInfos.insert({agentId, spatialInfo});
+		_agentSpatialInfos.insert({spatialInfo.id, spatialInfo});
 	}
 
 	AgentSpatialInfo & NavSystem::GetSpatialInfo(size_t agentId)
@@ -41,8 +33,6 @@ namespace FusionCrowd
 
 	std::vector<AgentSpatialInfo> NavSystem::GetNeighbours(size_t agentId) const
 	{
-		return std::vector<AgentSpatialInfo>();
-
 		std::vector<AgentSpatialInfo> result;
 		for(auto & pair : _agentSpatialInfos)
 			if(pair.first != agentId)
@@ -53,16 +43,19 @@ namespace FusionCrowd
 
 	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId) const
 	{
-		return std::vector<Obstacle>();
+		AgentSpatialInfo agent = _agentSpatialInfos.at(agentId);
+
+		std::vector<Obstacle> result;
+		for(size_t obstId : _navMeshQuery.ObstacleQuery(agent.pos))
+		{
+			result.push_back(_navMesh->GetObstacle(obstId));
+		}
+
+		return result;
 	}
 
 	void NavSystem::Update(float timeStep)
 	{
-		for (const auto& pair : _navComponents)
-		{
-			INavComponent component = pair.second;
-		}
-
 		for (auto & pair : _agentSpatialInfos)
 		{
 			size_t id = pair.first;
