@@ -6,10 +6,10 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	NavSystem::NavSystem(NavMeshComponent & component) :
-		_navMeshQuery(NavMeshSpatialQuery(component.GetLocalizer()))
+	NavSystem::NavSystem(std::shared_ptr<NavMeshComponent> component) :
+		_navMeshQuery(NavMeshSpatialQuery(component->GetLocalizer()))
 	{
-		_navMesh = component.GetNavMesh();
+		_navMesh = component->GetNavMesh();
 	}
 
 	void NavSystem::AddAgent(size_t agentId, Vector2 position)

@@ -2,7 +2,6 @@
 
 #include "Math/Geometry2D.h"
 #include "TacticComponent/Path/PrefVelocity.h"
-#include "Agent.h"
 #include "Config.h"
 #include "Math/Util.h"
 
@@ -44,7 +43,7 @@ namespace FusionCrowd
 		DirectX::SimpleMath::Vector2 getCentroid() const { return _geometry->getCentroid(); }
 
 		bool hasCapacity() const;
-		void assign(const Agent * agent);
+		void assign(size_t agentId);
 		void free();
 		void setGeometry(Math::Geometry2D * geometry);
 		inline void setGoalSet(GoalSet * goalSet) { _goalSet = goalSet; }

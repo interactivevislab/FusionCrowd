@@ -7,29 +7,29 @@ namespace FusionCrowd
 {
 	Simulator::Simulator(const char* navMeshPath)
 	{
-		_navMeshTactic = new NavMeshComponent(*this, navMeshPath);
+		_navMeshTactic = std::make_shared<NavMeshComponent>(*this, navMeshPath);
 
-		AddTacticComponent(*_navMeshTactic);
+		AddTacticComponent(_navMeshTactic);
 
-		_navSystem = new NavSystem(*_navMeshTactic);
+		_navSystem = new NavSystem(_navMeshTactic);
 	}
 
 	bool Simulator::DoStep()
 	{
 		const float timeStep = 0.1f;
-		for (IStrategyComponent & strategy : strategyComponents)
+		for (auto strategy : _strategyComponents)
 		{
-			strategy.Update(timeStep);
+			strategy->Update(timeStep);
 		}
 
-		for (ITacticComponent & tactic : tacticComponents)
+		for (auto tactic : _tacticComponents)
 		{
-			tactic.Update(timeStep);
+			tactic->Update(timeStep);
 		}
 
-		for (IOperationComponent & oper : operComponents)
+		for (auto oper : _operComponents)
 		{
-			oper.Update(timeStep);
+			oper->Update(timeStep);
 		}
 
 		_navSystem->Update(timeStep);
@@ -47,7 +47,7 @@ namespace FusionCrowd
 		return _agents[agentId];
 	}
 
-	size_t Simulator::AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, Goal & g)
+	size_t Simulator::AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, std::shared_ptr<Goal> goal)
 	{
 		size_t id = _agents.size();
 
@@ -61,7 +61,9 @@ namespace FusionCrowd
 		info.maxAccel = maxAccel;
 
 		_navSystem->AddAgent(info);
-		_agents.push_back(Agent(id, g));
+		Agent a(id);
+		a.currentGoal = goal;
+		_agents.push_back(a);
 
 		//TEMPORARY
 		_navMeshTactic->AddAgent(id);
@@ -69,19 +71,39 @@ namespace FusionCrowd
 		return id;
 	}
 
-	void Simulator::AddOperComponent(IOperationComponent & component)
+	bool Simulator::SetOperationComponent(size_t agentId, std::string newOperationComponent)
 	{
-		operComponents.push_back(component);
+		for(std::shared_ptr<IOperationComponent> c : _operComponents)
+		{
+			if(c->GetName() == newOperationComponent) {
+				std::shared_ptr<IOperationComponent> old = _agents[agentId].opComponent;
+				if(old != nullptr)
+				{
+					old->DeleteAgent(agentId);
+				}
+
+				c->AddAgent(agentId);
+				_agents[agentId].opComponent = c;
+
+				return true;
+			}
+		}
+		return false;
 	}
 
-	void Simulator::AddTacticComponent(ITacticComponent & component)
+	void Simulator::AddOperComponent(std::shared_ptr<IOperationComponent> component)
 	{
-		tacticComponents.push_back(component);
+		_operComponents.push_back(component);
 	}
 
-	void Simulator::AddStrategyComponent(IStrategyComponent& component)
+	void Simulator::AddTacticComponent(std::shared_ptr<ITacticComponent> component)
 	{
-		strategyComponents.push_back(component);
+		_tacticComponents.push_back(component);
+	}
+
+	void Simulator::AddStrategyComponent(std::shared_ptr<IStrategyComponent> component)
+	{
+		_strategyComponents.push_back(component);
 	}
 
 	void Simulator::InitSimulator()
@@ -90,7 +112,5 @@ namespace FusionCrowd
 
 	Simulator::~Simulator()
 	{
-		delete _navSystem;
-		delete _navMeshTactic;
 	}
 }

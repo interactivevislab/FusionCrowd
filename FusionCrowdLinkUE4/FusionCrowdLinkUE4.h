@@ -1,5 +1,7 @@
 #define LINKFUSIONCROWD_API __declspec(dllexport)
 
+#include <memory>
+
 // Forward declarations
 namespace FusionCrowd
 {
@@ -22,6 +24,7 @@ struct agentInfo
 	float* orient;
 	float* vel;
 	float radius;
+	char* opCompName;
 };
 
 class FusionCrowdLinkUE4
@@ -31,6 +34,7 @@ public:
 	LINKFUSIONCROWD_API FusionCrowdLinkUE4();
 	LINKFUSIONCROWD_API ~FusionCrowdLinkUE4();
 
+	LINKFUSIONCROWD_API void SetOperationModel(size_t agentIdconst, const char * name);
 	LINKFUSIONCROWD_API void StartFusionCrowd(char* navMeshDir);
 	LINKFUSIONCROWD_API int GetAgentCount();
 	LINKFUSIONCROWD_API void AddAgents(int agentsCount);
@@ -38,9 +42,9 @@ public:
 
 private:
 	FusionCrowd::Simulator* sim;
-	FusionCrowd::Karamouzas::KaramouzasComponent* kComponent;
-	FusionCrowd::ORCA::ORCAComponent* orcaComponent;
-	FusionCrowd::NavMeshComponent* navMeshTactic;
+	std::shared_ptr<FusionCrowd::Karamouzas::KaramouzasComponent> kComponent;
+	std::shared_ptr<FusionCrowd::ORCA::ORCAComponent> orcaComponent;
+	std::shared_ptr<FusionCrowd::NavMeshComponent> navMeshTactic;
 	int agentsCount;
 	char* navMeshPath;
 };

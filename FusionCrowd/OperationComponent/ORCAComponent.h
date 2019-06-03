@@ -33,6 +33,8 @@ namespace FusionCrowd
 			void LinearProgram3(const std::vector<FusionCrowd::Math::Line>& lines, size_t numObstLines,
 				size_t beginLine, float radius, DirectX::SimpleMath::Vector2& result);
 
+			std::string GetName() { return "orca"; };
+
 			void AddAgent(size_t id);
 			bool DeleteAgent(size_t id);
 

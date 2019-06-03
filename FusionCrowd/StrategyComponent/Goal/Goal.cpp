@@ -20,7 +20,7 @@ namespace FusionCrowd
 		return result;
 	}
 
-	void Goal::assign(const FusionCrowd::Agent* agent)
+	void Goal::assign(const size_t agentId)
 	{
 		++_population;
 		if (_population >= _capacity && _goalSet) _goalSet->setGoalFull(this);

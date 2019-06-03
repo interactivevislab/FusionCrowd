@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include "Agent.h"
 #include "Config.h"
@@ -34,12 +35,14 @@ namespace FusionCrowd
 			float maxSpeed,
 			float maxAccel,
 			Vector2 pos,
-			Goal & g
+			std::shared_ptr<Goal> g
 		);
 
-		void AddOperComponent(IOperationComponent & operComponent);
-		void AddTacticComponent(ITacticComponent & tacticComponent);
-		void AddStrategyComponent(IStrategyComponent & strategyComponent);
+		bool SetOperationComponent(size_t agentId, std::string newOperationComponent);
+
+		void AddOperComponent(std::shared_ptr<IOperationComponent> operComponent);
+		void AddTacticComponent(std::shared_ptr<ITacticComponent> tacticComponent);
+		void AddStrategyComponent(std::shared_ptr<IStrategyComponent> strategyComponent);
 
 		void InitSimulator();
 	private:
@@ -48,11 +51,11 @@ namespace FusionCrowd
 		NavSystem * _navSystem;
 
 		// TEMPORARY SOLUTION
-		NavMeshComponent * _navMeshTactic;
+		std::shared_ptr<NavMeshComponent> _navMeshTactic;
 
 		std::vector<FusionCrowd::Agent> _agents;
-		std::vector<std::reference_wrapper<IStrategyComponent>> strategyComponents;
-		std::vector<std::reference_wrapper<ITacticComponent>> tacticComponents;
-		std::vector<std::reference_wrapper<IOperationComponent>> operComponents;
+		std::vector<std::shared_ptr<IStrategyComponent>> _strategyComponents;
+		std::vector<std::shared_ptr<ITacticComponent>> _tacticComponents;
+		std::vector<std::shared_ptr<IOperationComponent>> _operComponents;
 	};
 }

@@ -5,9 +5,8 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	Agent::Agent(size_t agentId, Goal& goal) : _currentGoal(goal)
+	Agent::Agent(size_t agentId) : id(agentId)
 	{
-		id = agentId;
 	}
 
 	Agent::~Agent()
@@ -73,10 +72,4 @@ namespace FusionCrowd
 		}
 	}
 	*/
-
-
-	Goal& Agent::getCurrentGoal() const
-	{
-		return _currentGoal;
-	}
 }

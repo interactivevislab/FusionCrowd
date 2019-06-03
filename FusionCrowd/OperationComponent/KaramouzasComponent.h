@@ -34,13 +34,15 @@ namespace FusionCrowd
 				float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE);
 			~KaramouzasComponent();
 
+			std::string GetName() { return "karamouzas"; };
+
 			void AddAgent(size_t id);
 			void AddAgent(size_t id, float perSpace, float anticipation);
 			bool DeleteAgent(size_t id);
 
 			void Update(float timeStep);
+
 		private:
-			void Update(AgentSpatialInfo & agent, float timeStep);
 			void ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep);
 
 			Simulator & _simulator;

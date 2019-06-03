@@ -18,7 +18,7 @@ namespace FusionCrowd
 	class FUSION_CROWD_API NavSystem
 	{
 	public:
-		NavSystem(NavMeshComponent & component);
+		NavSystem(std::shared_ptr<NavMeshComponent> component);
 		~NavSystem();
 
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);

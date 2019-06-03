@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <random>
+#include <memory>
 #include <time.h>
 
 #include "Agent.h"
@@ -32,8 +33,8 @@ int main()
 	std::string navPath = "Resources/simple.nav";
 
 	FusionCrowd::Simulator sim(navPath.c_str());
-	FusionCrowd::Karamouzas::KaramouzasComponent kComponent(sim);
-	FusionCrowd::ORCA::ORCAComponent orcaComponent(sim);
+	auto kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(sim);
+	auto orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent >(sim);
 
 	sim.AddOperComponent(kComponent);
 	sim.AddOperComponent(orcaComponent);
@@ -42,7 +43,7 @@ int main()
     std::mt19937 gen(rd());
 	std::uniform_real_distribution<> uniform(-0.5f, 0.5f);
 
-	FusionCrowd::PointGoal goal(-3.0f, 5.0f);
+	auto goal = std::make_shared<FusionCrowd::PointGoal>(-3.0f, 5.0f);
 
 
 	std::vector<Vector2> positions;
@@ -64,10 +65,9 @@ int main()
 		size_t id = sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, positions[i], goal);
 
 		if(i % 2 == 0)
-			kComponent.AddAgent(id, 0.69f, 8.0f);
+			sim.SetOperationComponent(id, kComponent->GetName());
 		else
-
-		orcaComponent.AddAgent(id);
+			sim.SetOperationComponent(id, orcaComponent->GetName());
 	}
 
 	sim.InitSimulator();

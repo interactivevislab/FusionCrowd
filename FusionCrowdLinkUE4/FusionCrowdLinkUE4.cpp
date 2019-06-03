@@ -16,8 +16,8 @@
 
 #include "TacticComponent/NavMeshComponent.h"
 
-
 #include <algorithm>
+#include <memory>
 
 using namespace DirectX::SimpleMath;
 
@@ -36,12 +36,12 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 
 	sim = new FusionCrowd::Simulator(navMeshPath);
 //	navMeshTactic = new FusionCrowd::NavMeshComponent(*sim, );
-	kComponent = new FusionCrowd::Karamouzas::KaramouzasComponent(*sim);
-	orcaComponent = new FusionCrowd::ORCA::ORCAComponent(*sim);
+	kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(*sim);
+	orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(*sim);
 
-	sim->AddOperComponent(*kComponent);
+	sim->AddOperComponent(kComponent);
 	//sim->AddTacticComponent(*navMeshTactic);
-	sim->AddOperComponent(*orcaComponent);
+	sim->AddOperComponent(orcaComponent);
 }
 
 int FusionCrowdLinkUE4::GetAgentCount()
@@ -61,20 +61,26 @@ void FusionCrowdLinkUE4::AddAgents(int agentsCount)
 	positions.push_back(Vector2(0.3f, -1.5f));
 
 
-	FusionCrowd::PointGoal* goal = new FusionCrowd::PointGoal(-3.0f, 5.0f);
+	auto goal = std::make_shared<FusionCrowd::PointGoal>(-3.0f, 5.0f);
 	for(Vector2 pos : positions)
 	{
-		size_t id = sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, pos, *goal);
+		size_t id = sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, pos, goal);
 		if(id % 2 == 0)
-			kComponent->AddAgent(id, 0.69f, 8.0f);
+			sim->SetOperationComponent(id, kComponent->GetName());
 		else
-			orcaComponent->AddAgent(id);
+			sim->SetOperationComponent(id, orcaComponent->GetName());
 
 		//navMeshTactic->AddAgent(id);
 	}
 
 	sim->InitSimulator();
 }
+
+void FusionCrowdLinkUE4::SetOperationModel(size_t agentId, const char * name)
+{
+	sim->SetOperationComponent(agentId, std::string(name));
+}
+
 
 void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* ueAgentInfo)
 {
@@ -101,5 +107,11 @@ void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* ueAgentInfo)
 		ueAgentInfo[i].orient[1] = spatialInfo.orient.y;
 
 		ueAgentInfo[i].radius = spatialInfo.radius;
+
+		auto opComp = sim->GetById(i).opComponent;
+		auto name = opComp != nullptr ? opComp->GetName() : std::string("NO_OP_COMPONENT");
+
+		ueAgentInfo[i].opCompName = new char [name.length() + 1];
+		std::strcpy (ueAgentInfo[i].opCompName, name.c_str());
 	}
 }

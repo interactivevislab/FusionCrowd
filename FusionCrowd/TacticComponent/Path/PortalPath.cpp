@@ -11,7 +11,7 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	PortalPath::PortalPath(const Vector2& startPos, const Goal* goal,
+	PortalPath::PortalPath(const Vector2& startPos, const std::shared_ptr<Goal> goal,
 	                       const PortalRoute* route, float agentRadius) :
 		_route(route), _goal(goal), _currPortal(0), _waypoints(0x0),
 		_headings(0x0)

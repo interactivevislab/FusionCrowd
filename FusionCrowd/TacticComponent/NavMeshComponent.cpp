@@ -19,14 +19,14 @@ namespace FusionCrowd
 		AgentSpatialInfo & agentInfo = _simulator.GetNavSystem().GetSpatialInfo(id);
 
 		unsigned int from = _localizer->getNodeId(agentInfo.pos);
-		unsigned int to = _localizer->getNodeId(agent.getCurrentGoal().getCentroid());
+		unsigned int to = _localizer->getNodeId(agent.currentGoal->getCentroid());
 
 		assert(from != NavMeshLocation::NO_NODE && "Agent is not on the nav mesh");
 		assert(to != NavMeshLocation::NO_NODE && "Agent goal is not on the nav mesh");
 
 		std::shared_ptr<PathPlanner> planner = _localizer->getPlanner();
 		PortalRoute * route = planner->getRoute(from, to, agentInfo.radius);
-		PortalPath * path = new PortalPath(agentInfo.pos, &agent.getCurrentGoal(), route, agentInfo.radius);
+		PortalPath * path = new PortalPath(agentInfo.pos, agent.currentGoal, route, agentInfo.radius);
 
 		NavMeshLocation location(_localizer->getNodeId(agentInfo.pos));
 		location.setPath(path);
@@ -60,7 +60,7 @@ namespace FusionCrowd
 		PortalPath * path = agentStruct.location.getPath();
 		if (path == nullptr)
 		{
-			Vector2 goalPoint = agent.getCurrentGoal().getCentroid();
+			Vector2 goalPoint = agent.currentGoal->getCentroid();
 			unsigned int goalNode = _localizer->getNodeId(goalPoint);
 			if (goalNode == NavMeshLocation::NO_NODE)
 			{
@@ -71,7 +71,7 @@ namespace FusionCrowd
 
 			PortalRoute* route = _localizer->getPlanner()->getRoute(agtNode, goalNode, agentInfo.radius * 2.f);
 
-			path = new PortalPath(agentInfo.pos, &(agent.getCurrentGoal()), route, agentInfo.radius);
+			path = new PortalPath(agentInfo.pos, agent.currentGoal, route, agentInfo.radius);
 			// assign it to the localizer
 			agentStruct.location.setPath(path);
 		}
