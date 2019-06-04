@@ -28,6 +28,7 @@
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="OperationComponent\ORCAComponent.h" />
+    <ClInclude Include="OperationComponent\PedVOComponent.h" />
     <ClInclude Include="OperationComponent\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshLocalizer.h" />
     <ClInclude Include="TacticComponent\Path\MinHeap.h" />
@@ -60,6 +61,7 @@
     <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
+    <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />

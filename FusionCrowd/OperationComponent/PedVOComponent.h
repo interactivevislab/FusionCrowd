@@ -1,7 +1,12 @@
-/*#pragma once
-#include "OperationComponent/IOperationComponent.h"
+#pragma once
+
+#include "Simulator.h"
 #include "Agent.h"
 #include "Config.h"
+
+#include "OperationComponent/IOperationComponent.h"
+#include "Navigation/AgentSpatialInfo.h"
+
 #include "Math/Util.h"
 #include "Math/Line.h"
 
@@ -54,22 +59,26 @@ namespace FusionCrowd
 			}
 		};
 
-		class FUSION_CROWD_API PedVOComponent
-			: public IOperationComponent
+		class FUSION_CROWD_API PedVOComponent : public IOperationComponent
 		{
 		public:
-			PedVOComponent();
-			PedVOComponent(float cosObstTurn, float sinObstTurn);
+			PedVOComponent(Simulator & simulator);
+			PedVOComponent(Simulator & simulator, float cosObstTurn, float sinObstTurn);
 			~PedVOComponent();
 
-			void ComputeNewVelocity(FusionCrowd::Agent* agent);
-			void AdaptPreferredVelocity(FusionCrowd::Agent* agent);
-			size_t ComputeORCALinesTurning(FusionCrowd::Agent* agent, DirectX::SimpleMath::Vector2& optVel, DirectX::SimpleMath::Vector2& prefDir,
+			std::string GetName() { return "pedvo"; };
+			void AddAgent(size_t agentId);
+			bool DeleteAgent(size_t idAgent);
+			void Update(float timeStep);
+
+			void ComputeNewVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo);
+
+			void AdaptPreferredVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo);
+			size_t ComputeORCALinesTurning(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo, DirectX::SimpleMath::Vector2& optVel, DirectX::SimpleMath::Vector2& prefDir,
 				float& prefSpeed);
-			void ObstacleLine(FusionCrowd::Agent* agent, size_t obstNbrID, const float invTau, bool flip);
-			void AddAgent(int idAgent, float timeHorizon, float timeHorizonObst, float turningBias, bool denseAware, float factor, float buffer);
-			void DeleteAgent(int idAgent);
-			void Update(FusionCrowd::Agent* agent, float timeStep);
+			void ObstacleLine(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo, Obstacle & obst, const float invTau, bool flip);
+
+			void AddAgent(size_t agentId, float timeHorizon, float timeHorizonObst, float turningBias, bool denseAware, float factor, float buffer);
 
 			bool LinearProgram1(const std::vector<FusionCrowd::Math::Line>& lines, size_t lineNo, float radius,
 				const DirectX::SimpleMath::Vector2& optVelocity, bool directionOpt, float turnBias,
@@ -83,7 +92,9 @@ namespace FusionCrowd
 				size_t beginLine, float radius, float turnBias, DirectX::SimpleMath::Vector2& result);
 
 		private:
-			std::map<int, AgentParamentrs> _agents;
+			Simulator & _simulator;
+
+			std::map<size_t, AgentParamentrs> _agents;
 			std::vector<FusionCrowd::Math::Line> _orcaLines;
 			float _cosObstTurn;
 			float _sinObstTurn;
@@ -91,4 +102,3 @@ namespace FusionCrowd
 		};
 	}
 }
-*/

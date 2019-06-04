@@ -29,6 +29,7 @@
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
     <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
+    <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -67,6 +68,7 @@
     <ClInclude Include="Navigation\AgentSpatialInfo.h" />
     <ClInclude Include="OperationComponent\ORCAComponent.h" />
     <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
+    <ClInclude Include="OperationComponent\PedVOComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

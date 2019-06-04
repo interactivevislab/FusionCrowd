@@ -15,6 +15,10 @@ namespace FusionCrowd
 	{
 		class ORCAComponent;
 	}
+	namespace PedVO
+	{
+		class PedVOComponent;
+	}
 }
 
 struct agentInfo
@@ -44,6 +48,7 @@ private:
 	FusionCrowd::Simulator* sim;
 	std::shared_ptr<FusionCrowd::Karamouzas::KaramouzasComponent> kComponent;
 	std::shared_ptr<FusionCrowd::ORCA::ORCAComponent> orcaComponent;
+	std::shared_ptr<FusionCrowd::PedVO::PedVOComponent> pedvoComponent;
 	std::shared_ptr<FusionCrowd::NavMeshComponent> navMeshTactic;
 	int agentsCount;
 	char* navMeshPath;

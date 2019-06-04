@@ -13,6 +13,7 @@
 #include "OperationComponent/IOperationComponent.h"
 #include "OperationComponent/KaramouzasComponent.h"
 #include "OperationComponent/ORCAComponent.h"
+#include "OperationComponent/PedVOComponent.h"
 
 #include "TacticComponent/NavMeshComponent.h"
 
@@ -38,10 +39,12 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 //	navMeshTactic = new FusionCrowd::NavMeshComponent(*sim, );
 	kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(*sim);
 	orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(*sim);
+	pedvoComponent = std::make_shared<FusionCrowd::PedVO::PedVOComponent>(*sim);
 
 	sim->AddOperComponent(kComponent);
 	//sim->AddTacticComponent(*navMeshTactic);
 	sim->AddOperComponent(orcaComponent);
+	sim->AddOperComponent(pedvoComponent);
 }
 
 int FusionCrowdLinkUE4::GetAgentCount()
@@ -65,11 +68,14 @@ void FusionCrowdLinkUE4::AddAgents(int agentsCount)
 	for(Vector2 pos : positions)
 	{
 		size_t id = sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, pos, goal);
+		sim->SetOperationComponent(id, pedvoComponent->GetName());
+
+		/*
 		if(id % 2 == 0)
 			sim->SetOperationComponent(id, kComponent->GetName());
 		else
 			sim->SetOperationComponent(id, orcaComponent->GetName());
-
+		*/
 		//navMeshTactic->AddAgent(id);
 	}
 

@@ -33,11 +33,13 @@ namespace FusionCrowd
 			float t0 = (-b - sqrtDiscr) / (2.f * a);
 			float t1 = (-b + sqrtDiscr) / (2.f * a);
 			// If the points of collision have different signs, it means I'm already colliding
-			if ((t0 < 0.f && t1 > 0.f) ||
-				(t1 < 0.f && t0 > 0.f)) return 0.f;
-			if (t0 < t1 && t0 > 0.f) return t0;
-			else if (t1 > 0.f) return t1;
-			else return INFTY;
+			if ((t0 < 0.f && t1 > 0.f) || (t1 < 0.f && t0 > 0.f)) return 0.f;
+			if (t0 < t1 && t0 > 0.f)
+				return t0;
+			else if (t1 > 0.f)
+				return t1;
+			else
+				return INFTY;
 		}
 
 		////////////////////////////////////////////////////////////////

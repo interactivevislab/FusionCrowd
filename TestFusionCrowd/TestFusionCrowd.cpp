@@ -34,17 +34,18 @@ int main()
 
 	FusionCrowd::Simulator sim(navPath.c_str());
 	auto kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(sim);
-	auto orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent >(sim);
+	auto orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(sim);
+	auto pedvoComponent = std::make_shared<FusionCrowd::PedVO::PedVOComponent>(sim);
 
 	sim.AddOperComponent(kComponent);
 	sim.AddOperComponent(orcaComponent);
+	sim.AddOperComponent(pedvoComponent);
 
 	std::random_device rd;  //Will be used to obtain a seed for the random number engine
     std::mt19937 gen(rd());
 	std::uniform_real_distribution<> uniform(-0.5f, 0.5f);
 
 	auto goal = std::make_shared<FusionCrowd::PointGoal>(-3.0f, 5.0f);
-
 
 	std::vector<Vector2> positions;
 	positions.push_back(Vector2(-0.55f, 4.0f));
@@ -64,10 +65,11 @@ int main()
 		//DirectX::SimpleMath::Vector2 pos(uniform(gen), uniform(gen));
 		size_t id = sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, positions[i], goal);
 
-		if(i % 2 == 0)
-			sim.SetOperationComponent(id, kComponent->GetName());
-		else
-			sim.SetOperationComponent(id, orcaComponent->GetName());
+		sim.SetOperationComponent(id, pedvoComponent->GetName());
+		//if(i % 2 == 0)
+		//	sim.SetOperationComponent(id, kComponent->GetName());
+		//else
+		//	sim.SetOperationComponent(id, orcaComponent->GetName());
 	}
 
 	sim.InitSimulator();

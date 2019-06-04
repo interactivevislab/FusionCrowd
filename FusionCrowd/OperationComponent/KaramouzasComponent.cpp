@@ -186,7 +186,7 @@ namespace FusionCrowd
 
 		void KaramouzasComponent::AddAgent(size_t id)
 		{
-			AddAgent(id, 0.69f, 8.0f);
+			AddAgent(id, 1.0f, 3.0f);
 		}
 
 		bool KaramouzasComponent::DeleteAgent(size_t id)
