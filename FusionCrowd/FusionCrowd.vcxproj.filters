@@ -30,6 +30,9 @@
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
     <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
+    <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
+    <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
+    <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -69,8 +72,14 @@
     <ClInclude Include="OperationComponent\ORCAComponent.h" />
     <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="OperationComponent\PedVOComponent.h" />
+    <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.h" />
+    <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.h" />
+    <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl" />
   </ItemGroup>
 </Project>
