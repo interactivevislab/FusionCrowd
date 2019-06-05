@@ -38,9 +38,10 @@ public:
 	LINKFUSIONCROWD_API FusionCrowdLinkUE4();
 	LINKFUSIONCROWD_API ~FusionCrowdLinkUE4();
 
-	LINKFUSIONCROWD_API void SetOperationModel(size_t agentIdconst, const char * name);
+	LINKFUSIONCROWD_API void SetOperationModel(size_t agentId, const char * name);
 	LINKFUSIONCROWD_API void StartFusionCrowd(char* navMeshDir);
 	LINKFUSIONCROWD_API int GetAgentCount();
+	LINKFUSIONCROWD_API size_t AddAgent(const float * agentPos, const float * goalPos, const char * opComponent);
 	LINKFUSIONCROWD_API void AddAgents(int agentsCount);
 	LINKFUSIONCROWD_API void GetPositionAgents(agentInfo* agentsPos);
 

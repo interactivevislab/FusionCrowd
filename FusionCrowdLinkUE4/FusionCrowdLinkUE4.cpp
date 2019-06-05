@@ -52,6 +52,19 @@ int FusionCrowdLinkUE4::GetAgentCount()
 	return sim->GetAgentCount();
 }
 
+size_t FusionCrowdLinkUE4::AddAgent(const float * agentPos, const float * goalPos, const char * opComponent)
+{
+	Vector2 position(agentPos[0], agentPos[1]);
+	auto goal = std::make_shared<FusionCrowd::PointGoal>(goalPos[0], goalPos[1]);
+	std::string compName(opComponent);
+
+	size_t id = sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, position, goal);
+
+	sim->SetOperationComponent(id, compName);
+
+	return id;
+}
+
 void FusionCrowdLinkUE4::AddAgents(int agentsCount)
 {
 	std::vector<Vector2> positions;
