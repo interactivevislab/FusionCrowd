@@ -10,6 +10,7 @@
 #include "Navigation/Obstacle.h"
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
+#include "Navigation/FastFixedRadiusNearestNeighbors/NeighborsSeeker.h"
 
 namespace FusionCrowd
 {
@@ -33,9 +34,13 @@ namespace FusionCrowd
 	private:
 		void UpdatePos(AgentSpatialInfo & agent, float timeStep);
 		void UpdateOrient(AgentSpatialInfo & agent, float timeStep);
+		void UpdateNeighbours();
 
 		std::map<size_t, AgentSpatialInfo> _agentSpatialInfos;
 		NavMeshSpatialQuery _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
+
+		NeighborsSeeker _neighborsSeeker;
+		std::map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 	};
 }
