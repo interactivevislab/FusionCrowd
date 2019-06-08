@@ -3,7 +3,6 @@
 #include <string>
 
 #include "ITacticComponent.h"
-#include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 #include "TacticComponent/Path/PrefVelocity.h"
@@ -15,6 +14,7 @@
 namespace FusionCrowd
 {
 	class Simulator;
+	class AgentSpatialInfo;
 
 	class FUSION_CROWD_API NavMeshComponent : public ITacticComponent
 	{

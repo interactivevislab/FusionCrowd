@@ -27,23 +27,24 @@ namespace FusionCrowd
 		{
 		}
 
-		NavMeshLocation(PortalPath* path) : _path(path), _hasPath(true)
+		NavMeshLocation(std::shared_ptr<PortalPath> path) : _path(path), _hasPath(true)
+		{
+		}
+
+		~NavMeshLocation()
 		{
 		}
 
 		void setNode(unsigned int nodeID);
 		void clearPath();
 		unsigned int getNode() const;
-		void setPath(PortalPath* path);
-		PortalPath* getPath();
+		void setPath(std::shared_ptr<PortalPath> path);
+		std::shared_ptr<PortalPath> getPath();
 		inline bool isPath() const { return _hasPath; }
 		inline bool isNode() const { return !_hasPath; }
 
-		union
-		{
-			size_t _nodeID;
-			PortalPath* _path;
-		};
+		size_t _nodeID;
+		std::shared_ptr<PortalPath> _path;
 
 		bool _hasPath;
 		const static unsigned int NO_NODE = std::numeric_limits<unsigned int>::max();

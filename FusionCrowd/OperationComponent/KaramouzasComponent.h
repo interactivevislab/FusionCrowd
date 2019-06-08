@@ -3,7 +3,6 @@
 #include "Agent.h"
 #include "Config.h"
 #include "Simulator.h"
-#include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
 
@@ -11,6 +10,8 @@
 
 namespace FusionCrowd
 {
+	class AgentSpatialInfo;
+
 	namespace Karamouzas
 	{
 		struct FUSION_CROWD_API AgentParamentrs

@@ -7,7 +7,7 @@ namespace FusionCrowd
 {
 	namespace Agents
 	{
-		class FUSION_CROWD_API PrefVelocity
+		class PrefVelocity
 		{
 		public:
 			PrefVelocity();

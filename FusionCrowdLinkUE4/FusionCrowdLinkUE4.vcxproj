@@ -20,12 +20,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FusionCrowdLinkUE4.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="UE4StrategyProxy.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FusionCrowdLinkUE4.cpp" />
+    <ClCompile Include="UE4StrategyProxy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FusionCrowdLinkUE4.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

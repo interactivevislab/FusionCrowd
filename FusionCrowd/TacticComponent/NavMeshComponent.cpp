@@ -2,6 +2,7 @@
 #include "Path/PortalPath.h"
 #include "Path/PathPlanner.h"
 #include "Path/Route.h"
+#include "Navigation/AgentSpatialInfo.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -26,7 +27,7 @@ namespace FusionCrowd
 
 		std::shared_ptr<PathPlanner> planner = _localizer->getPlanner();
 		PortalRoute * route = planner->getRoute(from, to, agentInfo.radius);
-		PortalPath * path = new PortalPath(agentInfo.pos, agent.currentGoal, route, agentInfo.radius);
+		auto path = std::make_shared<PortalPath>(agentInfo.pos, agent.currentGoal, route, agentInfo.radius);
 
 		NavMeshLocation location(_localizer->getNodeId(agentInfo.pos));
 		location.setPath(path);
@@ -57,8 +58,8 @@ namespace FusionCrowd
 
 	void NavMeshComponent::setPrefVelocity(Agent & agent, AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
 	{
-		PortalPath * path = agentStruct.location.getPath();
-		if (path == nullptr)
+		auto path = agentStruct.location.getPath();
+		if (path == nullptr || path->getGoal() != agent.currentGoal)
 		{
 			Vector2 goalPoint = agent.currentGoal->getCentroid();
 			unsigned int goalNode = _localizer->getNodeId(goalPoint);
@@ -71,7 +72,7 @@ namespace FusionCrowd
 
 			PortalRoute* route = _localizer->getPlanner()->getRoute(agtNode, goalNode, agentInfo.radius * 2.f);
 
-			path = new PortalPath(agentInfo.pos, agent.currentGoal, route, agentInfo.radius);
+			path = std::make_shared<PortalPath>(agentInfo.pos, agent.currentGoal, route, agentInfo.radius);
 			// assign it to the localizer
 			agentStruct.location.setPath(path);
 		}

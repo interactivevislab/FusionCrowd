@@ -18,7 +18,7 @@ namespace FusionCrowd
 		float maxSpeed  = 2.5f;
 		float maxAccel  = 2.f;
 		float prefSpeed = 1.34f;
-		float maxAngVel = 360.f;
+		float maxAngVel = 6.28f;
 
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
 	};

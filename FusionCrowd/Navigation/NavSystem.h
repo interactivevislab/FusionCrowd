@@ -6,7 +6,6 @@
 
 #include "Config.h"
 #include "Math/Util.h"
-#include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/Obstacle.h"
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
@@ -14,12 +13,23 @@
 namespace FusionCrowd
 {
 	class NavMeshComponent;
+	class AgentSpatialInfo;
 
-	class FUSION_CROWD_API NavSystem
+	struct FUSION_CROWD_API PublicSpatialInfo
+	{
+		size_t id;
+		float posX, posY;
+		float velX, velY;
+		float orientX, orientY;
+		float radius;
+	};
+
+	class NavSystem
 	{
 	public:
-		NavSystem(std::shared_ptr<NavMeshComponent> component);
-		~NavSystem();
+		FUSION_CROWD_API NavSystem(std::shared_ptr<NavMeshComponent> component);
+		FUSION_CROWD_API ~NavSystem();
+		FUSION_CROWD_API PublicSpatialInfo GetPublicSpatialInfo(size_t agentId);
 
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
 		void AddAgent(AgentSpatialInfo spatialInfo);

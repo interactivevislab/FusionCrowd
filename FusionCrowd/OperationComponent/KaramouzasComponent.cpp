@@ -4,9 +4,13 @@
 #include "Math/geomQuery.h"
 #include "Math/Util.h"
 
+#include "Navigation/AgentSpatialInfo.h"
+
 #include <algorithm>
 #include <list>
 #include <iostream>
+
+using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {

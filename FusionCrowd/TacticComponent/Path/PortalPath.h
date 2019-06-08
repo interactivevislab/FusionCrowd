@@ -40,8 +40,8 @@ namespace FusionCrowd
 		const std::shared_ptr<Goal> _goal;
 		size_t _currPortal;
 		void computeCrossing(const DirectX::SimpleMath::Vector2& startPos, float agentRadius);
-		DirectX::SimpleMath::Vector2* _waypoints;
-		DirectX::SimpleMath::Vector2* _headings;
+		std::vector<DirectX::SimpleMath::Vector2> _waypoints;
+		std::vector<DirectX::SimpleMath::Vector2> _headings;
 		void replan(const DirectX::SimpleMath::Vector2& startPos, unsigned int startNode, unsigned int endNode,
 		            float minWidth, const std::shared_ptr<PathPlanner> planner);
 	};

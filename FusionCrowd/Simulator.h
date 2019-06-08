@@ -34,11 +34,12 @@ namespace FusionCrowd
 			float prefSpeed,
 			float maxSpeed,
 			float maxAccel,
-			Vector2 pos,
+			DirectX::SimpleMath::Vector2 pos,
 			std::shared_ptr<Goal> g
 		);
 
 		bool SetOperationComponent(size_t agentId, std::string newOperationComponent);
+		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent);
 
 		void AddOperComponent(std::shared_ptr<IOperationComponent> operComponent);
 		void AddTacticComponent(std::shared_ptr<ITacticComponent> tacticComponent);

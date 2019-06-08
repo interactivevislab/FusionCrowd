@@ -14,9 +14,10 @@ namespace FusionCrowd
 	{
 		if (_hasPath)
 		{
-			delete _path;
-			_hasPath = false;
+			_path = nullptr;
+
 		}
+		_hasPath = false;
 		_nodeID = nodeID;
 	}
 
@@ -25,7 +26,7 @@ namespace FusionCrowd
 		if (_hasPath)
 		{
 			unsigned int node = _path->getNode();
-			delete _path;
+			_path = nullptr;
 			_hasPath = false;
 			_nodeID = (size_t)node;
 		}
@@ -44,17 +45,14 @@ namespace FusionCrowd
 		}
 	}
 
-	void NavMeshLocation::setPath(PortalPath* path)
+	void NavMeshLocation::setPath(std::shared_ptr<PortalPath> path)
 	{
-		if (_hasPath)
-		{
-			delete _path;
-		}
 		_path = path;
 		_hasPath = true;
+		_nodeID = std::numeric_limits<size_t>::max();
 	}
 
-	PortalPath * NavMeshLocation::getPath()
+	std::shared_ptr<PortalPath> NavMeshLocation::getPath()
 	{
 		if(_hasPath)
 			return _path;

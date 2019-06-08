@@ -1,11 +1,15 @@
 #pragma once
 
 #include "Config.h"
-#include "TacticComponent/Path/PrefVelocity.h"
 #include "Math/Util.h"
 
 namespace FusionCrowd
 {
+	namespace Agents
+	{
+		class PrefVelocity;
+	}
+
 	namespace Math
 	{
 		class FUSION_CROWD_API Geometry2D
@@ -16,8 +20,7 @@ namespace FusionCrowd
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt) const = 0;
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos) const = 0;
 			virtual float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const = 0;
-			virtual void setDirections(const DirectX::SimpleMath::Vector2 & q, float r,
-				Agents::PrefVelocity & directions) const = 0;
+			virtual void setDirections(const DirectX::SimpleMath::Vector2 & q, float r, Agents::PrefVelocity & directions) const = 0;
 			virtual DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const = 0;
 			virtual DirectX::SimpleMath::Vector2 getCentroid() const = 0;
 		};

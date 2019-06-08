@@ -3,13 +3,10 @@
 #include "Config.h"
 
 #include "OperationComponent/IOperationComponent.h"
-#include "TacticComponent/Path/PrefVelocity.h"
 #include "StrategyComponent/Goal/Goal.h"
+#include "StrategyComponent/IStrategyComponent.h"
 
-#include <vector>
 #include <memory>
-
-using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
@@ -22,7 +19,7 @@ namespace FusionCrowd
 		size_t id;
 
 		std::shared_ptr<IOperationComponent> opComponent;
+		std::shared_ptr<IStrategyComponent> stratComponent;
 		std::shared_ptr<Goal> currentGoal;
-
 	};
 }
