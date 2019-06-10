@@ -1,15 +1,16 @@
 #pragma once
 
 #include "GpuCalculator.h"
+#include "Config.h"
 
 namespace FusionCrowd
 {
 	class Point;
 
-	class NeighborsSeeker
+	class FUSION_CROWD_API NeighborsSeeker
 	{
 	private:
-		struct GridCell {
+		struct FUSION_CROWD_API GridCell {
 			int pointsCount = 0;
 			int startIndex = 0;
 		};
@@ -52,7 +53,7 @@ namespace FusionCrowd
 		void FindNeighborsGpu();
 		void PrepareGpuCalculator();
 
-		struct CpuConstants {
+		struct FUSION_CROWD_API CpuConstants {
 			float cellSize;
 			int cellsInRow;
 			float searchRadius;
@@ -64,7 +65,7 @@ namespace FusionCrowd
 
 		static float gridCellCoeff;
 
-		struct PointNeighbors {
+		struct FUSION_CROWD_API PointNeighbors {
 			int pointID;
 			int neighborsCount = 0;
 			int neighborsID[NUMBER_OF_NEIGHBORS];
@@ -75,7 +76,7 @@ namespace FusionCrowd
 	};
 
 
-	class Point {
+	class FUSION_CROWD_API Point {
 	public:
 		float x;
 		float y;

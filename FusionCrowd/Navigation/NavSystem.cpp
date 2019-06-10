@@ -79,7 +79,7 @@ namespace FusionCrowd
 		agentsInfos.reserve(numAgents);
 		int i = 0;
 		for (auto & pair : _agentSpatialInfos) {
-			agentsInfos[i] = pair.second;
+			agentsInfos.push_back(pair.second);
 			i++;
 		}
 
