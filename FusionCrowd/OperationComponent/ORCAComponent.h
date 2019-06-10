@@ -10,6 +10,8 @@
 
 namespace FusionCrowd
 {
+	class Obstacle;
+
 	namespace ORCA
 	{
 		class FUSION_CROWD_API ORCAComponent :

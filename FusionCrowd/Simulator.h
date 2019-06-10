@@ -7,15 +7,16 @@
 #include "Config.h"
 
 #include "StrategyComponent/IStrategyComponent.h"
-#include "StrategyComponent/Goal/PointGoal.h"
-#include "TacticComponent/NavMeshComponent.h"
+#include "StrategyComponent/Goal/Goal.h"
 #include "TacticComponent/ITacticComponent.h"
 #include "OperationComponent/IOperationComponent.h"
 
-#include "Navigation/NavSystem.h"
 
 namespace FusionCrowd
 {
+	class NavMeshComponent;
+	class NavSystem;
+
 	class FUSION_CROWD_API Simulator
 	{
 	public:
@@ -49,7 +50,7 @@ namespace FusionCrowd
 	private:
 		size_t GetNextId() const { return GetAgentCount(); }
 
-		NavSystem * _navSystem;
+		std::shared_ptr<NavSystem> _navSystem;
 
 		// TEMPORARY SOLUTION
 		std::shared_ptr<NavMeshComponent> _navMeshTactic;

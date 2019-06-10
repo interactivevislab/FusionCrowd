@@ -13,7 +13,7 @@
 namespace FusionCrowd
 {
 	class NavMeshComponent;
-	class AgentSpatialInfo;
+	struct AgentSpatialInfo;
 
 	struct FUSION_CROWD_API PublicSpatialInfo
 	{

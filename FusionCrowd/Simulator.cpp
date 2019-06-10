@@ -1,5 +1,6 @@
 #include "Simulator.h"
 
+#include "Navigation/NavSystem.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include "TacticComponent/NavMeshComponent.h"
 
@@ -13,7 +14,7 @@ namespace FusionCrowd
 
 		AddTacticComponent(_navMeshTactic);
 
-		_navSystem = new NavSystem(_navMeshTactic);
+		_navSystem = std::make_shared<NavSystem>(_navMeshTactic);
 	}
 
 	bool Simulator::DoStep()

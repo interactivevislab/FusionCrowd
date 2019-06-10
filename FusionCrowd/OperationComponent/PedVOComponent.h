@@ -14,6 +14,7 @@
 namespace FusionCrowd
 {
 	class AgentSpatialInfo;
+	class Obstacle;
 
 	namespace PedVO
 	{

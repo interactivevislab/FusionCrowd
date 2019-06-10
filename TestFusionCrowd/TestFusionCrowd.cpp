@@ -11,21 +11,14 @@
 #include "Simulator.h"
 #include "Math/consts.h"
 
-#include "StrategyComponent/Goal/GoalSet.h"
-#include "StrategyComponent/Goal/Goal.h"
 #include "StrategyComponent/Goal/PointGoal.h"
 
-#include "TacticComponent/NavMeshComponent.h"
-
 #include "OperationComponent/IOperationComponent.h"
-#include "OperationComponent/HelbingComponent.h"
 #include "OperationComponent/KaramouzasComponent.h"
-#include "OperationComponent/ZanlungoComponent.h"
 #include "OperationComponent/PedVOComponent.h"
 #include "OperationComponent/ORCAComponent.h"
 
 #include "Navigation/NavSystem.h"
-#include "Navigation/AgentSpatialInfo.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -57,7 +50,7 @@ int main()
 	positions.push_back(Vector2(0.3f, -1.1f));
 	positions.push_back(Vector2(0.3f, -1.5f));
 
-	std::srand (time(NULL));
+	std::srand (time(nullptr));
 	std::random_shuffle(positions.begin(), positions.end());
 
 	const int agentsCount = positions.size();
@@ -84,10 +77,10 @@ int main()
 	{
 		for(size_t i = 0; i < agentsCount; i++)
 		{
-			FusionCrowd::AgentSpatialInfo & agent = navSystem.GetSpatialInfo(i);
+			auto agent = navSystem.GetPublicSpatialInfo(i);
 			if(i > 0) myfile << ",";
 
-			myfile << agent.pos.x << "," << agent.pos.y;
+			myfile << agent.posX << "," << agent.posY;
 		}
 		myfile << std::endl;
 	}

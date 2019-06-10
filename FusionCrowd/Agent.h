@@ -3,13 +3,14 @@
 #include "Config.h"
 
 #include "OperationComponent/IOperationComponent.h"
-#include "StrategyComponent/Goal/Goal.h"
 #include "StrategyComponent/IStrategyComponent.h"
 
 #include <memory>
 
 namespace FusionCrowd
 {
+	class Goal;
+
 	class FUSION_CROWD_API Agent
 	{
 	public:

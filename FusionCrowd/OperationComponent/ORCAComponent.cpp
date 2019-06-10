@@ -1,10 +1,12 @@
 #include "ORCAComponent.h"
 #include "Navigation/Obstacle.h"
 #include "Navigation/AgentSpatialInfo.h"
+#include "Navigation/NavSystem.h"
 
 #include <algorithm>
 #include <cassert>
 #include <limits>
+#include <vector>
 
 using namespace  DirectX::SimpleMath;
 

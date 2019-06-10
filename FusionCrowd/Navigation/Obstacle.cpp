@@ -4,6 +4,7 @@
 #include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;
+using namespace FusionCrowd;
 
 Obstacle::Obstacle() : _doubleSided(false), _isConvex(false), _nextObstacle(0x0),
 _point(), _prevObstacle(0x0), _unitDir(), _id(0),

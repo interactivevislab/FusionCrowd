@@ -2,7 +2,6 @@
 
 #include <fstream>
 
-#include "NavMeshNode.h"
 #include "Config.h"
 #include "Navigation/Obstacle.h"
 #include "Math/Util.h"

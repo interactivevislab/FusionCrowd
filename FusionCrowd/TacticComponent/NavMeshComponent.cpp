@@ -3,6 +3,7 @@
 #include "Path/PathPlanner.h"
 #include "Path/Route.h"
 #include "Navigation/AgentSpatialInfo.h"
+#include "Navigation/NavSystem.h"
 
 using namespace DirectX::SimpleMath;
 
