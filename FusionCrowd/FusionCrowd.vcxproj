@@ -24,6 +24,9 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Math\Util.h" />
     <ClInclude Include="Navigation\AgentSpatialInfo.h" />
+    <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.h" />
+    <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.h" />
+    <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.h" />
     <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
@@ -58,6 +61,9 @@
     <ClInclude Include="TacticComponent\Path\WayPortal.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
+    <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
+    <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.cpp" />
     <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
@@ -90,6 +96,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -169,7 +181,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>D3D11.lib;D3DCompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -222,6 +234,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>D3D11.lib;D3DCompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
