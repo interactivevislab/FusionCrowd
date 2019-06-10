@@ -1,7 +1,6 @@
 #include "FusionCrowdLinkUE4.h"
 
 #include "Simulator.h"
-#include "Agent.h"
 
 #include "Math/consts.h"
 #include "Math/Util.h"
@@ -36,6 +35,9 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 	strcpy(navMeshPath, navMeshDir);
 
 	sim = new FusionCrowd::Simulator(navMeshPath);
+
+	_strategy = std::make_shared<UE4StrategyProxy>(*sim);
+
 //	navMeshTactic = new FusionCrowd::NavMeshComponent(*sim, );
 	kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(*sim);
 	orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(*sim);
@@ -45,6 +47,8 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 	//sim->AddTacticComponent(*navMeshTactic);
 	sim->AddOperComponent(orcaComponent);
 	sim->AddOperComponent(pedvoComponent);
+
+	sim->AddStrategyComponent(_strategy);
 }
 
 int FusionCrowdLinkUE4::GetAgentCount()
@@ -61,8 +65,14 @@ size_t FusionCrowdLinkUE4::AddAgent(const float * agentPos, const float * goalPo
 	size_t id = sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, position, goal);
 
 	sim->SetOperationComponent(id, compName);
+	sim->SetStrategyComponent(id, _strategy->GetName());
 
 	return id;
+}
+
+void FusionCrowdLinkUE4::SetGoal(size_t agentId, const float * goalPos)
+{
+	_strategy->SetGoal(agentId, goalPos);
 }
 
 void FusionCrowdLinkUE4::AddAgents(int agentsCount)
@@ -90,6 +100,8 @@ void FusionCrowdLinkUE4::AddAgents(int agentsCount)
 			sim->SetOperationComponent(id, orcaComponent->GetName());
 		*/
 		//navMeshTactic->AddAgent(id);
+
+		sim->SetStrategyComponent(id, _strategy->GetName());
 	}
 
 	sim->InitSimulator();
@@ -109,21 +121,21 @@ void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* ueAgentInfo)
 
 	for (int i = 0; i < agentsCount; i++)
 	{
-		auto spatialInfo = nav.GetSpatialInfo(i);
+		auto spatialInfo = nav.GetPublicSpatialInfo(i);
 
 		ueAgentInfo[i].id = spatialInfo.id;
 
 		ueAgentInfo[i].pos = new float[2];
-		ueAgentInfo[i].pos[0] = spatialInfo.pos.x;
-		ueAgentInfo[i].pos[1] = spatialInfo.pos.y;
+		ueAgentInfo[i].pos[0] = spatialInfo.posX;
+		ueAgentInfo[i].pos[1] = spatialInfo.posY;
 
 		ueAgentInfo[i].vel = new float[2];
-		ueAgentInfo[i].vel[0] = spatialInfo.vel.x;
-		ueAgentInfo[i].vel[1] = spatialInfo.vel.y;
+		ueAgentInfo[i].vel[0] = spatialInfo.velX;
+		ueAgentInfo[i].vel[1] = spatialInfo.velY;
 
 		ueAgentInfo[i].orient = new float[2];
-		ueAgentInfo[i].orient[0] = spatialInfo.orient.x;
-		ueAgentInfo[i].orient[1] = spatialInfo.orient.y;
+		ueAgentInfo[i].orient[0] = spatialInfo.orientX;
+		ueAgentInfo[i].orient[1] = spatialInfo.orientY;
 
 		ueAgentInfo[i].radius = spatialInfo.radius;
 

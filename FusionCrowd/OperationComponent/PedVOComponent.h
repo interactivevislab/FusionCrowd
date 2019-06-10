@@ -5,7 +5,6 @@
 #include "Config.h"
 
 #include "OperationComponent/IOperationComponent.h"
-#include "Navigation/AgentSpatialInfo.h"
 
 #include "Math/Util.h"
 #include "Math/Line.h"
@@ -14,6 +13,8 @@
 
 namespace FusionCrowd
 {
+	class AgentSpatialInfo;
+
 	namespace PedVO
 	{
 		struct FUSION_CROWD_API AgentParamentrs

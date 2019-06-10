@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Math/Geometry2D.h"
-#include "TacticComponent/Path/PrefVelocity.h"
 #include "Config.h"
 #include "Math/Util.h"
 
@@ -9,6 +8,11 @@ namespace FusionCrowd
 {
 	// Forward declaration
 	class GoalSet;
+
+	namespace Agents
+	{
+		class PrefVelocity;
+	}
 
 	class FUSION_CROWD_API Goal
 	{
@@ -25,22 +29,13 @@ namespace FusionCrowd
 	public:
 		virtual std::string getStringId() const = 0;
 
-		float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const
-		{
-			return _geometry->squaredDistance(pt);
-		}
-		void setDirections(const DirectX::SimpleMath::Vector2 & q, float r,
-			Agents::PrefVelocity & directions) const
-		{
-			return _geometry->setDirections(q, r, directions);
-		}
+		float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const;
 
-		DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const
-		{
-			return _geometry->getTargetPoint(q, r);
-		}
+		void setDirections(const DirectX::SimpleMath::Vector2 & q, float r, Agents::PrefVelocity & directions) const;
 
-		DirectX::SimpleMath::Vector2 getCentroid() const { return _geometry->getCentroid(); }
+		DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const;
+
+		DirectX::SimpleMath::Vector2 getCentroid() const;
 
 		bool hasCapacity() const;
 		void assign(size_t agentId);

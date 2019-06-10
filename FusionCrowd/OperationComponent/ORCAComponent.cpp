@@ -1,5 +1,6 @@
 #include "ORCAComponent.h"
 #include "Navigation/Obstacle.h"
+#include "Navigation/AgentSpatialInfo.h"
 
 #include <algorithm>
 #include <cassert>

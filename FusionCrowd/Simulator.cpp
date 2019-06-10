@@ -3,6 +3,8 @@
 #include "Navigation/AgentSpatialInfo.h"
 #include "TacticComponent/NavMeshComponent.h"
 
+using namespace DirectX::SimpleMath;
+
 namespace FusionCrowd
 {
 	Simulator::Simulator(const char* navMeshPath)
@@ -84,6 +86,26 @@ namespace FusionCrowd
 
 				c->AddAgent(agentId);
 				_agents[agentId].opComponent = c;
+
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool Simulator::SetStrategyComponent(size_t agentId, std::string newStrategyComponent)
+	{
+		for(std::shared_ptr<IStrategyComponent> c : _strategyComponents)
+		{
+			if(c->GetName() == newStrategyComponent) {
+				std::shared_ptr<IStrategyComponent> old = _agents[agentId].stratComponent;
+				if(old != nullptr)
+				{
+					old->RemoveAgent(agentId);
+				}
+
+				c->AddAgent(agentId);
+				_agents[agentId].stratComponent = c;
 
 				return true;
 			}

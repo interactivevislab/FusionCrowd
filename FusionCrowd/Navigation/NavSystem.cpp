@@ -1,4 +1,5 @@
 #include "NavSystem.h"
+#include "Navigation/AgentSpatialInfo.h"
 #include "Math/Util.h"
 #include "TacticComponent/NavMeshComponent.h"
 
@@ -185,5 +186,24 @@ namespace FusionCrowd
 
 	NavSystem::~NavSystem()
 	{
+	}
+
+	PublicSpatialInfo NavSystem::GetPublicSpatialInfo(size_t agentId)
+	{
+		PublicSpatialInfo publicInfo;
+		auto & info = _agentSpatialInfos[agentId];
+		publicInfo.id = agentId;
+
+		publicInfo.posX = info.pos.x;
+		publicInfo.posY = info.pos.y;
+
+		publicInfo.velX = info.vel.x;
+		publicInfo.velY = info.vel.y;
+
+		publicInfo.orientX = info.orient.x;
+		publicInfo.orientY = info.orient.y;
+		publicInfo.radius = info.radius;
+
+		return publicInfo;
 	}
 }

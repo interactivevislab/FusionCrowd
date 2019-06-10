@@ -13,16 +13,13 @@ namespace FusionCrowd
 {
 	PortalPath::PortalPath(const Vector2& startPos, const std::shared_ptr<Goal> goal,
 	                       const PortalRoute* route, float agentRadius) :
-		_route(route), _goal(goal), _currPortal(0), _waypoints(0x0),
-		_headings(0x0)
+		_route(route), _goal(goal), _currPortal(0)
 	{
 		computeCrossing(startPos, agentRadius);
 	}
 
 	PortalPath::~PortalPath()
 	{
-		if (_waypoints) delete[] _waypoints;
-		if (_headings) delete[] _headings;
 	}
 
 	void PortalPath::setPreferredDirection(AgentSpatialInfo & agent, float headingCos)
@@ -283,10 +280,10 @@ namespace FusionCrowd
 		const size_t PORTAL_COUNT = _route->getPortalCount();
 		if (PORTAL_COUNT > 0)
 		{
-			assert(_waypoints == 0x0 && "Computing the crossing for a path that already exists");
+			assert(_waypoints.size() == 0 && "Computing the crossing for a path that already exists");
 			_currPortal = 0;
-			_waypoints = new Vector2[PORTAL_COUNT];
-			_headings = new Vector2[PORTAL_COUNT];
+			_waypoints.resize(PORTAL_COUNT);
+			_headings.resize(PORTAL_COUNT);
 			FunnelPlanner planner;
 			planner.computeCrossing(agentRadius, startPos, this);
 		}
@@ -296,13 +293,8 @@ namespace FusionCrowd
 	                        unsigned int endNode, float agentRadius, const std::shared_ptr<PathPlanner> planner)
 	{
 		PortalRoute* route = planner->getRoute(startNode, _route->getEndNode(), agentRadius * 2.f);
-		if (_waypoints != 0x0)
-		{
-			delete[] _waypoints;
-			_waypoints = 0x0;
-			delete[] _headings;
-			_headings = 0x0;
-		}
+		_waypoints.clear();
+		_headings.clear();
 		_currPortal = 0;
 		_route = route;
 		computeCrossing(startPos, agentRadius);

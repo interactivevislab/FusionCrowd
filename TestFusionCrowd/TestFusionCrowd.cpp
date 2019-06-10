@@ -22,9 +22,10 @@
 #include "OperationComponent/KaramouzasComponent.h"
 #include "OperationComponent/ZanlungoComponent.h"
 #include "OperationComponent/PedVOComponent.h"
+#include "OperationComponent/ORCAComponent.h"
 
 #include "Navigation/NavSystem.h"
-#include "OperationComponent/ORCAComponent.h"
+#include "Navigation/AgentSpatialInfo.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -65,9 +66,9 @@ int main()
 		//DirectX::SimpleMath::Vector2 pos(uniform(gen), uniform(gen));
 		size_t id = sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, positions[i], goal);
 
-		sim.SetOperationComponent(id, pedvoComponent->GetName());
+		//sim.SetOperationComponent(id, pedvoComponent->GetName());
 		//if(i % 2 == 0)
-		//	sim.SetOperationComponent(id, kComponent->GetName());
+		sim.SetOperationComponent(id, kComponent->GetName());
 		//else
 		//	sim.SetOperationComponent(id, orcaComponent->GetName());
 	}

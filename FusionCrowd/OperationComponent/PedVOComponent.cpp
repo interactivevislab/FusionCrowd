@@ -1,4 +1,7 @@
 #include "PedVOComponent.h"
+
+#include "Navigation/AgentSpatialInfo.h"
+
 #include "Math/consts.h"
 #include "Math/geomQuery.h"
 #include "Math/Util.h"

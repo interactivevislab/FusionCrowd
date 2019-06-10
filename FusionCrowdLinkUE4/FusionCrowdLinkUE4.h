@@ -2,7 +2,8 @@
 
 #include <memory>
 
-// Forward declarations
+#include "UE4StrategyProxy.h"
+
 namespace FusionCrowd
 {
 	class Simulator;
@@ -38,6 +39,7 @@ public:
 	LINKFUSIONCROWD_API FusionCrowdLinkUE4();
 	LINKFUSIONCROWD_API ~FusionCrowdLinkUE4();
 
+	LINKFUSIONCROWD_API void SetGoal(size_t agentId, const float * goalPos);
 	LINKFUSIONCROWD_API void SetOperationModel(size_t agentId, const char * name);
 	LINKFUSIONCROWD_API void StartFusionCrowd(char* navMeshDir);
 	LINKFUSIONCROWD_API int GetAgentCount();
@@ -47,6 +49,7 @@ public:
 
 private:
 	FusionCrowd::Simulator* sim;
+	std::shared_ptr<UE4StrategyProxy> _strategy;
 	std::shared_ptr<FusionCrowd::Karamouzas::KaramouzasComponent> kComponent;
 	std::shared_ptr<FusionCrowd::ORCA::ORCAComponent> orcaComponent;
 	std::shared_ptr<FusionCrowd::PedVO::PedVOComponent> pedvoComponent;
