@@ -22,7 +22,7 @@ void UE4StrategyProxy::SetGoal(size_t id, const float* goalPos)
 {
 	if(_agents.find(id) != _agents.end())
 	{
-		_simulator.GetById(id).currentGoal = std::make_shared<FusionCrowd::PointGoal>(goalPos[90], goalPos[2]);
+		_simulator.GetById(id).currentGoal = std::make_shared<FusionCrowd::PointGoal>(goalPos[0], goalPos[1]);
 	}
 }
 
