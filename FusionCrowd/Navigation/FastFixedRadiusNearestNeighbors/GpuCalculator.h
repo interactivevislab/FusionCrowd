@@ -26,11 +26,11 @@ namespace FusionCrowd
 		ID3D11ShaderResourceView**  _inputBuffersSRV = nullptr;
 		ID3D11UnorderedAccessView*  _outputBufferUAV = nullptr;
 
-		int	_numberOfInputBuffers;
-		int _outputElementsCount;
-		int _outputElementsSize;
-		int _constantElementsSize;
-		int _constantElementsCount;
+		int	_numberOfInputBuffers = 0;
+		int _outputElementsCount = 0;
+		int _outputElementsSize = 0;
+		int _constantElementsSize = 0;
+		int _constantElementsCount = 0;
 
 	public:
 		GpuCalculator();

@@ -80,6 +80,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl" />
+    <Text Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl" />
   </ItemGroup>
 </Project>
