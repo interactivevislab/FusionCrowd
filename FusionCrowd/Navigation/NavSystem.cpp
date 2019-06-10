@@ -41,7 +41,15 @@ namespace FusionCrowd
 
 		return result;*/
 
-		return _agentsNeighbours.find(agentId)->second;
+		auto result = _agentsNeighbours.find(agentId);
+		if (result != _agentsNeighbours.end()) {
+			return result->second;
+		}
+		else 
+		{
+			return std::vector<AgentSpatialInfo>();
+		}
+		
 	}
 
 	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId) const
@@ -73,22 +81,20 @@ namespace FusionCrowd
 
 	void NavSystem::UpdateNeighbours() {
 		int numAgents = _agentSpatialInfos.size();
-		float worldSize = 2000;
+		float worldSize = 20;
 		float searchRadius = 5;
 
 		std::vector<AgentSpatialInfo> agentsInfos;
 		agentsInfos.reserve(numAgents);
-		int i = 0;
 		for (auto & pair : _agentSpatialInfos) {
 			agentsInfos.push_back(pair.second);
-			i++;
 		}
 
 		Point *agentsPositions = new Point[numAgents];
-		i = 0;
+		int i = 0;
 		for (auto & info : agentsInfos) {
-			agentsPositions[i].x = info.pos.x + 1000;
-			agentsPositions[i].y = info.pos.y + 1000;
+			agentsPositions[i].x = info.pos.x + worldSize / 2;
+			agentsPositions[i].y = info.pos.y + worldSize / 2;
 			i++;
 		}
 
@@ -102,7 +108,7 @@ namespace FusionCrowd
 			auto neighbors = allNeighbors[i];
 
 			std::vector<AgentSpatialInfo> neighborsInfos;
-			neighborsInfos.reserve(neighbors.neighborsCount);
+			neighborsInfos.resize(neighbors.neighborsCount);
 
 			for (int j = 0; j < neighbors.neighborsCount; j++) {
 				neighborsInfos[j] = agentsInfos[neighbors.neighborsID[j]];
