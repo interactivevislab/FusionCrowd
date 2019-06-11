@@ -104,19 +104,21 @@ namespace FusionCrowd
 
 		_agentsNeighbours.clear();
 		i = 0;
+
+		std::vector<AgentSpatialInfo> neighborsInfos;
+
 		for (auto & info : agentsInfos) {
 			auto neighbors = allNeighbors[i];
 
-			std::vector<AgentSpatialInfo> neighborsInfos;
-			neighborsInfos.resize(neighbors.neighborsCount);
-
+			neighborsInfos.clear();
+			
 			for (int j = 0; j < neighbors.neighborsCount; j++) {
-				neighborsInfos[j] = agentsInfos[neighbors.neighborsID[j]];
+				neighborsInfos.push_back(agentsInfos[neighbors.neighborsID[j]]);
 			}
 
-			_agentsNeighbours.insert(std::pair<size_t, std::vector<AgentSpatialInfo>>(info.id, neighborsInfos));
+			_agentsNeighbours.insert({ info.id, neighborsInfos });
 
-			i++;
+			i++; 
 		}
 
 		delete[] agentsPositions;

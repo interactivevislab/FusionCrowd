@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 
@@ -51,6 +52,6 @@ namespace FusionCrowd
 		std::shared_ptr<NavMesh> _navMesh;
 
 		NeighborsSeeker _neighborsSeeker;
-		std::map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
+		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 	};
 }
