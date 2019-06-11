@@ -76,12 +76,12 @@ namespace FusionCrowd
 			UpdateOrient(info, timeStep);
 		}
 
-		UpdateNeighbours();
+		if (_agentSpatialInfos.size() > 0) UpdateNeighbours();
 	}
 
 	void NavSystem::UpdateNeighbours() {
 		int numAgents = _agentSpatialInfos.size();
-		float worldSize = 20;
+		float worldSize = 2000;
 		float searchRadius = 5;
 
 		std::vector<AgentSpatialInfo> agentsInfos;

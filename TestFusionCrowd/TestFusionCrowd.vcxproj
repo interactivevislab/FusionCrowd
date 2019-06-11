@@ -172,6 +172,7 @@
     <None Include="Resources\simple.nav">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="Resources\square.nav" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FusionCrowd\FusionCrowd.vcxproj">

@@ -32,5 +32,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="Resources\square.nav" />
   </ItemGroup>
 </Project>
