@@ -28,7 +28,7 @@ namespace FusionCrowd
 		std::shared_ptr<NavMeshLocalizer> GetLocalizer();
 
 		void Update(float timeStep);
-
+		void UpdateNavMesh(DirectX::SimpleMath::Vector2 point);
 		unsigned int getNodeId(size_t agentId) const;
 		unsigned int getNodeId(size_t agentId, const std::string& grpName, bool searchAll = false);
 
