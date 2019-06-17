@@ -8,10 +8,12 @@ struct GridCell {
 	int startIndex;
 };
 
+const int MAX_NEIGHBORS = 100;
+
 struct PointNeighbors {
 	int pointID;
 	int neighborsCount;
-	int neighborsID[100];
+	int neighborsID[MAX_NEIGHBORS];
 };
 
 cbuffer globals : register(b0) {
@@ -55,6 +57,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	}
 
 	int neighborsCount = 0;
+	bool enoughNeighbors = false;
 	for (int cellIndexIndex = 0; cellIndexIndex < numberOfNearCells; cellIndexIndex++) {
 		GridCell cell = cells[nearCellsIndeces[cellIndexIndex]];
 		for (int pointIndex = cell.startIndex; pointIndex < cell.startIndex + cell.pointsCount; pointIndex++) {
@@ -64,8 +67,13 @@ void main(uint3 DTid : SV_DispatchThreadID)
 			if (InRange(currentPoint.x, currentPoint.y, otherPoint.x, otherPoint.y, searchRadius)) {
 				pointNeighbors[DTid.x].neighborsID[neighborsCount] = otherPointIndex;
 				neighborsCount++;
+				if (neighborsCount == MAX_NEIGHBORS) {
+					enoughNeighbors = true;
+					break;
+				}
 			}
 		}
+		if (enoughNeighbors) break;
 	}
 	pointNeighbors[DTid.x].pointID = DTid.x;
 	pointNeighbors[DTid.x].neighborsCount = neighborsCount;
