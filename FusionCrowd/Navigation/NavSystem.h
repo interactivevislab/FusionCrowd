@@ -43,6 +43,8 @@ namespace FusionCrowd
 
 		void Update(float timeStep);
 
+		FUSION_CROWD_API void SetAgentsSensitivityRadius(float radius);
+
 	private:
 		void UpdatePos(AgentSpatialInfo & agent, float timeStep);
 		void UpdateOrient(AgentSpatialInfo & agent, float timeStep);
@@ -54,5 +56,6 @@ namespace FusionCrowd
 
 		NeighborsSeeker _neighborsSeeker;
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
+		float _agentsSensitivityRadius = 1;
 	};
 }

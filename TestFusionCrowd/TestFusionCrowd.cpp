@@ -119,14 +119,13 @@ void measure()
 	sim.InitSimulator();	
 
 	auto & navSystem = sim.GetNavSystem();
+	navSystem.SetAgentsSensitivityRadius(2.3f);
 
 	std::ofstream myfile;
 	myfile.open("way.csv");
 
 	for (int i = 0; i < stepsTotal; i++) {
 
-		//if (i == 1800) SwitchOperationComponent(sim, orcaComponent->GetName());
-		//if (i == 2400) SwitchOperationComponent(sim, kComponent->GetName());
 		AutoSelectOperationComponent(sim, 5, kComponent->GetName(), orcaComponent->GetName());
 
 		high_resolution_clock::time_point t1 = high_resolution_clock::now();

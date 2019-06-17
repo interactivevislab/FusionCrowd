@@ -8,7 +8,7 @@ struct GridCell {
 	int startIndex;
 };
 
-const int MAX_NEIGHBORS = 100;
+static const int MAX_NEIGHBORS = 100;
 
 struct PointNeighbors {
 	int pointID;
@@ -19,6 +19,7 @@ struct PointNeighbors {
 cbuffer globals : register(b0) {
 	float cellSize;
 	int cellsInRow;
+	int cellsInColumn;
 	float searchRadius;
 };
 
@@ -43,7 +44,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	if (startCellX < 0) startCellX = 0;
 	if (startCellY < 0) startCellY = 0;
 	if (endCellX >= cellsInRow) endCellX = cellsInRow - 1;
-	if (endCellY >= cellsInRow) endCellY = cellsInRow - 1;
+	if (endCellY >= cellsInColumn) endCellY = cellsInColumn - 1;
 
 	int nearCellsIndeces[100];
 	int numberOfNearCells = 0;
