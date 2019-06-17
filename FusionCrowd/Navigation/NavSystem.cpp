@@ -52,6 +52,18 @@ namespace FusionCrowd
 		
 	}
 
+	//TEST METHOD, MUST BE DELETED
+	int NavSystem::CountNeighbors(size_t agentId) const {
+		auto neighbors = _agentsNeighbours.find(agentId);
+		if (neighbors != _agentsNeighbours.end()) {
+			return neighbors->second.size();
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
 	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId) const
 	{
 		AgentSpatialInfo agent = _agentSpatialInfos.at(agentId);
@@ -81,8 +93,8 @@ namespace FusionCrowd
 
 	void NavSystem::UpdateNeighbours() {
 		int numAgents = _agentSpatialInfos.size();
-		float worldSize = 2000;
-		float searchRadius = 5;
+		float worldSize = 100;
+		float searchRadius = 2.3;
 
 		std::vector<AgentSpatialInfo> agentsInfos;
 		agentsInfos.reserve(numAgents);
