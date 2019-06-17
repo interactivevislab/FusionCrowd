@@ -136,4 +136,14 @@ namespace FusionCrowd
 	Simulator::~Simulator()
 	{
 	}
+
+	void Simulator::UpdateNav(float x, float y)
+	{
+		DirectX::SimpleMath::Vector2 point1(-20.2780991, -22.8689995);
+		_navMeshTactic->UpdateNavMesh(point1);
+		for (int i = 0; i < _agents.size(); i++)
+		{
+			_navMeshTactic->AddAgent(_agents[i].id);
+		}
+	}
 }

@@ -62,7 +62,7 @@ size_t FusionCrowdLinkUE4::AddAgent(const float * agentPos, const float * goalPo
 	auto goal = std::make_shared<FusionCrowd::PointGoal>(goalPos[0], goalPos[1]);
 	std::string compName(opComponent);
 
-	size_t id = sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, position, goal);
+	size_t id = sim->AddAgent(360, 2.0f, 0.5f, 0.2f, 5, position, goal);
 
 	sim->SetOperationComponent(id, compName);
 	sim->SetStrategyComponent(id, _strategy->GetName());
@@ -145,4 +145,9 @@ void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* ueAgentInfo)
 		ueAgentInfo[i].opCompName = new char [name.length() + 1];
 		std::strcpy (ueAgentInfo[i].opCompName, name.c_str());
 	}
+}
+
+void FusionCrowdLinkUE4::UpdateNav(float x, float y)
+{
+	sim->UpdateNav(0, 0);
 }

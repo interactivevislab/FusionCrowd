@@ -47,13 +47,15 @@ namespace FusionCrowd
 		void AddStrategyComponent(std::shared_ptr<IStrategyComponent> strategyComponent);
 
 		void InitSimulator();
+
+		void UpdateNav(float x, float y);
+
+		// TEMPORARY SOLUTION
+		std::shared_ptr<NavMeshComponent> _navMeshTactic;
 	private:
 		size_t GetNextId() const { return GetAgentCount(); }
 
 		std::shared_ptr<NavSystem> _navSystem;
-
-		// TEMPORARY SOLUTION
-		std::shared_ptr<NavMeshComponent> _navMeshTactic;
 
 		std::vector<FusionCrowd::Agent> _agents;
 		std::vector<std::shared_ptr<IStrategyComponent>> _strategyComponents;
