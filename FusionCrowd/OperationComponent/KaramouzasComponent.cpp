@@ -5,6 +5,7 @@
 #include "Math/Util.h"
 
 #include "Navigation/AgentSpatialInfo.h"
+#include "Navigation/Obstacle.h"
 
 #include <algorithm>
 #include <list>
