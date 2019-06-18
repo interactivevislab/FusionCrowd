@@ -38,9 +38,12 @@ namespace FusionCrowd
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 
 		std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const;
+		FUSION_CROWD_API int CountNeighbors(size_t agentId) const;								//TEST METHOD, MUST BE DELETED
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId) const;
 
 		void Update(float timeStep);
+
+		FUSION_CROWD_API void SetAgentsSensitivityRadius(float radius);
 
 	private:
 		void UpdatePos(AgentSpatialInfo & agent, float timeStep);
@@ -53,5 +56,6 @@ namespace FusionCrowd
 
 		NeighborsSeeker _neighborsSeeker;
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
+		float _agentsSensitivityRadius = 1;
 	};
 }

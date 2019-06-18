@@ -3,6 +3,8 @@
 #include "Math/Util.h"
 #include "TacticComponent/NavMeshComponent.h"
 
+#include <limits>
+
 using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
@@ -52,6 +54,18 @@ namespace FusionCrowd
 		
 	}
 
+	//TEST METHOD, MUST BE DELETED
+	int NavSystem::CountNeighbors(size_t agentId) const {
+		auto neighbors = _agentsNeighbours.find(agentId);
+		if (neighbors != _agentsNeighbours.end()) {
+			return neighbors->second.size();
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
 	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId) const
 	{
 		AgentSpatialInfo agent = _agentSpatialInfos.at(agentId);
@@ -81,8 +95,6 @@ namespace FusionCrowd
 
 	void NavSystem::UpdateNeighbours() {
 		int numAgents = _agentSpatialInfos.size();
-		float worldSize = 2000;
-		float searchRadius = 5;
 
 		std::vector<AgentSpatialInfo> agentsInfos;
 		agentsInfos.reserve(numAgents);
@@ -90,19 +102,31 @@ namespace FusionCrowd
 			agentsInfos.push_back(pair.second);
 		}
 
+		float minX = std::numeric_limits<float>::max();
+		float minY = std::numeric_limits<float>::max();
+		float maxX = std::numeric_limits<float>::min();
+		float maxY = std::numeric_limits<float>::min();
+		for (auto & info : agentsInfos) {
+			if (info.pos.x < minX) minX = info.pos.x;
+			if (info.pos.x > maxX) maxX = info.pos.x;
+			if (info.pos.y < minY) minY = info.pos.y;
+			if (info.pos.y > maxY) maxY = info.pos.y;
+		}
+
 		Point *agentsPositions = new Point[numAgents];
 		int i = 0;
 		for (auto & info : agentsInfos) {
-			agentsPositions[i].x = info.pos.x + worldSize / 2;
-			agentsPositions[i].y = info.pos.y + worldSize / 2;
+			agentsPositions[i].x = info.pos.x - minX;
+			agentsPositions[i].y = info.pos.y - minY;
 			i++;
 		}
 
-		_neighborsSeeker.Init(agentsPositions, numAgents, worldSize, searchRadius);
+		_neighborsSeeker.Init(agentsPositions, numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius);
 
 		auto allNeighbors =_neighborsSeeker.FindNeighbors();
 
 		_agentsNeighbours.clear();
+		_agentsNeighbours.reserve(numAgents);
 		i = 0;
 
 		std::vector<AgentSpatialInfo> neighborsInfos;
@@ -122,6 +146,10 @@ namespace FusionCrowd
 		}
 
 		delete[] agentsPositions;
+	}
+
+	void NavSystem::SetAgentsSensitivityRadius(float radius) {
+		_agentsSensitivityRadius = radius;
 	}
 
 	void NavSystem::UpdatePos(AgentSpatialInfo & agent, float timeStep)
