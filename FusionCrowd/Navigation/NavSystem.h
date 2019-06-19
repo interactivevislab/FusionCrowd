@@ -3,9 +3,8 @@
 #include <memory>
 #include <vector>
 
-#include "Math/Util.h"
 #include "Config.h"
-
+#include "Math/Util.h"
 
 namespace FusionCrowd
 {

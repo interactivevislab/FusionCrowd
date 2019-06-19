@@ -10,22 +10,21 @@
 #include "StrategyComponent/Goal/Goal.h"
 #include "TacticComponent/ITacticComponent.h"
 #include "OperationComponent/IOperationComponent.h"
-
+#include "Navigation/NavSystem.h"
 
 namespace FusionCrowd
 {
 	class NavMeshComponent;
-	class NavSystem;
 
 	class FUSION_CROWD_API Simulator
 	{
 	public:
 		Simulator(const char* navMeshPath);
-		~Simulator();
+		virtual ~Simulator();
 
 		bool DoStep();
 
-		size_t GetAgentCount() const { return _agents.size(); }
+		size_t GetAgentCount() const;
 		Agent & GetById(size_t agentId);
 		NavSystem & GetNavSystem();
 
@@ -49,17 +48,9 @@ namespace FusionCrowd
 		void InitSimulator();
 
 		void UpdateNav(float x, float y);
-
-		// TEMPORARY SOLUTION
-		std::shared_ptr<NavMeshComponent> _navMeshTactic;
 	private:
-		size_t GetNextId() const { return GetAgentCount(); }
+		class SimulatorImpl;
 
-		std::shared_ptr<NavSystem> _navSystem;
-
-		std::vector<FusionCrowd::Agent> _agents;
-		std::vector<std::shared_ptr<IStrategyComponent>> _strategyComponents;
-		std::vector<std::shared_ptr<ITacticComponent>> _tacticComponents;
-		std::vector<std::shared_ptr<IOperationComponent>> _operComponents;
+		std::unique_ptr<SimulatorImpl> pimpl;
 	};
 }

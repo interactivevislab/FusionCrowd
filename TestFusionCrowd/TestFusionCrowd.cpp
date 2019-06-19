@@ -3,6 +3,7 @@
 #include "pch.h"
 
 #include <iostream>
+#include <fstream>
 #include <random>
 #include <memory>
 #include <time.h>
@@ -49,7 +50,7 @@ void prep()
 	pointGoals.push_back(Vector2(0, -goalsDistance));
 	pointGoals.push_back(Vector2(-goalsDistance, 0));
 
-	for (int goalIndex = 0; goalIndex < 2; goalIndex++) {		
+	for (int goalIndex = 0; goalIndex < 2; goalIndex++) {
 		positions[goalIndex].reserve(agentsInGroup);
 		for (int i = 0; i < agentsInGroup; i++) {
 			float angle = (float)i / (float)agentsInGroup * 2 * 3.1415;
@@ -81,7 +82,7 @@ void AutoSelectOperationComponent(FusionCrowd::Simulator simulator, int neighbor
 	}
 }
 
-void measure() 
+void measure()
 {
 	std::string navPath = "Resources/square.nav";
 
@@ -98,8 +99,8 @@ void measure()
 	pointGoals.push_back(Vector2(-goalsDistance, 0));
 	pointGoals.push_back(Vector2(0, -goalsDistance));
 	pointGoals.push_back(Vector2(goalsDistance, 0));
-	
-	for (int goalIndex = 0; goalIndex < 2; goalIndex++) 
+
+	for (int goalIndex = 0; goalIndex < 2; goalIndex++)
 	{
 		for(int i = 0; i < agentsInGroup; i++) {
 			float angle = (float)i / (float)agentsInGroup * 2 * 3.1415;
@@ -116,7 +117,7 @@ void measure()
 
 	//---
 
-	sim.InitSimulator();	
+	sim.InitSimulator();
 
 	auto & navSystem = sim.GetNavSystem();
 	navSystem.SetAgentsSensitivityRadius(2.3f);
