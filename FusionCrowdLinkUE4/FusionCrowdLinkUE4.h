@@ -20,6 +20,10 @@ namespace FusionCrowd
 	{
 		class PedVOComponent;
 	}
+	namespace Helbing
+	{
+		class HelbingComponent;
+	}
 }
 
 struct agentInfo
@@ -54,6 +58,7 @@ private:
 	std::shared_ptr<FusionCrowd::Karamouzas::KaramouzasComponent> kComponent;
 	std::shared_ptr<FusionCrowd::ORCA::ORCAComponent> orcaComponent;
 	std::shared_ptr<FusionCrowd::PedVO::PedVOComponent> pedvoComponent;
+	std::shared_ptr<FusionCrowd::Helbing::HelbingComponent> helbingComponent;
 	std::shared_ptr<FusionCrowd::NavMeshComponent> navMeshTactic;
 	int agentsCount;
 	char* navMeshPath;
