@@ -149,15 +149,15 @@ namespace FusionCrowd
 	}
 
 
-	void NeighborsSeeker::Init(Point* points, int numberOfPoints, float worldSize, float searchRadius) {
+	void NeighborsSeeker::Init(Point* points, int numberOfPoints, float worldWidth, float worldHeight, float searchRadius) {
 		this->points = points;
 		this->numberOfPoints = numberOfPoints;
 
-		this->worldSize = worldSize;
 		this->searchRadius = searchRadius;
 		cellSize = 2.f * searchRadius / gridCellCoeff;
-		cellsInRow = ceil(worldSize / cellSize);
-		numberOfCells = cellsInRow * cellsInRow;
+		cellsInRow = ceil(worldWidth / cellSize);
+		cellsInColumn = ceil(worldHeight / cellSize);
+		numberOfCells = cellsInRow * cellsInColumn;
 		float cellsInRadius = ceil(gridCellCoeff) + 1;
 		maxNearCells = cellsInRadius * cellsInRadius;
 
@@ -179,7 +179,7 @@ namespace FusionCrowd
 			if (startCellX < 0) startCellX = 0;
 			if (startCellY < 0) startCellY = 0;
 			if (endCellX >= cellsInRow) endCellX = cellsInRow - 1;
-			if (endCellY >= cellsInRow) endCellY = cellsInRow - 1;
+			if (endCellY >= cellsInColumn) endCellY = cellsInColumn - 1;
 
 			int* nearCellsIndeces = new int[maxNearCells];
 			int numberOfNearCells = 0;
@@ -230,7 +230,7 @@ namespace FusionCrowd
 		}
 
 		_calculator.SetInputBuffers(3, _bufferDescriptions);
-		CpuConstants constants = { cellSize , cellsInRow , searchRadius };
+		CpuConstants constants = { cellSize , cellsInRow , cellsInColumn , searchRadius };
 		_calculator.SetConstantBuffer(sizeof(CpuConstants), 1, &constants);
 		_calculator.RunShader();
 		pointNeighbors = (PointNeighbors*)_calculator.GetResult();

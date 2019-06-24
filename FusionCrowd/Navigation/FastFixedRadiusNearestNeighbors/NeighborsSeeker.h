@@ -26,11 +26,11 @@ namespace FusionCrowd
 		int numberOfPoints;
 		int numberOfCells;
 		static const int NUMBER_OF_NEIGHBORS = 100;
-		float worldSize;
 		float searchRadius;
 		int maxNearCells;
 		float cellSize;
 		int cellsInRow;
+		int cellsInColumn;
 
 		GpuCalculator _calculator;
 		InputBufferDesc _bufferDescriptions[3];
@@ -56,6 +56,7 @@ namespace FusionCrowd
 		struct FUSION_CROWD_API CpuConstants {
 			float cellSize;
 			int cellsInRow;
+			int cellsInColumn;
 			float searchRadius;
 		};
 
@@ -71,7 +72,7 @@ namespace FusionCrowd
 			int neighborsID[NUMBER_OF_NEIGHBORS];
 		};
 
-		void Init(Point* points, int numberOfPoints, float worldSize, float searchRadius);
+		void Init(Point* points, int numberOfPoints, float worldWidth, float worldHeight, float searchRadius);
 		PointNeighbors* FindNeighbors(bool useGpu = true);
 	};
 
