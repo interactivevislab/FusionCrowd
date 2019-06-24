@@ -33,6 +33,7 @@
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.cpp" />
+    <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -75,6 +76,7 @@
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.h" />
+    <ClInclude Include="OperationComponent\HelbingComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

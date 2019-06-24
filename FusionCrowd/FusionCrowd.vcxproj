@@ -28,6 +28,7 @@
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.h" />
     <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
+    <ClInclude Include="OperationComponent\HelbingComponent.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="OperationComponent\ORCAComponent.h" />
@@ -65,6 +66,7 @@
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.cpp" />
     <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
+    <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
