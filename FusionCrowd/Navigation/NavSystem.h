@@ -31,7 +31,7 @@ namespace FusionCrowd
 		NavSystem& operator=(NavSystem&&);
 
 		FUSION_CROWD_API PublicSpatialInfo GetPublicSpatialInfo(size_t agentId);
-		FUSION_CROWD_API int CountNeighbors(size_t agentId) const;								//TEST METHOD, MUST BE DELETED
+		FUSION_CROWD_API int CountNeighbors(size_t agentId) const; //TEST METHOD, MUST BE DELETED
 		FUSION_CROWD_API void SetAgentsSensitivityRadius(float radius);
 
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);

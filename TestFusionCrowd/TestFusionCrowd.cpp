@@ -61,7 +61,8 @@ void prep()
 	}
 }
 
-void SwitchOperationComponent(FusionCrowd::Simulator simulator, std::string componentName) {
+void SwitchOperationComponent(FusionCrowd::Simulator & simulator, std::string componentName)
+{
 	for (int i = 0; i < agentsCount; i++) {
 		simulator.SetOperationComponent(i, componentName);
 	}
@@ -70,7 +71,7 @@ void SwitchOperationComponent(FusionCrowd::Simulator simulator, std::string comp
 int control1 = 0;
 int control2 = 0;
 
-void AutoSelectOperationComponent(FusionCrowd::Simulator simulator, int neighborsCount, std::string component1Name, std::string component2Name) {
+void AutoSelectOperationComponent(FusionCrowd::Simulator & simulator, int neighborsCount, std::string component1Name, std::string component2Name) {
 	for (int i = 0; i < agentsCount; i++) {
 		if (simulator.GetNavSystem().CountNeighbors(i) < neighborsCount) {
 			simulator.SetOperationComponent(i, component1Name);
@@ -127,7 +128,7 @@ void measure()
 
 	for (int i = 0; i < stepsTotal; i++) {
 
-		AutoSelectOperationComponent(sim, 5, kComponent->GetName(), orcaComponent->GetName());
+		AutoSelectOperationComponent(sim, 4, kComponent->GetName(), orcaComponent->GetName());
 
 		high_resolution_clock::time_point t1 = high_resolution_clock::now();
 		if (!sim.DoStep()) break;

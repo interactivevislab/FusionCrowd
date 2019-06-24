@@ -6,7 +6,7 @@
 
 namespace FusionCrowd
 {
-	struct FUSION_CROWD_API AgentSpatialInfo
+	struct AgentSpatialInfo
 	{
 		size_t id;
 		DirectX::SimpleMath::Vector2 pos;
