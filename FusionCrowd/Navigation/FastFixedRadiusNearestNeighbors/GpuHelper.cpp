@@ -119,7 +119,7 @@ namespace FusionCrowd
 		// Compile and create the CS
 		//--------------------------------------------------------------------------------------
 		_Use_decl_annotations_
-			HRESULT CreateComputeShader(LPCWSTR pSrcFile, LPCSTR pFunctionName,
+			HRESULT CreateComputeShader(LPCWSTR pSrcFile, LPCSTR pFunctionName, const D3D_SHADER_MACRO defines[],
 				ID3D11Device* pDevice, ID3D11ComputeShader** ppShaderOut)
 		{
 			if (!pDevice || !ppShaderOut)
@@ -144,11 +144,6 @@ namespace FusionCrowd
 			// Disable optimizations to further improve shader debugging
 			dwShaderFlags |= D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
-
-			const D3D_SHADER_MACRO defines[] =
-			{
-				nullptr, nullptr
-			};
 
 			// We generally prefer to use the higher CS shader profile when possible as CS 5.0 is better performance on 11-class hardware
 			LPCSTR pProfile = (pDevice->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0) ? "cs_5_0" : "cs_4_0";

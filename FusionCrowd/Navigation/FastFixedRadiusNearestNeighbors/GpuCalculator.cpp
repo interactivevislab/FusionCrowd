@@ -37,8 +37,8 @@ namespace FusionCrowd
 	}
 
 
-	bool GpuCalculator::LoadShader(LPCWSTR sourseFile, LPCSTR functionName) {
-		return !FAILED(GpuHelper::CreateComputeShader(sourseFile, functionName, _device, &_shader));
+	bool GpuCalculator::LoadShader(LPCWSTR sourseFile, LPCSTR functionName, const D3D_SHADER_MACRO defines[]) {
+		return !FAILED(GpuHelper::CreateComputeShader(sourseFile, functionName, defines, _device, &_shader));
 	}
 
 

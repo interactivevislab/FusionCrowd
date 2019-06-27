@@ -37,7 +37,7 @@ namespace FusionCrowd
 		~GpuCalculator();
 
 		bool Init(); //CreatingDevice + CreatingContext
-		bool LoadShader(LPCWSTR sourseFile, LPCSTR functionName);
+		bool LoadShader(LPCWSTR sourseFile, LPCSTR functionName, const D3D_SHADER_MACRO defines[]);
 		void SetInputBuffers(int numberOfBuffers, InputBufferDesc descriptions[]); //+ CreatingViews
 		void SetOutputBuffer(int elementSize, int elementsCount); //+ CreatingView
 		void SetConstantBuffer(int elementSize, int elementsCount, void* initDataSource);
