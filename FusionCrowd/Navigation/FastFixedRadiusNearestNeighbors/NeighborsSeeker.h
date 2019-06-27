@@ -25,7 +25,7 @@ namespace FusionCrowd
 
 		int numberOfPoints;
 		int numberOfCells;
-		static const int NUMBER_OF_NEIGHBORS = 100;
+		static const int NUMBER_OF_NEIGHBORS = 1;
 		float searchRadius;
 		int maxNearCells;
 		float cellSize;

@@ -8,7 +8,7 @@ struct GridCell {
 	int startIndex;
 };
 
-static const int MAX_NEIGHBORS = 100;
+static const int MAX_NEIGHBORS = 1;
 
 struct PointNeighbors {
 	int pointID;

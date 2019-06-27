@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "Config.h"
 #include "Math/Util.h"
@@ -37,7 +38,7 @@ namespace FusionCrowd
 		void AddAgent(AgentSpatialInfo spatialInfo);
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 
-		std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const;
+		const std::vector<AgentSpatialInfo> & GetNeighbours(size_t agentId) const;
 		FUSION_CROWD_API int CountNeighbors(size_t agentId) const;								//TEST METHOD, MUST BE DELETED
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId) const;
 

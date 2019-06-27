@@ -93,7 +93,7 @@ namespace FusionCrowd
 			if (VERBOSE) std::cout << "Agent " << agent.id << "\n";
 			float totalTime = 1.f;
 			std::list< std::pair< float, const AgentSpatialInfo> > collidingSet;
-			for (const AgentSpatialInfo other : _navSystem.GetNeighbours(agent.id)) {
+			for (auto & other : _navSystem.GetNeighbours(agent.id)) {
 				float circRadius = _agents[agent.id]._perSpace + other.radius;
 				Vector2 relVel = desVel - other.vel;
 				Vector2 relPos = other.pos - agent.pos;

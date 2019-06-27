@@ -115,7 +115,7 @@ namespace FusionCrowd
 				const float norm = 1.f / (area * sqrt2Pi);
 
 				// AGENTS
-				for (AgentSpatialInfo & other : _simulator.GetNavSystem().GetNeighbours(agentInfo.id))
+				for (auto & other : _simulator.GetNavSystem().GetNeighbours(agentInfo.id))
 				{
 					Vector2 critDisp = other.pos - critPt;
 					// dot project gets projection, in the preferred direction

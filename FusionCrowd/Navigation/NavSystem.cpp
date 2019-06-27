@@ -34,24 +34,18 @@ namespace FusionCrowd
 		return _agentSpatialInfos[agentId];
 	}
 
-	std::vector<AgentSpatialInfo> NavSystem::GetNeighbours(size_t agentId) const
+	const std::vector<AgentSpatialInfo> & NavSystem::GetNeighbours(size_t agentId) const
 	{
-		/*std::vector<AgentSpatialInfo> result;
-		for(auto & pair : _agentSpatialInfos)
-			if(pair.first != agentId)
-				result.push_back(pair.second);
-
-		return result;*/
-
-		auto result = _agentsNeighbours.find(agentId);
+		/*auto result = _agentsNeighbours.find(agentId);
 		if (result != _agentsNeighbours.end()) {
 			return result->second;
 		}
 		else 
 		{
 			return std::vector<AgentSpatialInfo>();
-		}
-		
+		}*/
+
+		return (_agentsNeighbours.find(agentId))->second;
 	}
 
 	//TEST METHOD, MUST BE DELETED
@@ -125,24 +119,30 @@ namespace FusionCrowd
 
 		auto allNeighbors =_neighborsSeeker.FindNeighbors();
 
-		_agentsNeighbours.clear();
 		_agentsNeighbours.reserve(numAgents);
 		i = 0;
 
-		std::vector<AgentSpatialInfo> neighborsInfos;
-
 		for (auto & info : agentsInfos) {
+
+			auto dataPair = _agentsNeighbours.find(info.id);
+			if (dataPair == _agentsNeighbours.end()) {
+				dataPair = _agentsNeighbours.insert({ info.id, std::vector<AgentSpatialInfo>() }).first;
+			}
+			else 
+			{
+				dataPair->second.clear();
+			}
+
 			auto neighbors = allNeighbors[i];
 
-			neighborsInfos.clear();
-			
+			auto &neighborsInfos = dataPair->second;
+			neighborsInfos.reserve(neighbors.neighborsCount);
+
 			for (int j = 0; j < neighbors.neighborsCount; j++) {
 				neighborsInfos.push_back(agentsInfos[neighbors.neighborsID[j]]);
 			}
 
-			_agentsNeighbours.insert({ info.id, neighborsInfos });
-
-			i++; 
+			i++;
 		}
 
 		delete[] agentsPositions;
