@@ -30,6 +30,7 @@
     <ClInclude Include="Navigation\SpatialQuery\NavMeshSpatialQuery.h" />
     <ClInclude Include="Navigation\OnlineRecording\OnlineRecording.h" />
     <ClInclude Include="Navigation\OnlineRecording\OnlineRecordingSlice.h" />
+    <ClInclude Include="OperationComponent\HelbingComponent.h" />
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="Math\Line.h" />
     <ClInclude Include="OperationComponent\ORCAComponent.h" />
@@ -73,6 +74,7 @@
     <ClCompile Include="Navigation\SpatialQuery\NavMeshSpatialQuery.cpp" />
     <ClCompile Include="Navigation\OnlineRecording\OnlineRecording.cpp" />
     <ClCompile Include="Navigation\OnlineRecording\OnlineRecordingSlice.cpp" />
+    <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
