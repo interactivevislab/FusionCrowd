@@ -9,6 +9,7 @@
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
 #include "Navigation/FastFixedRadiusNearestNeighbors/NeighborsSeeker.h"
+#include "Navigation/OnlineRecording/OnlineRecording.h"
 
 #include <limits>
 #include <unordered_map>
@@ -24,6 +25,7 @@ namespace FusionCrowd
 			: _navMeshQuery(NavMeshSpatialQuery(component->GetLocalizer()))
 		{
 			_navMesh = component->GetNavMesh();
+			m_recording = OnlineRecording();
 		}
 
 		~NavSystemImpl() { }
@@ -224,7 +226,7 @@ namespace FusionCrowd
 			auto allNeighbors =_neighborsSeeker.FindNeighbors();
 
 			_agentsNeighbours.clear();
-			_agentsNeighbours.reserve(numAgents);
+			//_agentsNeighbours.reserve(numAgents);
 			i = 0;
 
 			std::vector<AgentSpatialInfo> neighborsInfos;
@@ -248,11 +250,12 @@ namespace FusionCrowd
 
 	private:
 		std::map<size_t, AgentSpatialInfo> _agentSpatialInfos;
+		std::map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		NavMeshSpatialQuery _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
 
 		NeighborsSeeker _neighborsSeeker;
-		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
+		OnlineRecording m_recording;
 		float _agentsSensitivityRadius = 1;
 	};
 

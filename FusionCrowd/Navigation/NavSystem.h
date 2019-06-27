@@ -5,21 +5,13 @@
 
 #include "Config.h"
 #include "Math/Util.h"
+#include "Util/PublicSpatialInfo.h"
 
 namespace FusionCrowd
 {
 	class NavMeshComponent;
 	class Obstacle;
 	struct AgentSpatialInfo;
-
-	struct FUSION_CROWD_API PublicSpatialInfo
-	{
-		size_t id;
-		float posX, posY;
-		float velX, velY;
-		float orientX, orientY;
-		float radius;
-	};
 
 	class NavSystem
 	{
