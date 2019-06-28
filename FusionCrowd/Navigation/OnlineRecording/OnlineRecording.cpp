@@ -18,10 +18,14 @@ namespace FusionCrowd
 
 		TimeSpan GetTimeSpan() const
 		{
-			return TimeSpan(m_snapshotTimes.data(), m_snapshotTimes.size());
+			TimeSpan result(m_snapshotTimes.size());
+
+			std::copy(m_snapshotTimes.begin(), m_snapshotTimes.end(), result.begin());
+
+			return result;
 		}
 
-		OnlineRecordingSlice GetSlice(float time)
+		OnlineRecordingSlice & GetSlice(float time)
 		{
 			assert(time >= 0 && "Time must be non-negative");
 

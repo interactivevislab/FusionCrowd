@@ -23,8 +23,11 @@
 
 #include "Navigation/NavSystem.h"
 
+#include "Benchmark/MicroscopicMetrics.h"
+
 using namespace DirectX::SimpleMath;
 using namespace std::chrono;
+using namespace FusionCrowd;
 
 const size_t stepsTotal = 4200;
 long long measures[stepsTotal];
@@ -146,6 +149,9 @@ void measure()
 	}
 
 	myfile.close();
+
+	auto & rec = navSystem.GetRecording();
+	std::cout << "AvgDist: " << MicroscopicMetrics::AbsoluteDifference(rec, rec) << std::endl;
 }
 
 void printResult()

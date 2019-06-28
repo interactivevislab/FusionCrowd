@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Config.h"
-#include "Util/TimeSpan.h"
+#include "Util/FCArray.h"
 #include "Util/IRecordingSlice.h"
 
 namespace FusionCrowd
 {
+	using TimeSpan = FCArray<float>;
+
 	class FUSION_CROWD_API IRecording
 	{
 	public:

@@ -22,7 +22,9 @@
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Util\FCArray.h" />
     <ClInclude Include="Math\Util.h" />
+    <ClInclude Include="Benchmark\MicroscopicMetrics.h" />
     <ClInclude Include="Navigation\AgentSpatialInfo.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.h" />
@@ -63,7 +65,6 @@
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="TacticComponent\Path\WayPortal.h" />
     <ClInclude Include="Util\IRecordingSlice.h" />
-    <ClInclude Include="Util\TimeSpan.h" />
     <ClInclude Include="Util\IRecording.h" />
     <ClInclude Include="Util\PublicSpatialInfo.h" />
   </ItemGroup>
@@ -103,7 +104,6 @@
     <ClCompile Include="StrategyComponent\Goal\PointGoal.cpp" />
     <ClCompile Include="StrategyComponent\Goal\GoalSet.cpp" />
     <ClCompile Include="StrategyComponent\Goal\Goal.cpp" />
-    <ClCompile Include="Util\TimeSpan.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

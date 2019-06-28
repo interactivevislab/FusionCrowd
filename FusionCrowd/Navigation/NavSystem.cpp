@@ -30,6 +30,11 @@ namespace FusionCrowd
 
 		~NavSystemImpl() { }
 
+		IRecording & GetRecording()
+		{
+			return m_recording;
+		}
+
 		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId)
 		{
 			PublicSpatialInfo publicInfo;
@@ -310,5 +315,10 @@ namespace FusionCrowd
 	PublicSpatialInfo NavSystem::GetPublicSpatialInfo(size_t agentId)
 	{
 		return pimpl->GetPublicSpatialInfo(agentId);
+	}
+
+	IRecording & NavSystem::GetRecording()
+	{
+		return pimpl->GetRecording();
 	}
 }

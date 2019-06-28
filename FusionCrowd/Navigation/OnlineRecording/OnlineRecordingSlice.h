@@ -3,6 +3,7 @@
 #include <map>
 
 #include "Util/IRecording.h"
+#include "Util/FCArray.h"
 #include "Util/PublicSpatialInfo.h"
 #include "Navigation/AgentSpatialInfo.h"
 
@@ -13,8 +14,9 @@ namespace FusionCrowd
 	public:
 		OnlineRecordingSlice();
 
-		size_t GetAgentCount() const;
-		PublicSpatialInfo GetAgentInfo(size_t agentId) const;
+		size_t GetAgentCount() const override;
+		PublicSpatialInfo GetAgentInfo(size_t agentId) const override;
+		FCArray<size_t> GetAgentIds() const override;
 
 		AgentSpatialInfo & GetInfo(size_t agentId);
 		void AddAgent(AgentSpatialInfo info);
