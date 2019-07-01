@@ -90,7 +90,7 @@ namespace FusionCrowd
 			return _agentSpatialInfos[agentId];
 		}
 
-		std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const
+		const std::vector<AgentSpatialInfo> & GetNeighbours(size_t agentId) const
 		{
 			return (_agentsNeighbours.find(agentId))->second;
 		}
@@ -262,7 +262,7 @@ namespace FusionCrowd
 
 	private:
 		std::map<size_t, AgentSpatialInfo> _agentSpatialInfos;
-		std::map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
+		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		NavMeshSpatialQuery _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
 
@@ -295,7 +295,7 @@ namespace FusionCrowd
 		return pimpl->GetSpatialInfo(agentId);
 	}
 
-	std::vector<AgentSpatialInfo> NavSystem::GetNeighbours(size_t agentId) const
+	const std::vector<AgentSpatialInfo> & NavSystem::GetNeighbours(size_t agentId) const
 	{
 		return pimpl->GetNeighbours(agentId);
 	}
@@ -334,6 +334,6 @@ namespace FusionCrowd
 	}
 
 	void NavSystem::SetGridCoeff(float coeff) {
-		pimpl->SetGridCoeff(float coeff);
+		pimpl->SetGridCoeff(coeff);
 	}
 }
