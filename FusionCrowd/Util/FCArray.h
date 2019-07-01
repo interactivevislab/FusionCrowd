@@ -24,7 +24,7 @@ namespace FusionCrowd
 
 	template<typename T>
 	FCArray<T>::FCArray(const size_t l)
-		: vals(new T[len + 1]), len(l)
+		: vals(new T[l + 1]), len(l)
 	{
 		vals[len] = 0;
 	}
