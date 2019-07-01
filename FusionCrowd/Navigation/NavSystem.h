@@ -41,7 +41,9 @@ namespace FusionCrowd
 		const std::vector<AgentSpatialInfo> & GetNeighbours(size_t agentId) const;
 		FUSION_CROWD_API int CountNeighbors(size_t agentId) const;								//TEST METHOD, MUST BE DELETED
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId) const;
+		FUSION_CROWD_API void SetGridCoeff(float coeff);
 
+		void Init();
 		void Update(float timeStep);
 
 		FUSION_CROWD_API void SetAgentsSensitivityRadius(float radius);

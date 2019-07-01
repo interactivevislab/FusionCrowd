@@ -131,6 +131,7 @@ namespace FusionCrowd
 
 	void Simulator::InitSimulator()
 	{
+		_navSystem->Init();
 	}
 
 	Simulator::~Simulator()

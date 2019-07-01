@@ -25,15 +25,17 @@
 using namespace DirectX::SimpleMath;
 using namespace std::chrono;
 
-const size_t stepsTotal = 4200;
+const size_t stepsTotal = 100;
 long long measures[stepsTotal];
 
-const int input = 10;
+const float worldSide = 100;
+const int totalAgents = 5 * worldSide * worldSide;
 
 const float goalsDistance = 10;
-const int agentsInGroup = input / 2;
+const int agentsInGroup = totalAgents / 2;
 const int agentsCount = 2 * agentsInGroup;
 const float agentsSpread = 1.f;
+const float searchRadius = 5;
 
 float RandFloat(float min, float max) {
 	return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
@@ -54,7 +56,6 @@ void prep()
 		for (int i = 0; i < agentsInGroup; i++) {
 			float angle = (float)i / (float)agentsInGroup * 2 * 3.1415;
 			Vector2 shift(agentsSpread * cos(angle), agentsSpread * sin(angle));
-			//Vector2 shift(RandFloat(-agentsSpread, agentsSpread), RandFloat(-agentsSpread, agentsSpread));
 			positions[goalIndex].push_back(pointGoals[goalIndex] + shift);
 		}
 	}
@@ -81,7 +82,7 @@ void AutoSelectOperationComponent(FusionCrowd::Simulator simulator, int neighbor
 	}
 }
 
-void measure() 
+void measure(float gridCellCoeff) 
 {
 	std::string navPath = "Resources/square.nav";
 
@@ -94,32 +95,41 @@ void measure()
 	sim.AddOperComponent(orcaComponent);
 	sim.AddOperComponent(pedvoComponent);
 
-	pointGoals.push_back(Vector2(0, goalsDistance));
-	pointGoals.push_back(Vector2(-goalsDistance, 0));
-	pointGoals.push_back(Vector2(0, -goalsDistance));
-	pointGoals.push_back(Vector2(goalsDistance, 0));
-	
-	for (int goalIndex = 0; goalIndex < 2; goalIndex++) 
-	{
-		for(int i = 0; i < agentsInGroup; i++) {
-			float angle = (float)i / (float)agentsInGroup * 2 * 3.1415;
-			auto goal = std::make_shared<FusionCrowd::PointGoal>(
-				pointGoals[(goalIndex + 2) % 4].x + agentsSpread * cos(angle),
-				pointGoals[(goalIndex + 2) % 4].y + agentsSpread * sin(angle));
+	//pointGoals.push_back(Vector2(0, goalsDistance));
+	//pointGoals.push_back(Vector2(-goalsDistance, 0));
+	//pointGoals.push_back(Vector2(0, -goalsDistance));
+	//pointGoals.push_back(Vector2(goalsDistance, 0));
+	//
+	//for (int goalIndex = 0; goalIndex < 2; goalIndex++) 
+	//{
+	//	for(int i = 0; i < agentsInGroup; i++) {
+	//		float angle = (float)i / (float)agentsInGroup * 2 * 3.1415;
+	//		auto goal = std::make_shared<FusionCrowd::PointGoal>(
+	//			pointGoals[(goalIndex + 2) % 4].x + agentsSpread * cos(angle),
+	//			pointGoals[(goalIndex + 2) % 4].y + agentsSpread * sin(angle)
+	//		);
 
-			size_t id = sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, positions[goalIndex][i], goal);
-			//sim.SetOperationComponent(id, orcaComponent->GetName());
-		}
+	//		sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, positions[goalIndex][i], goal);
+	//	}
+	//}
+
+	for (int i = 0; i < totalAgents; i++) {
+		auto goal = std::make_shared<FusionCrowd::PointGoal>(
+			RandFloat(0, worldSide),
+			RandFloat(0, worldSide)
+		);
+		sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(0, worldSide), RandFloat(0, worldSide)), goal);
 	}
 
 	SwitchOperationComponent(sim, kComponent->GetName());
 
 	//---
 
-	sim.InitSimulator();	
-
 	auto & navSystem = sim.GetNavSystem();
-	navSystem.SetAgentsSensitivityRadius(2.3f);
+	navSystem.SetGridCoeff(gridCellCoeff);
+	navSystem.SetAgentsSensitivityRadius(searchRadius);
+
+	sim.InitSimulator();
 
 	std::ofstream myfile;
 	myfile.open("way.csv");
@@ -131,8 +141,9 @@ void measure()
 		high_resolution_clock::time_point t1 = high_resolution_clock::now();
 		if (!sim.DoStep()) break;
 		high_resolution_clock::time_point t2 = high_resolution_clock::now();
+		measures[i] = duration_cast<microseconds>(t2 - t1).count();
 
-		for(size_t i = 0; i < agentsCount; i++)
+		/*for(size_t i = 0; i < agentsCount; i++)
 		{
 			auto agent = navSystem.GetPublicSpatialInfo(i);
 			if(i > 0) myfile << ",";
@@ -140,7 +151,7 @@ void measure()
 		}
 		myfile << std::endl;
 
-		measures[i] = duration_cast<microseconds>(t2 - t1).count();
+		std::cout << i << std::endl;*/
 	}
 
 	myfile.close();
@@ -148,33 +159,34 @@ void measure()
 
 void printResult()
 {
-	std::ofstream myfile;
+	/*std::ofstream myfile;
 	myfile.open("measures.csv");
 	for (int i = 0; i < stepsTotal; i++) {
 		myfile << measures[i] << std::endl;
 	}
+	myfile.close();*/
 
 	std::sort(measures, measures + stepsTotal);
-	std::cout << agentsCount
+	std::cout
 		<< " " << measures[0]
 		<< " " << measures[stepsTotal / 4]
 		<< " " << measures[stepsTotal / 2]
 		<< " " << measures[stepsTotal * 3 / 4]
 		<< " " << measures[stepsTotal * 95 / 100]
 		<< " " << measures[stepsTotal - 1]
-		<< std::endl;
+		/*<< "\tfps = "*/ << 1000000 / measures[stepsTotal / 2] << std::endl;
 
-	std::cout << control1 << ' ' << control2 << std::endl;
-
-	myfile.close();
+	//std::cout << control1 << ' ' << control2 << std::endl;
 }
 
 int main()
 {
 	prep();
 
-	for (int i = 0; i < 5; i++)
-		measure();
-
-	printResult();
+	std::cout << "totalAgents = " << totalAgents << std::endl;
+	for (float coeff = 0.5; coeff < 10; coeff += 0.25) {
+		std::cout /*<< "coeff = "*/ << coeff << '\t';
+		measure(coeff);
+		printResult();
+	}
 }

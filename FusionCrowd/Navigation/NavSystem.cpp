@@ -44,7 +44,6 @@ namespace FusionCrowd
 		{
 			return std::vector<AgentSpatialInfo>();
 		}*/
-
 		return (_agentsNeighbours.find(agentId))->second;
 	}
 
@@ -85,6 +84,10 @@ namespace FusionCrowd
 		}
 
 		if (_agentSpatialInfos.size() > 0) UpdateNeighbours();
+	}
+
+	void NavSystem::Init() {
+		UpdateNeighbours();
 	}
 
 	void NavSystem::UpdateNeighbours() {
@@ -146,6 +149,10 @@ namespace FusionCrowd
 		}
 
 		delete[] agentsPositions;
+	}
+
+	void NavSystem::SetGridCoeff(float coeff) {
+		_neighborsSeeker.gridCellCoeff = coeff;
 	}
 
 	void NavSystem::SetAgentsSensitivityRadius(float radius) {
