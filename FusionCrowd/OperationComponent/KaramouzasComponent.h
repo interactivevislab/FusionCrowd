@@ -6,12 +6,10 @@
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
 
-#include <map>
+#include <memory>
 
 namespace FusionCrowd
 {
-	class AgentSpatialInfo;
-
 	namespace Karamouzas
 	{
 		struct FUSION_CROWD_API AgentParamentrs
@@ -35,7 +33,7 @@ namespace FusionCrowd
 				float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE);
 			~KaramouzasComponent();
 
-			std::string GetName() { return "karamouzas"; };
+			std::string GetName();
 
 			void AddAgent(size_t id);
 			void AddAgent(size_t id, float perSpace, float anticipation);
@@ -44,21 +42,9 @@ namespace FusionCrowd
 			void Update(float timeStep);
 
 		private:
-			void ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep);
+			class KaramouzasComponentImpl;
 
-			Simulator & _simulator;
-			NavSystem & _navSystem;
-			std::map<int, AgentParamentrs> _agents;
-			float _orientWeight;
-			float _cosFOVAngle;
-			float _reactionTime;
-			float _wallSteepness;
-			float _wallDistance;
-			int _collidingCount;
-			float _dMin;
-			float _dMid;
-			float _dMax;
-			float _agentForce;
+			std::unique_ptr<KaramouzasComponentImpl> pimpl;
 		};
 	}
 }

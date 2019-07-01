@@ -3,6 +3,7 @@
 #include "pch.h"
 
 #include <iostream>
+#include <fstream>
 #include <random>
 #include <memory>
 #include <time.h>
@@ -22,8 +23,11 @@
 
 #include "Navigation/NavSystem.h"
 
+#include "Benchmark/MicroscopicMetrics.h"
+
 using namespace DirectX::SimpleMath;
 using namespace std::chrono;
+using namespace FusionCrowd;
 
 const size_t stepsTotal = 100;
 long long measures[stepsTotal];
@@ -51,7 +55,7 @@ void prep()
 	pointGoals.push_back(Vector2(0, -goalsDistance));
 	pointGoals.push_back(Vector2(-goalsDistance, 0));
 
-	for (int goalIndex = 0; goalIndex < 2; goalIndex++) {		
+	for (int goalIndex = 0; goalIndex < 2; goalIndex++) {
 		positions[goalIndex].reserve(agentsInGroup);
 		for (int i = 0; i < agentsInGroup; i++) {
 			float angle = (float)i / (float)agentsInGroup * 2 * 3.1415;
@@ -61,7 +65,8 @@ void prep()
 	}
 }
 
-void SwitchOperationComponent(FusionCrowd::Simulator simulator, std::string componentName) {
+void SwitchOperationComponent(FusionCrowd::Simulator & simulator, std::string componentName)
+{
 	for (int i = 0; i < agentsCount; i++) {
 		simulator.SetOperationComponent(i, componentName);
 	}
@@ -70,7 +75,7 @@ void SwitchOperationComponent(FusionCrowd::Simulator simulator, std::string comp
 int control1 = 0;
 int control2 = 0;
 
-void AutoSelectOperationComponent(FusionCrowd::Simulator simulator, int neighborsCount, std::string component1Name, std::string component2Name) {
+void AutoSelectOperationComponent(FusionCrowd::Simulator & simulator, int neighborsCount, std::string component1Name, std::string component2Name) {
 	for (int i = 0; i < agentsCount; i++) {
 		if (simulator.GetNavSystem().CountNeighbors(i) < neighborsCount) {
 			simulator.SetOperationComponent(i, component1Name);
@@ -136,7 +141,7 @@ void measure(float gridCellCoeff)
 
 	for (int i = 0; i < stepsTotal; i++) {
 
-		AutoSelectOperationComponent(sim, 5, kComponent->GetName(), orcaComponent->GetName());
+		AutoSelectOperationComponent(sim, 4, kComponent->GetName(), orcaComponent->GetName());
 
 		high_resolution_clock::time_point t1 = high_resolution_clock::now();
 		if (!sim.DoStep()) break;
@@ -155,6 +160,9 @@ void measure(float gridCellCoeff)
 	}
 
 	myfile.close();
+
+	auto & rec = navSystem.GetRecording();
+	std::cout << "AvgDist: " << MicroscopicMetrics::AbsoluteDifference(rec, rec) << std::endl;
 }
 
 void printResult()
