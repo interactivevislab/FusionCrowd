@@ -162,7 +162,7 @@ void measure(float gridCellCoeff)
 	myfile.close();
 
 	auto & rec = navSystem.GetRecording();
-	std::cout << "AvgDist: " << MicroscopicMetrics::AbsoluteDifference(rec, rec) << std::endl;
+	//std::cout << "AvgDist: " << MicroscopicMetrics::AbsoluteDifference(rec, rec) << std::endl;
 }
 
 void printResult()
@@ -192,6 +192,11 @@ int main()
 	prep();
 
 	std::cout << "totalAgents = " << totalAgents << std::endl;
+
+	std::cout << "Overclocking launch... ";
+	measure(3);
+	std::cout << "complete" << std::endl;
+
 	for (float coeff = 0.5; coeff < 10; coeff += 0.25) {
 		std::cout /*<< "coeff = "*/ << coeff << '\t';
 		measure(coeff);
