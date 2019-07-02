@@ -253,6 +253,9 @@
     <FxCompile>
       <ShaderModel>4.0_level_9_3</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)\FusionCrowd\Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
