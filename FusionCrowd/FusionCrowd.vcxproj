@@ -115,6 +115,7 @@
       <FileType>Document</FileType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <DeploymentContent>true</DeploymentContent>
     </Text>
   </ItemGroup>
   <PropertyGroup Label="Globals">
