@@ -7,7 +7,7 @@ namespace FusionCrowd
 {
 	namespace MicroscopicMetrics
 	{
-		static float AbsoluteDifference(IRecording & rec1, IRecording & rec2)
+		static float AbsoluteDifference(const IRecording & rec1, const IRecording & rec2)
 		{
 			float result = 0;
 

@@ -70,20 +70,19 @@ namespace TestFusionCrowd
 		pointGoals.push_back(Vector2(0, -goalsDistance));
 		pointGoals.push_back(Vector2(-goalsDistance, 0));
 
-		for (int goalIndex = 0; goalIndex < 2; goalIndex++)
-		{
+		for (int goalIndex = 0; goalIndex < 2; goalIndex++) {
 			positions[goalIndex].reserve(agentsInGroup);
-			for (int i = 0; i < agentsInGroup; i++)
-			{
+			for (int i = 0; i < agentsInGroup; i++) {
 				float angle = (float)i / (float)agentsInGroup * 2 * 3.1415;
 				Vector2 shift(agentsSpread * cos(angle), agentsSpread * sin(angle));
-				//Vector2 shift(RandFloat(-agentsSpread, agentsSpread), RandFloat(-agentsSpread, agentsSpread));
 				positions[goalIndex].push_back(pointGoals[goalIndex] + shift);
 			}
 		}
+
+		std::cout << "totalAgents = " << totalAgents << std::endl;
 	}
 
-	void NeighbourSearchBenchCase::Run()
+	void NeighbourSearchBenchCase::Run(const float & coeff)
 	{
 		std::string navPath = "Resources/square.nav";
 
@@ -96,32 +95,23 @@ namespace TestFusionCrowd
 		sim.AddOperComponent(orcaComponent);
 		sim.AddOperComponent(pedvoComponent);
 
-		pointGoals.push_back(Vector2(0, goalsDistance));
-		pointGoals.push_back(Vector2(-goalsDistance, 0));
-		pointGoals.push_back(Vector2(0, -goalsDistance));
-		pointGoals.push_back(Vector2(goalsDistance, 0));
-
-		for (int goalIndex = 0; goalIndex < 2; goalIndex++)
-		{
-			for(int i = 0; i < agentsInGroup; i++) {
-				float angle = (float)i / (float)agentsInGroup * 2 * 3.1415;
-				auto goal = std::make_shared<FusionCrowd::PointGoal>(
-					pointGoals[(goalIndex + 2) % 4].x + agentsSpread * cos(angle),
-					pointGoals[(goalIndex + 2) % 4].y + agentsSpread * sin(angle));
-
-				size_t id = sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, positions[goalIndex][i], goal);
-				//sim.SetOperationComponent(id, orcaComponent->GetName());
-			}
+		for (int i = 0; i < totalAgents; i++) {
+			auto goal = std::make_shared<FusionCrowd::PointGoal>(
+				RandFloat(0, worldSide),
+				RandFloat(0, worldSide)
+			);
+			sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(0, worldSide), RandFloat(0, worldSide)), goal);
 		}
 
 		SwitchOperationComponent(sim, kComponent->GetName());
 
 		//---
 
-		sim.InitSimulator();
-
 		auto & navSystem = sim.GetNavSystem();
-		navSystem.SetAgentsSensitivityRadius(2.3f);
+		navSystem.SetGridCoeff(coeff);
+		navSystem.SetAgentsSensitivityRadius(searchRadius);
+
+		sim.InitSimulator();
 
 		std::ofstream myfile;
 		myfile.open("way.csv");
@@ -133,22 +123,12 @@ namespace TestFusionCrowd
 			high_resolution_clock::time_point t1 = high_resolution_clock::now();
 			if (!sim.DoStep()) break;
 			high_resolution_clock::time_point t2 = high_resolution_clock::now();
-
-			for(size_t i = 0; i < agentsCount; i++)
-			{
-				auto agent = navSystem.GetPublicSpatialInfo(i);
-				if(i > 0) myfile << ",";
-				myfile << agent.posX << "," << agent.posY;
-			}
-			myfile << std::endl;
-
 			measures[i] = duration_cast<microseconds>(t2 - t1).count();
 		}
 
 		myfile.close();
 
-		auto & rec = navSystem.GetRecording();
-		std::cout << "AvgDist: " << MicroscopicMetrics::AbsoluteDifference(rec, rec) << std::endl;
+		recording = navSystem.GetRecording();
 	}
 
 	void NeighbourSearchBenchCase::Post()
@@ -167,11 +147,14 @@ namespace TestFusionCrowd
 			<< " " << measures[stepsTotal * 3 / 4]
 			<< " " << measures[stepsTotal * 95 / 100]
 			<< " " << measures[stepsTotal - 1]
+			<< 1000000 / measures[stepsTotal / 2]
 			<< std::endl;
 
 		std::cout << control1 << ' ' << control2 << std::endl;
 
 		myfile.close();
+
+		std::cout << "Latest recording, AvgDist: " << MicroscopicMetrics::AbsoluteDifference(*recording, *recording) << std::endl;
 	}
 
 	NeighbourSearchBenchCase::~NeighbourSearchBenchCase()

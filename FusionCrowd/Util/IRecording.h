@@ -12,7 +12,7 @@ namespace FusionCrowd
 	{
 	public:
 		virtual TimeSpan GetTimeSpan() const = 0;
-		virtual const IRecordingSlice & GetSlice(float time) = 0;
+		virtual const IRecordingSlice & GetSlice(float time) const = 0;
 
 		virtual ~IRecording() { }
 	};

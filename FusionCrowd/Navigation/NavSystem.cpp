@@ -30,9 +30,9 @@ namespace FusionCrowd
 
 		~NavSystemImpl() { }
 
-		IRecording & GetRecording()
+		IRecording* GetRecording()
 		{
-			return m_recording;
+			return &m_recording;
 		}
 
 		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId)
@@ -90,16 +90,9 @@ namespace FusionCrowd
 			return _agentSpatialInfos[agentId];
 		}
 
-		std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const
+		const std::vector<AgentSpatialInfo> & GetNeighbours(size_t agentId) const
 		{
-			auto result = _agentsNeighbours.find(agentId);
-			if (result != _agentsNeighbours.end()) {
-				return result->second;
-			}
-			else
-			{
-				return std::vector<AgentSpatialInfo>();
-			}
+			return (_agentsNeighbours.find(agentId))->second;
 		}
 
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId) const
@@ -147,54 +140,54 @@ namespace FusionCrowd
 		void UpdateOrient(AgentSpatialInfo & agent, float timeStep)
 		{
 			float speed = agent.vel.Length();
-		const float speedThresh = agent.prefSpeed / 3.f;
-		Vector2 newOrient(agent.orient); // by default new is old
-		Vector2 moveDir = agent.vel / speed;
-		if (speed >= speedThresh)
-		{
-			newOrient = moveDir;
-		}
-		else
-		{
-			float frac = sqrtf(speed / speedThresh);
-			Vector2 prefDir = agent.prefVelocity.getPreferred();
-			// prefDir *can* be zero if we've arrived at goal.  Only use it if it's non-zero.
-			if (prefDir.LengthSquared() > 0.000001f)
+			const float speedThresh = agent.prefSpeed / 3.f;
+			Vector2 newOrient(agent.orient); // by default new is old
+			Vector2 moveDir = agent.vel / speed;
+			if (speed >= speedThresh)
 			{
-				newOrient = frac * moveDir + (1.f - frac) * prefDir;
-				newOrient.Normalize();
-			}
-		}
-
-		// Now limit angular velocity.
-		const float MAX_ANGLE_CHANGE = timeStep * agent.maxAngVel;
-		float maxCt = cos(MAX_ANGLE_CHANGE);
-		float ct = newOrient.Dot(agent.orient);
-		if (ct < maxCt)
-		{
-			// changing direction at a rate greater than _maxAngVel
-			float maxSt = sin(MAX_ANGLE_CHANGE);
-			if (MathUtil::det(agent.orient, newOrient) > 0.f)
-			{
-				// rotate _orient left
-				agent.orient = Vector2(
-					maxCt * agent.orient.x - maxSt * agent.orient.y,
-					maxSt * agent.orient.x + maxCt * agent.orient.y
-				);
+				newOrient = moveDir;
 			}
 			else
 			{
-				// rotate _orient right
-				agent.orient = Vector2(
-					maxCt * agent.orient.x + maxSt * agent.orient.y,
-					-maxSt * agent.orient.x + maxCt * agent.orient.y
-				);
+				float frac = sqrtf(speed / speedThresh);
+				Vector2 prefDir = agent.prefVelocity.getPreferred();
+				// prefDir *can* be zero if we've arrived at goal.  Only use it if it's non-zero.
+				if (prefDir.LengthSquared() > 0.000001f)
+				{
+					newOrient = frac * moveDir + (1.f - frac) * prefDir;
+					newOrient.Normalize();
+				}
 			}
-		}
-		else
-		{
-			agent.orient = newOrient;
-		}
+
+			// Now limit angular velocity.
+			const float MAX_ANGLE_CHANGE = timeStep * agent.maxAngVel;
+			float maxCt = cos(MAX_ANGLE_CHANGE);
+			float ct = newOrient.Dot(agent.orient);
+			if (ct < maxCt)
+			{
+				// changing direction at a rate greater than _maxAngVel
+				float maxSt = sin(MAX_ANGLE_CHANGE);
+				if (MathUtil::det(agent.orient, newOrient) > 0.f)
+				{
+					// rotate _orient left
+					agent.orient = Vector2(
+						maxCt * agent.orient.x - maxSt * agent.orient.y,
+						maxSt * agent.orient.x + maxCt * agent.orient.y
+					);
+				}
+				else
+				{
+					// rotate _orient right
+					agent.orient = Vector2(
+						maxCt * agent.orient.x + maxSt * agent.orient.y,
+						-maxSt * agent.orient.x + maxCt * agent.orient.y
+					);
+				}
+			}
+			else
+			{
+				agent.orient = newOrient;
+			}
 		}
 
 		void UpdateNeighbours()
@@ -230,22 +223,28 @@ namespace FusionCrowd
 
 			auto allNeighbors =_neighborsSeeker.FindNeighbors();
 
-			_agentsNeighbours.clear();
-			//_agentsNeighbours.reserve(numAgents);
+			_agentsNeighbours.reserve(numAgents);
 			i = 0;
 
-			std::vector<AgentSpatialInfo> neighborsInfos;
-
 			for (auto & info : agentsInfos) {
+
+				auto dataPair = _agentsNeighbours.find(info.id);
+				if (dataPair == _agentsNeighbours.end()) {
+					dataPair = _agentsNeighbours.insert({ info.id, std::vector<AgentSpatialInfo>() }).first;
+				}
+				else
+				{
+					dataPair->second.clear();
+				}
+
 				auto neighbors = allNeighbors[i];
 
-				neighborsInfos.clear();
+				auto &neighborsInfos = dataPair->second;
+				neighborsInfos.reserve(neighbors.neighborsCount);
 
 				for (int j = 0; j < neighbors.neighborsCount; j++) {
 					neighborsInfos.push_back(agentsInfos[neighbors.neighborsID[j]]);
 				}
-
-				_agentsNeighbours.insert({ info.id, neighborsInfos });
 
 				i++;
 			}
@@ -253,9 +252,17 @@ namespace FusionCrowd
 			delete[] agentsPositions;
 		}
 
+		void Init() {
+			UpdateNeighbours();
+		}
+
+		void SetGridCoeff(float coeff) {
+			_neighborsSeeker.gridCellCoeff = coeff;
+		}
+
 	private:
 		std::map<size_t, AgentSpatialInfo> _agentSpatialInfos;
-		std::map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
+		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		NavMeshSpatialQuery _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
 
@@ -288,7 +295,7 @@ namespace FusionCrowd
 		return pimpl->GetSpatialInfo(agentId);
 	}
 
-	std::vector<AgentSpatialInfo> NavSystem::GetNeighbours(size_t agentId) const
+	const std::vector<AgentSpatialInfo> & NavSystem::GetNeighbours(size_t agentId) const
 	{
 		return pimpl->GetNeighbours(agentId);
 	}
@@ -317,8 +324,16 @@ namespace FusionCrowd
 		return pimpl->GetPublicSpatialInfo(agentId);
 	}
 
-	IRecording & NavSystem::GetRecording()
+	IRecording* NavSystem::GetRecording()
 	{
 		return pimpl->GetRecording();
+	}
+
+	void NavSystem::Init() {
+		pimpl->Init();
+	}
+
+	void NavSystem::SetGridCoeff(float coeff) {
+		pimpl->SetGridCoeff(coeff);
 	}
 }

@@ -25,7 +25,7 @@ namespace FusionCrowd
 			return result;
 		}
 
-		OnlineRecordingSlice & GetSlice(float time)
+		const OnlineRecordingSlice & GetSlice(float time) const
 		{
 			assert(time >= 0 && "Time must be non-negative");
 
@@ -101,7 +101,7 @@ namespace FusionCrowd
 		return pimpl->GetTimeSpan();
 	}
 
-	const OnlineRecordingSlice & OnlineRecording::GetSlice(float time)
+	const OnlineRecordingSlice & OnlineRecording::GetSlice(float time) const
 	{
 		return pimpl->GetSlice(time);
 	}

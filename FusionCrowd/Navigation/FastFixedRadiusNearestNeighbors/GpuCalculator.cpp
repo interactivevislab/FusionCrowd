@@ -37,8 +37,8 @@ namespace FusionCrowd
 	}
 
 
-	bool GpuCalculator::LoadShader(LPCWSTR sourseFile, LPCSTR functionName) {
-		return !FAILED(GpuHelper::CreateComputeShader(sourseFile, functionName, _device, &_shader));
+	bool GpuCalculator::LoadShader(LPCWSTR sourseFile, LPCSTR functionName, const D3D_SHADER_MACRO defines[]) {
+		return !FAILED(GpuHelper::CreateComputeShader(sourseFile, functionName, defines, _device, &_shader));
 	}
 
 
@@ -96,7 +96,7 @@ namespace FusionCrowd
 		ID3D11Buffer* resultBuffer = GpuHelper::CreateAndCopyToBuffer(_device, _context, _outputBuffer);
 		D3D11_MAPPED_SUBRESOURCE MappedResource;
 		_context->Map(resultBuffer, 0, D3D11_MAP_READ, 0, &MappedResource);
-		void *result = ::operator new(_outputElementsSize * _outputElementsCount);
+		void *result = ::operator new[](_outputElementsSize * _outputElementsCount);
 		std::memcpy(result, MappedResource.pData, _outputElementsSize * _outputElementsCount);
 		_context->Unmap(resultBuffer, 0);
 		resultBuffer->Release();

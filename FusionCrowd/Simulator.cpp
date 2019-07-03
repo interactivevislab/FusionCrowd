@@ -146,7 +146,9 @@ namespace FusionCrowd
 			_strategyComponents.push_back(strategyComponent);
 		}
 
-		void InitSimulator() { }
+		void InitSimulator() { 
+			_navSystem->Init();
+		}
 
 		void UpdateNav(float x, float y)
 		{

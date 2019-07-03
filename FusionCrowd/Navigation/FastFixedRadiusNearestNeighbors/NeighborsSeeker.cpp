@@ -1,6 +1,7 @@
 #include "NeighborsSeeker.h"
 #include "GpuCalculator.h"
 #include <iostream>
+#include <string>
 
 namespace FusionCrowd
 {
@@ -15,7 +16,12 @@ namespace FusionCrowd
 	NeighborsSeeker::NeighborsSeeker()
 	{
 		_calculator.Init();
-		_calculator.LoadShader(L"NeighborsSeeker.hlsl", "main");
+		const D3D_SHADER_MACRO defines[] =
+		{
+			{ "MAX_NEIGHBORS", std::to_string(NUMBER_OF_NEIGHBORS).c_str() },
+			{ nullptr, nullptr }
+		};
+		_calculator.LoadShader(L"NeighborsSeeker.hlsl", "main", defines);
 	}
 
 

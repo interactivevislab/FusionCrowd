@@ -19,7 +19,7 @@ namespace FusionCrowd
 
 
 		TimeSpan GetTimeSpan() const override;
-		const OnlineRecordingSlice & GetSlice(float time) override;
+		const OnlineRecordingSlice & GetSlice(float time) const override;
 
 
 		size_t GetAgentCount() const;

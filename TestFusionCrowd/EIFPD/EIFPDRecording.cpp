@@ -20,7 +20,7 @@ FusionCrowd::TimeSpan EIFPDRecording::GetTimeSpan() const
 }
 
 
-const FusionCrowd::IRecordingSlice & EIFPDRecording::GetSlice(float time)
+const FusionCrowd::IRecordingSlice & EIFPDRecording::GetSlice(float time) const
 {
 	throw std::logic_error("Function not yet implemented");
 }

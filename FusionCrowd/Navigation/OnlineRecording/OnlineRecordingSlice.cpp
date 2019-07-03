@@ -41,4 +41,9 @@ namespace FusionCrowd
 
 		return ids;
 	}
+
+	OnlineRecordingSlice::OnlineRecordingSlice(const OnlineRecordingSlice & other) = default;
+	OnlineRecordingSlice::OnlineRecordingSlice(OnlineRecordingSlice && other) = default;
+	OnlineRecordingSlice& OnlineRecordingSlice::operator=(const OnlineRecordingSlice & other) = default;
+	OnlineRecordingSlice& OnlineRecordingSlice::operator=(OnlineRecordingSlice && other) = default;
 }

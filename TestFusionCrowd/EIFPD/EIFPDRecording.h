@@ -18,7 +18,7 @@ namespace TestFuctionCrowd
 		EIFPDRecording();
 
 		FusionCrowd::TimeSpan GetTimeSpan() const override;
-		const FusionCrowd::IRecordingSlice & GetSlice(float time) override;
+		const FusionCrowd::IRecordingSlice & GetSlice(float time) const override;
 
 		~EIFPDRecording();
 	private:

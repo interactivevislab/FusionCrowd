@@ -13,6 +13,10 @@ namespace FusionCrowd
 	{
 	public:
 		OnlineRecordingSlice();
+		OnlineRecordingSlice(const OnlineRecordingSlice & other);
+		OnlineRecordingSlice(OnlineRecordingSlice && other);
+		OnlineRecordingSlice& operator=(const OnlineRecordingSlice & other);
+		OnlineRecordingSlice& operator=(OnlineRecordingSlice && other);
 
 		size_t GetAgentCount() const override;
 		PublicSpatialInfo GetAgentInfo(size_t agentId) const override;
