@@ -21,6 +21,8 @@ namespace FusionCrowd
 			void Update(float timeStep);
 			~SwitchingComponent();
 
+			void SetNeighborsToSwitch(int neighborsToSwitch);
+
 		private:
 			class SwitchingComponentImpl;
 

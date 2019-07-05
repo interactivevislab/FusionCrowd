@@ -48,16 +48,21 @@ namespace FusionCrowd
 				_secondaryComponent->Update(timeStep);
 			}
 
+			void SetNeighborsToSwitch(int neighborsToSwitch) {
+				_neighborsToSwitch = neighborsToSwitch;
+			}
+
 		private:
 
 			Simulator & _simulator;
 			std::shared_ptr<IOperationComponent> _primaryComponent;
 			std::shared_ptr<IOperationComponent> _secondaryComponent;
 			std::map<size_t, int> _agentsComponents;
+			int _neighborsToSwitch = 3;
 
 			//TEMP SOLUTION
 			bool NeedSwitchToSecondary(size_t agentId) {
-				return _simulator.GetNavSystem().CountNeighbors(agentId) < 4;
+				return _simulator.GetNavSystem().CountNeighbors(agentId) <= 3;
 			}
 
 			void UpdateAgentsDistribution() {
@@ -110,6 +115,11 @@ namespace FusionCrowd
 		void SwitchingComponent::Update(float timeStep)
 		{
 			pimpl->Update(timeStep);
+		}
+
+		void SwitchingComponent::SetNeighborsToSwitch(int neighborsToSwitch)
+		{
+			pimpl->SetNeighborsToSwitch(neighborsToSwitch);
 		}
 
 		SwitchingComponent::~SwitchingComponent() = default;
