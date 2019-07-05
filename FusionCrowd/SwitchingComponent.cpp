@@ -1,6 +1,7 @@
 #include "SwitchingComponent.h"
 
 #include <set>
+#include <map>
 
 namespace FusionCrowd
 {
@@ -24,18 +25,18 @@ namespace FusionCrowd
 
 			void AddAgent(size_t id)
 			{
-				_agents.insert(id);
-
 				if (NeedSwitchToSecondary(id)) {
 					_secondaryComponent->AddAgent(id);
+					_agentsComponents.insert({ id, 1 });
 				} else {
 					_primaryComponent->AddAgent(id);
+					_agentsComponents.insert({ id, 0 });
 				}
 			}
 
 			bool DeleteAgent(size_t id)
 			{
-				_agents.erase(id);
+				_agentsComponents.erase(id);
 				return _primaryComponent->DeleteAgent(id) || _secondaryComponent->DeleteAgent(id);
 			}
 
@@ -52,7 +53,7 @@ namespace FusionCrowd
 			Simulator & _simulator;
 			std::shared_ptr<IOperationComponent> _primaryComponent;
 			std::shared_ptr<IOperationComponent> _secondaryComponent;
-			std::set<size_t> _agents;
+			std::map<size_t, int> _agentsComponents;
 
 			//TEMP SOLUTION
 			bool NeedSwitchToSecondary(size_t agentId) {
@@ -61,31 +62,25 @@ namespace FusionCrowd
 
 			void UpdateAgentsDistribution() {
 
-				std::set<size_t> switchToPrimary;
-				std::set<size_t> switchToSecondary;
+				for (auto agentData : _agentsComponents) {
 
-				for (auto agentId : _agents) {
+					size_t agentId = agentData.first;
+					int componentIndex = agentData.second;
 
-					bool nowInSecondary = _simulator.GetById(agentId).opComponent == _secondaryComponent;
+					bool nowInSecondary = componentIndex == 1;
 					bool mustBeInSecondary = NeedSwitchToSecondary(agentId);
 
 					if (!nowInSecondary && mustBeInSecondary) {
-						switchToSecondary.insert(agentId);
+						_primaryComponent->DeleteAgent(agentId);
+						_secondaryComponent->AddAgent(agentId);
+						agentData.second = 1;
 					}
 
 					if (nowInSecondary && !mustBeInSecondary) {
-						switchToPrimary.insert(agentId);
+						_secondaryComponent->DeleteAgent(agentId);
+						_primaryComponent->AddAgent(agentId);
+						agentData.second = 0;
 					}
-				}
-
-				for (auto agentId : switchToPrimary) {
-					_secondaryComponent->DeleteAgent(agentId);
-					_primaryComponent->AddAgent(agentId);
-				}
-
-				for (auto agentId : switchToSecondary) {
-					_primaryComponent->DeleteAgent(agentId);
-					_secondaryComponent->AddAgent(agentId);
 				}
 			}
 		};
