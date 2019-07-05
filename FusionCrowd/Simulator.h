@@ -25,7 +25,8 @@ namespace FusionCrowd
 		bool DoStep();
 
 		size_t GetAgentCount() const;
-		Agent & GetById(size_t agentId);
+		std::shared_ptr<Goal> GetAgentGoal(size_t agentId);
+
 		NavSystem & GetNavSystem();
 
 	    size_t AddAgent(
