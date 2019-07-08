@@ -1,6 +1,7 @@
 #pragma once
 #include "Config.h"
 #include "Agent.h"
+#include "Navigation/Obstacle.h"
 
 #include <vector>
 

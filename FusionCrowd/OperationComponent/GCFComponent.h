@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 #include "OperationComponent/IOperationComponent.h"
 #include "Agent.h"
 #include "Config.h"
@@ -12,7 +12,7 @@ namespace FusionCrowd
 {
 	namespace GCF
 	{
-		struct FUSION_CROWD_API AgentParameters
+		struct FUSION_CROWD_API AgentParamentrs
 		{
 			AgentShape::Ellipse _ellipse;
 			float _aMin;
@@ -20,7 +20,7 @@ namespace FusionCrowd
 			float _bMax;
 			float _bGrowth;
 
-			AgentParameters(): _ellipse()
+			AgentParamentrs(): _ellipse()
 			{
 				_aMin = 0.18f;
 				_aRate = 0.53f;
@@ -28,7 +28,7 @@ namespace FusionCrowd
 				_bGrowth = 0.05f;
 			}
 
-			AgentParameters(float aMin, float aRate, float bMax, float bGrowth) : _ellipse()
+			AgentParamentrs(float aMin, float aRate, float bMax, float bGrowth) : _ellipse()
 			{
 				_aMin = aMin;
 				_aRate = aRate;
@@ -38,8 +38,7 @@ namespace FusionCrowd
 
 		};
 
-		class FUSION_CROWD_API GCFComponent :
-			public IOperationComponent
+		class FUSION_CROWD_API GCFComponent
 		{
 		public:
 			GCFComponent();
@@ -61,7 +60,7 @@ namespace FusionCrowd
 			float ComputeDistanceResponse(float effDist) const;
 
 		private:
-			std::map<int, AgentParameters> _agents;
+			std::map<int, AgentParamentrs> _agents;
 			float _timeStep;
 
 			float _reactionTime;
@@ -74,3 +73,4 @@ namespace FusionCrowd
 	}
 }
 
+*/

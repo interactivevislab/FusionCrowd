@@ -12,8 +12,6 @@ namespace FusionCrowd
 		PointGoal(const DirectX::SimpleMath::Vector2 & p);
 		PointGoal(float x, float y);
 		virtual std::string getStringId() const { return "point"; }
-
-		//static const std::string NAME;
 	};
 }
 

@@ -1,50 +1,57 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
-#include "Navigation/NavSystem.h"
 #include "Agent.h"
+#include "Config.h"
+
 #include "StrategyComponent/IStrategyComponent.h"
+#include "StrategyComponent/Goal/Goal.h"
 #include "TacticComponent/ITacticComponent.h"
 #include "OperationComponent/IOperationComponent.h"
-#include "Config.h"
-#include "Navigation/SpatialQuery/SpatialQuery.h"
-#include "StrategyComponent/Goal/PointGoal.h"
+#include "Navigation/NavSystem.h"
 
-#include "TacticComponent/NavMeshComponent.h"
-#include "Navigation/NavMesh/NavMeshLocalizer.h"
-
-class FUSION_CROWD_API Simulator
+namespace FusionCrowd
 {
-public:
-	Simulator();
-	~Simulator();
+	class NavMeshComponent;
 
-	bool DoStep();
-	void AddAgent(FusionCrowd::Agent agent);
-	void AddAgent(float maxAngleVel, float maxNeighbors, int obstacleSet,
-		float neighborDist, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos);
-	void AddOperComponent(IOperationComponent* operComponent);
-	void AddTacticComponent(ITacticComponent* tacticComponent);
-	void AddStrategyComponent(IStrategyComponent* strategyComponent);
-	void AddNavComponent(std::string name, INavComponent* navComponent);
+	class FUSION_CROWD_API Simulator
+	{
+	public:
+		Simulator(const char* navMeshPath);
+		virtual ~Simulator();
 
-	void AddSpatialQuery(FusionCrowd::SpatialQuery* spatialQuery);
+		bool DoStep();
 
-	void ComputeNeighbors(FusionCrowd::Agent * agent);
+		size_t GetAgentCount() const;
+		std::shared_ptr<Goal> GetAgentGoal(size_t agentId);
 
-	void InitSimulator(const char* navMeshPath);
+		NavSystem & GetNavSystem();
 
-//private:
-	NavSystem navSystem;
-	NavMeshComponent nav;
+	    size_t AddAgent(
+			float maxAngleVel,
+			float radius,
+			float prefSpeed,
+			float maxSpeed,
+			float maxAccel,
+			DirectX::SimpleMath::Vector2 pos,
+			std::shared_ptr<Goal> g
+		);
 
-	std::vector<FusionCrowd::SpatialQuery*> spatialQuerys;
-	std::vector<FusionCrowd::Agent> agents;
-	std::vector<IStrategyComponent*> strategyComponents;
-	std::vector<ITacticComponent*> tacticComponents;
-	std::vector<IOperationComponent*> operComponents;
-	Goal* goal;
-};
+		bool SetOperationComponent(size_t agentId, std::string newOperationComponent);
+		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent);
 
+		void AddOperComponent(std::shared_ptr<IOperationComponent> operComponent);
+		void AddTacticComponent(std::shared_ptr<ITacticComponent> tacticComponent);
+		void AddStrategyComponent(std::shared_ptr<IStrategyComponent> strategyComponent);
 
+		void InitSimulator();
+
+		void UpdateNav(float x, float y);
+	private:
+		class SimulatorImpl;
+
+		std::unique_ptr<SimulatorImpl> pimpl;
+	};
+}

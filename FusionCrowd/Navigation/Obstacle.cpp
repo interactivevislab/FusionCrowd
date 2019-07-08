@@ -4,6 +4,7 @@
 #include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;
+using namespace FusionCrowd;
 
 Obstacle::Obstacle() : _doubleSided(false), _isConvex(false), _nextObstacle(0x0),
 _point(), _prevObstacle(0x0), _unitDir(), _id(0),
@@ -49,6 +50,7 @@ Obstacle::NearTypeEnum Obstacle::distanceSqToPoint(const Vector2 & pt, Vector2 &
 		return MIDDLE;
 	}
 }
+
 float Obstacle::circleIntersection(const Vector2 & dir, const Vector2 & start,
 	float radius) const {
 	const float radSqd = radius * radius;

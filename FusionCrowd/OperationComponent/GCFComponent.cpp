@@ -53,7 +53,7 @@ namespace FusionCrowd
 
 		void GCFComponent::AddAgent(FusionCrowd::Agent* agent, float mass)
 		{
-			_agents[agent->_id] = AgentParameters();
+			_agents[agent->_id] = AgentParamentrs();
 			UpdateEllipse(agent);
 		}
 
@@ -91,23 +91,12 @@ namespace FusionCrowd
 // Pedestrians
 			for (size_t j = 0; j < agent->_nearAgents.size(); ++j) {
 				const Agent* otherBase = agent->_nearAgents[j].agent;
-				// Add array
-				bool otherAgentAdd = false;
-				if (_agents.find(otherBase->_id) == _agents.end())
-				{
-					_agents[otherBase->_id] = AgentParameters();
-					otherAgentAdd = true;
-				}
 				const Agent* const other = static_cast<const Agent*>(otherBase);
 				float effDist, K_ij, response, velScale, magnitude;
 				Vector2 forceDir;
 				if (GetRepulsionParameters(agent, other, effDist, forceDir, K_ij, response, velScale, magnitude) ==
 					0) {
 					force += forceDir * magnitude;
-				}
-				if (otherAgentAdd)
-				{
-					DeleteAgent(otherBase->_id);
 				}
 			}
 
@@ -153,10 +142,6 @@ namespace FusionCrowd
 
 			float dist = forceDir.Length();
 			assert(dist > 0.0001f && "Agents are on top of each other");
-			if (dist == 0)
-			{
-				dist = 0.0001f;
-			}
 			forceDir /= dist;
 
 			if (effDist >= _maxAgentDist) {

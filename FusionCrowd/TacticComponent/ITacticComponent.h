@@ -2,12 +2,15 @@
 
 #include "Config.h"
 
-class FUSION_CROWD_API ITacticComponent
+namespace FusionCrowd
 {
-public:
-	ITacticComponent() {};
+	class FUSION_CROWD_API ITacticComponent
+	{
+	public:
+		virtual void AddAgent(size_t id) = 0;
+		virtual bool RemoveAgent(size_t id) = 0;
 
-	virtual void SetPrefVelocity() {};
-
-	virtual ~ITacticComponent() {};
-};
+		virtual void Update(float timeStep) = 0;
+		virtual ~ITacticComponent() { };
+	};
+}

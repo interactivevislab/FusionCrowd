@@ -1,4 +1,9 @@
 #include "PedVOComponent.h"
+
+#include "Navigation/AgentSpatialInfo.h"
+#include "Navigation/NavSystem.h"
+#include "Navigation/Obstacle.h"
+
 #include "Math/consts.h"
 #include "Math/geomQuery.h"
 #include "Math/Util.h"
@@ -6,18 +11,20 @@
 #include <algorithm>
 #include <list>
 #include <iostream>
-#include <math.h>
 
+using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
 	namespace PedVO
 	{
-		PedVOComponent::PedVOComponent() : _cosObstTurn(1.0f), _sinObstTurn(0.0f)
+		PedVOComponent::PedVOComponent(Simulator & simulator) :
+			_cosObstTurn(1.0f), _sinObstTurn(0.0f), _simulator(simulator)
 		{
 		}
 
-		PedVOComponent::PedVOComponent(float cosObstTurn, float sinObstTurn) : _cosObstTurn(cosObstTurn), _sinObstTurn(sinObstTurn)
+		PedVOComponent::PedVOComponent(Simulator & simulator, float cosObstTurn, float sinObstTurn) :
+			_cosObstTurn(cosObstTurn), _sinObstTurn(sinObstTurn), _simulator(simulator)
 		{
 		}
 
@@ -25,57 +32,52 @@ namespace FusionCrowd
 		{
 		}
 
-		void PedVOComponent::AddAgent(int idAgent, float timeHorizon, float timeHorizonObst, float turningBias, bool denseAware, float factor, float buffer)
+		void PedVOComponent::AddAgent(size_t agentId)
 		{
-			_agents[idAgent] = AgentParamentrs(timeHorizon, timeHorizonObst, turningBias, denseAware, factor, buffer);
+			AddAgent(agentId, 3.0f, 0.1f, 2.0, true, 1.57f, 0.9f);
 		}
 
-		void PedVOComponent::DeleteAgent(int idAgent)
+		void PedVOComponent::AddAgent(size_t agentId, float timeHorizon, float timeHorizonObst, float turningBias, bool denseAware, float factor, float buffer)
 		{
-			_agents.erase(idAgent);
+			_agents[agentId] = AgentParamentrs(timeHorizon, timeHorizonObst, turningBias, denseAware, factor, buffer);
 		}
 
-		void PedVOComponent::Update(FusionCrowd::Agent* agent, float timeStep)
+		bool PedVOComponent::DeleteAgent(size_t agentId)
 		{
-			_timeStep = timeStep;
-			ComputeNewVelocity(agent);
+			return _agents.erase(agentId) > 0;
+		}
 
-			float delV = (agent->_vel - agent->_velNew).Length();
+		void PedVOComponent::Update(float timeStep)
+		{
+			for(auto & p : _agents)
+			{
+				size_t id = p.first;
+				AgentParamentrs & params = p.second;
+				AgentSpatialInfo & spatialInfo = _simulator.GetNavSystem().GetSpatialInfo(id);
 
-			if (delV > agent->_maxAccel * timeStep) {
-				float w = agent->_maxAccel * timeStep / delV;
-				agent->_vel = (1.f - w) *  agent->_vel + w * agent->_velNew;
+				ComputeNewVelocity(params, spatialInfo);
 			}
-			else {
-				agent->_vel = agent->_velNew;
-			}
-			Vector2 t = agent->_vel * timeStep;
-
-			agent->_pos += agent->_vel * timeStep;
-
-			agent->UpdateOrient(timeStep);
-			agent->PostUpdate();
 		}
 
-		void PedVOComponent::ComputeNewVelocity(FusionCrowd::Agent* agent)
+		void PedVOComponent::ComputeNewVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo)
 		{
-			AdaptPreferredVelocity(agent);
+			AdaptPreferredVelocity(agentParams, agentInfo);
 
 			Vector2 optVel;
 			Vector2 prefDir;
 			float prefSpeed;
 
-			const size_t numObstLines = ComputeORCALinesTurning(agent, optVel, prefDir, prefSpeed);
+			const size_t numObstLines = ComputeORCALinesTurning(agentParams, agentInfo, optVel, prefDir, prefSpeed);
 
-			size_t lineFail = LinearProgram2(_orcaLines, agent->_maxSpeed, optVel, false, _agents[agent->_id]._turningBias, agent->_velNew);
+			size_t lineFail = LinearProgram2(_orcaLines, agentInfo.maxSpeed, optVel, false, agentParams._turningBias, agentInfo.velNew);
 
 			if (lineFail < _orcaLines.size()) {
-				LinearProgram3(_orcaLines, numObstLines, lineFail, agent->_maxSpeed, _agents[agent->_id]._turningBias, agent->_velNew);
+				LinearProgram3(_orcaLines, numObstLines, lineFail, agentInfo.maxSpeed, agentParams._turningBias, agentInfo.velNew);
 			}
-			if (_agents[agent->_id]._turningBias != 1.f && prefSpeed > FusionCrowd::EPS) {
+			if (agentParams._turningBias != 1.f && prefSpeed > FusionCrowd::EPS) {
 				// Transform _velNew from affine space to real space
 				// Undo the scale
-				Vector2 vel(agent->_velNew.x, agent->_velNew.y * _agents[agent->_id]._turningBias);
+				Vector2 vel(agentInfo.velNew.x, agentInfo.velNew.y * agentParams._turningBias);
 				// Rotate it back
 				// Flip the y-value so I perform rotation in the other direction
 				//	I'm multiplying v * R, where R is the matrix:
@@ -89,22 +91,22 @@ namespace FusionCrowd
 				Vector2 n(-prefDir.y, prefDir.x);
 				float vx = vel.Dot(prefDir);
 				float vy = vel.Dot(n);
-				agent->_velNew = Vector2(vx, vy);
+				agentInfo.velNew = Vector2(vx, vy);
 			}
 		}
 
-		void PedVOComponent::AdaptPreferredVelocity(FusionCrowd::Agent* agent)
+		void PedVOComponent::AdaptPreferredVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo)
 		{
-			if (_agents[agent->_id]._denseAware) {
-				float prefSpeed = agent->_velPref.getSpeed();
-				Vector2 prefDir(agent->_velPref.getPreferred());
+			if (agentParams._denseAware) {
+				float prefSpeed = agentInfo.prefVelocity.getSpeed();
+				Vector2 prefDir(agentInfo.prefVelocity.getPreferred());
 				// start assuming there is infinite space
 				float availSpace = 1e6f;
 
 				// Not the speed-dependent stride length, but rather the mid-point of the
 				float strideLen = 1.f;
 				// elliptical personal space.
-				Vector2 critPt = agent->_pos + strideLen * prefDir;
+				Vector2 critPt = agentInfo.pos + strideLen * prefDir;
 				float density = 0.f;
 				// For now, assume some constants
 				const float area = 1.5f;
@@ -113,11 +115,11 @@ namespace FusionCrowd
 				const float norm = 1.f / (area * sqrt2Pi);
 
 				// AGENTS
-				for (size_t i = 0; i < agent->_nearAgents.size(); ++i) {
-					const FusionCrowd::Agent* const other = agent->_nearAgents[i].agent;
-					Vector2 critDisp = other->_pos - critPt;
+				for (auto & other : _simulator.GetNavSystem().GetNeighbours(agentInfo.id))
+				{
+					Vector2 critDisp = other.pos - critPt;
 					// dot project gets projection, in the preferred direction
-					Vector2 yComp = (critDisp * prefDir) * prefDir;
+					Vector2 yComp = critDisp.Dot(prefDir) * prefDir;
 					// penalize displacement perpindicular to the preferred direction
 					Vector2 xComp = (critDisp - yComp) * 2.5f;
 					critDisp = xComp + yComp;
@@ -128,14 +130,13 @@ namespace FusionCrowd
 				const float OBST_AREA = 0.75f;
 				const float OBST_AREA_SQ_INV = 1.f / (2 * OBST_AREA * OBST_AREA);
 				const float OBST_SCALE = norm;  // * 6.25f;	// what is the "density" of an obstacle?
-				for (size_t i = 0; i < agent->_nearObstacles.size(); ++i) {
-					const Obstacle* const obst = agent->_nearObstacles[i].obstacle;
+				for (auto const obst : _simulator.GetNavSystem().GetClosestObstacles(agentInfo.id)) {
 					Vector2 nearPt;
 					float distSq;  // set by distanceSqToPoint
-					if (obst->distanceSqToPoint(critPt, nearPt, distSq) == Obstacle::LAST)
+					if (obst.distanceSqToPoint(critPt, nearPt, distSq) == Obstacle::LAST)
 						continue;
 
-					if ( prefDir.Dot(nearPt - agent->_pos) < 0.f) continue;
+					if ( prefDir.Dot(nearPt - agentInfo.pos) < 0.f) continue;
 					density += OBST_SCALE * expf(-distSq * OBST_AREA_SQ_INV);
 				}
 
@@ -148,66 +149,77 @@ namespace FusionCrowd
 				}
 
 				// Compute the maximum speed I could take for the available space
-				float maxSpeed = _agents[agent->_id]._speedConst * availSpace * availSpace;
-				if (maxSpeed < prefSpeed) agent->_velPref.setSpeed(maxSpeed);
+				float maxSpeed = agentParams._speedConst * availSpace * availSpace;
+				if (maxSpeed < prefSpeed) agentInfo.prefVelocity.setSpeed(maxSpeed);
 			}
 		}
 
-		size_t PedVOComponent::ComputeORCALinesTurning(FusionCrowd::Agent* agent, DirectX::SimpleMath::Vector2& optVel, DirectX::SimpleMath::Vector2& prefDir,
-			float& prefSpeed)
+		size_t PedVOComponent::ComputeORCALinesTurning(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo, DirectX::SimpleMath::Vector2& optVel, DirectX::SimpleMath::Vector2& prefDir, float& prefSpeed)
 		{
-			const float invTimeHorizonObst = 1.0f / _agents[agent->_id]._timeHorizonObst;
+			_orcaLines.clear();
 
-			for (size_t i = 0; i < agent->_nearObstacles.size(); ++i) {
-				const Obstacle* obst = agent->_nearObstacles[i].obstacle;
-				const Vector2 P0 = obst->getP0();
-				const Vector2 P1 = obst->getP1();
-				const bool agtOnRight = MathUtil::leftOf(P0, P1, agent->_pos) < 0.f;
+			const float invTimeHorizonObst = 1.0f / agentParams._timeHorizonObst;
 
-				ObstacleLine(agent, i, invTimeHorizonObst, !agtOnRight && obst->_doubleSided);
+			for (Obstacle & obst : _simulator.GetNavSystem().GetClosestObstacles(agentInfo.id))
+			{
+				const Vector2 P0 = obst.getP0();
+				const Vector2 P1 = obst.getP1();
+				const bool agtOnRight = MathUtil::leftOf(P0, P1, agentInfo.pos) < 0.f;
+
+				ObstacleLine(agentParams, agentInfo, obst, invTimeHorizonObst, !agtOnRight && obst._doubleSided);
 			}
 
 			const size_t numObstLines = _orcaLines.size();
 
-			const float invTimeHorizon = 1.0f / _agents[agent->_id]._timeHorizon;
+			const float invTimeHorizon = 1.0f / agentParams._timeHorizon;
 			/* Create agent ORCA lines. */
-			for (size_t i = 0; i < agent->_nearAgents.size(); ++i) {
-				const Agent* const other = static_cast<const Agent*>(agent->_nearAgents[i].agent);
+			for (auto & other : _simulator.GetNavSystem().GetNeighbours(agentInfo.id))
+			{
+				const Vector2 relativePosition = other.pos - agentInfo.pos;
 
-				const Vector2 relativePosition = other->_pos - agent->_pos;
-				float rightOfWay = fabs(agent->_priority - other->_priority);
-				if (rightOfWay > 1.f) rightOfWay = 1.f;
+				// TODO: priorities
+				//float rightOfWay = fabs(agentInfo.priority - other->_priority);
+				//if (rightOfWay > 1.f)
+				//	rightOfWay = 1.f;
+				float rightOfWay = .9f;
 
 				// Right of way-dependent calculations
-				Vector2 myVel = agent->_vel;
-				Vector2 hisVel = other->_vel;
+				Vector2 myVel = agentInfo.vel;
+				Vector2 hisVel = other.vel;
 				// this is my fraction of effort
 				float weight = 0.5f;
 				float const MAX_DEV = 0.1f;
 				float const MAX_DEV_SQD = MAX_DEV * MAX_DEV;
-				if (agent->_priority < other->_priority) {
+
+				// TODO: we don't have priorities yet, so lets flip a coin.
+				bool myAdvantage = rand() > 0.5f;
+				//if (agent->_priority < other->_priority) {
+				if (!myAdvantage) {
 					// his advantage
 					weight += 0.5f * rightOfWay;
-					hisVel = other->_velPref.getPreferredVel() * rightOfWay + (1.f - rightOfWay) * other->_vel;
-					if ((hisVel - other->_vel).LengthSquared() > MAX_DEV_SQD) {
-						(other->_velPref.getPreferredVel() - other->_vel).Normalize(hisVel);
-						hisVel = hisVel * MAX_DEV + other->_vel;
+					hisVel = other.prefVelocity.getPreferredVel() * rightOfWay + (1.f - rightOfWay) * other.vel;
+					if ((hisVel - other.vel).LengthSquared() > MAX_DEV_SQD) {
+						hisVel = other.prefVelocity.getPreferredVel() - other.vel;
+						hisVel.Normalize();
+
+						hisVel = hisVel * MAX_DEV + other.vel;
 					}
 				}
-				else if (agent->_priority > other->_priority) {
+				else
+				{
 					// my advantage
 					weight -= 0.5f * rightOfWay;
-					myVel = agent->_velPref.getPreferredVel() * rightOfWay + (1.f - rightOfWay) * agent->_vel;
-					if ((myVel - agent->_vel).LengthSquared() > MAX_DEV_SQD) {
-						(agent->_velPref.getPreferredVel() - agent->_vel).Normalize(myVel);
-						myVel = myVel * MAX_DEV + agent->_vel;
+					myVel = agentInfo.prefVelocity.getPreferredVel() * rightOfWay + (1.f - rightOfWay) * agentInfo.vel;
+					if ((myVel - agentInfo.vel).LengthSquared() > MAX_DEV_SQD) {
+						(agentInfo.prefVelocity.getPreferredVel() - agentInfo.vel).Normalize(myVel);
+						myVel = myVel * MAX_DEV + agentInfo.vel;
 					}
 				}
 
 				const Vector2 relativeVelocity = myVel - hisVel;
 
 				const float distSq = relativePosition.LengthSquared();
-				const float combinedRadius = agent->_radius + other->_radius;
+				const float combinedRadius = agentInfo.radius + other.radius;
 				const float combinedRadiusSq = pow(combinedRadius, 2);
 
 				FusionCrowd:Math::Line line;
@@ -275,30 +287,30 @@ namespace FusionCrowd
 			}
 
 			// Transform the lines
-			if (_agents[agent->_id]._turningBias != 1.f) {
-				prefSpeed = agent->_velPref.getSpeed();
-				optVel= Vector2(prefSpeed, 0.f);
+			if (agentParams._turningBias != 1.f) {
+				prefSpeed = agentInfo.prefVelocity.getSpeed();
+				optVel = Vector2(prefSpeed, 0.f);
 				// Transformation is dependent on prefSpeed being non-zero
 				if (prefSpeed > FusionCrowd::EPS) {
-					prefDir = Vector2(agent->_velPref.getPreferred());
+					prefDir = Vector2(agentInfo.prefVelocity.getPreferred());
 					Vector2 n(-prefDir.y, prefDir.x);
 					// rotate and scale all of the lines
-					float turnInv = 1.f / _agents[agent->_id]._turningBias;
+					float turnInv = 1.f / agentParams._turningBias;
 					for (size_t i = 0; i < _orcaLines.size(); ++i) {
 						// Make sure I'm not perpendicular
 						// turning threshhold is bigger than zero degrees
 						if (_cosObstTurn < 1.f &&
 							// only tilt if I'm seeking to magnify differences
-							_agents[agent->_id]._turningBias > 1.f && i >= numObstLines &&  // don't perturb obstacles
+							agentParams._turningBias > 1.f && i >= numObstLines &&  // don't perturb obstacles
 							MathUtil::det(_orcaLines[i]._direction,
 								// preferred velocity is not feasible w.r.t. this obstacle
-								_orcaLines[i]._point - agent->_velPref.getPreferredVel()) > 0.0f &&
+								_orcaLines[i]._point - agentInfo.prefVelocity.getPreferredVel()) > 0.0f &&
 							// This is a trick: det with the line direction, is dot product with normal
 							// angle between pref vel and line norm is less than 1/2 degree either way
 							MathUtil::det(-_orcaLines[i]._direction, prefDir) > _cosObstTurn) {
 							// Compute the intersection with the circle of maximum velocity
 							float dotProduct = _orcaLines[i]._point.Dot(_orcaLines[i]._direction);
-							float discriminant = pow(dotProduct, 2) + pow(agent->_maxSpeed, 2) - _orcaLines[i]._point.LengthSquared();
+							float discriminant = pow(dotProduct, 2) + pow(agentInfo.maxSpeed, 2) - _orcaLines[i]._point.LengthSquared();
 							if (discriminant >= 0.f) {
 								// Intersects the circle of maximum speed
 								// I already know from the previous test that the preferred velocity
@@ -306,7 +318,7 @@ namespace FusionCrowd
 								// intersection, the whole circle must be infeasible. don't bother
 								// perturbing.
 								const float sqrtDiscriminant = std::sqrt(discriminant);
-								if (agent->_vel.Dot(_orcaLines[i]._direction) > 0.f) {
+								if (agentInfo.vel.Dot(_orcaLines[i]._direction) > 0.f) {
 									float t = -dotProduct + sqrtDiscriminant;
 									// new line point
 									Vector2 p = _orcaLines[i]._point + t * _orcaLines[i]._direction;
@@ -348,28 +360,25 @@ namespace FusionCrowd
 				}
 			}
 			else {
-				optVel = (agent->_velPref.getPreferredVel());
+				optVel = (agentInfo.prefVelocity.getPreferredVel());
 			}
 
 			return numObstLines;
 		}
 
-		void PedVOComponent::ObstacleLine(FusionCrowd::Agent* agent, size_t obstNbrID, const float invTau, bool flip)
+		void PedVOComponent::ObstacleLine(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo, Obstacle & obst, const float invTau, bool flip)
 		{
-			const Obstacle* obst = agent->_nearObstacles[obstNbrID].obstacle;
-			const float LENGTH = obst->length();
-			const Vector2 P0 = flip ? obst->getP1() : obst->getP0();
-			const Vector2 P1 = flip ? obst->getP0() : obst->getP1();
-			const Vector2 obstDir = flip ? -obst->_unitDir : obst->_unitDir;
-			const bool p0Convex = flip ? obst->p1Convex(true) : obst->p0Convex(true);
-			const bool p1Convex = flip ? obst->p0Convex(true) : obst->p1Convex(true);
-			const Obstacle* const leftNeighbor =
-				flip ? obst->_nextObstacle : obst->_prevObstacle;
-			const Obstacle* const rightNeighbor =
-				flip ? obst->_prevObstacle : obst->_nextObstacle;
+			const float LENGTH = obst.length();
+			const Vector2 P0 = flip ? obst.getP1() : obst.getP0();
+			const Vector2 P1 = flip ? obst.getP0() : obst.getP1();
+			const Vector2 obstDir = flip ? -obst._unitDir : obst._unitDir;
+			const bool p0Convex = flip ? obst.p1Convex(true) : obst.p0Convex(true);
+			const bool p1Convex = flip ? obst.p0Convex(true) : obst.p1Convex(true);
+			const Obstacle* const leftNeighbor = flip ? obst._nextObstacle : obst._prevObstacle;
+			const Obstacle* const rightNeighbor = flip ? obst._prevObstacle : obst._nextObstacle;
 
-			const Vector2 relativePosition1 = P0 - agent->_pos;
-			const Vector2 relativePosition2 = P1 - agent->_pos;
+			const Vector2 relativePosition1 = P0 - agentInfo.pos;
+			const Vector2 relativePosition2 = P1 - agentInfo.pos;
 
 			/*
 			 * Check if velocity obstacle of obstacle is already taken care of by
@@ -379,10 +388,10 @@ namespace FusionCrowd
 
 			for (size_t j = 0; j < _orcaLines.size(); ++j) {
 				if (MathUtil::det(invTau * relativePosition1 - _orcaLines[j]._point, _orcaLines[j]._direction) -
-					invTau * agent->_radius >=
+					invTau * agentInfo.radius >=
 					-FusionCrowd::EPS &&
 					MathUtil::det(invTau * relativePosition2 - _orcaLines[j]._point, _orcaLines[j]._direction) -
-					invTau * agent->_radius >=
+					invTau * agentInfo.radius >=
 					-FusionCrowd::EPS) {
 					alreadyCovered = true;
 					break;
@@ -398,7 +407,7 @@ namespace FusionCrowd
 			const float distSq1 = relativePosition1.LengthSquared();
 			const float distSq2 = relativePosition2.LengthSquared();
 
-			const float radiusSq = pow(agent->_radius, 2);
+			const float radiusSq = pow(agentInfo.radius, 2);
 
 			const float s = -(relativePosition1.Dot(obstDir));
 			const float distSqLine = (relativePosition1 + s * obstDir).LengthSquared();
@@ -417,8 +426,8 @@ namespace FusionCrowd
 			else if (s > LENGTH && distSq2 <= radiusSq) {
 				/* Collision with right vertex. Ignore if non-convex
 				 * or if it will be taken care of by neighoring obstace */
-				if ((obst->_nextObstacle == 0x0) ||
-					(p1Convex && MathUtil::det(relativePosition2, obst->_nextObstacle->_unitDir) >= 0)) {
+				if ((obst._nextObstacle == 0x0) ||
+					(p1Convex && MathUtil::det(relativePosition2, obst._nextObstacle->_unitDir) >= 0)) {
 					line._point = Vector2(0.f, 0.f);
 					(Vector2(-relativePosition2.y, relativePosition2.x)).Normalize(line._direction);
 					_orcaLines.push_back(line);
@@ -463,11 +472,11 @@ namespace FusionCrowd
 				nextIsCurrent = true;
 
 				const float leg1 = std::sqrt(distSq1 - radiusSq);
-				leftLegDirection = Vector2(relativePosition1.x * leg1 - relativePosition1.y * agent->_radius,
-					relativePosition1.x * agent->_radius + relativePosition1.y * leg1) /
+				leftLegDirection = Vector2(relativePosition1.x * leg1 - relativePosition1.y * agentInfo.radius,
+					relativePosition1.x * agentInfo.radius + relativePosition1.y * leg1) /
 					distSq1;
-				rightLegDirection = Vector2(relativePosition1.x * leg1 + relativePosition1.y * agent->_radius,
-					-relativePosition1.x * agent->_radius + relativePosition1.y * leg1) /
+				rightLegDirection = Vector2(relativePosition1.x * leg1 + relativePosition1.y * agentInfo.radius,
+					-relativePosition1.x * agentInfo.radius + relativePosition1.y * leg1) /
 					distSq1;
 			}
 			else if (s > LENGTH && distSqLine <= radiusSq) {
@@ -482,19 +491,19 @@ namespace FusionCrowd
 				prevIsCurrent = true;
 
 				const float leg2 = std::sqrt(distSq2 - radiusSq);
-				leftLegDirection = Vector2(relativePosition2.x * leg2 - relativePosition2.y * agent->_radius,
-					relativePosition2.x * agent->_radius + relativePosition2.y * leg2) /
+				leftLegDirection = Vector2(relativePosition2.x * leg2 - relativePosition2.y * agentInfo.radius,
+					relativePosition2.x * agentInfo.radius + relativePosition2.y * leg2) /
 					distSq2;
-				rightLegDirection = Vector2(relativePosition2.x * leg2 + relativePosition2.y * agent->_radius,
-					-relativePosition2.x * agent->_radius + relativePosition2.y * leg2) /
+				rightLegDirection = Vector2(relativePosition2.x * leg2 + relativePosition2.y * agentInfo.radius,
+					-relativePosition2.x * agentInfo.radius + relativePosition2.y * leg2) /
 					distSq2;
 			}
 			else {
 				/* Usual situation. */
 				if (p0Convex) {
 					const float leg1 = std::sqrt(distSq1 - radiusSq);
-					leftLegDirection = Vector2(relativePosition1.x * leg1 - relativePosition1.y * agent->_radius,
-						relativePosition1.x * agent->_radius + relativePosition1.y * leg1) /
+					leftLegDirection = Vector2(relativePosition1.x * leg1 - relativePosition1.y * agentInfo.radius,
+						relativePosition1.x * agentInfo.radius + relativePosition1.y * leg1) /
 						distSq1;
 				}
 				else {
@@ -504,8 +513,8 @@ namespace FusionCrowd
 
 				if (p1Convex) {
 					const float leg2 = std::sqrt(distSq2 - radiusSq);
-					rightLegDirection = Vector2(relativePosition2.x * leg2 + relativePosition2.y * agent->_radius,
-						-relativePosition2.x * agent->_radius + relativePosition2.y * leg2) /
+					rightLegDirection = Vector2(relativePosition2.x * leg2 + relativePosition2.y * agentInfo.radius,
+						-relativePosition2.x * agentInfo.radius + relativePosition2.y * leg2) /
 						distSq2;
 				}
 				else {
@@ -550,25 +559,25 @@ namespace FusionCrowd
 
 			/* Project current velocity on velocity obstacle. */
 			/* Check if current velocity is projected on cutoff circles. */
-			const float t = obstaclesSame ? 0.5f : ((agent->_vel - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared()));
-			const float tLeft = (agent->_vel - leftCutoff).Dot(leftLegDirection);
-			const float tRight = (agent->_vel - rightCutoff).Dot(rightLegDirection);
+			const float t = obstaclesSame ? 0.5f : ((agentInfo.vel - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared()));
+			const float tLeft = (agentInfo.vel - leftCutoff).Dot(leftLegDirection);
+			const float tRight = (agentInfo.vel - rightCutoff).Dot(rightLegDirection);
 
 			if ((t < 0.0f && tLeft < 0.0f) || (obstaclesSame && tLeft < 0.0f && tRight < 0.0f)) {
 				/* Project on left cut-off circle. */
 				Vector2 unitW;
-				(agent->_vel - leftCutoff).Normalize(unitW);
+				(agentInfo.vel - leftCutoff).Normalize(unitW);
 				line._direction = Vector2(unitW.y, -unitW.x);
-				line._point = leftCutoff + agent->_radius * invTau * unitW;
+				line._point = leftCutoff + agentInfo.radius * invTau * unitW;
 				_orcaLines.push_back(line);
 				return;
 			}
 			else if (t > 1.0f && tRight < 0.0f) {
 				/* Project on right cut-off circle. */
 				Vector2 unitW;
-				(agent->_vel - rightCutoff).Normalize(unitW);
+				(agentInfo.vel - rightCutoff).Normalize(unitW);
 				line._direction = Vector2(unitW.y, -unitW.x);
-				line._point = rightCutoff + agent->_radius * invTau * unitW;
+				line._point = rightCutoff + agentInfo.radius * invTau * unitW;
 				_orcaLines.push_back(line);
 				return;
 			}
@@ -579,18 +588,18 @@ namespace FusionCrowd
 			 */
 			const float distSqCutoff =
 				((t < 0.0f || t > 1.0f || obstaclesSame) ? std::numeric_limits<float>::infinity()
-					:(agent->_vel - (leftCutoff + t * cutoffVec)).LengthSquared());
+					:(agentInfo.vel - (leftCutoff + t * cutoffVec)).LengthSquared());
 			const float distSqLeft = ((tLeft < 0.0f) ? std::numeric_limits<float>::infinity()
-				: (agent->_vel - (leftCutoff + tLeft * leftLegDirection)).LengthSquared());
+				: (agentInfo.vel - (leftCutoff + tLeft * leftLegDirection)).LengthSquared());
 			const float distSqRight =
 				((tRight < 0.0f) ? std::numeric_limits<float>::infinity()
-					: (agent->_vel - (rightCutoff + tRight * rightLegDirection)).LengthSquared());
+					: (agentInfo.vel - (rightCutoff + tRight * rightLegDirection)).LengthSquared());
 
 			if (distSqCutoff <= distSqLeft && distSqCutoff <= distSqRight) {
 				/* Project on cut-off line. */
 				line._direction = -obstDir;
 				line._point =
-					leftCutoff + agent->_radius * invTau * Vector2(-line._direction.y, line._direction.x);
+					leftCutoff + agentInfo.radius * invTau * Vector2(-line._direction.y, line._direction.x);
 				_orcaLines.push_back(line);
 			}
 			else if (distSqLeft <= distSqRight) {
@@ -598,7 +607,7 @@ namespace FusionCrowd
 				if (!isLeftLegForeign) {
 					line._direction = leftLegDirection;
 					line._point =
-						leftCutoff + agent->_radius * invTau * Vector2(-line._direction.y, line._direction.x);
+						leftCutoff + agentInfo.radius * invTau * Vector2(-line._direction.y, line._direction.x);
 					_orcaLines.push_back(line);
 				}
 			}
@@ -607,7 +616,7 @@ namespace FusionCrowd
 				if (!isRightLegForeign) {
 					line._direction = -rightLegDirection;
 					line._point =
-						rightCutoff + agent->_radius * invTau * Vector2(-line._direction.y, line._direction.x);
+						rightCutoff + agentInfo.radius * invTau * Vector2(-line._direction.y, line._direction.x);
 					_orcaLines.push_back(line);
 				}
 			}

@@ -1,19 +1,20 @@
 #pragma once
 
 #include "Config.h"
-#include "Goal/Goal.h"
+#include <string>
 
-#include <map>
-
-
-class FUSION_CROWD_API IStrategyComponent
+namespace FusionCrowd
 {
-public:
+	class FUSION_CROWD_API IStrategyComponent
+	{
+	public:
+		virtual void AddAgent(size_t id) = 0;
+		virtual bool RemoveAgent(size_t id) = 0;
+		virtual void Update(float timeStep) = 0;
+		virtual std::string GetName() = 0;
 
-	virtual void Update() {}
-	virtual void AddGoal(int idAgent, Goal* goal){}
-	virtual Goal* GetGoal(int idAgent) { return NULL; }
-	virtual ~IStrategyComponent() {}
-private:
-
-};
+		virtual ~IStrategyComponent()
+		{
+		};
+	};
+}

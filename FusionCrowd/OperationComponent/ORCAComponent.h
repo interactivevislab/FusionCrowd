@@ -1,45 +1,33 @@
 #pragma once
-#include "IOperationComponent.h"
-#include "Agent.h"
+
+#include <memory>
+
 #include "Config.h"
-#include "Math/Line.h"
+#include "Simulator.h"
+
+#include "OperationComponent/IOperationComponent.h"
 
 namespace FusionCrowd
 {
 	namespace ORCA
 	{
-		class FUSION_CROWD_API ORCAComponent :
-			public IOperationComponent
+		class FUSION_CROWD_API ORCAComponent : public IOperationComponent
 		{
 		public:
-			ORCAComponent();
-			ORCAComponent(float timeHorizon, float timeHorizonObst);
-			void ComputeNewVelocity(FusionCrowd::Agent* agent);
-			size_t ComputeORCALines(FusionCrowd::Agent* agent);
-			void ObstacleLine(size_t obstNbrID, const float invTau, bool flip, FusionCrowd::Agent* agent);
+			ORCAComponent(Simulator & simulator);
+			ORCAComponent(Simulator & simulator, float timeHorizon, float timeHorizonObst);
+			std::string GetName() { return "orca"; };
 
-			bool LinearProgram1(const std::vector<FusionCrowd::Math::Line>& lines, size_t lineNo,
-				float radius, const DirectX::SimpleMath::Vector2 & optVelocity,
-				bool directionOpt, DirectX::SimpleMath::Vector2& result);
-			size_t LinearProgram2(const std::vector<FusionCrowd::Math::Line>& lines, float radius,
-				const DirectX::SimpleMath::Vector2& optVelocity, bool directionOpt,
-				DirectX::SimpleMath::Vector2& result);
-			void LinearProgram3(const std::vector<FusionCrowd::Math::Line>& lines, size_t numObstLines,
-				size_t beginLine, float radius, DirectX::SimpleMath::Vector2& result);
+			void AddAgent(size_t id);
+			bool DeleteAgent(size_t id);
 
-			void Update(FusionCrowd::Agent* agent, float timeStep);
+			void Update(float timeStep);
 			~ORCAComponent();
 
-			void AddAgent(int idAgent);
-			void DeleteAgent(int idAgent);
-
 		private:
-			std::vector<int> _agents;
-			float _timeHorizon;
-			float _timeHorizonObst;
+			class ORCAComponentImpl;
 
-			std::vector<FusionCrowd::Math::Line> _orcaLines;
-
+			std::unique_ptr<ORCAComponentImpl> pimpl;
 		};
 	}
 }

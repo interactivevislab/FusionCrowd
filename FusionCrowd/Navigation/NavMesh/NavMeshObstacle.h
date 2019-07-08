@@ -2,30 +2,33 @@
 
 #include <fstream>
 
-#include "NavMeshNode.h"
 #include "Config.h"
 #include "Navigation/Obstacle.h"
 #include "Math/Util.h"
 
-// FORWARD DECLARATIONS
-class NavMeshNode;
-class NavMesh;
-
-class FUSION_CROWD_API NavMeshObstacle : public Obstacle
+namespace FusionCrowd
 {
-public:
-	static size_t NO_NEIGHBOR_OBST;
+	// FORWARD DECLARATIONS
+	class NavMeshNode;
+	class NavMesh;
 
-	NavMeshObstacle() : Obstacle(), _node(0x0) {}
+	class FUSION_CROWD_API NavMeshObstacle : public Obstacle
+	{
+	public:
+		static size_t NO_NEIGHBOR_OBST;
 
-	bool LoadFromAscii(std::ifstream & f, DirectX::SimpleMath::Vector2 * vertices);
-	inline const NavMeshNode * getNode() const { return _node; }
+		NavMeshObstacle() : Obstacle(), _node(0x0)
+		{
+		}
 
-	~NavMeshObstacle();
+		bool LoadFromAscii(std::ifstream& f, DirectX::SimpleMath::Vector2* vertices);
+		inline const NavMeshNode* getNode() const { return _node; }
 
-	friend class NavMeshNode;
-	friend class NavMesh;
-protected:
-	NavMeshNode *	_node;
-};
+		~NavMeshObstacle();
 
+		friend class NavMeshNode;
+		friend class NavMesh;
+	protected:
+		NavMeshNode* _node;
+	};
+}
