@@ -2,6 +2,7 @@
 
 #include "GpuCalculator.h"
 #include "Config.h"
+#include <string>
 
 namespace FusionCrowd
 {
@@ -26,6 +27,7 @@ namespace FusionCrowd
 		int numberOfPoints;
 		int numberOfCells;
 		static const int NUMBER_OF_NEIGHBORS = 10;
+		static const std::string NUMBER_OF_NEIGHBORS_AS_STRING;
 		float searchRadius;
 		int maxNearCells;
 		float cellSize;

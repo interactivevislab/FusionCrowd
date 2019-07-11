@@ -202,7 +202,7 @@
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(SolutionDir)\FusionCrowd\Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl" "$(TargetDir)"</Command>
+      <Command>xcopy /Y "$(SolutionDir)\FusionCrowd\Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
