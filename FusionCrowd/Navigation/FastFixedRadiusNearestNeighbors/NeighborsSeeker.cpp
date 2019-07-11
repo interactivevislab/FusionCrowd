@@ -198,6 +198,7 @@ namespace FusionCrowd
 				}
 			}
 
+			bool enoughNeighbors = false;
 			for (int cellIndexIndex = 0; cellIndexIndex < numberOfNearCells; cellIndexIndex++) {
 				GridCell cell = cells[nearCellsIndeces[cellIndexIndex]];
 				for (int pointIndex = cell.startIndex; pointIndex < cell.startIndex + cell.pointsCount; pointIndex++) {
@@ -208,8 +209,13 @@ namespace FusionCrowd
 						PointNeighbors* neighbors = &pointNeighbors[i];
 						neighbors->neighborsID[neighbors->neighborsCount] = otherPointIndex;
 						neighbors->neighborsCount++;
+						if (neighbors->neighborsCount == NUMBER_OF_NEIGHBORS) {
+							enoughNeighbors = true;
+							break;
+						}
 					}
 				}
+				if (enoughNeighbors) break;
 			}
 
 			delete[] nearCellsIndeces;
