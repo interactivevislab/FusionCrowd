@@ -1,7 +1,10 @@
-/*#pragma once
+#pragma once
+
 #include "Agent.h"
 #include "Config.h"
-#include "IOperationComponent.h"
+#include "Simulator.h"
+#include "Navigation/NavSystem.h"
+#include "OperationComponent/IOperationComponent.h"
 
 #include <map>
 
@@ -9,46 +12,38 @@ namespace FusionCrowd
 {
 	namespace Zanlungo
 	{
-		struct FUSION_CROWD_API AgentParamentrs
+		struct FUSION_CROWD_API ZAgentParamentrs
 		{
 			float _mass;
 
-			AgentParamentrs() :_mass(80)
+			ZAgentParamentrs() :_mass(80.0f)
 			{
 			}
-			AgentParamentrs(float mass) :_mass(mass)
+			ZAgentParamentrs(float mass) :_mass(mass)
 			{
 			}
 		};
 
-		class FUSION_CROWD_API ZanlungoComponent :
-			public IOperationComponent
+		class FUSION_CROWD_API ZanlungoComponent : public IOperationComponent
 		{
 		public:
-			ZanlungoComponent();
-			ZanlungoComponent(float agentScale, float obstScale, float reactionTime, float forceDistance);
+			ZanlungoComponent(Simulator & simulator);
+			ZanlungoComponent(Simulator & simulator, float agentScale, float obstScale, float reactionTime, float forceDistance);
 			~ZanlungoComponent();
 
-			void AddAgent(int idAgent, float mass);
-			void DeleteAgent(int idAgent);
+			std::string GetName();
 
-			void Update(FusionCrowd::Agent* agent, float timeStep);
-			void ComputeNewVelocity(FusionCrowd::Agent* agent);
-			bool ComputeTTI(FusionCrowd::Agent* agent, float& T_i) const;
-			DirectX::SimpleMath::Vector2 AgentForce(FusionCrowd::Agent* agent, const FusionCrowd::Agent* other, float T_i) const;
+			void AddAgent(size_t id);
+			void AddAgent(size_t id, float mass);
+			bool DeleteAgent(size_t id);
 
-			float RightOfWayVel(FusionCrowd::Agent* agent, DirectX::SimpleMath::Vector2& otherVel, const DirectX::SimpleMath::Vector2& otherPrefVel,
-				float otherPriority, DirectX::SimpleMath::Vector2& vel) const;
+			void Update(float timeStep);
 
 		private:
-			std::map<int, AgentParamentrs> _agents;
-			float _agentScale;
-			float _obstScale;
-			float _reactionTime;
-			float _forceDistance;
-			float _timeStep;
+			class ZanlungoComponentImpl;
+
+			std::unique_ptr<ZanlungoComponentImpl> pimpl;
 		};
 	}
 }
 
-*/

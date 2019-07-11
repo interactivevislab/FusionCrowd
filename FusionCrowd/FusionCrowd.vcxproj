@@ -22,6 +22,7 @@
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="SwitchingComponent.h" />
     <ClInclude Include="Util\FCArray.h" />
     <ClInclude Include="Math\Util.h" />
@@ -80,6 +81,7 @@
     <ClCompile Include="OperationComponent\KaramouzasComponent.cpp" />
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
+    <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />
