@@ -12,16 +12,22 @@ namespace FusionCrowd
 		}
 	}
 
+	const std::string NeighborsSeeker::NUMBER_OF_NEIGHBORS_AS_STRING = std::to_string(NUMBER_OF_NEIGHBORS);
 
 	NeighborsSeeker::NeighborsSeeker()
 	{
 		_calculator.Init();
+
 		const D3D_SHADER_MACRO defines[] =
 		{
-			{ "MAX_NEIGHBORS", std::to_string(NUMBER_OF_NEIGHBORS).c_str() },
+			{ "MAX_NEIGHBORS", NUMBER_OF_NEIGHBORS_AS_STRING.c_str() },
 			{ nullptr, nullptr }
 		};
-		_calculator.LoadShader(L"NeighborsSeeker.hlsl", "main", defines);
+
+		bool isShaderLoaded = _calculator.LoadShader(L"NeighborsSeeker.hlsl", "main", defines);
+		if (!isShaderLoaded) {
+			throw std::runtime_error("An error occurred during shader loading.");
+		}
 	}
 
 
