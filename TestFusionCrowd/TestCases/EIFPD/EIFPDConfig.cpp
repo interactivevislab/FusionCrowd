@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "EIFPDConfig.h"
 
-using namespace TestFuctionCrowd;
+using namespace TestFusionCrowd;
 
 EIFPDConfig::EIFPDConfig()
 {

@@ -23,12 +23,16 @@ namespace FusionCrowd
 
 			AddTacticComponent(_navMeshTactic);
 
-			_navSystem = std::make_shared<NavSystem>(_navMeshTactic);
+			_navSystem = NavSystem();
+			_navSystem.SetNavComponent(*_navMeshTactic);
 		}
 
 		bool DoStep()
 		{
 			const float timeStep = 0.1f;
+
+			_currentTime += timeStep;
+
 			for (auto strategy : _strategyComponents)
 			{
 				strategy->Update(timeStep);
@@ -44,7 +48,7 @@ namespace FusionCrowd
 				oper->Update(timeStep);
 			}
 
-			_navSystem->Update(timeStep);
+			_navSystem.Update(timeStep);
 
 			return true;
 		}
@@ -57,7 +61,7 @@ namespace FusionCrowd
 
 		NavSystem & GetNavSystem()
 		{
-			return *_navSystem;
+			return _navSystem;
 		}
 
 	    size_t AddAgent(
@@ -81,7 +85,7 @@ namespace FusionCrowd
 			info.maxSpeed = maxSpeed;
 			info.maxAccel = maxAccel;
 
-			_navSystem->AddAgent(info);
+			_navSystem.AddAgent(info);
 			Agent a(id);
 			a.currentGoal = goal;
 			_agents.push_back(a);
@@ -146,8 +150,8 @@ namespace FusionCrowd
 			_strategyComponents.push_back(strategyComponent);
 		}
 
-		void InitSimulator() { 
-			_navSystem->Init();
+		void InitSimulator() {
+			_navSystem.Init();
 		}
 
 		void UpdateNav(float x, float y)
@@ -160,13 +164,24 @@ namespace FusionCrowd
 			}
 		}
 
+		float GetElapsedTime()
+		{
+			return _currentTime;
+		}
+
+		void SetNavSystem(NavSystem && navSystem)
+		{
+			_navSystem = std::move(navSystem);
+		}
+
 		// TEMPORARY SOLUTION
 		std::shared_ptr<NavMeshComponent> _navMeshTactic;
 	private:
-
 		size_t GetNextId() const { return GetAgentCount(); }
 
-		std::shared_ptr<NavSystem> _navSystem;
+		float _currentTime = 0;
+
+		NavSystem _navSystem;
 
 		std::vector<FusionCrowd::Agent> _agents;
 		std::vector<std::shared_ptr<IStrategyComponent>> _strategyComponents;
@@ -180,6 +195,11 @@ namespace FusionCrowd
 		: pimpl(std::make_unique<SimulatorImpl>())
 	{
 		pimpl->Initialize(*this, navMeshPath);
+	}
+
+	void Simulator::InitSimulator()
+	{
+		pimpl->InitSimulator();
 	}
 
 	bool Simulator::DoStep()
@@ -232,13 +252,18 @@ namespace FusionCrowd
 		pimpl->AddStrategyComponent(component);
 	}
 
-	void Simulator::InitSimulator()
-	{
-		pimpl->InitSimulator();
-	}
-
 	void Simulator::UpdateNav(float x, float y)
 	{
 		pimpl->UpdateNav(x, y);
+	}
+
+	float Simulator::GetElapsedTime()
+	{
+		return pimpl->GetElapsedTime();
+	}
+
+	void Simulator::SetNavSystem(NavSystem && system)
+	{
+		pimpl->SetNavSystem(std::move(system));
 	}
 }

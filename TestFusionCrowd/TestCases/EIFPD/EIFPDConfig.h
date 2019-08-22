@@ -1,6 +1,6 @@
 #pragma once
 
-namespace TestFuctionCrowd
+namespace TestFusionCrowd
 {
 	class EIFPDConfig
 	{

@@ -45,6 +45,9 @@ namespace FusionCrowd
 		void AddTacticComponent(std::shared_ptr<ITacticComponent> tacticComponent);
 		void AddStrategyComponent(std::shared_ptr<IStrategyComponent> strategyComponent);
 
+		void SetNavSystem(NavSystem && system);
+		float GetElapsedTime();
+
 		void InitSimulator();
 
 		void UpdateNav(float x, float y);

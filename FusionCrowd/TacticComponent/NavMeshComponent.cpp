@@ -206,7 +206,7 @@ namespace FusionCrowd
 		return nodeId;
 	}
 
-	std::shared_ptr<NavMeshLocalizer> NavMeshComponent::GetLocalizer()
+	std::shared_ptr<NavMeshLocalizer> NavMeshComponent::GetLocalizer() const
 	{
 		return _localizer;
 	}

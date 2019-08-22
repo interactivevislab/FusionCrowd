@@ -75,7 +75,6 @@ namespace FusionCrowd
 		}
 
 		const std::shared_ptr<NavMesh> getNavMesh() const { return _navMesh; }
-		std::shared_ptr<NavMesh> getNavMesh() { return _navMesh; }
 
 		OccupantSet* _nodeOccupants;
 		unsigned int findNodeBlind(const DirectX::SimpleMath::Vector2& p, float tgtElev = 1e5f) const;

@@ -5,7 +5,7 @@
 
 #include <memory>
 
-namespace TestFuctionCrowd
+namespace TestFusionCrowd
 {
 	// Track recording holder from Edinburgh Informatics Forum Pedestrian Database
 	// http://homepages.inf.ed.ac.uk/rbf/FORUMTRACKING/

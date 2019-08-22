@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-using namespace TestFuctionCrowd;
+using namespace TestFusionCrowd;
 
 
 /*

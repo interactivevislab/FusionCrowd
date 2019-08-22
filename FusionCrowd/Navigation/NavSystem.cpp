@@ -21,14 +21,18 @@ namespace FusionCrowd
 	class NavSystem::NavSystemImpl
 	{
 	public:
-		NavSystemImpl(std::shared_ptr<NavMeshComponent> component)
-			: _navMeshQuery(NavMeshSpatialQuery(component->GetLocalizer()))
+		NavSystemImpl()
 		{
-			_navMesh = component->GetNavMesh();
 			m_recording = OnlineRecording();
 		}
 
 		~NavSystemImpl() { }
+
+		void SetNavComponent(const NavMeshComponent & component)
+		{
+			_navMeshQuery = std::make_shared<NavMeshSpatialQuery>(component.GetLocalizer());
+			_navMesh = component.GetNavMesh();
+		}
 
 		IRecording* GetRecording()
 		{
@@ -100,7 +104,7 @@ namespace FusionCrowd
 			AgentSpatialInfo agent = _agentSpatialInfos.at(agentId);
 
 			std::vector<Obstacle> result;
-			for(size_t obstId : _navMeshQuery.ObstacleQuery(agent.pos))
+			for(size_t obstId : _navMeshQuery->ObstacleQuery(agent.pos))
 			{
 				result.push_back(_navMesh->GetObstacle(obstId));
 			}
@@ -263,7 +267,7 @@ namespace FusionCrowd
 	private:
 		std::map<size_t, AgentSpatialInfo> _agentSpatialInfos;
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
-		NavMeshSpatialQuery _navMeshQuery;
+		std::shared_ptr<NavMeshSpatialQuery> _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
 
 		NeighborsSeeker _neighborsSeeker;
@@ -271,8 +275,7 @@ namespace FusionCrowd
 		float _agentsSensitivityRadius = 1;
 	};
 
-	NavSystem::NavSystem(std::shared_ptr<NavMeshComponent> component) :
-		pimpl(std::make_unique<NavSystemImpl>(component))
+	NavSystem::NavSystem() : pimpl(std::make_unique<NavSystemImpl>())
 	{
 	}
 
@@ -335,5 +338,10 @@ namespace FusionCrowd
 
 	void NavSystem::SetGridCoeff(float coeff) {
 		pimpl->SetGridCoeff(coeff);
+	}
+
+	void NavSystem::SetNavComponent(const NavMeshComponent & component)
+	{
+		pimpl->SetNavComponent(component);
 	}
 }

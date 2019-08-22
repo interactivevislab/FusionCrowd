@@ -18,8 +18,11 @@ namespace FusionCrowd
 	class NavSystem
 	{
 	public:
-		NavSystem(std::shared_ptr<NavMeshComponent> component);
+		NavSystem();
 		~NavSystem();
+
+		NavSystem(const NavSystem &) = delete;
+		NavSystem& operator=(const NavSystem&) = delete;
 
 		NavSystem(NavSystem&&);
 		NavSystem& operator=(NavSystem&&);
@@ -27,6 +30,7 @@ namespace FusionCrowd
 		FUSION_CROWD_API PublicSpatialInfo GetPublicSpatialInfo(size_t agentId);
 		FUSION_CROWD_API int CountNeighbors(size_t agentId) const; //TEST METHOD, MUST BE DELETED
 		FUSION_CROWD_API void SetAgentsSensitivityRadius(float radius);
+		FUSION_CROWD_API void SetNavComponent(const NavMeshComponent & component);
 		FUSION_CROWD_API IRecording* GetRecording();
 
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);

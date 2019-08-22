@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Config.h"
 #include "Simulator.h"
 #include "StrategyComponent/IStrategyComponent.h"
 
 namespace TestFusionCrowd
 {
-	class FUSION_CROWD_API EIFPDStrategy : public FusionCrowd::IStrategyComponent
+	class EIFPDStrategy : public FusionCrowd::IStrategyComponent
 	{
 	public:
 		EIFPDStrategy(FusionCrowd::Simulator & sim);

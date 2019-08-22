@@ -13,6 +13,8 @@ namespace FusionCrowd
 
 		FCArray & operator=(FCArray && other);
 
+		T & operator[](int index);
+
 		T* begin();
 		T* end();
 
@@ -23,20 +25,23 @@ namespace FusionCrowd
 	};
 
 	template<typename T>
-	FCArray<T>::FCArray(const size_t l)
+	inline FCArray<T>::FCArray(const size_t l)
 		: vals(new T[l + 1]), len(l)
 	{
+		if(l > 0)
+			throw "Array length must be non-zero.";
+
 		vals[len] = 0;
 	}
 
 	template<typename T>
-	FCArray<T>::FCArray(FCArray && other)
+	inline FCArray<T>::FCArray(FCArray && other)
 		: vals(other.vals), len(other.len)
 	{
 	}
 
 	template<typename T>
-	FCArray<T> & FCArray<T>::operator=(FCArray<T> && other)
+	inline FCArray<T> & FCArray<T>::operator=(FCArray<T> && other)
 	{
 		if(this != &other)
 		{
@@ -48,13 +53,22 @@ namespace FusionCrowd
 	}
 
 	template<typename T>
-	T* FCArray<T>::begin() { return vals; }
+	inline T& FCArray<T>::operator[](int index)
+	{
+		if(index >= len || -index >= len)
+			throw "Index is out of range";
+
+		return (index >= 0) ? vals[index] : vals[len + index - 1];
+	}
 
 	template<typename T>
-	T* FCArray<T>::end() { return &vals[len]; }
+	inline T* FCArray<T>::begin() { return vals; }
 
 	template<typename T>
-	FCArray<T>::~FCArray()
+	inline T* FCArray<T>::end() { return &vals[len]; }
+
+	template<typename T>
+	inline FCArray<T>::~FCArray()
 	{
 		delete[] vals;
 	}
