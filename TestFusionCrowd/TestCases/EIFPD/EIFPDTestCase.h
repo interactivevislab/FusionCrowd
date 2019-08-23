@@ -15,9 +15,7 @@ namespace TestFusionCrowd
 		EIFPDTestCase(std::string datasetPath);
 
 		void Pre() override;
-
 		void Run(const int& arg) override;
-
 		void Post() override;
 
 		~EIFPDTestCase();

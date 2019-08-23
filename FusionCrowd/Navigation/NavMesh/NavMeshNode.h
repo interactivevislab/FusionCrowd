@@ -56,7 +56,7 @@ namespace FusionCrowd
 			return _poly.containsPoint(point);
 		}
 
-		bool loadFromAscii(std::ifstream& f);
+		bool loadFromAscii(std::istream& f);
 
 		inline float getElevation(const DirectX::SimpleMath::Vector2& p) const
 		{

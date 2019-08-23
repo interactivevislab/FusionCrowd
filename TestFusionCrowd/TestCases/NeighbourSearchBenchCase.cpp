@@ -19,6 +19,7 @@
 #include "OperationComponent/KaramouzasComponent.h"
 #include "OperationComponent/PedVOComponent.h"
 #include "OperationComponent/ORCAComponent.h"
+#include "OperationComponent/ZanlungoComponent.h"
 
 #include "Navigation/NavSystem.h"
 
@@ -86,7 +87,7 @@ namespace TestFusionCrowd
 	{
 		std::string navPath = "Resources/square.nav";
 
-		FusionCrowd::Simulator sim(navPath.c_str());
+		FusionCrowd::Simulator sim;
 		auto kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(sim);
 		auto orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(sim);
 		auto pedvoComponent = std::make_shared<FusionCrowd::PedVO::PedVOComponent>(sim);
@@ -111,7 +112,7 @@ namespace TestFusionCrowd
 		navSystem.SetGridCoeff(coeff);
 		navSystem.SetAgentsSensitivityRadius(searchRadius);
 
-		sim.InitSimulator();
+		sim.InitSimulator(navPath.c_str());
 
 		std::ofstream myfile;
 		myfile.open("way.csv");

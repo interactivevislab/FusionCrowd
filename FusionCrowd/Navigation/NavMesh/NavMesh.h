@@ -43,10 +43,10 @@ namespace FusionCrowd
 	class FUSION_CROWD_API NavMesh
 	{
 	public:
-		NavMesh(const std::string& name);
+		NavMesh();
 		~NavMesh();
 		//Load
-		static std::shared_ptr<NavMesh> Load(const std::string& FileName);
+		static std::shared_ptr<NavMesh> Load(std::istream& f);
 
 		void clear();
 		bool finalize();

@@ -9,11 +9,11 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	NavMesh::NavMesh(const std::string& name) : vCount(0), vertices(0x0),
-	                                            nCount(0), nodes(0x0),
-												eCount(0), edges(0x0),
-												obstCount(0), obstacles(0x0),
-	                                            nodeGroups()
+	NavMesh::NavMesh() : vCount(0), vertices(0x0),
+                        nCount(0), nodes(0x0),
+						eCount(0), edges(0x0),
+						obstCount(0), obstacles(0x0),
+                        nodeGroups()
 	{
 	}
 
@@ -118,16 +118,9 @@ namespace FusionCrowd
 #pragma warning( default : 4311 )
 #endif
 
-	std::shared_ptr<NavMesh> NavMesh::Load(const std::string& FileName)
+	std::shared_ptr<NavMesh> NavMesh::Load(std::istream& f)
 	{
 		// TODO: Change this to support comments.
-		std::ifstream f;
-		f.open(FileName.c_str(), std::ios::in);
-
-		if (!f.is_open())
-		{
-			return NULL;
-		}
 
 		// load vertices
 		unsigned int vertCount;
@@ -136,7 +129,7 @@ namespace FusionCrowd
 			return NULL;
 		}
 
-		std::shared_ptr<NavMesh> mesh = std::make_shared<NavMesh>(FileName);
+		std::shared_ptr<NavMesh> mesh = std::make_shared<NavMesh>();
 		mesh->SetVertexCount(vertCount);
 		float x, y;
 		for (unsigned int v = 0; v < vertCount; ++v)

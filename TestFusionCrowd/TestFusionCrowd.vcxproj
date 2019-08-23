@@ -99,6 +99,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>FusionCrowd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y "$(ProjectDir)\Resources" "$(TargetDir)\Resources\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -154,6 +157,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y "$(ProjectDir)\Resources" "$(TargetDir)\Resources\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="TestCases\EIFPD\EIFPDTestCase.h" />
@@ -164,6 +170,7 @@
     <ClInclude Include="TestCases\NeighbourSearchBenchCase.h" />
     <ClInclude Include="TestCases\ITestCase.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="TestCases\ZanlungoCase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCases\EIFPD\EIFPDTestCase.cpp" />
@@ -178,6 +185,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TestCases\ZanlungoCase.cpp" />
     <ClCompile Include="TestFusionCrowd.cpp" />
   </ItemGroup>
   <ItemGroup>

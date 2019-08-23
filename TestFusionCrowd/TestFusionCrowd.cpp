@@ -4,17 +4,20 @@
 #include <iostream>
 
 #include "TestCases/NeighbourSearchBenchCase.h"
+#include "TestCases/ZanlungoCase.h"
 
 using namespace TestFusionCrowd;
 
 int main()
 {
 	NeighbourSearchBenchCase case1;
-
-	case1.Pre();
+	ZanlungoCase case2;
+	//case1.Pre();
+	case2.Pre();
 
 	std::cout << "Overclocking launch... ";
-	case1.Run(3.0f);
+	//case1.Run(3.0f);
+	case2.Run(3.0f);
 	std::cout << "complete" << std::endl;
 
 	/*for (float coeff = 0.5; coeff < 10; coeff += 0.25) {

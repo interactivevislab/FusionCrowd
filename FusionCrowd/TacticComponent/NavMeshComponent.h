@@ -42,8 +42,8 @@ namespace FusionCrowd
 			NavMeshLocation location;
 		};
 
-		void setPrefVelocity(Agent & agent, AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
-		unsigned int updateLocation(Agent & agent, AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const;
+		void setPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
+		unsigned int updateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const;
 
 		/*
 		PortalPath * getPath(size_t id);

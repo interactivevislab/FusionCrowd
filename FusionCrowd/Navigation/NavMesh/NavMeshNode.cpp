@@ -83,7 +83,7 @@ namespace FusionCrowd
 	//	pointers.  These indices are eventually mapped to REAL pointers.
 #pragma warning( disable : 4312 )
 #endif
-	bool NavMeshNode::loadFromAscii(std::ifstream& f)
+	bool NavMeshNode::loadFromAscii(std::istream& f)
 	{
 		// center
 		float cx, cy;

@@ -18,12 +18,6 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestCases\ITestCase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestCases\NeighbourSearchBenchCase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestCases\EIFPD\EIFPDConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -39,15 +33,21 @@
     <ClInclude Include="TestCases\EIFPD\EIFPDTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestCases\ITestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases\NeighbourSearchBenchCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases\ZanlungoCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestFusionCrowd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestCases\NeighbourSearchBenchCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestCases\EIFPD\EIFPDConfig.cpp">
@@ -63,6 +63,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestCases\EIFPD\EIFPDTestCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases\NeighbourSearchBenchCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases\ZanlungoCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

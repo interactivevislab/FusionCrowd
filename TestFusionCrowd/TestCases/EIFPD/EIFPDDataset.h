@@ -19,6 +19,7 @@ namespace TestFusionCrowd
 		EIFPDStrategy GetStrategy();
 		EIFPDConfig GetConfig();
 		FusionCrowd::NavSystem GetNavSystem();
+		std::string GetNavMeshPath();
 
 		~EIFPDDataset();
 	};

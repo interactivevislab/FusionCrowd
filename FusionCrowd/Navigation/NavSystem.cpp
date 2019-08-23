@@ -279,7 +279,8 @@ namespace FusionCrowd
 	{
 	}
 
-	NavSystem::~NavSystem() = default;
+	NavSystem::~NavSystem() { };
+
 	NavSystem::NavSystem(NavSystem&&) = default;
 	NavSystem& NavSystem::operator=(NavSystem&&) = default;
 

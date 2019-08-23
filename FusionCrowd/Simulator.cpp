@@ -25,6 +25,8 @@ namespace FusionCrowd
 
 			_navSystem = NavSystem();
 			_navSystem.SetNavComponent(*_navMeshTactic);
+
+			_navSystem.Init();
 		}
 
 		bool DoStep()
@@ -54,14 +56,14 @@ namespace FusionCrowd
 		}
 
 		size_t GetAgentCount() const { return _agents.size(); }
-		Agent & GetById(size_t agentId)
-		{
-			return _agents[agentId];
-		}
 
 		NavSystem & GetNavSystem()
 		{
 			return _navSystem;
+		}
+
+		std::shared_ptr<Goal> GetAgentGoal(size_t agentId) {
+			return _agents[agentId].currentGoal;
 		}
 
 	    size_t AddAgent(
@@ -115,6 +117,7 @@ namespace FusionCrowd
 			}
 			return false;
 		}
+
 		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent)
 		{
 			for(std::shared_ptr<IStrategyComponent> c : _strategyComponents)
@@ -151,7 +154,6 @@ namespace FusionCrowd
 		}
 
 		void InitSimulator() {
-			_navSystem.Init();
 		}
 
 		void UpdateNav(float x, float y)
@@ -191,15 +193,13 @@ namespace FusionCrowd
 
 	Simulator::~Simulator() = default;
 
-	Simulator::Simulator(const char* navMeshPath)
-		: pimpl(std::make_unique<SimulatorImpl>())
+	Simulator::Simulator() : pimpl(std::make_unique<SimulatorImpl>())
 	{
-		pimpl->Initialize(*this, navMeshPath);
 	}
 
-	void Simulator::InitSimulator()
+	void Simulator::InitSimulator(const char* navMeshPath)
 	{
-		pimpl->InitSimulator();
+		pimpl->Initialize(*this, navMeshPath);
 	}
 
 	bool Simulator::DoStep()
@@ -217,9 +217,8 @@ namespace FusionCrowd
 		return pimpl->GetNavSystem();
 	}
 
-	Agent & Simulator::GetById(size_t agentId)
-	{
-		return pimpl->GetById(agentId);
+	std::shared_ptr<Goal> Simulator::GetAgentGoal(size_t agentId) {
+		return pimpl->GetAgentGoal(agentId);
 	}
 
 	size_t Simulator::AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, std::shared_ptr<Goal> goal)

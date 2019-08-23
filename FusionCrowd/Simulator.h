@@ -19,13 +19,14 @@ namespace FusionCrowd
 	class FUSION_CROWD_API Simulator
 	{
 	public:
-		Simulator(const char* navMeshPath);
+		Simulator();
 		virtual ~Simulator();
 
 		bool DoStep();
 
 		size_t GetAgentCount() const;
-		Agent & GetById(size_t agentId);
+		std::shared_ptr<Goal> GetAgentGoal(size_t agentId);
+
 		NavSystem & GetNavSystem();
 
 	    size_t AddAgent(
@@ -48,7 +49,7 @@ namespace FusionCrowd
 		void SetNavSystem(NavSystem && system);
 		float GetElapsedTime();
 
-		void InitSimulator();
+		void InitSimulator(const char* navMeshPath);
 
 		void UpdateNav(float x, float y);
 	private:

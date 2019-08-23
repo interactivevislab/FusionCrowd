@@ -5,6 +5,7 @@
 #include "TacticComponent/Path/PortalPath.h"
 
 #include <limits>
+#include <iostream>
 
 using namespace DirectX::SimpleMath;
 
@@ -103,7 +104,16 @@ namespace FusionCrowd
 
 	NavMeshLocalizer::NavMeshLocalizer(const std::string& name, bool usePlanner) : _navMesh(0x0), _trackAll(false), _planner(0x0)
 	{
-		_navMesh = NavMesh::Load(name);
+		std::ifstream f;
+		f.open(name, std::ios::in);
+
+		if (f.is_open())
+		{
+			_navMesh = NavMesh::Load(f);
+		} else
+		{
+			std::cout << "Can't load navmesh from " << name << std::endl;
+		}
 
 		const size_t NODE_COUNT = _navMesh->getNodeCount();
 		_nodeOccupants = new OccupantSet[NODE_COUNT + 1];

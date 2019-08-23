@@ -19,7 +19,7 @@ namespace FusionCrowd
 	{
 	public:
 		NavSystem();
-		~NavSystem();
+		FUSION_CROWD_API virtual ~NavSystem();
 
 		NavSystem(const NavSystem &) = delete;
 		NavSystem& operator=(const NavSystem&) = delete;

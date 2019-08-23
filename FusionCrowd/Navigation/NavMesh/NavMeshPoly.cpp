@@ -117,7 +117,7 @@ namespace FusionCrowd
 		return A * point.x + B * point.y + C;
 	}
 
-	bool NavMeshPoly::loadFromAscii(std::ifstream& f)
+	bool NavMeshPoly::loadFromAscii(std::istream& f)
 	{
 		if (!(f >> vertCount))
 		{
@@ -140,7 +140,7 @@ namespace FusionCrowd
 		return true;
 	}
 
-	bool NavMeshPoly::loadFromBinary(std::ifstream& f)
+	bool NavMeshPoly::loadFromBinary(std::istream& f)
 	{
 		// TODO: This can lead to problems.  If the size of size_t changes,
 		//	but the file spec doesn't, this will read the wrong amount of data.
