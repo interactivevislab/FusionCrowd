@@ -36,8 +36,8 @@
     <ClCompile Include="Navigation\OnlineRecording\OnlineRecording.cpp" />
     <ClCompile Include="Navigation\OnlineRecording\OnlineRecordingSlice.cpp" />
     <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
-    <ClCompile Include="SwitchingComponent.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
+    <ClCompile Include="OperationComponent\SwitchingComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -88,8 +88,8 @@
     <ClInclude Include="OperationComponent\HelbingComponent.h" />
     <ClInclude Include="Util\FCArray.h" />
     <ClInclude Include="Benchmark\MicroscopicMetrics.h" />
-    <ClInclude Include="SwitchingComponent.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
+    <ClInclude Include="OperationComponent\SwitchingComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

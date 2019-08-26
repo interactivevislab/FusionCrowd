@@ -22,7 +22,7 @@ namespace FusionCrowd
 
 	using namespace DirectX::SimpleMath;
 
-	bool NavMeshObstacle::LoadFromAscii(std::ifstream& f, Vector2* vertices)
+	bool NavMeshObstacle::LoadFromAscii(std::istream& f, Vector2* vertices)
 	{
 		size_t v0, v1, node;
 		long int nextObst;

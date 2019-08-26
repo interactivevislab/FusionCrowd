@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fstream>
+#include <istream>
 
 #include "Config.h"
 #include "TacticComponent/Path/PrefVelocity.h"
@@ -67,7 +67,7 @@ namespace FusionCrowd
 		float getDist(const DirectX::SimpleMath::Vector2& pt) const { return sqrtf(getSqDist(pt)); }
 		float getNodeDistance(float minWidth);
 		inline float getNodeDistance() const { return _distance; }
-		bool loadFromAscii(std::ifstream& f, DirectX::SimpleMath::Vector2* vertices);
+		bool loadFromAscii(std::istream& f, DirectX::SimpleMath::Vector2* vertices);
 		bool pointOnLeft(unsigned int id) const;
 		bool pointOnLeft(const NavMeshNode* node) const;
 		friend class NavMesh;

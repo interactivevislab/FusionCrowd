@@ -18,7 +18,8 @@ namespace TestFusionCrowd
 		m_simulator->SetNavSystem(dataset->GetNavSystem());
 		m_simulator->AddStrategyComponent(std::make_shared<EIFPDStrategy>(dataset->GetStrategy()));
 
-		//m_simulator->InitSimulator(dataset->GetConfig().NavMeshPath);
+		std::string path = dataset->GetNavMeshPath();
+		m_simulator->InitSimulator(path.c_str());
 	}
 
 	void EIFPDTestCase::Run(const int & arg)

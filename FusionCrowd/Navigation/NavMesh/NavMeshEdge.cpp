@@ -105,7 +105,7 @@ namespace FusionCrowd
 		}
 	}
 
-	bool NavMeshEdge::loadFromAscii(std::ifstream& f, Vector2* vertices)
+	bool NavMeshEdge::loadFromAscii(std::istream& f, Vector2* vertices)
 	{
 		size_t v0, v1, n0, n1;
 		if (!(f >> v0 >> v1 >> n0 >> n1))

@@ -24,11 +24,26 @@ namespace FusionCrowd
 
 		bool DoStep();
 
-		size_t GetAgentCount() const;
-		std::shared_ptr<Goal> GetAgentGoal(size_t agentId);
+		bool SetOperationComponent(size_t agentId, std::string newOperationComponent);
+		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent);
 
 		NavSystem & GetNavSystem();
 
+		float GetElapsedTime();
+
+		// Need to remove following methods.
+		// 1. Move to agent?
+		size_t GetAgentCount() const;
+		std::shared_ptr<Goal> GetAgentGoal(size_t agentId);
+
+		// 2. Create simulator builder
+		void AddOperComponent(std::shared_ptr<IOperationComponent> operComponent);
+		void AddTacticComponent(std::shared_ptr<ITacticComponent> tacticComponent);
+		void AddStrategyComponent(std::shared_ptr<IStrategyComponent> strategyComponent);
+		void SetNavSystem(NavSystem && system);
+		void InitSimulator(const char* navMeshPath);
+
+		// 3. Should we create agent builder for that?
 	    size_t AddAgent(
 			float maxAngleVel,
 			float radius,
@@ -39,19 +54,9 @@ namespace FusionCrowd
 			std::shared_ptr<Goal> g
 		);
 
-		bool SetOperationComponent(size_t agentId, std::string newOperationComponent);
-		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent);
-
-		void AddOperComponent(std::shared_ptr<IOperationComponent> operComponent);
-		void AddTacticComponent(std::shared_ptr<ITacticComponent> tacticComponent);
-		void AddStrategyComponent(std::shared_ptr<IStrategyComponent> strategyComponent);
-
-		void SetNavSystem(NavSystem && system);
-		float GetElapsedTime();
-
-		void InitSimulator(const char* navMeshPath);
-
+		// 4. WTF is that?
 		void UpdateNav(float x, float y);
+
 	private:
 		class SimulatorImpl;
 

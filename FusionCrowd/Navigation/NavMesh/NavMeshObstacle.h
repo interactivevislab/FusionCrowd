@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fstream>
+#include <istream>
 
 #include "Config.h"
 #include "Navigation/Obstacle.h"
@@ -21,7 +21,7 @@ namespace FusionCrowd
 		{
 		}
 
-		bool LoadFromAscii(std::ifstream& f, DirectX::SimpleMath::Vector2* vertices);
+		bool LoadFromAscii(std::istream& f, DirectX::SimpleMath::Vector2* vertices);
 		inline const NavMeshNode* getNode() const { return _node; }
 
 		~NavMeshObstacle();

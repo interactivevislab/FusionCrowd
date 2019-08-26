@@ -28,6 +28,10 @@ FusionCrowd::NavSystem EIFPDDataset::GetNavSystem()
 	throw std::logic_error("Function not yet implemented");
 }
 
+std::string EIFPDDataset::GetNavMeshPath()
+{
+	throw std::logic_error("Function not yet implemented");
+}
 
 EIFPDDataset::~EIFPDDataset()
 {

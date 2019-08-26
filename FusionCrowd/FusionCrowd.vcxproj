@@ -23,7 +23,7 @@
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
-    <ClInclude Include="SwitchingComponent.h" />
+    <ClInclude Include="OperationComponent\SwitchingComponent.h" />
     <ClInclude Include="Util\FCArray.h" />
     <ClInclude Include="Math\Util.h" />
     <ClInclude Include="Benchmark\MicroscopicMetrics.h" />
@@ -88,7 +88,7 @@
     <ClCompile Include="Math\Line.cpp" />
     <ClCompile Include="Math\Geometry2D.cpp" />
     <ClCompile Include="Math\geomQuery.cpp" />
-    <ClCompile Include="SwitchingComponent.cpp" />
+    <ClCompile Include="OperationComponent\SwitchingComponent.cpp" />
     <ClCompile Include="TacticComponent\Path\MinHeap.cpp" />
     <ClCompile Include="TacticComponent\Path\Funnel.cpp" />
     <ClCompile Include="TacticComponent\Path\PathPlanner.cpp" />
