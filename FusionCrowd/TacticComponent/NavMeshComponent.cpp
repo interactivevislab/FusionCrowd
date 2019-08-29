@@ -18,7 +18,7 @@ namespace FusionCrowd
 	void NavMeshComponent::AddAgent(size_t id)
 	{
 		auto agentGoal = _simulator.GetAgentGoal(id);
-		AgentSpatialInfo & agentInfo = _simulator.GetNavSystem().GetSpatialInfo(id);
+		AgentSpatialInfo & agentInfo = _simulator.GetNavSystem()->GetSpatialInfo(id);
 
 		unsigned int from = _localizer->getNodeId(agentInfo.pos);
 		unsigned int to = _localizer->getNodeId(agentGoal->getCentroid());
@@ -50,7 +50,7 @@ namespace FusionCrowd
 		for (auto agtStruct : _agents)
 		{
 			size_t id = agtStruct.id;
-			AgentSpatialInfo & info = _simulator.GetNavSystem().GetSpatialInfo(id);
+			AgentSpatialInfo & info = _simulator.GetNavSystem()->GetSpatialInfo(id);
 
 			updateLocation(info, agtStruct, false);
 			setPrefVelocity(info, agtStruct);

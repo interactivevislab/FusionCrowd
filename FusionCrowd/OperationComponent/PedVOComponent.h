@@ -64,8 +64,8 @@ namespace FusionCrowd
 		class FUSION_CROWD_API PedVOComponent : public IOperationComponent
 		{
 		public:
-			PedVOComponent(Simulator & simulator);
-			PedVOComponent(Simulator & simulator, float cosObstTurn, float sinObstTurn);
+			PedVOComponent(std::shared_ptr<NavSystem> navSystem);
+			PedVOComponent(std::shared_ptr<NavSystem> navSystem, float cosObstTurn, float sinObstTurn);
 			~PedVOComponent();
 
 			std::string GetName() { return "pedvo"; };
@@ -94,7 +94,7 @@ namespace FusionCrowd
 				size_t beginLine, float radius, float turnBias, DirectX::SimpleMath::Vector2& result);
 
 		private:
-			Simulator & _simulator;
+			std::shared_ptr<NavSystem> _navSystem;
 
 			std::map<size_t, AgentParamentrs> _agents;
 			std::vector<FusionCrowd::Math::Line> _orcaLines;

@@ -15,11 +15,12 @@ namespace FusionCrowd
 	class Obstacle;
 	struct AgentSpatialInfo;
 
-	class NavSystem
+	class FUSION_CROWD_API NavSystem
 	{
 	public:
 		NavSystem();
-		FUSION_CROWD_API virtual ~NavSystem();
+
+		virtual ~NavSystem();
 
 		NavSystem(const NavSystem &) = delete;
 		NavSystem& operator=(const NavSystem&) = delete;
@@ -27,12 +28,21 @@ namespace FusionCrowd
 		NavSystem(NavSystem&&);
 		NavSystem& operator=(NavSystem&&);
 
-		FUSION_CROWD_API PublicSpatialInfo GetPublicSpatialInfo(size_t agentId);
-		FUSION_CROWD_API int CountNeighbors(size_t agentId) const; //TEST METHOD, MUST BE DELETED
-		FUSION_CROWD_API void SetAgentsSensitivityRadius(float radius);
-		FUSION_CROWD_API void SetNavComponent(const NavMeshComponent & component);
-		FUSION_CROWD_API IRecording* GetRecording();
+		// Should it be a constructor parameter?
+		void SetNavComponent(const NavMeshComponent & component);
+		// Why do we need it?
+		void Init();
 
+		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId);
+		int CountNeighbors(size_t agentId) const; //TEST METHOD, MUST BE DELETED
+
+		// Those looks very specific, are we sure they should be in public api?
+		void SetAgentsSensitivityRadius(float radius);
+		void SetGridCoeff(float coeff);
+
+		IRecording* GetRecording();
+
+		// Very confusing methods pair
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
 		void AddAgent(AgentSpatialInfo spatialInfo);
 
@@ -40,11 +50,8 @@ namespace FusionCrowd
 
 		const std::vector<AgentSpatialInfo> & GetNeighbours(size_t agentId) const;
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId) const;
-		FUSION_CROWD_API void SetGridCoeff(float coeff);
 
-		void Init();
 		void Update(float timeStep);
-
 	private:
 		class NavSystemImpl;
 

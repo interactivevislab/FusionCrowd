@@ -14,8 +14,8 @@ namespace FusionCrowd
 		class FUSION_CROWD_API ORCAComponent : public IOperationComponent
 		{
 		public:
-			ORCAComponent(Simulator & simulator);
-			ORCAComponent(Simulator & simulator, float timeHorizon, float timeHorizonObst);
+			ORCAComponent(std::shared_ptr<NavSystem> navSystem);
+			ORCAComponent(std::shared_ptr<NavSystem> navSystem, float timeHorizon, float timeHorizonObst);
 			std::string GetName() { return "orca"; };
 
 			void AddAgent(size_t id);

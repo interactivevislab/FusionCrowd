@@ -37,25 +37,6 @@ namespace TestFusionCrowd
 		return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
 	}
 
-	void NeighbourSearchBenchCase::SwitchOperationComponent(FusionCrowd::Simulator & simulator, std::string componentName)
-	{
-		for (int i = 0; i < agentsCount; i++) {
-			simulator.SetOperationComponent(i, componentName);
-		}
-	}
-
-	void NeighbourSearchBenchCase::AutoSelectOperationComponent(FusionCrowd::Simulator & simulator, int neighborsCount, std::string component1Name, std::string component2Name) {
-		for (int i = 0; i < agentsCount; i++) {
-			if (simulator.GetNavSystem().CountNeighbors(i) < neighborsCount) {
-				simulator.SetOperationComponent(i, component1Name);
-				control1++;
-			} else {
-				simulator.SetOperationComponent(i, component2Name);
-				control2++;
-			}
-		}
-	}
-
 	NeighbourSearchBenchCase::NeighbourSearchBenchCase()
 	{
 		for(size_t i = 0; i < 4; i++)
@@ -87,14 +68,19 @@ namespace TestFusionCrowd
 	{
 		std::string navPath = "Resources/square.nav";
 
-		FusionCrowd::Simulator sim;
-		auto kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(sim);
-		auto orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(sim);
-		auto pedvoComponent = std::make_shared<FusionCrowd::PedVO::PedVOComponent>(sim);
+		auto navSystem = std::make_shared<NavSystem>();
+		navSystem->SetGridCoeff(coeff);
+		navSystem->SetAgentsSensitivityRadius(searchRadius);
 
-		sim.AddOperComponent(kComponent);
-		sim.AddOperComponent(orcaComponent);
-		sim.AddOperComponent(pedvoComponent);
+		auto kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(navSystem);
+		auto orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(navSystem);
+		auto pedvoComponent = std::make_shared<FusionCrowd::PedVO::PedVOComponent>(navSystem);
+
+		FusionCrowd::Simulator & sim = FusionCrowd::Simulator{}
+			.AddOpModel(kComponent)
+			.AddOpModel(orcaComponent)
+			.AddOpModel(pedvoComponent)
+			.UseNavSystem(navSystem);
 
 		for (int i = 0; i < totalAgents; i++) {
 			auto goal = std::make_shared<FusionCrowd::PointGoal>(
@@ -102,25 +88,16 @@ namespace TestFusionCrowd
 				RandFloat(0, worldSide)
 			);
 			sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(0, worldSide), RandFloat(0, worldSide)), goal);
+			sim.SetOperationComponent(i, kComponent->GetName());
 		}
 
-		SwitchOperationComponent(sim, kComponent->GetName());
-
-		//---
-
-		auto & navSystem = sim.GetNavSystem();
-		navSystem.SetGridCoeff(coeff);
-		navSystem.SetAgentsSensitivityRadius(searchRadius);
-
-		sim.InitSimulator(navPath.c_str());
+		//sim.InitSimulator(navPath.c_str());
 
 		std::ofstream myfile;
 		myfile.open("way.csv");
 
-		for (int i = 0; i < stepsTotal; i++) {
-
-			AutoSelectOperationComponent(sim, 4, kComponent->GetName(), orcaComponent->GetName());
-
+		for (int i = 0; i < stepsTotal; i++)
+		{
 			high_resolution_clock::time_point t1 = high_resolution_clock::now();
 			if (!sim.DoStep()) break;
 			high_resolution_clock::time_point t2 = high_resolution_clock::now();
@@ -129,7 +106,7 @@ namespace TestFusionCrowd
 
 		myfile.close();
 
-		recording = navSystem.GetRecording();
+		recording = navSystem->GetRecording();
 	}
 
 	void NeighbourSearchBenchCase::Post()
@@ -150,8 +127,6 @@ namespace TestFusionCrowd
 			<< " " << measures[stepsTotal - 1]
 			<< 1000000 / measures[stepsTotal / 2]
 			<< std::endl;
-
-		std::cout << control1 << ' ' << control2 << std::endl;
 
 		myfile.close();
 

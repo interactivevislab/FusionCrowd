@@ -8,6 +8,7 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
+#pragma region Simulator
 	class Simulator::SimulatorImpl
 	{
 	public:
@@ -17,6 +18,7 @@ namespace FusionCrowd
 
 		~SimulatorImpl() = default;
 
+		/*
 		void Initialize(Simulator & simulator, const char* navMeshPath)
 		{
 			_navMeshTactic = std::make_shared<NavMeshComponent>(simulator, navMeshPath);
@@ -28,6 +30,7 @@ namespace FusionCrowd
 
 			_navSystem.Init();
 		}
+		*/
 
 		bool DoStep()
 		{
@@ -50,14 +53,14 @@ namespace FusionCrowd
 				oper->Update(timeStep);
 			}
 
-			_navSystem.Update(timeStep);
+			_navSystem->Update(timeStep);
 
 			return true;
 		}
 
 		size_t GetAgentCount() const { return _agents.size(); }
 
-		NavSystem & GetNavSystem()
+		std::shared_ptr<NavSystem> GetNavSystem()
 		{
 			return _navSystem;
 		}
@@ -87,7 +90,7 @@ namespace FusionCrowd
 			info.maxSpeed = maxSpeed;
 			info.maxAccel = maxAccel;
 
-			_navSystem.AddAgent(info);
+			_navSystem->AddAgent(info);
 			Agent a(id);
 			a.currentGoal = goal;
 			_agents.push_back(a);
@@ -100,7 +103,7 @@ namespace FusionCrowd
 
 		bool SetOperationComponent(size_t agentId, std::string newOperationComponent)
 		{
-			for(std::shared_ptr<IOperationComponent> c : _operComponents)
+			for(auto& c : _operComponents)
 			{
 				if(c->GetName() == newOperationComponent) {
 					std::shared_ptr<IOperationComponent> old = _agents[agentId].opComponent;
@@ -120,10 +123,10 @@ namespace FusionCrowd
 
 		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent)
 		{
-			for(std::shared_ptr<IStrategyComponent> c : _strategyComponents)
+			for(auto& c : _strategyComponents)
 			{
 				if(c->GetName() == newStrategyComponent) {
-					std::shared_ptr<IStrategyComponent> old = _agents[agentId].stratComponent;
+					std::shared_ptr<IStrategyComponent>& old = _agents[agentId].stratComponent;
 					if(old != nullptr)
 					{
 						old->RemoveAgent(agentId);
@@ -171,9 +174,9 @@ namespace FusionCrowd
 			return _currentTime;
 		}
 
-		void SetNavSystem(NavSystem && navSystem)
+		void SetNavSystem(std::shared_ptr<NavSystem> navSystem)
 		{
-			_navSystem = std::move(navSystem);
+			_navSystem = navSystem;
 		}
 
 		// TEMPORARY SOLUTION
@@ -183,7 +186,7 @@ namespace FusionCrowd
 
 		float _currentTime = 0;
 
-		NavSystem _navSystem;
+		std::shared_ptr<NavSystem> _navSystem;
 
 		std::vector<FusionCrowd::Agent> _agents;
 		std::vector<std::shared_ptr<IStrategyComponent>> _strategyComponents;
@@ -191,15 +194,30 @@ namespace FusionCrowd
 		std::vector<std::shared_ptr<IOperationComponent>> _operComponents;
 	};
 
-	Simulator::~Simulator() = default;
+	Simulator::~Simulator() { };
 
 	Simulator::Simulator() : pimpl(std::make_unique<SimulatorImpl>())
 	{
 	}
 
-	void Simulator::InitSimulator(const char* navMeshPath)
+	Simulator::Simulator(Simulator && other)
 	{
-		pimpl->Initialize(*this, navMeshPath);
+		if(this == &other)
+			return;
+
+		this->pimpl = std::move(other.pimpl);
+	}
+
+	Simulator& Simulator::operator=(Simulator && other)
+	{
+		if(this == &other)
+		{
+			return *this;
+		}
+
+		this->pimpl = std::move(other.pimpl);
+
+		return *this;
 	}
 
 	bool Simulator::DoStep()
@@ -212,7 +230,7 @@ namespace FusionCrowd
 		return pimpl->GetAgentCount();
 	}
 
-	NavSystem & Simulator::GetNavSystem()
+	std::shared_ptr<NavSystem> Simulator::GetNavSystem()
 	{
 		return pimpl->GetNavSystem();
 	}
@@ -236,19 +254,22 @@ namespace FusionCrowd
 		return pimpl->SetStrategyComponent(agentId, newStrategyComponent);
 	}
 
-	void Simulator::AddOperComponent(std::shared_ptr<IOperationComponent> component)
+	Simulator & Simulator::AddOpModel(std::shared_ptr<IOperationComponent> component)
 	{
 		pimpl->AddOperComponent(component);
+		return *this;
 	}
 
-	void Simulator::AddTacticComponent(std::shared_ptr<ITacticComponent> component)
+	Simulator & Simulator::AddTactic(std::shared_ptr<ITacticComponent> component)
 	{
 		pimpl->AddTacticComponent(component);
+		return *this;
 	}
 
-	void Simulator::AddStrategyComponent(std::shared_ptr<IStrategyComponent> component)
+	Simulator & Simulator::AddStrategy(std::shared_ptr<IStrategyComponent> component)
 	{
 		pimpl->AddStrategyComponent(component);
+		return *this;
 	}
 
 	void Simulator::UpdateNav(float x, float y)
@@ -261,8 +282,10 @@ namespace FusionCrowd
 		return pimpl->GetElapsedTime();
 	}
 
-	void Simulator::SetNavSystem(NavSystem && system)
+	Simulator & Simulator::UseNavSystem(std::shared_ptr<NavSystem> system)
 	{
-		pimpl->SetNavSystem(std::move(system));
+		pimpl->SetNavSystem(system);
+		return *this;
 	}
+#pragma endregion
 }

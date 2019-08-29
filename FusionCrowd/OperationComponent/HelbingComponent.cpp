@@ -18,12 +18,12 @@ namespace FusionCrowd
 {
 	namespace Helbing
 	{
-		HelbingComponent::HelbingComponent(Simulator & simulator): _simulator(simulator), _navSystem(simulator.GetNavSystem()), _agentScale(2000.f), _obstScale(2000.f), _reactionTime(0.5f), _bodyForse(1.2e5f), _friction(2.4e5f), _forceDistance(0.08f)
+		HelbingComponent::HelbingComponent(std::shared_ptr<NavSystem> navSystem): _navSystem(navSystem), _agentScale(2000.f), _obstScale(2000.f), _reactionTime(0.5f), _bodyForse(1.2e5f), _friction(2.4e5f), _forceDistance(0.08f)
 		{
 		}
 
-		HelbingComponent::HelbingComponent(Simulator & simulator, float AGENT_SCALE, float OBST_SCALE, float REACTION_TIME, float BODY_FORCE, float FRICTION, float FORCE_DISTANCE):
-			_simulator(simulator), _navSystem(simulator.GetNavSystem()), _agentScale(AGENT_SCALE), _obstScale(OBST_SCALE), _reactionTime(REACTION_TIME), _bodyForse(BODY_FORCE), _friction(FRICTION), _forceDistance(FORCE_DISTANCE)
+		HelbingComponent::HelbingComponent(std::shared_ptr<NavSystem> navSystem, float AGENT_SCALE, float OBST_SCALE, float REACTION_TIME, float BODY_FORCE, float FRICTION, float FORCE_DISTANCE):
+			_navSystem(navSystem), _agentScale(AGENT_SCALE), _obstScale(OBST_SCALE), _reactionTime(REACTION_TIME), _bodyForse(BODY_FORCE), _friction(FRICTION), _forceDistance(FORCE_DISTANCE)
 		{
 		}
 
@@ -36,7 +36,7 @@ namespace FusionCrowd
 			for (auto p : _agents)
 			{
 				auto id = p.first;
-				AgentSpatialInfo & agent = _simulator.GetNavSystem().GetSpatialInfo(id);
+				AgentSpatialInfo & agent = _navSystem->GetSpatialInfo(id);
 				ComputeNewVelocity(agent, timeStep);
 			}
 		}
@@ -44,7 +44,7 @@ namespace FusionCrowd
 		void HelbingComponent::ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep)
 		{
 			Vector2 force(DrivingForce(&agent));
-			std::vector<AgentSpatialInfo> nearAgents = _navSystem.GetNeighbours(agent.id);
+			std::vector<AgentSpatialInfo> nearAgents = _navSystem->GetNeighbours(agent.id);
 			for (size_t i = 0; i < nearAgents.size(); ++i)
 			{
 				//const AgentSpatialInfo* otherBase = nearAgents[i];
@@ -53,7 +53,7 @@ namespace FusionCrowd
 				force += AgentForce(&agent, &other);
 			}
 
-			for (auto obst : _navSystem.GetClosestObstacles(agent.id)) {
+			for (auto obst : _navSystem->GetClosestObstacles(agent.id)) {
 				force += ObstacleForce(&agent, &obst);
 			}
 			Vector2 acc = force / _agents[agent.id]._mass;
@@ -146,7 +146,7 @@ namespace FusionCrowd
 
 		Vector2 HelbingComponent::DrivingForce(AgentSpatialInfo* agent)
 		{
-			auto & agentInfo = _simulator.GetNavSystem().GetSpatialInfo(agent->id);
+			auto & agentInfo = _navSystem->GetSpatialInfo(agent->id);
 			return (agentInfo.prefVelocity.getPreferredVel() - agent->vel) * (_agents[agent->id]._mass / _reactionTime);
 		}
 

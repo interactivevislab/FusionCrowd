@@ -21,12 +21,12 @@ namespace FusionCrowd
 		class ORCAComponent::ORCAComponentImpl
 		{
 		public:
-			ORCAComponentImpl(Simulator & simulator)
-				: _simulator(simulator), _timeHorizon(2.5f), _timeHorizonObst(0.15f)
+			ORCAComponentImpl(std::shared_ptr<NavSystem> navSystem)
+				: _navSystem(navSystem), _timeHorizon(2.5f), _timeHorizonObst(0.15f)
 			{
 			}
-			ORCAComponentImpl(Simulator & simulator, float timeHorizon, float timeHorizonObst)
-				: _simulator(simulator), _timeHorizon(timeHorizon), _timeHorizonObst(timeHorizonObst)
+			ORCAComponentImpl(std::shared_ptr<NavSystem> navSystem, float timeHorizon, float timeHorizonObst)
+				: _navSystem(navSystem), _timeHorizon(timeHorizon), _timeHorizonObst(timeHorizonObst)
 			{
 			}
 
@@ -57,7 +57,7 @@ namespace FusionCrowd
 			void ComputeNewVelocity(size_t agentId)
 			{
 				const size_t numObstLines = ComputeORCALines(agentId);
-				auto & agentInfo = _simulator.GetNavSystem().GetSpatialInfo(agentId);
+				auto & agentInfo = _navSystem->GetSpatialInfo(agentId);
 
 				Vector2 velPref(agentInfo.prefVelocity.getPreferredVel());
 
@@ -71,15 +71,14 @@ namespace FusionCrowd
 			size_t ComputeORCALines(size_t agentId)
 			{
 				_orcaLines.clear();
-				auto & nav = _simulator.GetNavSystem();
 
-				auto & agentInfo = nav.GetSpatialInfo(agentId);
+				auto & agentInfo = _navSystem->GetSpatialInfo(agentId);
 
 				const float invTimeHorizonObst = 1.0f / _timeHorizonObst;
 
 				/* Create obstacle ORCA lines. */
 
-				for (Obstacle & obst : nav.GetClosestObstacles(agentId)) {
+				for (Obstacle & obst : _navSystem->GetClosestObstacles(agentId)) {
 					const Vector2 P0 = obst.getP0();
 					const Vector2 P1 = obst.getP1();
 					const bool agtOnRight = FusionCrowd::MathUtil::leftOf(P0, P1, agentInfo.pos) < 0.f;
@@ -91,7 +90,7 @@ namespace FusionCrowd
 				const float invTimeHorizon = 1.0f / _timeHorizon;
 
 				/* Create agent ORCA lines. */
-				for (auto & other : nav.GetNeighbours(agentId)) {
+				for (auto & other : _navSystem->GetNeighbours(agentId)) {
 					const Vector2 relativePosition = other.pos - agentInfo.pos;
 					const Vector2 relativeVelocity = agentInfo.vel - other.vel;
 
@@ -167,7 +166,7 @@ namespace FusionCrowd
 
 			void ObstacleLine(Obstacle & obst, const float invTau, bool flip, size_t agentId)
 			{
-				auto & agentInfo = _simulator.GetNavSystem().GetSpatialInfo(agentId);
+				auto & agentInfo = _navSystem->GetSpatialInfo(agentId);
 				const float LENGTH = obst.length();
 				const Vector2 P0 = flip ? obst.getP1() : obst.getP0();
 				const Vector2 P1 = flip ? obst.getP0() : obst.getP1();
@@ -581,19 +580,19 @@ namespace FusionCrowd
 			float _timeHorizon;
 			float _timeHorizonObst;
 
-			Simulator & _simulator;
+			std::shared_ptr<NavSystem> _navSystem;
 
 			std::vector<FusionCrowd::Math::Line> _orcaLines;
 			std::set<size_t> _agents;
 		};
 
-		ORCAComponent::ORCAComponent(Simulator & simulator)
-			: pimpl(std::make_unique<ORCAComponentImpl>(simulator, 2.5f, 0.15f))
+		ORCAComponent::ORCAComponent(std::shared_ptr<NavSystem> navSystem)
+			: pimpl(std::make_unique<ORCAComponentImpl>(navSystem, 2.5f, 0.15f))
 		{
 		}
 
-		ORCAComponent::ORCAComponent(Simulator & simulator, float timeHorizon, float timeHorizonObst)
-			: pimpl(std::make_unique<ORCAComponentImpl>(simulator, timeHorizon, timeHorizonObst))
+		ORCAComponent::ORCAComponent(std::shared_ptr<NavSystem> navSystem, float timeHorizon, float timeHorizonObst)
+			: pimpl(std::make_unique<ORCAComponentImpl>(navSystem, timeHorizon, timeHorizonObst))
 		{
 		}
 

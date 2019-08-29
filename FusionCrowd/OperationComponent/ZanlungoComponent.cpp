@@ -15,13 +15,13 @@ namespace FusionCrowd
 		class ZanlungoComponent::ZanlungoComponentImpl
 		{
 		public:
-			ZanlungoComponentImpl(Simulator & simulator)
-				: _simulator(simulator), _navSystem(simulator.GetNavSystem()), _agentScale(2000), _obstScale(2000), _reactionTime(0.5f), _forceDistance(0.08f)
+			ZanlungoComponentImpl(std::shared_ptr<NavSystem> navSystem)
+				: _navSystem(navSystem), _agentScale(2000), _obstScale(2000), _reactionTime(0.5f), _forceDistance(0.08f)
 			{
 			}
 
-			ZanlungoComponentImpl(Simulator & simulator, float agentScale, float obstScale, float reactionTime, float forceDistance)
-				: _simulator(simulator), _navSystem(simulator.GetNavSystem()), _agentScale(agentScale), _obstScale(obstScale), _reactionTime(reactionTime), _forceDistance(forceDistance)
+			ZanlungoComponentImpl(std::shared_ptr<NavSystem> navSystem, float agentScale, float obstScale, float reactionTime, float forceDistance)
+				: _navSystem(navSystem), _agentScale(agentScale), _obstScale(obstScale), _reactionTime(reactionTime), _forceDistance(forceDistance)
 			{
 			}
 
@@ -51,7 +51,7 @@ namespace FusionCrowd
 				for (auto p : _agents)
 				{
 					auto id = p.first;
-					AgentSpatialInfo & agent = _simulator.GetNavSystem().GetSpatialInfo(id);
+					AgentSpatialInfo & agent = _navSystem->GetSpatialInfo(id);
 					ComputeNewVelocity(agent, timeStep);
 				}
 			}
@@ -69,7 +69,7 @@ namespace FusionCrowd
 					const float SPEED = agent.vel.Length();
 					const float B = _forceDistance;
 
-					std::vector<AgentSpatialInfo> nearAgents = _navSystem.GetNeighbours(agent.id);
+					std::vector<AgentSpatialInfo> nearAgents = _navSystem->GetNeighbours(agent.id);
 					// const float MAG = Simulator::AGENT_SCALE * SPEED / T_i;
 					for (size_t j = 0; j < nearAgents.size(); ++j) {
 						// 2. Use T_i to compute the direction
@@ -80,7 +80,7 @@ namespace FusionCrowd
 					// obstacles
 					Vector2 futurePos = agent.pos + agent.vel * T_i;
 					const float OBST_MAG = _obstScale * SPEED / T_i;
-					for (auto obst : _navSystem.GetClosestObstacles(agent.id)) {
+					for (auto obst : _navSystem->GetClosestObstacles(agent.id)) {
 						Vector2 nearPt;  // set by call to distanceSqToPoint
 						float d2;        // set by call to distanceSqToPoint
 						if (obst.distanceSqToPoint(futurePos, nearPt, d2) == Obstacle::LAST)
@@ -106,7 +106,7 @@ namespace FusionCrowd
 #ifdef COLLIDE_PRIORITY
 				float t_collision = T_i;
 #endif
-				std::vector<AgentSpatialInfo> nearAgents = _navSystem.GetNeighbours(agent->id);
+				std::vector<AgentSpatialInfo> nearAgents = _navSystem->GetNeighbours(agent->id);
 				for (size_t j = 0; j < nearAgents.size(); ++j) {
 					AgentSpatialInfo other = nearAgents[j];
 
@@ -179,7 +179,7 @@ namespace FusionCrowd
 #endif
 				}
 				// Compute time to interaction for obstacles
-				for (auto obst : _navSystem.GetClosestObstacles(agent->id)) {
+				for (auto obst : _navSystem->GetClosestObstacles(agent->id)) {
 					// TODO: Interaction with obstacles is, currently, defined strictly
 					//	by COLLISIONS.  Only if I'm going to collide with an obstacle is
 					//	a force applied.  This may be too naive.
@@ -292,12 +292,11 @@ namespace FusionCrowd
 
 			Vector2 DrivingForce(AgentSpatialInfo* agent)
 			{
-				auto & agentInfo = _simulator.GetNavSystem().GetSpatialInfo(agent->id);
+				auto & agentInfo = _navSystem->GetSpatialInfo(agent->id);
 				return (agentInfo.prefVelocity.getPreferredVel() - agent->vel) * (_agents[agent->id]._mass / _reactionTime);
 			}
 
-			Simulator & _simulator;
-			NavSystem & _navSystem;
+			std::shared_ptr<NavSystem> _navSystem;
 			std::map<int, ZAgentParamentrs> _agents;
 			float _agentScale;
 			float _obstScale;
@@ -305,13 +304,13 @@ namespace FusionCrowd
 			float _forceDistance;
 		};
 
-		ZanlungoComponent::ZanlungoComponent(Simulator & simulator)
-			: pimpl(std::make_unique<ZanlungoComponentImpl>(simulator))
+		ZanlungoComponent::ZanlungoComponent(std::shared_ptr<NavSystem> navSystem)
+			: pimpl(std::make_unique<ZanlungoComponentImpl>(navSystem))
 		{
 		}
 
-		ZanlungoComponent::ZanlungoComponent(Simulator & simulator, float agentScale, float obstScale, float reactionTime, float forceDistance)
-			: pimpl(std::make_unique<ZanlungoComponentImpl>(simulator, agentScale, obstScale, reactionTime, forceDistance))
+		ZanlungoComponent::ZanlungoComponent(std::shared_ptr<NavSystem> navSystem, float agentScale, float obstScale, float reactionTime, float forceDistance)
+			: pimpl(std::make_unique<ZanlungoComponentImpl>(navSystem, agentScale, obstScale, reactionTime, forceDistance))
 		{
 		}
 

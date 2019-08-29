@@ -27,8 +27,8 @@ namespace FusionCrowd
 		class FUSION_CROWD_API HelbingComponent: public IOperationComponent
 		{
 		public:
-			HelbingComponent(Simulator & simulator);
-			HelbingComponent(Simulator & simulator, float AGENT_SCALE, float OBST_SCALE, float REACTION_TIME, float BODY_FORCE, float FRICTION, float FORCE_DISTANCE);
+			HelbingComponent(std::shared_ptr<NavSystem> navSystem);
+			HelbingComponent(std::shared_ptr<NavSystem> navSystem, float AGENT_SCALE, float OBST_SCALE, float REACTION_TIME, float BODY_FORCE, float FRICTION, float FORCE_DISTANCE);
 			~HelbingComponent();
 
 
@@ -47,8 +47,7 @@ namespace FusionCrowd
 			DirectX::SimpleMath::Vector2 DrivingForce(AgentSpatialInfo* agent);
 
 
-			Simulator & _simulator;
-			NavSystem & _navSystem;
+			std::shared_ptr<NavSystem> _navSystem;
 			std::map<int, AgentParamentrs> _agents;
 
 			float _agentScale;

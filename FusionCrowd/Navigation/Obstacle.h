@@ -5,6 +5,7 @@
 
 namespace FusionCrowd
 {
+	// public API here is a mess
 	class FUSION_CROWD_API Obstacle
 	{
 	public:

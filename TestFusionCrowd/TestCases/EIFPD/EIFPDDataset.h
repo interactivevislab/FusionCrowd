@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include "Navigation/NavSystem.h"
 
@@ -16,7 +17,7 @@ namespace TestFusionCrowd
 		EIFPDDataset(std::string path);
 
 		EIFPDRecording GetRecording();
-		EIFPDStrategy GetStrategy();
+		std::shared_ptr<EIFPDStrategy> EIFPDDataset::GetStrategy();
 		EIFPDConfig GetConfig();
 		FusionCrowd::NavSystem GetNavSystem();
 		std::string GetNavMeshPath();

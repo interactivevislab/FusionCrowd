@@ -20,14 +20,22 @@ namespace FusionCrowd
 	{
 	public:
 		Simulator();
-		virtual ~Simulator();
+		~Simulator();
+
+		Simulator & AddOpModel(std::shared_ptr<IOperationComponent> operComponent);
+		Simulator & AddTactic(std::shared_ptr<ITacticComponent> tacticComponent);
+		Simulator & AddStrategy(std::shared_ptr<IStrategyComponent> strategyComponent);
+		Simulator & UseNavSystem(std::shared_ptr<NavSystem> system);
+
+		Simulator(Simulator &&);
+		Simulator& operator=(Simulator &&);
 
 		bool DoStep();
 
 		bool SetOperationComponent(size_t agentId, std::string newOperationComponent);
 		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent);
 
-		NavSystem & GetNavSystem();
+		std::shared_ptr<NavSystem> GetNavSystem();
 
 		float GetElapsedTime();
 
@@ -35,13 +43,6 @@ namespace FusionCrowd
 		// 1. Move to agent?
 		size_t GetAgentCount() const;
 		std::shared_ptr<Goal> GetAgentGoal(size_t agentId);
-
-		// 2. Create simulator builder
-		void AddOperComponent(std::shared_ptr<IOperationComponent> operComponent);
-		void AddTacticComponent(std::shared_ptr<ITacticComponent> tacticComponent);
-		void AddStrategyComponent(std::shared_ptr<IStrategyComponent> strategyComponent);
-		void SetNavSystem(NavSystem && system);
-		void InitSimulator(const char* navMeshPath);
 
 		// 3. Should we create agent builder for that?
 	    size_t AddAgent(
@@ -56,7 +57,6 @@ namespace FusionCrowd
 
 		// 4. WTF is that?
 		void UpdateNav(float x, float y);
-
 	private:
 		class SimulatorImpl;
 

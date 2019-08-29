@@ -28,8 +28,8 @@ namespace FusionCrowd
 		class FUSION_CROWD_API KaramouzasComponent : public IOperationComponent
 		{
 		public:
-			KaramouzasComponent(Simulator & simulator);
-			KaramouzasComponent(Simulator & simulator, float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
+			explicit KaramouzasComponent(std::shared_ptr<NavSystem> navSystem);
+			KaramouzasComponent(std::shared_ptr<NavSystem> navSystem, float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
 				float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE);
 			~KaramouzasComponent();
 

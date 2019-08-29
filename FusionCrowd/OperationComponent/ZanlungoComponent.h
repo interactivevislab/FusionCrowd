@@ -27,8 +27,8 @@ namespace FusionCrowd
 		class FUSION_CROWD_API ZanlungoComponent : public IOperationComponent
 		{
 		public:
-			ZanlungoComponent(Simulator & simulator);
-			ZanlungoComponent(Simulator & simulator, float agentScale, float obstScale, float reactionTime, float forceDistance);
+			ZanlungoComponent(std::shared_ptr<NavSystem> navSystem);
+			ZanlungoComponent(std::shared_ptr<NavSystem> navSystem, float agentScale, float obstScale, float reactionTime, float forceDistance);
 			~ZanlungoComponent();
 
 			std::string GetName();

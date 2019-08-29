@@ -13,6 +13,11 @@ namespace TestFusionCrowd
 
 	void EIFPDTestCase::Pre()
 	{
+		m_simulator = Simulator::Builder{}
+			.AddStrategyComponent(dataset->GetStrategy())
+			//.AddTacticComponent()
+			.AddOperComponent();
+
 		m_simulator = std::make_unique<Simulator>();
 
 		m_simulator->SetNavSystem(dataset->GetNavSystem());

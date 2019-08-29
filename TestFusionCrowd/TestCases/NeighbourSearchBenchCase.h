@@ -25,9 +25,6 @@ namespace TestFusionCrowd
 
 	private:
 		float RandFloat(float min, float max);
-		void SwitchOperationComponent(FusionCrowd::Simulator & simulator, std::string componentName);
-		void AutoSelectOperationComponent(FusionCrowd::Simulator & simulator, int neighborsCount,
-			std::string component1Name, std::string component2Name);
 
 	private:
 		static const size_t stepsTotal = 100;

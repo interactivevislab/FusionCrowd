@@ -10,7 +10,7 @@ namespace FusionCrowd
 		class FUSION_CROWD_API SwitchingComponent : public IOperationComponent
 		{
 		public:
-			SwitchingComponent(Simulator & simulator,
+			SwitchingComponent(std::shared_ptr<NavSystem> navSystem,
 				std::shared_ptr<IOperationComponent> primaryComponent,
 				std::shared_ptr<IOperationComponent> secondaryComponent);
 			std::string GetName();

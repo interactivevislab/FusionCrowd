@@ -21,15 +21,16 @@ namespace FusionCrowd
 		class KaramouzasComponent::KaramouzasComponentImpl
 		{
 		public:
-			KaramouzasComponentImpl(Simulator & simulator)
-				: _simulator(simulator), _navSystem(simulator.GetNavSystem()), _orientWeight(0.8f), _cosFOVAngle(cos(100.f * DEG_TO_RAD)), _reactionTime(0.4f), _wallSteepness(2.f),
+			KaramouzasComponentImpl(std::shared_ptr<NavSystem> navSystem):
+				_navSystem(navSystem),
+				_orientWeight(0.8f), _cosFOVAngle(cos(100.f * DEG_TO_RAD)), _reactionTime(0.4f), _wallSteepness(2.f),
 				_wallDistance(2.f), _collidingCount(5), _dMin(1.f), _dMid(8.f), _dMax(10.f), _agentForce(3.f)
 			{
 			}
 
-			KaramouzasComponentImpl(Simulator & simulator, float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
+			KaramouzasComponentImpl(std::shared_ptr<NavSystem> navSystem, float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
 				float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE)
-				: _simulator(simulator), _navSystem(simulator.GetNavSystem())
+				: _navSystem(navSystem)
 			{
 				_orientWeight = ORIENT_WEIGHT;
 				_cosFOVAngle = COS_FOV_ANGLE;
@@ -68,7 +69,7 @@ namespace FusionCrowd
 				for(auto p : _agents)
 				{
 					auto id = p.first;
-					AgentSpatialInfo & agent = _simulator.GetNavSystem().GetSpatialInfo(id);
+					AgentSpatialInfo & agent = _navSystem->GetSpatialInfo(id);
 					ComputeNewVelocity(agent, timeStep);
 				}
 			}
@@ -83,7 +84,7 @@ namespace FusionCrowd
 				const float SAFE_DIST = _wallDistance + agent.radius;
 				const float SAFE_DIST2 = SAFE_DIST * SAFE_DIST;
 
-				for (auto obst : _navSystem.GetClosestObstacles(agent.id)) {
+				for (auto obst : _navSystem->GetClosestObstacles(agent.id)) {
 					// TODO: Interaction with obstacles is, currently, defined strictly
 					//	by COLLISIONS.  Only if I'm going to collide with an obstacle is
 					//	a force applied.  This may be too naive.
@@ -117,7 +118,7 @@ namespace FusionCrowd
 				if (VERBOSE) std::cout << "Agent " << agent.id << "\n";
 				float totalTime = 1.f;
 				std::list< std::pair< float, const AgentSpatialInfo> > collidingSet;
-				for (const AgentSpatialInfo other : _navSystem.GetNeighbours(agent.id)) {
+				for (const AgentSpatialInfo other : _navSystem->GetNeighbours(agent.id)) {
 					float circRadius = _agents[agent.id]._perSpace + other.radius;
 					Vector2 relVel = desVel - other.vel;
 					Vector2 relPos = other.pos - agent.pos;
@@ -207,8 +208,7 @@ namespace FusionCrowd
 				agent.velNew = desVel + force * timeStep;	// assumes unit mass
 			}
 
-			Simulator & _simulator;
-			NavSystem & _navSystem;
+			std::shared_ptr<NavSystem> _navSystem;
 			std::map<int, AgentParamentrs> _agents;
 			float _orientWeight;
 			float _cosFOVAngle;
@@ -222,16 +222,16 @@ namespace FusionCrowd
 			float _agentForce;
 		};
 
-		KaramouzasComponent::KaramouzasComponent(Simulator & simulator) :
-			pimpl(std::make_unique<KaramouzasComponentImpl>(simulator))
+		KaramouzasComponent::KaramouzasComponent(std::shared_ptr<NavSystem> navSystem)
+			: pimpl(std::make_unique<KaramouzasComponentImpl>(navSystem))
 		{
 		}
 
-		KaramouzasComponent::KaramouzasComponent(Simulator & simulator,
+		KaramouzasComponent::KaramouzasComponent(std::shared_ptr<NavSystem> navSystem,
 			float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME,
 			float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
 			float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE)
-			: pimpl(std::make_unique<KaramouzasComponentImpl>(simulator, ORIENT_WEIGHT, COS_FOV_ANGLE, REACTION_TIME, WALL_STEEPNESS, WALL_DISTANCE, COLLIDING_COUNT, D_MIN, D_MID, D_MAX, AGENT_FORCE))
+			: pimpl(std::make_unique<KaramouzasComponentImpl>(navSystem, ORIENT_WEIGHT, COS_FOV_ANGLE, REACTION_TIME, WALL_STEEPNESS, WALL_DISTANCE, COLLIDING_COUNT, D_MIN, D_MID, D_MAX, AGENT_FORCE))
 		{
 		}
 

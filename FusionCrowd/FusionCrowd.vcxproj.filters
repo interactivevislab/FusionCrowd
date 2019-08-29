@@ -90,6 +90,7 @@
     <ClInclude Include="Benchmark\MicroscopicMetrics.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
+    <ClInclude Include="Util\spimpl.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -162,22 +162,12 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="TestCases\EIFPD\EIFPDTestCase.h" />
-    <ClInclude Include="TestCases\EIFPD\EIFPDConfig.h" />
-    <ClInclude Include="TestCases\EIFPD\EIFPDRecording.h" />
-    <ClInclude Include="TestCases\EIFPD\EIFPDDataset.h" />
-    <ClInclude Include="TestCases\EIFPD\EIFPDStrategy.h" />
     <ClInclude Include="TestCases\NeighbourSearchBenchCase.h" />
     <ClInclude Include="TestCases\ITestCase.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TestCases\ZanlungoCase.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestCases\EIFPD\EIFPDTestCase.cpp" />
-    <ClCompile Include="TestCases\EIFPD\EIFPDConfig.cpp" />
-    <ClCompile Include="TestCases\EIFPD\EIFPDRecording.cpp" />
-    <ClCompile Include="TestCases\EIFPD\EIFPDDataset.cpp" />
-    <ClCompile Include="TestCases\EIFPD\EIFPDStrategy.cpp" />
     <ClCompile Include="TestCases\NeighbourSearchBenchCase.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

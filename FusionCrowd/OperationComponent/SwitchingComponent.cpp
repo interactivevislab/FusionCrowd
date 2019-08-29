@@ -10,16 +10,16 @@ namespace FusionCrowd
 		class SwitchingComponent::SwitchingComponentImpl
 		{
 		public:
-			SwitchingComponentImpl(Simulator & simulator,
+			SwitchingComponentImpl(std::shared_ptr<NavSystem> navSystem,
 				std::shared_ptr<IOperationComponent> primaryComponent,
 				std::shared_ptr<IOperationComponent> secondaryComponent)
-				: _simulator(simulator), _primaryComponent(primaryComponent), _secondaryComponent(secondaryComponent)
+				: _navSystem(navSystem), _primaryComponent(primaryComponent), _secondaryComponent(secondaryComponent)
 			{
 			}
 
 			~SwitchingComponentImpl() = default;
 
-			std::string GetName() { 
+			std::string GetName() {
 				return "switching(" + _primaryComponent->GetName() + '&' + _secondaryComponent->GetName() + ')';
 			};
 
@@ -54,7 +54,7 @@ namespace FusionCrowd
 
 		private:
 
-			Simulator & _simulator;
+			std::shared_ptr<NavSystem> _navSystem;
 			std::shared_ptr<IOperationComponent> _primaryComponent;
 			std::shared_ptr<IOperationComponent> _secondaryComponent;
 			std::map<size_t, int> _agentsComponents;
@@ -62,7 +62,7 @@ namespace FusionCrowd
 
 			//TEMP SOLUTION
 			bool NeedSwitchToSecondary(size_t agentId) {
-				return _simulator.GetNavSystem().CountNeighbors(agentId) <= 3;
+				return _navSystem->CountNeighbors(agentId) <= 3;
 			}
 
 			void UpdateAgentsDistribution() {
@@ -90,10 +90,10 @@ namespace FusionCrowd
 			}
 		};
 
-		SwitchingComponent::SwitchingComponent(Simulator & simulator,
+		SwitchingComponent::SwitchingComponent(std::shared_ptr<NavSystem> navSystem,
 			std::shared_ptr<IOperationComponent> primaryComponent,
 			std::shared_ptr<IOperationComponent> secondaryComponent)
-			: pimpl(std::make_unique<SwitchingComponentImpl>(simulator, primaryComponent, secondaryComponent))
+			: pimpl(std::make_unique<SwitchingComponentImpl>(navSystem, primaryComponent, secondaryComponent))
 		{
 		}
 

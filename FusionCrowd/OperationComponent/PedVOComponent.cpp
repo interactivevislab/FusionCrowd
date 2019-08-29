@@ -18,13 +18,13 @@ namespace FusionCrowd
 {
 	namespace PedVO
 	{
-		PedVOComponent::PedVOComponent(Simulator & simulator) :
-			_cosObstTurn(1.0f), _sinObstTurn(0.0f), _simulator(simulator)
+		PedVOComponent::PedVOComponent(std::shared_ptr<NavSystem> navSystem) :
+			_cosObstTurn(1.0f), _sinObstTurn(0.0f), _navSystem(navSystem)
 		{
 		}
 
-		PedVOComponent::PedVOComponent(Simulator & simulator, float cosObstTurn, float sinObstTurn) :
-			_cosObstTurn(cosObstTurn), _sinObstTurn(sinObstTurn), _simulator(simulator)
+		PedVOComponent::PedVOComponent(std::shared_ptr<NavSystem> navSystem, float cosObstTurn, float sinObstTurn) :
+			_cosObstTurn(cosObstTurn), _sinObstTurn(sinObstTurn), _navSystem(navSystem)
 		{
 		}
 
@@ -53,7 +53,7 @@ namespace FusionCrowd
 			{
 				size_t id = p.first;
 				AgentParamentrs & params = p.second;
-				AgentSpatialInfo & spatialInfo = _simulator.GetNavSystem().GetSpatialInfo(id);
+				AgentSpatialInfo & spatialInfo = _navSystem->GetSpatialInfo(id);
 
 				ComputeNewVelocity(params, spatialInfo);
 			}
@@ -115,7 +115,7 @@ namespace FusionCrowd
 				const float norm = 1.f / (area * sqrt2Pi);
 
 				// AGENTS
-				for (auto & other : _simulator.GetNavSystem().GetNeighbours(agentInfo.id))
+				for (auto & other : _navSystem->GetNeighbours(agentInfo.id))
 				{
 					Vector2 critDisp = other.pos - critPt;
 					// dot project gets projection, in the preferred direction
@@ -130,7 +130,7 @@ namespace FusionCrowd
 				const float OBST_AREA = 0.75f;
 				const float OBST_AREA_SQ_INV = 1.f / (2 * OBST_AREA * OBST_AREA);
 				const float OBST_SCALE = norm;  // * 6.25f;	// what is the "density" of an obstacle?
-				for (auto const obst : _simulator.GetNavSystem().GetClosestObstacles(agentInfo.id)) {
+				for (auto const obst : _navSystem->GetClosestObstacles(agentInfo.id)) {
 					Vector2 nearPt;
 					float distSq;  // set by distanceSqToPoint
 					if (obst.distanceSqToPoint(critPt, nearPt, distSq) == Obstacle::LAST)
@@ -160,7 +160,7 @@ namespace FusionCrowd
 
 			const float invTimeHorizonObst = 1.0f / agentParams._timeHorizonObst;
 
-			for (Obstacle & obst : _simulator.GetNavSystem().GetClosestObstacles(agentInfo.id))
+			for (Obstacle & obst : _navSystem->GetClosestObstacles(agentInfo.id))
 			{
 				const Vector2 P0 = obst.getP0();
 				const Vector2 P1 = obst.getP1();
@@ -173,7 +173,7 @@ namespace FusionCrowd
 
 			const float invTimeHorizon = 1.0f / agentParams._timeHorizon;
 			/* Create agent ORCA lines. */
-			for (auto & other : _simulator.GetNavSystem().GetNeighbours(agentInfo.id))
+			for (auto & other : _navSystem->GetNeighbours(agentInfo.id))
 			{
 				const Vector2 relativePosition = other.pos - agentInfo.pos;
 
@@ -222,7 +222,7 @@ namespace FusionCrowd
 				const float combinedRadius = agentInfo.radius + other.radius;
 				const float combinedRadiusSq = pow(combinedRadius, 2);
 
-				FusionCrowd:Math::Line line;
+				Math::Line line;
 				Vector2 u;
 
 				if (distSq > combinedRadiusSq) {

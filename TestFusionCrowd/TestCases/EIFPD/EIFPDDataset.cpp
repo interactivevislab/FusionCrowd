@@ -13,7 +13,7 @@ EIFPDRecording EIFPDDataset::GetRecording()
 	throw std::logic_error("Function not yet implemented");
 }
 
-EIFPDStrategy EIFPDDataset::GetStrategy()
+std::shared_ptr<EIFPDStrategy> EIFPDDataset::GetStrategy()
 {
 	throw std::logic_error("Function not yet implemented");
 }

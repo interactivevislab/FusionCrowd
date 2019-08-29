@@ -64,16 +64,19 @@ namespace TestFusionCrowd
 	{
 		std::string navPath = "Resources/square.nav";
 
-		FusionCrowd::Simulator sim;
-		auto zanlungoComponent = std::make_shared<FusionCrowd::Zanlungo::ZanlungoComponent>(sim);
+		auto navSystem = std::make_shared<NavSystem>();
+		navSystem->SetGridCoeff(coeff);
+		navSystem->SetAgentsSensitivityRadius(searchRadius);
 
-		sim.AddOperComponent(zanlungoComponent);
+		auto zanlungoComponent = std::make_shared<FusionCrowd::Zanlungo::ZanlungoComponent>(navSystem);
+		FusionCrowd::Simulator sim = std::move(FusionCrowd::Simulator().AddOpModel(zanlungoComponent).UseNavSystem(navSystem));
+
 
 		for (int i = 0; i < (totalAgents / 2 - 1); i++) {
 			auto goal = std::make_shared<FusionCrowd::PointGoal>(
 				RandFloat(14.0f, 16.0f),
 				RandFloat(10.0f, 20.0f)
-				);
+			);
 			sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(2.0f, 4.0f), RandFloat(10.0f, 20.0f)), goal);
 		}
 
@@ -92,11 +95,7 @@ namespace TestFusionCrowd
 
 		//---
 
-		auto & navSystem = sim.GetNavSystem();
-		navSystem.SetGridCoeff(coeff);
-		navSystem.SetAgentsSensitivityRadius(searchRadius);
-
-		sim.InitSimulator(navPath.c_str());
+		//sim.InitSimulator(navPath.c_str());
 
 		std::ofstream myfile;
 		myfile.open("way2.csv");
@@ -110,7 +109,7 @@ namespace TestFusionCrowd
 
 			for (size_t i = 0; i < agentsCount; i++)
 			{
-				auto agent = navSystem.GetPublicSpatialInfo(i);
+				auto agent = navSystem->GetPublicSpatialInfo(i);
 				if (i > 0) myfile << ",";
 				myfile << agent.posX << "," << agent.posY;
 			}
@@ -120,7 +119,7 @@ namespace TestFusionCrowd
 
 		myfile.close();
 
-		recording = navSystem.GetRecording();
+		recording = navSystem->GetRecording();
 	}
 
 	void ZanlungoCase::Post()
