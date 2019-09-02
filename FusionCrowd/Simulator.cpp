@@ -52,7 +52,7 @@ namespace FusionCrowd
 		}
 
 		std::shared_ptr<Goal> GetAgentGoal(size_t agentId) {
-			return _agents[agentId].currentGoal;
+			return _agents.find(agentId)->second.currentGoal;
 		}
 
 	    size_t AddAgent(
@@ -110,14 +110,15 @@ namespace FusionCrowd
 			for(auto& c : _operComponents)
 			{
 				if(c->GetName() == newOperationComponent) {
-					std::shared_ptr<IOperationComponent> old = _agents[agentId].opComponent;
+					Agent & agent = _agents.find(agentId)->second;
+					std::shared_ptr<IOperationComponent> old = agent.opComponent;
 					if(old != nullptr)
 					{
 						old->DeleteAgent(agentId);
 					}
 
 					c->AddAgent(agentId);
-					_agents[agentId].opComponent = c;
+					agent.opComponent = c;
 
 					return true;
 				}
@@ -130,14 +131,15 @@ namespace FusionCrowd
 			for(auto& c : _tacticComponents)
 			{
 				if(c->GetName() == newTactic) {
-					std::shared_ptr<ITacticComponent> old = _agents[agentId].tacticComponent;
+					Agent & agent = _agents.find(agentId)->second;
+					std::shared_ptr<ITacticComponent> old = agent.tacticComponent;
 					if(old != nullptr)
 					{
 						old->DeleteAgent(agentId);
 					}
 
 					c->AddAgent(agentId);
-					_agents[agentId].tacticComponent = c;
+					agent.tacticComponent = c;
 
 					return true;
 				}
@@ -150,14 +152,15 @@ namespace FusionCrowd
 			for(auto& c : _strategyComponents)
 			{
 				if(c->GetName() == newStrategyComponent) {
-					std::shared_ptr<IStrategyComponent>& old = _agents[agentId].stratComponent;
+					Agent & agent = _agents.find(agentId)->second;
+					std::shared_ptr<IStrategyComponent>& old = agent.stratComponent;
 					if(old != nullptr)
 					{
 						old->RemoveAgent(agentId);
 					}
 
 					c->AddAgent(agentId);
-					_agents[agentId].stratComponent = c;
+					agent.stratComponent = c;
 
 					return true;
 				}
@@ -196,7 +199,7 @@ namespace FusionCrowd
 
 		Agent & GetAgent(size_t id)
 		{
-			return _agents[id];
+			return _agents.find(id)->second;
 		}
 	private:
 		size_t _nextAgentId = 0;

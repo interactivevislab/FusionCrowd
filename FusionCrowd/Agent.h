@@ -16,6 +16,7 @@ namespace FusionCrowd
 	{
 	public:
 		Agent(size_t id);
+
 		~Agent();
 
 		size_t id;
