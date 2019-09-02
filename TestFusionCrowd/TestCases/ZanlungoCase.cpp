@@ -17,6 +17,7 @@
 
 #include "OperationComponent/IOperationComponent.h"
 #include "OperationComponent/ZanlungoComponent.h"
+#include "TacticComponent/NavMeshComponent.h"
 
 #include "Navigation/NavSystem.h"
 
@@ -64,38 +65,40 @@ namespace TestFusionCrowd
 	{
 		std::string navPath = "Resources/square.nav";
 
-		auto navSystem = std::make_shared<NavSystem>();
+		auto localizer = std::make_shared<NavMeshLocalizer>(navPath, true);
+		auto navSystem = std::make_shared<NavSystem>(localizer);
 		navSystem->SetGridCoeff(coeff);
 		navSystem->SetAgentsSensitivityRadius(searchRadius);
+		navSystem->Init();
 
 		auto zanlungoComponent = std::make_shared<FusionCrowd::Zanlungo::ZanlungoComponent>(navSystem);
-		FusionCrowd::Simulator sim = std::move(FusionCrowd::Simulator().AddOpModel(zanlungoComponent).UseNavSystem(navSystem));
+		auto sim = std::make_shared<FusionCrowd::Simulator>();
+		sim->AddOpModel(zanlungoComponent);
+		sim->UseNavSystem(navSystem);
 
+		auto tactic = std::make_shared<FusionCrowd::NavMeshComponent>(sim, localizer);
+		sim->AddTactic(tactic);
 
 		for (int i = 0; i < (totalAgents / 2 - 1); i++) {
 			auto goal = std::make_shared<FusionCrowd::PointGoal>(
 				RandFloat(14.0f, 16.0f),
 				RandFloat(10.0f, 20.0f)
 			);
-			sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(2.0f, 4.0f), RandFloat(10.0f, 20.0f)), goal);
+			sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(2.0f, 4.0f), RandFloat(10.0f, 20.0f)), goal);
 		}
 
 		for (int i = (totalAgents / 2 - 1); i < totalAgents; i++) {
 			auto goal = std::make_shared<FusionCrowd::PointGoal>(
 				RandFloat(8.0f, 10.0f),
 				RandFloat(0.0f, 5.0f)
-				);
-			sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(8.0f, 10.0f), RandFloat(20.0f, 25.0f)), goal);
+			);
+			sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(8.0f, 10.0f), RandFloat(20.0f, 25.0f)), goal);
 		}
-
 
 		for (int i = 0; i < agentsCount; i++) {
-			sim.SetOperationComponent(i, zanlungoComponent->GetName());
+			sim->SetOperationComponent(i, zanlungoComponent->GetName());
+			sim->SetTacticComponent(i, tactic->GetName());
 		}
-
-		//---
-
-		//sim.InitSimulator(navPath.c_str());
 
 		std::ofstream myfile;
 		myfile.open("way2.csv");
@@ -103,7 +106,7 @@ namespace TestFusionCrowd
 		for (int i = 0; i < stepsTotal; i++) {
 
 			high_resolution_clock::time_point t1 = high_resolution_clock::now();
-			if (!sim.DoStep()) break;
+			if (!sim->DoStep()) break;
 			high_resolution_clock::time_point t2 = high_resolution_clock::now();
 			measures[i] = duration_cast<microseconds>(t2 - t1).count();
 

@@ -8,6 +8,7 @@
 #include "Math/Util.h"
 #include "Util/PublicSpatialInfo.h"
 #include "Util/IRecording.h"
+#include "Navigation/NavMesh/NavMeshLocalizer.h"
 
 namespace FusionCrowd
 {
@@ -18,7 +19,7 @@ namespace FusionCrowd
 	class FUSION_CROWD_API NavSystem
 	{
 	public:
-		NavSystem();
+		NavSystem(std::shared_ptr<NavMeshLocalizer> localizer);
 
 		virtual ~NavSystem();
 
@@ -28,8 +29,6 @@ namespace FusionCrowd
 		NavSystem(NavSystem&&);
 		NavSystem& operator=(NavSystem&&);
 
-		// Should it be a constructor parameter?
-		void SetNavComponent(const NavMeshComponent & component);
 		// Why do we need it?
 		void Init();
 

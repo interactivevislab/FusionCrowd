@@ -79,7 +79,7 @@ namespace FusionCrowd
 			std::shared_ptr<Goal> goal
 		)
 		{
-			size_t id = _agents.size();
+			size_t id = GetNextId();
 
 			AgentSpatialInfo info;
 			info.id = id;
@@ -95,10 +95,28 @@ namespace FusionCrowd
 			a.currentGoal = goal;
 			_agents.push_back(a);
 
-			//TEMPORARY
-			_navMeshTactic->AddAgent(id);
-
 			return id;
+		}
+
+		size_t AddAgent(
+			DirectX::SimpleMath::Vector2 pos,
+			std::string opComponent,
+			std::string tacticComponent,
+			std::string startegyComponent
+		)
+		{
+			AgentSpatialInfo info;
+			info.id = GetNextId();
+			_navSystem->AddAgent(info);
+
+			Agent a(info.id);
+			_agents.push_back(a);
+
+			SetOperationComponent(info.id, opComponent);
+			SetTacticComponent(info.id, tacticComponent);
+			SetStrategyComponent(info.id, startegyComponent);
+
+			return info.id;
 		}
 
 		bool SetOperationComponent(size_t agentId, std::string newOperationComponent)
@@ -114,6 +132,26 @@ namespace FusionCrowd
 
 					c->AddAgent(agentId);
 					_agents[agentId].opComponent = c;
+
+					return true;
+				}
+			}
+			return false;
+		}
+
+		bool SetTacticComponent(size_t agentId, std::string newTactic)
+		{
+			for(auto& c : _tacticComponents)
+			{
+				if(c->GetName() == newTactic) {
+					std::shared_ptr<ITacticComponent> old = _agents[agentId].tacticComponent;
+					if(old != nullptr)
+					{
+						old->DeleteAgent(agentId);
+					}
+
+					c->AddAgent(agentId);
+					_agents[agentId].tacticComponent = c;
 
 					return true;
 				}
@@ -159,16 +197,6 @@ namespace FusionCrowd
 		void InitSimulator() {
 		}
 
-		void UpdateNav(float x, float y)
-		{
-			DirectX::SimpleMath::Vector2 point1(-20.2780991, -22.8689995);
-			_navMeshTactic->UpdateNavMesh(point1);
-			for (int i = 0; i < _agents.size(); i++)
-			{
-				_navMeshTactic->AddAgent(_agents[i].id);
-			}
-		}
-
 		float GetElapsedTime()
 		{
 			return _currentTime;
@@ -177,12 +205,14 @@ namespace FusionCrowd
 		void SetNavSystem(std::shared_ptr<NavSystem> navSystem)
 		{
 			_navSystem = navSystem;
+			_navSystem->Init();
 		}
-
-		// TEMPORARY SOLUTION
-		std::shared_ptr<NavMeshComponent> _navMeshTactic;
 	private:
-		size_t GetNextId() const { return GetAgentCount(); }
+		size_t _nextAgentId = 0;
+		size_t GetNextId()
+		{
+			return _nextAgentId++;
+		}
 
 		float _currentTime = 0;
 
@@ -249,9 +279,19 @@ namespace FusionCrowd
 		return pimpl->SetOperationComponent(agentId, newOperationComponent);
 	}
 
+	bool Simulator::SetTacticComponent(size_t agentId, std::string newTactic)
+	{
+		return pimpl->SetTacticComponent(agentId, newTactic);
+	}
+
 	bool Simulator::SetStrategyComponent(size_t agentId, std::string newStrategyComponent)
 	{
 		return pimpl->SetStrategyComponent(agentId, newStrategyComponent);
+	}
+
+	void Simulator::SetNavSystem(std::shared_ptr<NavSystem> navSystem)
+	{
+		pimpl->SetNavSystem(navSystem);
 	}
 
 	Simulator & Simulator::AddOpModel(std::shared_ptr<IOperationComponent> component)
@@ -270,11 +310,6 @@ namespace FusionCrowd
 	{
 		pimpl->AddStrategyComponent(component);
 		return *this;
-	}
-
-	void Simulator::UpdateNav(float x, float y)
-	{
-		pimpl->UpdateNav(x, y);
 	}
 
 	float Simulator::GetElapsedTime()

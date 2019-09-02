@@ -9,16 +9,15 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	NavMeshComponent::NavMeshComponent(Simulator & simulator, const char* navMeshPath) : _simulator(simulator)
+	NavMeshComponent::NavMeshComponent(std::shared_ptr<Simulator> simulator, std::shared_ptr<NavMeshLocalizer> localizer) :
+		_simulator(simulator), _localizer(localizer), _navMesh(localizer->getNavMesh())
 	{
-		_localizer = std::make_shared<NavMeshLocalizer>(navMeshPath, true);
-		_navMesh = _localizer->getNavMesh();
 	}
 
 	void NavMeshComponent::AddAgent(size_t id)
 	{
-		auto agentGoal = _simulator.GetAgentGoal(id);
-		AgentSpatialInfo & agentInfo = _simulator.GetNavSystem()->GetSpatialInfo(id);
+		auto agentGoal = _simulator->GetAgentGoal(id);
+		AgentSpatialInfo & agentInfo = _simulator->GetNavSystem()->GetSpatialInfo(id);
 
 		unsigned int from = _localizer->getNodeId(agentInfo.pos);
 		unsigned int to = _localizer->getNodeId(agentGoal->getCentroid());
@@ -40,7 +39,7 @@ namespace FusionCrowd
 		_agents.push_back(agtStruct);
 	}
 
-	bool NavMeshComponent::RemoveAgent(size_t id)
+	bool NavMeshComponent::DeleteAgent(size_t id)
 	{
 		return false;
 	}
@@ -50,74 +49,16 @@ namespace FusionCrowd
 		for (auto agtStruct : _agents)
 		{
 			size_t id = agtStruct.id;
-			AgentSpatialInfo & info = _simulator.GetNavSystem()->GetSpatialInfo(id);
+			AgentSpatialInfo & info = _simulator->GetNavSystem()->GetSpatialInfo(id);
 
 			updateLocation(info, agtStruct, false);
 			setPrefVelocity(info, agtStruct);
 		}
 	}
 
-	void NavMeshComponent::UpdateNavMesh(DirectX::SimpleMath::Vector2 point)
-	{
-		int nCount = _navMesh->getNodeCount();
-		NavMeshEdge** _edges = nullptr;
-		int edgeCount;
-		for (int i = 0; i < nCount; i++)
-		{
-			FusionCrowd::NavMeshNode& node = _navMesh->GetNode(i);
-			DirectX::SimpleMath::Vector2 c = node.getCenter();
-			if (c == point)
-			{
-				edgeCount = node.getEdgeCount();
-				_edges = new NavMeshEdge*[edgeCount];
-				for (int j = 0; j < edgeCount; j++)
-				{
-					_edges[j] = node.getEdge(j);
-					int eCount = node.getEdgeCount();
-				}
-			}
-		}
-		NavMeshEdge** _edgesNew = nullptr;
-		for (int i = 0; i < nCount; i++)
-		{
-			FusionCrowd::NavMeshNode& node = _navMesh->GetNode(i);
-			int eCount = node.getEdgeCount();
-			std::vector<int> t;
-			for (int j = 0; j < eCount; j++)
-			{
-				for (int e = 0; e < edgeCount; e++)
-				{
-					if (node.getEdge(j) == _edges[e])
-					{
-						t.push_back(j);
-					}
-				}
-			}
-			if (t.size() != 0)
-			{
-				_edgesNew = new NavMeshEdge*[eCount - t.size()];
-				int e = 0;
-				for (int j = 0; j < eCount; j++)
-				{
-					if (std::find(t.begin(), t.end(), j) == t.end())
-					{
-						_edgesNew[e] = node.getEdge(j);
-						e++;
-					}
-				}
-				node._edgeCount = eCount - t.size();
-				if (node._edgeCount == 0)
-				{
-					_edgesNew = nullptr;
-				}
-				node._edges = _edgesNew;
-			}
-		}
-	}
-
 	void NavMeshComponent::setPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
 	{
-		auto agentGoal = _simulator.GetAgentGoal(agentInfo.id);
+		auto agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
 		if (path == nullptr || path->getGoal() != agentGoal)
 		{

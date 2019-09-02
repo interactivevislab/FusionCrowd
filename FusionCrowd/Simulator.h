@@ -33,7 +33,9 @@ namespace FusionCrowd
 		bool DoStep();
 
 		bool SetOperationComponent(size_t agentId, std::string newOperationComponent);
+		bool SetTacticComponent(size_t agentId, std::string newTactic);
 		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent);
+		void SetNavSystem(std::shared_ptr<NavSystem> navSystem);
 
 		std::shared_ptr<NavSystem> GetNavSystem();
 
@@ -55,8 +57,6 @@ namespace FusionCrowd
 			std::shared_ptr<Goal> g
 		);
 
-		// 4. WTF is that?
-		void UpdateNav(float x, float y);
 	private:
 		class SimulatorImpl;
 

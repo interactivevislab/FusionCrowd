@@ -19,18 +19,19 @@ namespace FusionCrowd
 	class FUSION_CROWD_API NavMeshComponent : public ITacticComponent
 	{
 	public:
-		NavMeshComponent(Simulator & simulator, const char* navMeshPath);
+		NavMeshComponent(std::shared_ptr<Simulator> simulator, std::shared_ptr<NavMeshLocalizer> localizer);
 
-		void AddAgent(size_t id);
-		bool RemoveAgent(size_t id);
+		void AddAgent(size_t id) override;
+		bool DeleteAgent(size_t id) override;
 
 		std::shared_ptr<NavMesh> GetNavMesh() const { return _localizer->getNavMesh(); };
 		std::shared_ptr<NavMeshLocalizer> GetLocalizer() const;
 
-		void Update(float timeStep);
-		void UpdateNavMesh(DirectX::SimpleMath::Vector2 point);
+		void Update(float timeStep) override;
 		unsigned int getNodeId(size_t agentId) const;
 		unsigned int getNodeId(size_t agentId, const std::string& grpName, bool searchAll = false);
+
+		std::string GetName() override { return "NavMeshComponent"; }
 
 		~NavMeshComponent();
 
@@ -52,7 +53,7 @@ namespace FusionCrowd
 		void setNode(size_t agentID, unsigned int nodeID);
 		*/
 
-		Simulator & _simulator;
+		std::shared_ptr<Simulator> _simulator;
 
 		float _headingDevCos;
 		std::shared_ptr<NavMesh> _navMesh;

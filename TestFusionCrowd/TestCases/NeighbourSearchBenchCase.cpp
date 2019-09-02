@@ -68,7 +68,8 @@ namespace TestFusionCrowd
 	{
 		std::string navPath = "Resources/square.nav";
 
-		auto navSystem = std::make_shared<NavSystem>();
+		auto localizer = std::make_shared<NavMeshLocalizer>(navPath, true);
+		auto navSystem = std::make_shared<NavSystem>(localizer);
 		navSystem->SetGridCoeff(coeff);
 		navSystem->SetAgentsSensitivityRadius(searchRadius);
 
