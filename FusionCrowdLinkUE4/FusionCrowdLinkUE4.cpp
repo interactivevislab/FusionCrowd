@@ -16,11 +16,14 @@
 #include "OperationComponent/HelbingComponent.h"
 
 #include "TacticComponent/NavMeshComponent.h"
+#include "Navigation/NavMesh/NavMeshLocalizer.h"
+#include "Navigation/NavSystem.h"
 
 #include <algorithm>
 #include <memory>
 
 using namespace DirectX::SimpleMath;
+using namespace FusionCrowd;
 
 FusionCrowdLinkUE4::FusionCrowdLinkUE4(): agentsCount(0)
 {
@@ -32,26 +35,30 @@ FusionCrowdLinkUE4::~FusionCrowdLinkUE4()
 
 void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 {
-	navMeshPath = (char*)malloc(strlen(navMeshDir) + 1);
-	strcpy(navMeshPath, navMeshDir);
+	auto path = std::string(navMeshDir);
 
-	sim = new FusionCrowd::Simulator(navMeshPath);
+	auto localizer = std::make_shared<NavMeshLocalizer>(path, true);
+	auto navSystem = std::make_shared<NavSystem>(localizer);
+	navSystem->Init();
 
-	_strategy = std::make_shared<UE4StrategyProxy>(*sim);
+	auto sim = std::make_shared<Simulator>();
+	sim->UseNavSystem(navSystem);
 
-//	navMeshTactic = new FusionCrowd::NavMeshComponent(*sim, );
-	kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(*sim);
-	orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(*sim);
-	pedvoComponent = std::make_shared<FusionCrowd::PedVO::PedVOComponent>(*sim);
-	helbingComponent = std::make_shared<FusionCrowd::Helbing::HelbingComponent>(*sim);
+	kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(navSystem);
+	orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(navSystem);
+	pedvoComponent = std::make_shared<FusionCrowd::PedVO::PedVOComponent>(navSystem);
+	helbingComponent = std::make_shared<FusionCrowd::Helbing::HelbingComponent>(navSystem);
 
-	sim->AddOperComponent(kComponent);
-	//sim->AddTacticComponent(*navMeshTactic);
-	sim->AddOperComponent(orcaComponent);
-	sim->AddOperComponent(pedvoComponent);
-	sim->AddOperComponent(helbingComponent);
+	sim->AddOpModel(kComponent);
+	sim->AddOpModel(orcaComponent);
+	sim->AddOpModel(pedvoComponent);
+	sim->AddOpModel(helbingComponent);
 
-	sim->AddStrategyComponent(_strategy);
+	_tactic = std::make_shared<FusionCrowd::NavMeshComponent>(sim, localizer);
+	sim->AddTactic(_tactic);
+
+	_strategy = std::make_shared<UE4StrategyProxy>(sim);
+	sim->AddStrategy(_strategy);
 }
 
 int FusionCrowdLinkUE4::GetAgentCount()
@@ -94,20 +101,11 @@ void FusionCrowdLinkUE4::AddAgents(int agentsCount)
 	for(Vector2 pos : positions)
 	{
 		size_t id = sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, pos, goal);
+
 		sim->SetOperationComponent(id, pedvoComponent->GetName());
-
-		/*
-		if(id % 2 == 0)
-			sim->SetOperationComponent(id, kComponent->GetName());
-		else
-			sim->SetOperationComponent(id, orcaComponent->GetName());
-		*/
-		//navMeshTactic->AddAgent(id);
-
+		sim->SetTacticComponent(id, _tactic->GetName());
 		sim->SetStrategyComponent(id, _strategy->GetName());
 	}
-
-	sim->InitSimulator();
 }
 
 void FusionCrowdLinkUE4::SetOperationModel(size_t agentId, const char * name)
@@ -118,13 +116,13 @@ void FusionCrowdLinkUE4::SetOperationModel(size_t agentId, const char * name)
 
 void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* ueAgentInfo)
 {
-	FusionCrowd::NavSystem & nav = sim->GetNavSystem();
+	std::shared_ptr<NavSystem> nav = sim->GetNavSystem();
 	bool info = sim->DoStep();
 	agentsCount = sim->GetAgentCount();
 
 	for (int i = 0; i < agentsCount; i++)
 	{
-		auto spatialInfo = nav.GetPublicSpatialInfo(i);
+		auto spatialInfo = nav->GetPublicSpatialInfo(i);
 
 		ueAgentInfo[i].id = spatialInfo.id;
 
@@ -142,15 +140,10 @@ void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* ueAgentInfo)
 
 		ueAgentInfo[i].radius = spatialInfo.radius;
 
-		auto opComp = sim->GetById(i).opComponent;
+		auto opComp = sim->GetAgent(i).opComponent;
 		auto name = opComp != nullptr ? opComp->GetName() : std::string("NO_OP_COMPONENT");
 
 		ueAgentInfo[i].opCompName = new char [name.length() + 1];
 		std::strcpy (ueAgentInfo[i].opCompName, name.c_str());
 	}
-}
-
-void FusionCrowdLinkUE4::UpdateNav(float x, float y)
-{
-	sim->UpdateNav(0, 0);
 }

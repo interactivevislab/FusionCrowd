@@ -50,11 +50,14 @@ public:
 	LINKFUSIONCROWD_API size_t AddAgent(const float * agentPos, const float * goalPos, const char * opComponent);
 	LINKFUSIONCROWD_API void AddAgents(int agentsCount);
 	LINKFUSIONCROWD_API void GetPositionAgents(agentInfo* agentsPos);
-	LINKFUSIONCROWD_API void UpdateNav(float x, float y);
 
 private:
-	FusionCrowd::Simulator* sim;
+	std::shared_ptr<FusionCrowd::Simulator> sim;
+
 	std::shared_ptr<UE4StrategyProxy> _strategy;
+
+	std::shared_ptr<FusionCrowd::NavMeshComponent> _tactic;
+
 	std::shared_ptr<FusionCrowd::Karamouzas::KaramouzasComponent> kComponent;
 	std::shared_ptr<FusionCrowd::ORCA::ORCAComponent> orcaComponent;
 	std::shared_ptr<FusionCrowd::PedVO::PedVOComponent> pedvoComponent;

@@ -57,6 +57,8 @@ namespace FusionCrowd
 			std::shared_ptr<Goal> g
 		);
 
+		Agent & GetAgent(size_t id);
+
 	private:
 		class SimulatorImpl;
 

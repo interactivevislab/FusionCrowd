@@ -18,20 +18,6 @@ namespace FusionCrowd
 
 		~SimulatorImpl() = default;
 
-		/*
-		void Initialize(Simulator & simulator, const char* navMeshPath)
-		{
-			_navMeshTactic = std::make_shared<NavMeshComponent>(simulator, navMeshPath);
-
-			AddTacticComponent(_navMeshTactic);
-
-			_navSystem = NavSystem();
-			_navSystem.SetNavComponent(*_navMeshTactic);
-
-			_navSystem.Init();
-		}
-		*/
-
 		bool DoStep()
 		{
 			const float timeStep = 0.1f;
@@ -93,7 +79,7 @@ namespace FusionCrowd
 			_navSystem->AddAgent(info);
 			Agent a(id);
 			a.currentGoal = goal;
-			_agents.push_back(a);
+			_agents.insert({info.id, a});
 
 			return id;
 		}
@@ -110,7 +96,7 @@ namespace FusionCrowd
 			_navSystem->AddAgent(info);
 
 			Agent a(info.id);
-			_agents.push_back(a);
+			_agents.insert({info.id, a});
 
 			SetOperationComponent(info.id, opComponent);
 			SetTacticComponent(info.id, tacticComponent);
@@ -207,6 +193,11 @@ namespace FusionCrowd
 			_navSystem = navSystem;
 			_navSystem->Init();
 		}
+
+		Agent & GetAgent(size_t id)
+		{
+			return _agents[id];
+		}
 	private:
 		size_t _nextAgentId = 0;
 		size_t GetNextId()
@@ -218,7 +209,7 @@ namespace FusionCrowd
 
 		std::shared_ptr<NavSystem> _navSystem;
 
-		std::vector<FusionCrowd::Agent> _agents;
+		std::map<size_t, FusionCrowd::Agent> _agents;
 		std::vector<std::shared_ptr<IStrategyComponent>> _strategyComponents;
 		std::vector<std::shared_ptr<ITacticComponent>> _tacticComponents;
 		std::vector<std::shared_ptr<IOperationComponent>> _operComponents;
@@ -321,6 +312,11 @@ namespace FusionCrowd
 	{
 		pimpl->SetNavSystem(system);
 		return *this;
+	}
+
+	Agent& Simulator::GetAgent(size_t id)
+	{
+		return pimpl->GetAgent(id);
 	}
 #pragma endregion
 }

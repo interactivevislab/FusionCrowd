@@ -14,7 +14,7 @@ namespace FusionCrowd
 class UE4StrategyProxy : public FusionCrowd::IStrategyComponent
 {
 public:
-	UE4StrategyProxy(FusionCrowd::Simulator & simulator);
+	UE4StrategyProxy(std::shared_ptr<FusionCrowd::Simulator> simulator);
 	~UE4StrategyProxy();
 
 	std::string GetName() { return "ue4strategyproxy"; };
@@ -24,7 +24,7 @@ public:
 	void Update(float timeStep);
 
 private:
-	FusionCrowd::Simulator & _simulator;
+	std::shared_ptr<FusionCrowd::Simulator> _simulator;
 	std::unordered_set<size_t> _agents;
 };
 
