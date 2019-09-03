@@ -6,6 +6,8 @@
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
 
+#include "Util/spimpl.h"
+
 #include <memory>
 
 namespace FusionCrowd
@@ -31,7 +33,6 @@ namespace FusionCrowd
 			explicit KaramouzasComponent(std::shared_ptr<NavSystem> navSystem);
 			KaramouzasComponent(std::shared_ptr<NavSystem> navSystem, float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
 				float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE);
-			~KaramouzasComponent();
 
 			std::string GetName();
 
@@ -44,7 +45,7 @@ namespace FusionCrowd
 		private:
 			class KaramouzasComponentImpl;
 
-			std::unique_ptr<KaramouzasComponentImpl> pimpl;
+			spimpl::unique_impl_ptr<KaramouzasComponentImpl> pimpl;
 		};
 	}
 }

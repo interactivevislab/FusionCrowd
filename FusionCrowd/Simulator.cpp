@@ -8,7 +8,7 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-#pragma region Simulator
+#pragma region implementation
 	class Simulator::SimulatorImpl
 	{
 	public:
@@ -218,30 +218,11 @@ namespace FusionCrowd
 		std::vector<std::shared_ptr<IOperationComponent>> _operComponents;
 	};
 
-	Simulator::~Simulator() { };
+#pragma endregion
 
-	Simulator::Simulator() : pimpl(std::make_unique<SimulatorImpl>())
+#pragma region proxy methods
+	Simulator::Simulator() : pimpl(spimpl::make_unique_impl<SimulatorImpl>())
 	{
-	}
-
-	Simulator::Simulator(Simulator && other)
-	{
-		if(this == &other)
-			return;
-
-		this->pimpl = std::move(other.pimpl);
-	}
-
-	Simulator& Simulator::operator=(Simulator && other)
-	{
-		if(this == &other)
-		{
-			return *this;
-		}
-
-		this->pimpl = std::move(other.pimpl);
-
-		return *this;
 	}
 
 	bool Simulator::DoStep()

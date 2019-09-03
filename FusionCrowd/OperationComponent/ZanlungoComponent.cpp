@@ -12,6 +12,7 @@ namespace FusionCrowd
 {
 	namespace Zanlungo
 	{
+#pragma region Impl
 		class ZanlungoComponent::ZanlungoComponentImpl
 		{
 		public:
@@ -304,17 +305,18 @@ namespace FusionCrowd
 			float _forceDistance;
 		};
 
+#pragma endregion
+
+#pragma region Proxy methods
 		ZanlungoComponent::ZanlungoComponent(std::shared_ptr<NavSystem> navSystem)
-			: pimpl(std::make_unique<ZanlungoComponentImpl>(navSystem))
+			: pimpl(spimpl::make_unique_impl<ZanlungoComponentImpl>(navSystem))
 		{
 		}
 
 		ZanlungoComponent::ZanlungoComponent(std::shared_ptr<NavSystem> navSystem, float agentScale, float obstScale, float reactionTime, float forceDistance)
-			: pimpl(std::make_unique<ZanlungoComponentImpl>(navSystem, agentScale, obstScale, reactionTime, forceDistance))
+			: pimpl(spimpl::make_unique_impl<ZanlungoComponentImpl>(navSystem, agentScale, obstScale, reactionTime, forceDistance))
 		{
 		}
-
-		ZanlungoComponent::~ZanlungoComponent() = default;
 
 		std::string ZanlungoComponent::GetName()
 		{
@@ -340,5 +342,6 @@ namespace FusionCrowd
 		{
 			pimpl->Update(timeStep);
 		}
+#pragma endregion
 	}
 }

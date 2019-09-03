@@ -2,6 +2,7 @@
 
 #include "Simulator.h"
 #include "OperationComponent/IOperationComponent.h"
+#include "Util/spimpl.h"
 
 namespace FusionCrowd
 {
@@ -19,14 +20,13 @@ namespace FusionCrowd
 			bool DeleteAgent(size_t id);
 
 			void Update(float timeStep);
-			~SwitchingComponent();
 
 			void SetNeighborsToSwitch(int neighborsToSwitch);
 
 		private:
 			class SwitchingComponentImpl;
 
-			std::unique_ptr<SwitchingComponentImpl> pimpl;
+			spimpl::unique_impl_ptr<SwitchingComponentImpl> pimpl;
 		};
 	}
 }

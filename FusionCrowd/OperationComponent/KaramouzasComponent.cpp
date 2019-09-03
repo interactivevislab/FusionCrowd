@@ -18,6 +18,7 @@ namespace FusionCrowd
 {
 	namespace Karamouzas
 	{
+#pragma region Impl
 		class KaramouzasComponent::KaramouzasComponentImpl
 		{
 		public:
@@ -222,8 +223,11 @@ namespace FusionCrowd
 			float _agentForce;
 		};
 
+#pragma endregion
+
+#pragma region Proxy methods
 		KaramouzasComponent::KaramouzasComponent(std::shared_ptr<NavSystem> navSystem)
-			: pimpl(std::make_unique<KaramouzasComponentImpl>(navSystem))
+			: pimpl(spimpl::make_unique_impl<KaramouzasComponentImpl>(navSystem))
 		{
 		}
 
@@ -231,11 +235,9 @@ namespace FusionCrowd
 			float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME,
 			float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
 			float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE)
-			: pimpl(std::make_unique<KaramouzasComponentImpl>(navSystem, ORIENT_WEIGHT, COS_FOV_ANGLE, REACTION_TIME, WALL_STEEPNESS, WALL_DISTANCE, COLLIDING_COUNT, D_MIN, D_MID, D_MAX, AGENT_FORCE))
+			: pimpl(spimpl::make_unique_impl<KaramouzasComponentImpl>(navSystem, ORIENT_WEIGHT, COS_FOV_ANGLE, REACTION_TIME, WALL_STEEPNESS, WALL_DISTANCE, COLLIDING_COUNT, D_MIN, D_MID, D_MAX, AGENT_FORCE))
 		{
 		}
-
-		KaramouzasComponent::~KaramouzasComponent() = default;
 
 		void KaramouzasComponent::Update(float timeStep)
 		{
@@ -261,5 +263,6 @@ namespace FusionCrowd
 		{
 			return pimpl->DeleteAgent(id);
 		}
+#pragma endregion
 	}
 }

@@ -6,6 +6,8 @@
 #include "Agent.h"
 #include "Config.h"
 
+#include "Util/spimpl.h"
+
 #include "StrategyComponent/IStrategyComponent.h"
 #include "StrategyComponent/Goal/Goal.h"
 #include "TacticComponent/ITacticComponent.h"
@@ -20,15 +22,11 @@ namespace FusionCrowd
 	{
 	public:
 		Simulator();
-		~Simulator();
 
 		Simulator & AddOpModel(std::shared_ptr<IOperationComponent> operComponent);
 		Simulator & AddTactic(std::shared_ptr<ITacticComponent> tacticComponent);
 		Simulator & AddStrategy(std::shared_ptr<IStrategyComponent> strategyComponent);
 		Simulator & UseNavSystem(std::shared_ptr<NavSystem> system);
-
-		Simulator(Simulator &&);
-		Simulator& operator=(Simulator &&);
 
 		bool DoStep();
 
@@ -62,6 +60,6 @@ namespace FusionCrowd
 	private:
 		class SimulatorImpl;
 
-		std::unique_ptr<SimulatorImpl> pimpl;
+		spimpl::unique_impl_ptr<SimulatorImpl> pimpl;
 	};
 }

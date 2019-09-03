@@ -8,6 +8,7 @@
 #include "Math/Util.h"
 #include "Util/PublicSpatialInfo.h"
 #include "Util/IRecording.h"
+#include "Util/spimpl.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 
 namespace FusionCrowd
@@ -20,14 +21,6 @@ namespace FusionCrowd
 	{
 	public:
 		NavSystem(std::shared_ptr<NavMeshLocalizer> localizer);
-
-		virtual ~NavSystem();
-
-		NavSystem(const NavSystem &) = delete;
-		NavSystem& operator=(const NavSystem&) = delete;
-
-		NavSystem(NavSystem&&);
-		NavSystem& operator=(NavSystem&&);
 
 		// Why do we need it?
 		void Init();
@@ -54,6 +47,6 @@ namespace FusionCrowd
 	private:
 		class NavSystemImpl;
 
-		std::unique_ptr<NavSystemImpl> pimpl;
+		spimpl::unique_impl_ptr<NavSystemImpl> pimpl;
 	};
 }

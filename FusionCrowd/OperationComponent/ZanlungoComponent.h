@@ -5,6 +5,7 @@
 #include "Simulator.h"
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
+#include "Util/spimpl.h"
 
 #include <map>
 
@@ -29,7 +30,6 @@ namespace FusionCrowd
 		public:
 			ZanlungoComponent(std::shared_ptr<NavSystem> navSystem);
 			ZanlungoComponent(std::shared_ptr<NavSystem> navSystem, float agentScale, float obstScale, float reactionTime, float forceDistance);
-			~ZanlungoComponent();
 
 			std::string GetName();
 
@@ -42,7 +42,7 @@ namespace FusionCrowd
 		private:
 			class ZanlungoComponentImpl;
 
-			std::unique_ptr<ZanlungoComponentImpl> pimpl;
+			spimpl::unique_impl_ptr<ZanlungoComponentImpl> pimpl;
 		};
 	}
 }

@@ -7,6 +7,7 @@ namespace FusionCrowd
 {
 	namespace SwitchingComp
 	{
+#pragma region Impl
 		class SwitchingComponent::SwitchingComponentImpl
 		{
 		public:
@@ -89,11 +90,14 @@ namespace FusionCrowd
 				}
 			}
 		};
+#pragma endregion
+
+#pragma region proxy
 
 		SwitchingComponent::SwitchingComponent(std::shared_ptr<NavSystem> navSystem,
 			std::shared_ptr<IOperationComponent> primaryComponent,
 			std::shared_ptr<IOperationComponent> secondaryComponent)
-			: pimpl(std::make_unique<SwitchingComponentImpl>(navSystem, primaryComponent, secondaryComponent))
+			: pimpl(spimpl::make_unique_impl<SwitchingComponentImpl>(navSystem, primaryComponent, secondaryComponent))
 		{
 		}
 
@@ -121,7 +125,6 @@ namespace FusionCrowd
 		{
 			pimpl->SetNeighborsToSwitch(neighborsToSwitch);
 		}
-
-		SwitchingComponent::~SwitchingComponent() = default;
+#pragma endregion
 	}
 }

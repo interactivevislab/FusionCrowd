@@ -18,6 +18,7 @@ namespace FusionCrowd
 {
 	namespace ORCA
 	{
+#pragma region Impl
 		class ORCAComponent::ORCAComponentImpl
 		{
 		public:
@@ -585,14 +586,16 @@ namespace FusionCrowd
 			std::vector<FusionCrowd::Math::Line> _orcaLines;
 			std::set<size_t> _agents;
 		};
+#pragma endregion
 
+#pragma region proxy methods
 		ORCAComponent::ORCAComponent(std::shared_ptr<NavSystem> navSystem)
-			: pimpl(std::make_unique<ORCAComponentImpl>(navSystem, 2.5f, 0.15f))
+			: pimpl(spimpl::make_unique_impl<ORCAComponentImpl>(navSystem, 2.5f, 0.15f))
 		{
 		}
 
 		ORCAComponent::ORCAComponent(std::shared_ptr<NavSystem> navSystem, float timeHorizon, float timeHorizonObst)
-			: pimpl(std::make_unique<ORCAComponentImpl>(navSystem, timeHorizon, timeHorizonObst))
+			: pimpl(spimpl::make_unique_impl<ORCAComponentImpl>(navSystem, timeHorizon, timeHorizonObst))
 		{
 		}
 
@@ -610,7 +613,6 @@ namespace FusionCrowd
 		{
 			pimpl->Update(timeStep);
 		}
-
-		ORCAComponent::~ORCAComponent() = default;
 	}
+#pragma endregion
 }

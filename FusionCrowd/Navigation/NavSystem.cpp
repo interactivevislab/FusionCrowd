@@ -280,14 +280,10 @@ namespace FusionCrowd
 		float _agentsSensitivityRadius = 1;
 	};
 
-	NavSystem::NavSystem(std::shared_ptr<NavMeshLocalizer> localizer) : pimpl(std::make_unique<NavSystemImpl>(localizer))
+	NavSystem::NavSystem(std::shared_ptr<NavMeshLocalizer> localizer)
+		: pimpl(spimpl::make_unique_impl<NavSystemImpl>(localizer))
 	{
 	}
-
-	NavSystem::~NavSystem() { };
-
-	NavSystem::NavSystem(NavSystem&&) = default;
-	NavSystem& NavSystem::operator=(NavSystem&&) = default;
 
 	void NavSystem::AddAgent(size_t agentId, Vector2 position)
 	{
