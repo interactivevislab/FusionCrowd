@@ -4,17 +4,12 @@
 #include <unordered_set>
 
 #include "StrategyComponent/IStrategyComponent.h"
-
-
-namespace FusionCrowd
-{
-	class Simulator;
-}
+#include "Export.h"
 
 class UE4StrategyProxy : public FusionCrowd::IStrategyComponent
 {
 public:
-	UE4StrategyProxy(std::shared_ptr<FusionCrowd::Simulator> simulator);
+	UE4StrategyProxy(FusionCrowd::ISimulatorFacade * simulator);
 	~UE4StrategyProxy();
 
 	std::string GetName() { return "ue4strategyproxy"; };
@@ -24,7 +19,7 @@ public:
 	void Update(float timeStep);
 
 private:
-	std::shared_ptr<FusionCrowd::Simulator> _simulator;
+	FusionCrowd::ISimulatorFacade * _simulator;
 	std::unordered_set<size_t> _agents;
 };
 
