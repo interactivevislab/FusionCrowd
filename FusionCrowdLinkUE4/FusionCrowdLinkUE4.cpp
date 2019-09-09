@@ -35,6 +35,7 @@ FusionCrowdLinkUE4::~FusionCrowdLinkUE4()
 
 void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 {
+
 	auto path = std::string(navMeshDir);
 
 	auto localizer = std::make_shared<NavMeshLocalizer>(path, true);
@@ -75,6 +76,7 @@ size_t FusionCrowdLinkUE4::AddAgent(const float * agentPos, const float * goalPo
 	size_t id = sim->AddAgent(360, 0.19f, 0.3f, 0.5f, 5, position, goal);
 
 	sim->SetOperationComponent(id, compName);
+	sim->SetTacticComponent(id, _tactic->GetName());
 	sim->SetStrategyComponent(id, _strategy->GetName());
 
 	return id;

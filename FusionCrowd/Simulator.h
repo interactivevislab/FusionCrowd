@@ -7,12 +7,14 @@
 #include "Config.h"
 
 #include "Util/spimpl.h"
-
+#include "Util/FCArray.h"
+#include "Math/Util.h"
 #include "StrategyComponent/IStrategyComponent.h"
 #include "StrategyComponent/Goal/Goal.h"
 #include "TacticComponent/ITacticComponent.h"
 #include "OperationComponent/IOperationComponent.h"
 #include "Navigation/NavSystem.h"
+#include "Export.h"
 
 namespace FusionCrowd
 {
@@ -55,8 +57,12 @@ namespace FusionCrowd
 			std::shared_ptr<Goal> g
 		);
 
+		size_t AddAgent(DirectX::SimpleMath::Vector2 pos);
+		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos);
+
 		Agent & GetAgent(size_t id);
 
+		FCArray<AgentInfo> GetAgentsInfo();
 	private:
 		class SimulatorImpl;
 

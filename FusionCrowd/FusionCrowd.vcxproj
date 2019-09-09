@@ -22,6 +22,7 @@
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Export.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
     <ClInclude Include="Util\FCArray.h" />
@@ -72,6 +73,7 @@
     <ClInclude Include="Util\spimpl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Export.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.cpp" />

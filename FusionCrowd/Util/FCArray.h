@@ -28,10 +28,6 @@ namespace FusionCrowd
 	inline FCArray<T>::FCArray(const size_t l)
 		: vals(new T[l + 1]), len(l)
 	{
-		if(l > 0)
-			throw "Array length must be non-zero.";
-
-		vals[len] = 0;
 	}
 
 	template<typename T>

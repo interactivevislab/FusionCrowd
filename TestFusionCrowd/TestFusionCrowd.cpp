@@ -12,18 +12,18 @@ int main()
 {
 	NeighbourSearchBenchCase case1;
 	ZanlungoCase case2;
-	//case1.Pre();
-	case2.Pre();
+	case1.Pre();
+	//case2.Pre();
 
 	std::cout << "Overclocking launch... ";
-	//case1.Run(3.0f);
-	case2.Run(3.0f);
-	std::cout << "complete" << std::endl;
+	case1.Run(3.0f);
+	//case2.Run(3.0f);
+	//std::cout << "complete" << std::endl;
 
-	/*for (float coeff = 0.5; coeff < 10; coeff += 0.25) {
+	for (float coeff = 0.5; coeff < 10; coeff += 0.25) {
 		std::cout << "coeff = " << coeff << '\t';
 		case1.Run(coeff);
 		case1.Post();
 	}
-	*/
+
 }

@@ -3,6 +3,7 @@
 #include "Navigation/NavSystem.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include "TacticComponent/NavMeshComponent.h"
+#include "StrategyComponent/Goal/PointGoal.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -84,25 +85,22 @@ namespace FusionCrowd
 			return id;
 		}
 
-		size_t AddAgent(
-			DirectX::SimpleMath::Vector2 pos,
-			std::string opComponent,
-			std::string tacticComponent,
-			std::string startegyComponent
-		)
+		size_t AddAgent(DirectX::SimpleMath::Vector2 pos)
 		{
 			AgentSpatialInfo info;
 			info.id = GetNextId();
 			_navSystem->AddAgent(info);
 
 			Agent a(info.id);
+			a.currentGoal = std::make_shared<PointGoal>(pos);
 			_agents.insert({info.id, a});
 
-			SetOperationComponent(info.id, opComponent);
-			SetTacticComponent(info.id, tacticComponent);
-			SetStrategyComponent(info.id, startegyComponent);
-
 			return info.id;
+		}
+
+		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
+		{
+			_agents.find(agentId)->second.currentGoal = std::make_shared<PointGoal>(goalPos);
 		}
 
 		bool SetOperationComponent(size_t agentId, std::string newOperationComponent)
@@ -200,6 +198,31 @@ namespace FusionCrowd
 		Agent & GetAgent(size_t id)
 		{
 			return _agents.find(id)->second;
+		}
+
+		FCArray<AgentInfo> GetAgentsInfo()
+		{
+			auto result = FCArray<AgentInfo>(_agents.size());
+
+			int i = 0;
+			for(auto & p : _agents)
+			{
+				Agent & agent = p.second;
+				AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agent.id);
+				std::shared_ptr<Goal> g = GetAgentGoal(agent.id);
+				result[i] = AgentInfo {
+					agent.id,
+					info.pos.x, info.pos.y,
+					info.vel.x, info.vel.y,
+					info.orient.x, info.orient.y,
+					info.radius,
+					-1, -1, -1, // ComponentIds
+					g->getCentroid().x, g->getCentroid().y
+				};
+				i++;
+			}
+
+			return result;
 		}
 	private:
 		size_t _nextAgentId = 0;
@@ -301,6 +324,21 @@ namespace FusionCrowd
 	Agent& Simulator::GetAgent(size_t id)
 	{
 		return pimpl->GetAgent(id);
+	}
+
+	size_t Simulator::AddAgent(DirectX::SimpleMath::Vector2 pos)
+	{
+		return pimpl->AddAgent(pos);
+	}
+
+	void Simulator::SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
+	{
+		pimpl->SetAgentGoal(agentId, goalPos);
+	}
+
+	FCArray<AgentInfo> Simulator::GetAgentsInfo()
+	{
+		return pimpl->GetAgentsInfo();
 	}
 #pragma endregion
 }

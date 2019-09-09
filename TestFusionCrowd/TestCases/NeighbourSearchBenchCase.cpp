@@ -25,6 +25,8 @@
 
 #include "Benchmark/MicroscopicMetrics.h"
 
+#include "Export.h"
+
 
 namespace TestFusionCrowd
 {
@@ -68,46 +70,32 @@ namespace TestFusionCrowd
 	{
 		std::string navPath = "Resources/square.nav";
 
-		auto localizer = std::make_shared<NavMeshLocalizer>(navPath, true);
-		auto navSystem = std::make_shared<NavSystem>(localizer);
-		navSystem->SetGridCoeff(coeff);
-		navSystem->SetAgentsSensitivityRadius(searchRadius);
+		std::shared_ptr<ISimulatorBuilder> builder(BuildSimulator(), BuilderDeleter);
+		builder->WithNavMesh("Resources/square.nav")
+			->WithOp(FusionCrowd::KARAMOUZAS_ID)
+			->WithOp(FusionCrowd::ORCA_ID);
 
-		auto kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(navSystem);
-		auto orcaComponent = std::make_shared<FusionCrowd::ORCA::ORCAComponent>(navSystem);
-		auto pedvoComponent = std::make_shared<FusionCrowd::PedVO::PedVOComponent>(navSystem);
+		std::shared_ptr<ISimulatorFacade> sim(builder->Build(), SimulatorFacadeDeleter);
 
-		FusionCrowd::Simulator & sim = FusionCrowd::Simulator{}
-			.AddOpModel(kComponent)
-			.AddOpModel(orcaComponent)
-			.AddOpModel(pedvoComponent)
-			.UseNavSystem(navSystem);
-
-		for (int i = 0; i < totalAgents; i++) {
-			auto goal = std::make_shared<FusionCrowd::PointGoal>(
-				RandFloat(0, worldSide),
-				RandFloat(0, worldSide)
-			);
-			sim.AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(0, worldSide), RandFloat(0, worldSide)), goal);
-			sim.SetOperationComponent(i, kComponent->GetName());
+		for (int i = 0; i < totalAgents; i++)
+		{
+			auto id = sim->AddAgent(RandFloat(0, worldSide), RandFloat(0, worldSide), FusionCrowd::KARAMOUZAS_ID, -1);
+			sim->SetAgentGoal(id, RandFloat(0, worldSide), RandFloat(0, worldSide));
 		}
-
-		//sim.InitSimulator(navPath.c_str());
 
 		std::ofstream myfile;
 		myfile.open("way.csv");
-
 		for (int i = 0; i < stepsTotal; i++)
 		{
 			high_resolution_clock::time_point t1 = high_resolution_clock::now();
-			if (!sim.DoStep()) break;
+			sim->DoStep();
 			high_resolution_clock::time_point t2 = high_resolution_clock::now();
 			measures[i] = duration_cast<microseconds>(t2 - t1).count();
 		}
 
 		myfile.close();
 
-		recording = navSystem->GetRecording();
+		recording = sim->GetRecording();
 	}
 
 	void NeighbourSearchBenchCase::Post()

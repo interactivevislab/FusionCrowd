@@ -6,14 +6,17 @@
 
 namespace FusionCrowd
 {
-	using TimeSpan = FCArray<float>;
-
-	class FUSION_CROWD_API IRecording
+	extern "C"
 	{
-	public:
-		virtual TimeSpan GetTimeSpan() const = 0;
-		virtual const IRecordingSlice & GetSlice(float time) const = 0;
+		using TimeSpan = FCArray<float>;
 
-		virtual ~IRecording() { }
-	};
+		class FUSION_CROWD_API IRecording
+		{
+		public:
+			virtual TimeSpan GetTimeSpan() const = 0;
+			virtual const IRecordingSlice & GetSlice(float time) const = 0;
+
+			virtual ~IRecording() { }
+		};
+	}
 }

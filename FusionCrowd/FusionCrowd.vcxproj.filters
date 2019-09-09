@@ -38,6 +38,7 @@
     <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="OperationComponent\SwitchingComponent.cpp" />
+    <ClCompile Include="Export.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -91,6 +92,7 @@
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
     <ClInclude Include="Util\spimpl.h" />
+    <ClInclude Include="Export.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
