@@ -26,7 +26,7 @@ namespace FusionCrowd
 
 		bool isShaderLoaded = _calculator.LoadShader(L"NeighborsSeeker.hlsl", "main", defines);
 		if (!isShaderLoaded) {
-			throw std::runtime_error("An error occurred during shader loading.");
+			//throw std::runtime_error("An error occurred during shader loading.");
 		}
 	}
 

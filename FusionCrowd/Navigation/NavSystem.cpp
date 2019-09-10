@@ -230,7 +230,7 @@ namespace FusionCrowd
 
 			_neighborsSeeker.Init(agentsPositions, numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius);
 
-			auto allNeighbors = _neighborsSeeker.FindNeighbors();
+			auto allNeighbors = _neighborsSeeker.FindNeighbors(false);
 
 			_agentsNeighbours.reserve(numAgents);
 			i = 0;

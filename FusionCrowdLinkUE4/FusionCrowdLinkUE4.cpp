@@ -42,7 +42,7 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 	auto navSystem = std::make_shared<NavSystem>(localizer);
 	navSystem->Init();
 
-	auto sim = std::make_shared<Simulator>();
+	sim = std::make_shared<Simulator>();
 	sim->UseNavSystem(navSystem);
 
 	kComponent = std::make_shared<FusionCrowd::Karamouzas::KaramouzasComponent>(navSystem);
