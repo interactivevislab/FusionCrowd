@@ -8,7 +8,6 @@
 #include "TacticComponent/Path/PrefVelocity.h"
 #include "StrategyComponent/Goal/Goal.h"
 #include "Agent.h"
-#include "Config.h"
 #include "Simulator.h"
 
 namespace FusionCrowd
@@ -16,7 +15,7 @@ namespace FusionCrowd
 	class Simulator;
 	class AgentSpatialInfo;
 
-	class FUSION_CROWD_API NavMeshComponent : public ITacticComponent
+	class NavMeshComponent : public ITacticComponent
 	{
 	public:
 		NavMeshComponent(std::shared_ptr<Simulator> simulator, std::shared_ptr<NavMeshLocalizer> localizer);

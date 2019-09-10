@@ -2,7 +2,6 @@
 
 #include <istream>
 
-#include "Config.h"
 #include "Navigation/Obstacle.h"
 #include "Math/Util.h"
 
@@ -12,7 +11,7 @@ namespace FusionCrowd
 	class NavMeshNode;
 	class NavMesh;
 
-	class FUSION_CROWD_API NavMeshObstacle : public Obstacle
+	class NavMeshObstacle : public Obstacle
 	{
 	public:
 		static size_t NO_NEIGHBOR_OBST;

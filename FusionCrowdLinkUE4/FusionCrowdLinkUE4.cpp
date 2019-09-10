@@ -1,24 +1,9 @@
 #include "FusionCrowdLinkUE4.h"
 
-#include "Simulator.h"
-
 #include "Math/consts.h"
 #include "Math/Util.h"
 
-#include "StrategyComponent/Goal/GoalSet.h"
-#include "StrategyComponent/Goal/Goal.h"
-#include "StrategyComponent/Goal/PointGoal.h"
-
 #include "OperationComponent/IOperationComponent.h"
-#include "OperationComponent/KaramouzasComponent.h"
-#include "OperationComponent/ORCAComponent.h"
-#include "OperationComponent/PedVOComponent.h"
-#include "OperationComponent/HelbingComponent.h"
-
-#include "TacticComponent/NavMeshComponent.h"
-#include "Navigation/NavMesh/NavMeshLocalizer.h"
-#include "Navigation/NavSystem.h"
-
 #include "Export.h"
 
 #include <algorithm>

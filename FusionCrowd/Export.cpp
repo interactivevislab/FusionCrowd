@@ -106,8 +106,9 @@ namespace FusionCrowd
 	class BuilderImpl : public ISimulatorBuilder
 	{
 	public:
-		BuilderImpl(): sim(std::make_shared<Simulator>()), impl(new SimulatorFacadeImpl(sim))
+		BuilderImpl(): sim(std::make_shared<Simulator>())
 		{
+			impl = new SimulatorFacadeImpl(sim);
 		}
 
 		ISimulatorBuilder*  WithNavMesh(const char* path)

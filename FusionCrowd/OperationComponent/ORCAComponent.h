@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include "Config.h"
 #include "Simulator.h"
 
 #include "OperationComponent/IOperationComponent.h"
@@ -12,7 +11,7 @@ namespace FusionCrowd
 {
 	namespace ORCA
 	{
-		class FUSION_CROWD_API ORCAComponent : public IOperationComponent
+		class ORCAComponent : public IOperationComponent
 		{
 		public:
 			ORCAComponent(std::shared_ptr<NavSystem> navSystem);

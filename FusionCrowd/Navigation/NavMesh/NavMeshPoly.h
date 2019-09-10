@@ -3,12 +3,11 @@
 #include <fstream>
 #include <string>
 
-#include "Config.h"
 #include "Math/Util.h"
 
 namespace FusionCrowd
 {
-	class FUSION_CROWD_API NavMeshPoly
+	class NavMeshPoly
 	{
 	public:
 		NavMeshPoly();

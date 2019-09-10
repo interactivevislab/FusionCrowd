@@ -4,7 +4,6 @@
 #include <map>
 #include <vector>
 
-#include "Config.h"
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h"
 #include "NavMeshNode.h"
@@ -40,7 +39,7 @@ namespace FusionCrowd
 		size_t _last;
 	};
 
-	class FUSION_CROWD_API NavMesh
+	class NavMesh
 	{
 	public:
 		NavMesh();

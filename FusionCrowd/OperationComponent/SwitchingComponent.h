@@ -8,7 +8,7 @@ namespace FusionCrowd
 {
 	namespace SwitchingComp
 	{
-		class FUSION_CROWD_API SwitchingComponent : public IOperationComponent
+		class SwitchingComponent : public IOperationComponent
 		{
 		public:
 			SwitchingComponent(std::shared_ptr<NavSystem> navSystem,

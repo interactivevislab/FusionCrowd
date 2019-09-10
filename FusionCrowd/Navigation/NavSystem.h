@@ -4,7 +4,6 @@
 #include <vector>
 #include <functional>
 
-#include "Config.h"
 #include "Math/Util.h"
 #include "Util/PublicSpatialInfo.h"
 #include "Util/IRecording.h"
@@ -17,7 +16,7 @@ namespace FusionCrowd
 	class Obstacle;
 	struct AgentSpatialInfo;
 
-	class FUSION_CROWD_API NavSystem
+	class NavSystem
 	{
 	public:
 		NavSystem(std::shared_ptr<NavMeshLocalizer> localizer);

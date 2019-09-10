@@ -1,9 +1,5 @@
 #include "UE4StrategyProxy.h"
 
-#include "Simulator.h"
-#include "StrategyComponent/Goal/PointGoal.h"
-
-
 UE4StrategyProxy::UE4StrategyProxy(FusionCrowd::ISimulatorFacade * simulator) : _simulator(simulator)
 {
 }

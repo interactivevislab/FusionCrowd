@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Agent.h"
-#include "Config.h"
 #include "Simulator.h"
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
@@ -14,7 +13,7 @@ namespace FusionCrowd
 {
 	namespace Karamouzas
 	{
-		struct FUSION_CROWD_API AgentParamentrs
+		struct AgentParamentrs
 		{
 			float _perSpace;
 			float _anticipation;
@@ -27,7 +26,7 @@ namespace FusionCrowd
 			}
 		};
 
-		class FUSION_CROWD_API KaramouzasComponent : public IOperationComponent
+		class KaramouzasComponent : public IOperationComponent
 		{
 		public:
 			explicit KaramouzasComponent(std::shared_ptr<NavSystem> navSystem);

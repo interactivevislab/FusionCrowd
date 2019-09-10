@@ -3,7 +3,6 @@
 #include "NavMesh.h"
 #include "NavMeshNode.h"
 #include "Agent.h"
-#include "Config.h"
 #include "Math/Util.h"
 
 #include <set>
@@ -16,7 +15,7 @@ namespace FusionCrowd
 	class PortalPath;
 	class PathPlanner;
 
-	class FUSION_CROWD_API NavMeshLocation
+	class NavMeshLocation
 	{
 	public:
 		NavMeshLocation() : _nodeID(NO_NODE), _hasPath(false)

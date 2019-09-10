@@ -5,7 +5,6 @@
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h"
 #include "NavMeshPoly.h"
-#include "Config.h"
 
 namespace FusionCrowd
 {
@@ -15,7 +14,7 @@ namespace FusionCrowd
 	class PathPlanner;
 	class NavMeshObstacle;
 
-	class FUSION_CROWD_API NavMeshNode
+	class NavMeshNode
 	{
 	public:
 		NavMeshNode();

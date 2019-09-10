@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Config.h"
 #include "Math/Util.h"
 #include "TacticComponent/Path/PrefVelocity.h"
 #include "Util/IRecording.h"
