@@ -9,19 +9,9 @@
 #include <ctime>
 #include <chrono>
 
-#include "Agent.h"
-#include "Simulator.h"
 #include "Math/consts.h"
-
-#include "StrategyComponent/Goal/PointGoal.h"
-
-#include "OperationComponent/IOperationComponent.h"
-#include "OperationComponent/ZanlungoComponent.h"
-#include "TacticComponent/NavMeshComponent.h"
-
-#include "Navigation/NavSystem.h"
-
 #include "Benchmark/MicroscopicMetrics.h"
+#include "Export.h"
 
 namespace TestFusionCrowd
 {
@@ -65,56 +55,40 @@ namespace TestFusionCrowd
 	{
 		std::string navPath = "Resources/square.nav";
 
-		auto localizer = std::make_shared<NavMeshLocalizer>(navPath, true);
-		auto navSystem = std::make_shared<NavSystem>(localizer);
-		navSystem->SetGridCoeff(coeff);
-		navSystem->SetAgentsSensitivityRadius(searchRadius);
-		navSystem->Init();
+		std::shared_ptr<ISimulatorBuilder> builder(BuildSimulator(), BuilderDeleter);
+		builder->WithNavMesh("Resources/square.nav")
+			->WithOp(FusionCrowd::ZANLUNGO_ID);
 
-		auto zanlungoComponent = std::make_shared<FusionCrowd::Zanlungo::ZanlungoComponent>(navSystem);
-		auto sim = std::make_shared<FusionCrowd::Simulator>();
-		sim->AddOpModel(zanlungoComponent);
-		sim->UseNavSystem(navSystem);
+		std::shared_ptr<ISimulatorFacade> sim(builder->Build(), SimulatorFacadeDeleter);
 
-		auto tactic = std::make_shared<FusionCrowd::NavMeshComponent>(sim, localizer);
-		sim->AddTactic(tactic);
-
-		for (int i = 0; i < (totalAgents / 2 - 1); i++) {
-			auto goal = std::make_shared<FusionCrowd::PointGoal>(
-				RandFloat(14.0f, 16.0f),
-				RandFloat(10.0f, 20.0f)
-			);
-			sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(2.0f, 4.0f), RandFloat(10.0f, 20.0f)), goal);
+		for (int i = 0; i < (totalAgents / 2 - 1); i++)
+		{
+			size_t id = sim->AddAgent(RandFloat(2.0f, 4.0f), RandFloat(10.0f, 20.0f), ZANLUNGO_ID, -1);
+			sim->SetAgentGoal(id, RandFloat(14.0f, 16.0f), RandFloat(10.0f, 20.0f));
 		}
 
-		for (int i = (totalAgents / 2 - 1); i < totalAgents; i++) {
-			auto goal = std::make_shared<FusionCrowd::PointGoal>(
-				RandFloat(8.0f, 10.0f),
-				RandFloat(0.0f, 5.0f)
-			);
-			sim->AddAgent(360, 0.19f, 0.05f, 0.2f, 5, Vector2(RandFloat(8.0f, 10.0f), RandFloat(20.0f, 25.0f)), goal);
-		}
-
-		for (int i = 0; i < agentsCount; i++) {
-			sim->SetOperationComponent(i, zanlungoComponent->GetName());
-			sim->SetTacticComponent(i, tactic->GetName());
+		for (int i = (totalAgents / 2 - 1); i < totalAgents; i++)
+		{
+			size_t id = sim->AddAgent(RandFloat(8.0f, 10.0f), RandFloat(20.0f, 25.0f), ZANLUNGO_ID, -1);
+			sim->SetAgentGoal(id, RandFloat(8.0f, 10.0f), RandFloat(0.0f, 5.0f));
 		}
 
 		std::ofstream myfile;
 		myfile.open("way2.csv");
 
-		for (int i = 0; i < stepsTotal; i++) {
-
+		for (int i = 0; i < stepsTotal; i++)
+		{
 			high_resolution_clock::time_point t1 = high_resolution_clock::now();
-			if (!sim->DoStep()) break;
+			sim->DoStep();
+
 			high_resolution_clock::time_point t2 = high_resolution_clock::now();
 			measures[i] = duration_cast<microseconds>(t2 - t1).count();
 
+			auto agents = sim->GetAgents();
 			for (size_t i = 0; i < agentsCount; i++)
 			{
-				auto agent = navSystem->GetPublicSpatialInfo(i);
 				if (i > 0) myfile << ",";
-				myfile << agent.posX << "," << agent.posY;
+				myfile << agents[i].posX << "," << agents[i].posY;
 			}
 			myfile << std::endl;
 			std::cout << i << std::endl;
@@ -122,7 +96,7 @@ namespace TestFusionCrowd
 
 		myfile.close();
 
-		recording = navSystem->GetRecording();
+		recording = sim->GetRecording();
 	}
 
 	void ZanlungoCase::Post()

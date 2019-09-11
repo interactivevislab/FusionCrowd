@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Agent.h"
-#include "Config.h"
 #include "Simulator.h"
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
@@ -13,7 +12,7 @@ namespace FusionCrowd
 {
 	namespace Zanlungo
 	{
-		struct FUSION_CROWD_API ZAgentParamentrs
+		struct ZAgentParamentrs
 		{
 			float _mass;
 
@@ -25,7 +24,7 @@ namespace FusionCrowd
 			}
 		};
 
-		class FUSION_CROWD_API ZanlungoComponent : public IOperationComponent
+		class ZanlungoComponent : public IOperationComponent
 		{
 		public:
 			ZanlungoComponent(std::shared_ptr<NavSystem> navSystem);

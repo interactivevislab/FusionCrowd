@@ -6,7 +6,6 @@
 #include <vector>
 #include <memory>
 
-#include "Simulator.h"
 #include "Math/Util.h"
 #include "Util/IRecording.h"
 

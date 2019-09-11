@@ -14,6 +14,7 @@ namespace FusionCrowd
 		FUSION_CROWD_API const ComponentId HELBING_ID    = 101;
 		FUSION_CROWD_API const ComponentId ORCA_ID       = 102;
 		FUSION_CROWD_API const ComponentId ZANLUNGO_ID   = 103;
+		FUSION_CROWD_API const ComponentId PEDVO_ID      = 104;
 
 		FUSION_CROWD_API const ComponentId NAVMESH_ID = 200;
 
@@ -51,6 +52,7 @@ namespace FusionCrowd
 			virtual OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId) = 0;
 			virtual OperationStatus SetAgentGoal(size_t agentId, float x, float y) = 0;
 
+			virtual size_t GetAgentCount() = 0;
 			virtual FCArray<AgentInfo> GetAgents() = 0;
 
 			virtual size_t AddAgent(
@@ -69,7 +71,7 @@ namespace FusionCrowd
 		 */
 		FUSION_CROWD_API void SimulatorFacadeDeleter(ISimulatorFacade* sim);
 
-		FUSION_CROWD_API typedef IStrategyComponent* (*StrategyFactory)();
+		FUSION_CROWD_API typedef IStrategyComponent* (*StrategyFactory)(ISimulatorFacade *);
 
 		class FUSION_CROWD_API ISimulatorBuilder
 		{
@@ -78,7 +80,7 @@ namespace FusionCrowd
 			virtual ISimulatorBuilder* WithOp(ComponentId opId) = 0;
 			virtual ISimulatorBuilder* WithStrategy(ComponentId strategyId) = 0;
 
-			//virtual ComponentId WithExternalStrategy(StrategyFactory externalStrategyFactory) = 0;
+			virtual ComponentId WithExternalStrategy(StrategyFactory externalStrategyFactory) = 0;
 
 			virtual ISimulatorFacade* Build() = 0;
 		};

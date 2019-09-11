@@ -14,6 +14,7 @@
 #include "OperationComponent/HelbingComponent.h"
 #include "OperationComponent/ORCAComponent.h"
 #include "OperationComponent/ZanlungoComponent.h"
+#include "OperationComponent/PedVOComponent.h"
 
 namespace FusionCrowd
 {
@@ -22,6 +23,7 @@ namespace FusionCrowd
 		{HELBING_ID,    "helbing"},
 		{ORCA_ID,       "orca"},
 		{ZANLUNGO_ID,   "zanlungo"},
+		{PEDVO_ID,      "pedvo"}
 	};
 
 	static std::map<ComponentId, std::string> tacticComponentsMap = {
@@ -92,6 +94,11 @@ namespace FusionCrowd
 		{
 			return _sim->GetNavSystem()->GetRecording();
 		}
+
+		size_t GetAgentCount()
+		{
+			return _sim->GetAgentCount();
+		}
 	private:
 		std::shared_ptr<Simulator> _sim;
 	};
@@ -101,6 +108,7 @@ namespace FusionCrowd
 	public:
 		BuilderImpl(): sim(std::make_shared<Simulator>())
 		{
+			impl = new SimulatorFacadeImpl(sim);
 		}
 
 		ISimulatorBuilder*  WithNavMesh(const char* path)
@@ -133,7 +141,9 @@ namespace FusionCrowd
 				case ZANLUNGO_ID:
 					sim->AddOpModel(std::make_shared<Zanlungo::ZanlungoComponent>(navSystem));
 					break;
-
+				case PEDVO_ID:
+					sim->AddOpModel(std::make_shared<PedVO::PedVOComponent>(navSystem));
+					break;
 				default:
 					break;
 			}
@@ -146,17 +156,26 @@ namespace FusionCrowd
 			return this;
 		}
 
-		/*ComponentId WithExternalStrategy(StrategyFactory externalStrategyFactory)
+		ComponentId WithExternalStrategy(StrategyFactory externalStrategyFactory)
 		{
-			return nextExternalStrategyId++;
-		}*/
+			auto strat = std::shared_ptr<IStrategyComponent>(externalStrategyFactory(impl));
+			ComponentId newId = nextExternalStrategyId++;
+
+			sim->AddStrategy(strat);
+			strategyComponentsMap.insert({newId, strat->GetName()});
+
+			return newId;
+		}
 
 		ISimulatorFacade* Build()
 		{
-			return new SimulatorFacadeImpl(sim);
+			return impl;
 		}
 	private:
 		ComponentId nextExternalStrategyId = 900;
+
+		SimulatorFacadeImpl* impl;
+
 		std::shared_ptr<Simulator> sim;
 		std::shared_ptr<NavSystem> navSystem;
 	};

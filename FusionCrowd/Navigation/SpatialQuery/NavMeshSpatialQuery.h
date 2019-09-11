@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Config.h"
 #include "Agent.h"
 #include "Math/Util.h"
 
@@ -11,7 +10,7 @@
 
 namespace FusionCrowd
 {
-	class FUSION_CROWD_API NavMeshSpatialQuery
+	class NavMeshSpatialQuery
 	{
 	public:
 		NavMeshSpatialQuery(std::shared_ptr<NavMeshLocalizer> nml);

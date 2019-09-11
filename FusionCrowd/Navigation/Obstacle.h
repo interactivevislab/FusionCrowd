@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Config.h"
 #include "Math/Util.h"
 
 namespace FusionCrowd
 {
 	// public API here is a mess
-	class FUSION_CROWD_API Obstacle
+	class Obstacle
 	{
 	public:
 
@@ -78,7 +77,7 @@ namespace FusionCrowd
 	};
 }
 
-inline FUSION_CROWD_API float distSqPointLineSegment(const DirectX::SimpleMath::Vector2& a,
+inline float distSqPointLineSegment(const DirectX::SimpleMath::Vector2& a,
                                                      const DirectX::SimpleMath::Vector2& b,
                                                      const DirectX::SimpleMath::Vector2& c)
 {

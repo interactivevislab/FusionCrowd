@@ -2,7 +2,6 @@
 
 #include <istream>
 
-#include "Config.h"
 #include "TacticComponent/Path/PrefVelocity.h"
 #include "NavMeshNode.h"
 #include "Math/Util.h"
@@ -13,7 +12,7 @@ namespace FusionCrowd
 	class NavMesh;
 	class NavMeshNode;
 
-	class FUSION_CROWD_API NavMeshEdge
+	class NavMeshEdge
 	{
 	public:
 		NavMeshEdge();

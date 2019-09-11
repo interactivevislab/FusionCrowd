@@ -4,7 +4,6 @@
 #include <memory>
 
 #include "Agent.h"
-#include "Config.h"
 
 #include "Util/spimpl.h"
 #include "Util/FCArray.h"
@@ -20,7 +19,7 @@ namespace FusionCrowd
 {
 	class NavMeshComponent;
 
-	class FUSION_CROWD_API Simulator
+	class Simulator
 	{
 	public:
 		Simulator();

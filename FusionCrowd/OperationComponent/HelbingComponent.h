@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Agent.h"
-#include "Config.h"
 #include "Simulator.h"
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
@@ -12,7 +11,7 @@ namespace FusionCrowd
 {
 	namespace Helbing
 	{
-		struct FUSION_CROWD_API AgentParamentrs
+		struct AgentParamentrs
 		{
 			float _mass;
 
@@ -24,7 +23,7 @@ namespace FusionCrowd
 			}
 		};
 
-		class FUSION_CROWD_API HelbingComponent: public IOperationComponent
+		class HelbingComponent: public IOperationComponent
 		{
 		public:
 			HelbingComponent(std::shared_ptr<NavSystem> navSystem);

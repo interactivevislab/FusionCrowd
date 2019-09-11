@@ -73,6 +73,7 @@
     <ClInclude Include="Util\spimpl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />

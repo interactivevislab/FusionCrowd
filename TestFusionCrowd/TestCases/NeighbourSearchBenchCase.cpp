@@ -9,22 +9,8 @@
 #include <ctime>
 #include <chrono>
 
-#include "Agent.h"
-#include "Simulator.h"
 #include "Math/consts.h"
-
-#include "StrategyComponent/Goal/PointGoal.h"
-
-#include "OperationComponent/IOperationComponent.h"
-#include "OperationComponent/KaramouzasComponent.h"
-#include "OperationComponent/PedVOComponent.h"
-#include "OperationComponent/ORCAComponent.h"
-#include "OperationComponent/ZanlungoComponent.h"
-
-#include "Navigation/NavSystem.h"
-
 #include "Benchmark/MicroscopicMetrics.h"
-
 #include "Export.h"
 
 

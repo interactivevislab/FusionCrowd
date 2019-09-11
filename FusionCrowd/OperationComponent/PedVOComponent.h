@@ -2,7 +2,6 @@
 
 #include "Simulator.h"
 #include "Agent.h"
-#include "Config.h"
 
 #include "OperationComponent/IOperationComponent.h"
 
@@ -18,7 +17,7 @@ namespace FusionCrowd
 
 	namespace PedVO
 	{
-		struct FUSION_CROWD_API AgentParamentrs
+		struct AgentParamentrs
 		{
 			bool _denseAware;
 			float _strideConst;
@@ -61,7 +60,7 @@ namespace FusionCrowd
 			}
 		};
 
-		class FUSION_CROWD_API PedVOComponent : public IOperationComponent
+		class PedVOComponent : public IOperationComponent
 		{
 		public:
 			PedVOComponent(std::shared_ptr<NavSystem> navSystem);

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Config.h"
-
 #include "OperationComponent/IOperationComponent.h"
 #include "TacticComponent/ITacticComponent.h"
 #include "StrategyComponent/IStrategyComponent.h"
@@ -12,7 +10,7 @@ namespace FusionCrowd
 {
 	class Goal;
 
-	class FUSION_CROWD_API Agent
+	class Agent
 	{
 	public:
 		Agent(size_t id);

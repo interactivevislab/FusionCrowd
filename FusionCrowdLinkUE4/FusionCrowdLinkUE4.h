@@ -3,28 +3,8 @@
 #include <memory>
 
 #include "UE4StrategyProxy.h"
-
-namespace FusionCrowd
-{
-	class Simulator;
-	class NavMeshComponent;
-	namespace Karamouzas
-	{
-		class KaramouzasComponent;
-	}
-	namespace ORCA
-	{
-		class ORCAComponent;
-	}
-	namespace PedVO
-	{
-		class PedVOComponent;
-	}
-	namespace Helbing
-	{
-		class HelbingComponent;
-	}
-}
+#include "Export.h"
+#include "StrategyComponent/IStrategyComponent.h"
 
 struct agentInfo
 {
@@ -52,17 +32,12 @@ public:
 	LINKFUSIONCROWD_API void GetPositionAgents(agentInfo* agentsPos);
 
 private:
-	std::shared_ptr<FusionCrowd::Simulator> sim;
+	FusionCrowd::IStrategyComponent* ProxyStrategyFactory(FusionCrowd::ISimulatorFacade* simFacade);
 
-	std::shared_ptr<UE4StrategyProxy> _strategy;
+	FusionCrowd::ComponentId strategyId;
+	std::shared_ptr<FusionCrowd::ISimulatorFacade> sim;
+	UE4StrategyProxy * _strategy;
 
-	std::shared_ptr<FusionCrowd::NavMeshComponent> _tactic;
-
-	std::shared_ptr<FusionCrowd::Karamouzas::KaramouzasComponent> kComponent;
-	std::shared_ptr<FusionCrowd::ORCA::ORCAComponent> orcaComponent;
-	std::shared_ptr<FusionCrowd::PedVO::PedVOComponent> pedvoComponent;
-	std::shared_ptr<FusionCrowd::Helbing::HelbingComponent> helbingComponent;
-	std::shared_ptr<FusionCrowd::NavMeshComponent> navMeshTactic;
 	int agentsCount;
 	char* navMeshPath;
 };

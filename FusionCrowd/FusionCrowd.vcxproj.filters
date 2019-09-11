@@ -39,6 +39,7 @@
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="OperationComponent\SwitchingComponent.cpp" />
     <ClCompile Include="Export.cpp" />
+    <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
