@@ -89,6 +89,7 @@ namespace FusionCrowd
 		{
 			AgentSpatialInfo info;
 			info.id = GetNextId();
+			info.pos = pos;
 			_navSystem->AddAgent(info);
 
 			Agent a(info.id);
@@ -202,7 +203,7 @@ namespace FusionCrowd
 
 		FCArray<AgentInfo> GetAgentsInfo()
 		{
-			auto result = FCArray<AgentInfo>(_agents.size());
+			FCArray<AgentInfo> result(_agents.size());
 
 			int i = 0;
 			for(auto & p : _agents)

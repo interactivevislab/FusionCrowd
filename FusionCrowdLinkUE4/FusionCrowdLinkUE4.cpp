@@ -21,10 +21,10 @@ FusionCrowdLinkUE4::~FusionCrowdLinkUE4()
 	delete _strategy;
 }
 
-FusionCrowd::IStrategyComponent* FusionCrowdLinkUE4::ProxyStrategyFactory(FusionCrowd::ISimulatorFacade* simFacade)
+FusionCrowd::IStrategyComponent* ProxyStrategyFactory(FusionCrowd::ISimulatorFacade* simFacade, IStrategyComponent ** outStrategy)
 {	
-	_strategy = new UE4StrategyProxy(simFacade);
-	return _strategy;
+	*outStrategy = new UE4StrategyProxy(simFacade);
+	return *outStrategy;
 };
 
 void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
@@ -36,7 +36,7 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 		->WithOp(PEDVO_ID)
 		->WithOp(HELBING_ID);
 
-	strategyId = builder->WithExternalStrategy(&(this->ProxyStrategyFactory));
+	strategyId = builder->WithExternalStrategy(ProxyStrategyFactory, (IStrategyComponent **)(&_strategy));
 	sim = std::shared_ptr<ISimulatorFacade>(builder->Build(), SimulatorFacadeDeleter);
 }
 

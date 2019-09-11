@@ -71,7 +71,7 @@ namespace FusionCrowd
 		 */
 		FUSION_CROWD_API void SimulatorFacadeDeleter(ISimulatorFacade* sim);
 
-		FUSION_CROWD_API typedef IStrategyComponent* (*StrategyFactory)(ISimulatorFacade *);
+		FUSION_CROWD_API typedef IStrategyComponent* (*StrategyFactory)(ISimulatorFacade *, IStrategyComponent **);
 
 		class FUSION_CROWD_API ISimulatorBuilder
 		{
@@ -80,7 +80,7 @@ namespace FusionCrowd
 			virtual ISimulatorBuilder* WithOp(ComponentId opId) = 0;
 			virtual ISimulatorBuilder* WithStrategy(ComponentId strategyId) = 0;
 
-			virtual ComponentId WithExternalStrategy(StrategyFactory externalStrategyFactory) = 0;
+			virtual ComponentId WithExternalStrategy(StrategyFactory externalStrategyFactory, IStrategyComponent ** outStrategy) = 0;
 
 			virtual ISimulatorFacade* Build() = 0;
 		};
