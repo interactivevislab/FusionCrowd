@@ -6,6 +6,7 @@
 
 #include "OperationComponent/IOperationComponent.h"
 #include "Util/spimpl.h"
+#include "ComponentId.h"
 
 namespace FusionCrowd
 {
@@ -16,12 +17,13 @@ namespace FusionCrowd
 		public:
 			ORCAComponent(std::shared_ptr<NavSystem> navSystem);
 			ORCAComponent(std::shared_ptr<NavSystem> navSystem, float timeHorizon, float timeHorizonObst);
-			std::string GetName() { return "orca"; };
 
-			void AddAgent(size_t id);
-			bool DeleteAgent(size_t id);
+			ComponentId GetId() override { return ComponentIds::ORCA_ID; }
 
-			void Update(float timeStep);
+			void AddAgent(size_t id) override;
+			bool DeleteAgent(size_t id) override;
+
+			void Update(float timeStep) override;
 
 		private:
 			class ORCAComponentImpl;

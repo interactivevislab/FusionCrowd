@@ -4,6 +4,7 @@
 #include "Simulator.h"
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
+#include "ComponentId.h"
 
 #include <map>
 
@@ -30,14 +31,13 @@ namespace FusionCrowd
 			HelbingComponent(std::shared_ptr<NavSystem> navSystem, float AGENT_SCALE, float OBST_SCALE, float REACTION_TIME, float BODY_FORCE, float FRICTION, float FORCE_DISTANCE);
 			~HelbingComponent();
 
+			ComponentId GetId() override { return ComponentIds::HELBING_ID; };
 
-			std::string GetName() { return "helbing"; };
-
-			void AddAgent(size_t id);
+			void AddAgent(size_t id) override;
 			void AddAgent(size_t id, float mass);
-			bool DeleteAgent(size_t id);
+			bool DeleteAgent(size_t id) override;
 
-			void Update(float timeStep);
+			void Update(float timeStep) override;
 
 		private:
 			void ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep);

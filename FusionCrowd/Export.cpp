@@ -18,21 +18,6 @@
 
 namespace FusionCrowd
 {
-	static std::map<ComponentId, std::string> opComponentsMap = {
-		{KARAMOUZAS_ID, "karamouzas"},
-		{HELBING_ID,    "helbing"},
-		{ORCA_ID,       "orca"},
-		{ZANLUNGO_ID,   "zanlungo"},
-		{PEDVO_ID,      "pedvo"}
-	};
-
-	static std::map<ComponentId, std::string> tacticComponentsMap = {
-		{NAVMESH_ID, "NavMeshComponent"}
-	};
-
-	static std::map<ComponentId, std::string> strategyComponentsMap = {
-	};
-
 	class SimulatorFacadeImpl : public ISimulatorFacade
 	{
 	public:
@@ -47,14 +32,14 @@ namespace FusionCrowd
 
 		OperationStatus SetAgentOp(size_t agentId, ComponentId opId)
 		{
-			_sim->SetOperationComponent(agentId, opComponentsMap[opId]);
+			_sim->SetOperationComponent(agentId, opId);
 
 			return OperationStatus::OK;
 		}
 
 		OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId)
 		{
-			_sim->SetStrategyComponent(agentId, strategyComponentsMap[strategyId]);
+			_sim->SetStrategyComponent(agentId, strategyId);
 
 			return OperationStatus::OK;
 		}
@@ -78,9 +63,9 @@ namespace FusionCrowd
 		)
 		{
 			size_t agentId = _sim->AddAgent(DirectX::SimpleMath::Vector2(x, y));
-			_sim->SetOperationComponent(agentId, opComponentsMap[opId]);
-			_sim->SetTacticComponent(agentId, tacticComponentsMap[NAVMESH_ID]);
-			_sim->SetOperationComponent(agentId, strategyComponentsMap[strategyId]);
+			_sim->SetOperationComponent(agentId, opId);
+			_sim->SetTacticComponent(agentId, ComponentIds::NAVMESH_ID);
+			_sim->SetOperationComponent(agentId, strategyId);
 
 			return agentId;
 		}
@@ -129,19 +114,19 @@ namespace FusionCrowd
 		{
 			switch (opId)
 			{
-				case KARAMOUZAS_ID:
+				case ComponentIds::KARAMOUZAS_ID:
 					sim->AddOpModel(std::make_shared<Karamouzas::KaramouzasComponent>(navSystem));
 					break;
-				case HELBING_ID:
+				case ComponentIds::HELBING_ID:
 					sim->AddOpModel(std::make_shared<Helbing::HelbingComponent>(navSystem));
 					break;
-				case ORCA_ID:
+				case ComponentIds::ORCA_ID:
 					sim->AddOpModel(std::make_shared<ORCA::ORCAComponent>(navSystem));
 					break;
-				case ZANLUNGO_ID:
+				case ComponentIds::ZANLUNGO_ID:
 					sim->AddOpModel(std::make_shared<Zanlungo::ZanlungoComponent>(navSystem));
 					break;
-				case PEDVO_ID:
+				case ComponentIds::PEDVO_ID:
 					sim->AddOpModel(std::make_shared<PedVO::PedVOComponent>(navSystem));
 					break;
 				default:
@@ -158,11 +143,10 @@ namespace FusionCrowd
 
 		ComponentId WithExternalStrategy(StrategyFactory externalStrategyFactory)
 		{
-			auto strat = std::shared_ptr<IStrategyComponent>(externalStrategyFactory(impl));
 			ComponentId newId = nextExternalStrategyId++;
+			std::shared_ptr<IStrategyComponent> strat(externalStrategyFactory(impl, newId));
 
 			sim->AddStrategy(strat);
-			strategyComponentsMap.insert({newId, strat->GetName()});
 
 			return newId;
 		}

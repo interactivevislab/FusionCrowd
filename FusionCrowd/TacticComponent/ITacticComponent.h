@@ -1,13 +1,14 @@
 #pragma once
 
 #include "Config.h"
+#include "ComponentId.h"
 
 namespace FusionCrowd
 {
 	class FUSION_CROWD_API ITacticComponent
 	{
 	public:
-		virtual std::string GetName() = 0;
+		virtual ComponentId GetId() = 0;
 
 		virtual void AddAgent(size_t id) = 0;
 		virtual bool DeleteAgent(size_t id) = 0;

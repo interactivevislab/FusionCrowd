@@ -6,6 +6,7 @@
 #include "OperationComponent/IOperationComponent.h"
 
 #include "Util/spimpl.h"
+#include "ComponentId.h"
 
 #include <memory>
 
@@ -33,7 +34,7 @@ namespace FusionCrowd
 			KaramouzasComponent(std::shared_ptr<NavSystem> navSystem, float ORIENT_WEIGHT, float COS_FOV_ANGLE, float REACTION_TIME, float WALL_STEEPNESS, float WALL_DISTANCE, int COLLIDING_COUNT,
 				float D_MIN, float D_MID, float D_MAX, float AGENT_FORCE);
 
-			std::string GetName();
+			ComponentId GetId() override { return ComponentIds::KARAMOUZAS_ID; }
 
 			void AddAgent(size_t id);
 			void AddAgent(size_t id, float perSpace, float anticipation);

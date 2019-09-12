@@ -47,8 +47,6 @@ namespace FusionCrowd
 
 			~KaramouzasComponentImpl() = default;
 
-			std::string GetName() { return "karamouzas"; };
-
 			void AddAgent(size_t id)
 			{
 				AddAgent(id, 1.0f, 3.0f);
@@ -252,11 +250,6 @@ namespace FusionCrowd
 		void KaramouzasComponent::AddAgent(size_t id)
 		{
 			pimpl->AddAgent(id);
-		}
-
-		std::string KaramouzasComponent::GetName()
-		{
-			return pimpl->GetName();
 		}
 
 		bool KaramouzasComponent::DeleteAgent(size_t id)

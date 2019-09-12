@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
+    <ClInclude Include="ComponentId.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />

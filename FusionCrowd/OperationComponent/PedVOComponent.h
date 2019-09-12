@@ -8,6 +8,8 @@
 #include "Math/Util.h"
 #include "Math/Line.h"
 
+#include "ComponentId.h"
+
 #include <map>
 
 namespace FusionCrowd
@@ -67,10 +69,10 @@ namespace FusionCrowd
 			PedVOComponent(std::shared_ptr<NavSystem> navSystem, float cosObstTurn, float sinObstTurn);
 			~PedVOComponent();
 
-			std::string GetName() { return "pedvo"; };
-			void AddAgent(size_t agentId);
-			bool DeleteAgent(size_t idAgent);
-			void Update(float timeStep);
+			ComponentId GetId() override { return ComponentIds::PEDVO_ID; }
+			void AddAgent(size_t agentId) override;
+			bool DeleteAgent(size_t idAgent)  override;
+			void Update(float timeStep) override;
 
 			void ComputeNewVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo);
 

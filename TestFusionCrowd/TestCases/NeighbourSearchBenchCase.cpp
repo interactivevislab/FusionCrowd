@@ -58,14 +58,14 @@ namespace TestFusionCrowd
 
 		std::shared_ptr<ISimulatorBuilder> builder(BuildSimulator(), BuilderDeleter);
 		builder->WithNavMesh("Resources/square.nav")
-			->WithOp(FusionCrowd::KARAMOUZAS_ID)
-			->WithOp(FusionCrowd::ORCA_ID);
+			->WithOp(FusionCrowd::ComponentIds::KARAMOUZAS_ID)
+			->WithOp(FusionCrowd::ComponentIds::ORCA_ID);
 
 		std::shared_ptr<ISimulatorFacade> sim(builder->Build(), SimulatorFacadeDeleter);
 
 		for (int i = 0; i < totalAgents; i++)
 		{
-			auto id = sim->AddAgent(RandFloat(0, worldSide), RandFloat(0, worldSide), FusionCrowd::KARAMOUZAS_ID, -1);
+			auto id = sim->AddAgent(RandFloat(0, worldSide), RandFloat(0, worldSide), FusionCrowd::ComponentIds::KARAMOUZAS_ID, -1);
 			sim->SetAgentGoal(id, RandFloat(0, worldSide), RandFloat(0, worldSide));
 		}
 

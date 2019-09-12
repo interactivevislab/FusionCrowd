@@ -20,10 +20,6 @@ namespace FusionCrowd
 
 			~SwitchingComponentImpl() = default;
 
-			std::string GetName() {
-				return "switching(" + _primaryComponent->GetName() + '&' + _secondaryComponent->GetName() + ')';
-			};
-
 			void AddAgent(size_t id)
 			{
 				if (NeedSwitchToSecondary(id)) {
@@ -99,11 +95,6 @@ namespace FusionCrowd
 			std::shared_ptr<IOperationComponent> secondaryComponent)
 			: pimpl(spimpl::make_unique_impl<SwitchingComponentImpl>(navSystem, primaryComponent, secondaryComponent))
 		{
-		}
-
-		std::string SwitchingComponent::GetName()
-		{
-			return pimpl->GetName();
 		}
 
 		void SwitchingComponent::AddAgent(size_t id)
