@@ -12,7 +12,7 @@
 using namespace DirectX::SimpleMath;
 using namespace FusionCrowd;
 
-FusionCrowdLinkUE4::FusionCrowdLinkUE4(): agentsCount(0)
+FusionCrowdLinkUE4::FusionCrowdLinkUE4()
 {
 }
 
@@ -21,10 +21,10 @@ FusionCrowdLinkUE4::~FusionCrowdLinkUE4()
 	delete _strategy;
 }
 
-FusionCrowd::IStrategyComponent* FusionCrowdLinkUE4::ProxyStrategyFactory(FusionCrowd::ISimulatorFacade* simFacade, ComponentId assignedId)
+FusionCrowd::IStrategyComponent* ProxyStrategyFactory(FusionCrowd::ISimulatorFacade* simFacade, ComponentId assignedId, IStrategyComponent ** outStrategy)
 {
-	_strategy = new UE4StrategyProxy(simFacade, assignedId);
-	return _strategy;
+	*outStrategy = new UE4StrategyProxy(simFacade, assignedId);
+	return *outStrategy;
 };
 
 void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
@@ -36,7 +36,7 @@ void FusionCrowdLinkUE4::StartFusionCrowd(char* navMeshDir)
 		->WithOp(ComponentIds::PEDVO_ID)
 		->WithOp(ComponentIds::HELBING_ID);
 
-	strategyId = builder->WithExternalStrategy(&(this->ProxyStrategyFactory));
+	builder->WithExternalStrategy(ProxyStrategyFactory, (IStrategyComponent **)(&_strategy));
 	sim = std::shared_ptr<ISimulatorFacade>(builder->Build(), SimulatorFacadeDeleter);
 }
 
@@ -48,7 +48,7 @@ int FusionCrowdLinkUE4::GetAgentCount()
 size_t FusionCrowdLinkUE4::AddAgent(const float * agentPos, const float * goalPos, const char * opComponent)
 {
 	// TODO: use opComponent
-	size_t id = sim->AddAgent(agentPos[0], agentPos[1], ComponentIds::KARAMOUZAS_ID, strategyId);
+	size_t id = sim->AddAgent(agentPos[0], agentPos[1], ComponentIds::KARAMOUZAS_ID, _strategy->GetId());
 	sim->SetAgentGoal(id, goalPos[0], goalPos[1]);
 
 	return id;
@@ -74,7 +74,7 @@ void FusionCrowdLinkUE4::AddAgents(int agentsCount)
 	auto goal = Vector2(-3.0f, 5.0f);
 	for(Vector2 pos : positions)
 	{
-		size_t id = sim->AddAgent(pos.x, pos.y, ComponentIds::PEDVO_ID, strategyId);
+		size_t id = sim->AddAgent(pos.x, pos.y, ComponentIds::PEDVO_ID, _strategy->GetId());
 
 		sim->SetAgentGoal(id, goal.x, goal.y);
 	}
@@ -89,7 +89,7 @@ void FusionCrowdLinkUE4::SetOperationModel(size_t agentId, const char * name)
 void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* ueAgentInfo)
 {
 	sim->DoStep();
-	agentsCount = sim->GetAgentCount();
+	size_t agentsCount = sim->GetAgentCount();
 
 	auto arr = sim->GetAgents();
 

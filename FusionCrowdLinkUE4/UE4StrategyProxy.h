@@ -5,14 +5,15 @@
 
 #include "StrategyComponent/IStrategyComponent.h"
 #include "Export.h"
+#include "ComponentId.h"
 
 class UE4StrategyProxy : public FusionCrowd::IStrategyComponent
 {
 public:
-	UE4StrategyProxy(FusionCrowd::ISimulatorFacade * simulator, ComponentId assignedId);
+	UE4StrategyProxy(FusionCrowd::ISimulatorFacade * simulator, FusionCrowd::ComponentId assignedId);
 	~UE4StrategyProxy();
 
-	ComponentId GetId() override;
+	FusionCrowd::ComponentId GetId() override;
 
 	void SetGoal(size_t id, const float * goalPos);
 
@@ -23,5 +24,6 @@ public:
 private:
 	FusionCrowd::ISimulatorFacade * _simulator;
 	std::unordered_set<size_t> _agents;
+	FusionCrowd::ComponentId const _id;
 };
 

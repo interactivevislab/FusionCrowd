@@ -1,6 +1,6 @@
 #include "UE4StrategyProxy.h"
 
-UE4StrategyProxy::UE4StrategyProxy(FusionCrowd::ISimulatorFacade * simulator) : _simulator(simulator)
+UE4StrategyProxy::UE4StrategyProxy(FusionCrowd::ISimulatorFacade * simulator, FusionCrowd::ComponentId assignedId) : _simulator(simulator), _id(assignedId)
 {
 }
 
@@ -20,6 +20,11 @@ void UE4StrategyProxy::SetGoal(size_t id, const float* goalPos)
 	{
 		_simulator->SetAgentGoal(id, goalPos[0], goalPos[1]);
 	}
+}
+
+FusionCrowd::ComponentId UE4StrategyProxy::GetId()
+{
+	return _id;
 }
 
 

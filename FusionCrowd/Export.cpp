@@ -65,7 +65,7 @@ namespace FusionCrowd
 			size_t agentId = _sim->AddAgent(DirectX::SimpleMath::Vector2(x, y));
 			_sim->SetOperationComponent(agentId, opId);
 			_sim->SetTacticComponent(agentId, ComponentIds::NAVMESH_ID);
-			_sim->SetOperationComponent(agentId, strategyId);
+			_sim->SetStrategyComponent(agentId, strategyId);
 
 			return agentId;
 		}
@@ -141,10 +141,10 @@ namespace FusionCrowd
 			return this;
 		}
 
-		ComponentId WithExternalStrategy(StrategyFactory externalStrategyFactory)
+		ComponentId WithExternalStrategy(StrategyFactory externalStrategyFactory, IStrategyComponent ** outStrategy)
 		{
 			ComponentId newId = nextExternalStrategyId++;
-			std::shared_ptr<IStrategyComponent> strat(externalStrategyFactory(impl, newId));
+			std::shared_ptr<IStrategyComponent> strat(externalStrategyFactory(impl, newId, outStrategy));
 
 			sim->AddStrategy(strat);
 

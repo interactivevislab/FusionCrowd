@@ -51,10 +51,10 @@ namespace FusionCrowd
 	template<typename T>
 	inline T& FCArray<T>::operator[](int index)
 	{
-		if(index >= len || -index >= len)
+		if (index >= len || index < 0)			
 			throw "Index is out of range";
 
-		return (index >= 0) ? vals[index] : vals[len + index - 1];
+		return vals[index];
 	}
 
 	template<typename T>

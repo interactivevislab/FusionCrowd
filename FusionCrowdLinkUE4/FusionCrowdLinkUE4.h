@@ -32,12 +32,8 @@ public:
 	LINKFUSIONCROWD_API void GetPositionAgents(agentInfo* agentsPos);
 
 private:
-	FusionCrowd::IStrategyComponent* ProxyStrategyFactory(FusionCrowd::ISimulatorFacade* simFacade, ComponentId assignedId);
-
-	FusionCrowd::ComponentId strategyId;
 	std::shared_ptr<FusionCrowd::ISimulatorFacade> sim;
 	UE4StrategyProxy * _strategy;
 
-	int agentsCount;
 	char* navMeshPath;
 };
