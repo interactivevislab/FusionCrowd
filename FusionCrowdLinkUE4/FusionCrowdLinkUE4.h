@@ -30,6 +30,7 @@ public:
 	LINKFUSIONCROWD_API size_t AddAgent(const float * agentPos, const float * goalPos, const char * opComponent);
 	LINKFUSIONCROWD_API void AddAgents(int agentsCount);
 	LINKFUSIONCROWD_API void GetPositionAgents(agentInfo* agentsPos);
+	LINKFUSIONCROWD_API void DoSimulationStep();
 
 private:
 	FusionCrowd::ComponentId strategyId;

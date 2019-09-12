@@ -86,9 +86,13 @@ void FusionCrowdLinkUE4::SetOperationModel(size_t agentId, const char * name)
 }
 
 
+void FusionCrowdLinkUE4::DoSimulationStep() {
+	sim->DoStep();
+}
+
+
 void FusionCrowdLinkUE4::GetPositionAgents(agentInfo* ueAgentInfo)
 {
-	sim->DoStep();
 	agentsCount = sim->GetAgentCount();
 
 	auto arr = sim->GetAgents();
