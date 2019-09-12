@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Config.h"
-#include <string>
+#include "ComponentId.h"
 
 namespace FusionCrowd
 {
@@ -11,10 +11,9 @@ namespace FusionCrowd
 		virtual void AddAgent(size_t id) = 0;
 		virtual bool RemoveAgent(size_t id) = 0;
 		virtual void Update(float timeStep) = 0;
-		virtual std::string GetName() = 0;
 
-		virtual ~IStrategyComponent()
-		{
-		};
+		virtual ComponentId GetId() = 0;
+
+		virtual ~IStrategyComponent(){};
 	};
 }

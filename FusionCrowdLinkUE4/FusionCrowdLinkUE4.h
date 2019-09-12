@@ -33,10 +33,8 @@ public:
 	LINKFUSIONCROWD_API void DoSimulationStep();
 
 private:
-	FusionCrowd::ComponentId strategyId;
 	std::shared_ptr<FusionCrowd::ISimulatorFacade> sim;
 	UE4StrategyProxy * _strategy;
 
-	int agentsCount;
 	char* navMeshPath;
 };

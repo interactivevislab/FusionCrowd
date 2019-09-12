@@ -14,6 +14,7 @@
 #include "OperationComponent/IOperationComponent.h"
 #include "Navigation/NavSystem.h"
 #include "Export.h"
+#include "ComponentId.h"
 
 namespace FusionCrowd
 {
@@ -31,9 +32,9 @@ namespace FusionCrowd
 
 		bool DoStep();
 
-		bool SetOperationComponent(size_t agentId, std::string newOperationComponent);
-		bool SetTacticComponent(size_t agentId, std::string newTactic);
-		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent);
+		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent);
+		bool SetTacticComponent(size_t agentId, ComponentId newTactic);
+		bool SetStrategyComponent(size_t agentId, ComponentId newStrategyComponent);
 		void SetNavSystem(std::shared_ptr<NavSystem> navSystem);
 
 		std::shared_ptr<NavSystem> GetNavSystem();

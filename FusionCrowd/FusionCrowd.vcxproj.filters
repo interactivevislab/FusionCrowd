@@ -94,6 +94,7 @@
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
     <ClInclude Include="Util\spimpl.h" />
     <ClInclude Include="Export.h" />
+    <ClInclude Include="ComponentId.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -33,8 +33,6 @@ namespace FusionCrowd
 
 			~ORCAComponentImpl() = default;
 
-			std::string GetName() { return "orca"; };
-
 			void AddAgent(size_t id)
 			{
 				_agents.insert(id);

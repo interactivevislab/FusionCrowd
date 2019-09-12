@@ -3,22 +3,12 @@
 #include "Util/FCArray.h"
 #include "StrategyComponent/IStrategyComponent.h"
 #include "Util/IRecording.h"
+#include "ComponentId.h"
 
 namespace FusionCrowd
 {
 	extern "C"
 	{
-		FUSION_CROWD_API typedef int ComponentId;
-
-		FUSION_CROWD_API const ComponentId KARAMOUZAS_ID = 100;
-		FUSION_CROWD_API const ComponentId HELBING_ID    = 101;
-		FUSION_CROWD_API const ComponentId ORCA_ID       = 102;
-		FUSION_CROWD_API const ComponentId ZANLUNGO_ID   = 103;
-		FUSION_CROWD_API const ComponentId PEDVO_ID      = 104;
-
-		FUSION_CROWD_API const ComponentId NAVMESH_ID = 200;
-
-
 		struct FUSION_CROWD_API AgentInfo // PublicSpatialInfo?
 		{
 			size_t id;
@@ -71,7 +61,9 @@ namespace FusionCrowd
 		 */
 		FUSION_CROWD_API void SimulatorFacadeDeleter(ISimulatorFacade* sim);
 
-		FUSION_CROWD_API typedef IStrategyComponent* (*StrategyFactory)(ISimulatorFacade *, IStrategyComponent **);
+
+		// Params: simulator, assignedId, out result to be used outside of the simulator
+		FUSION_CROWD_API typedef IStrategyComponent* (*StrategyFactory)(ISimulatorFacade *, ComponentId, IStrategyComponent **);
 
 		class FUSION_CROWD_API ISimulatorBuilder
 		{

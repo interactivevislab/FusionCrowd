@@ -104,11 +104,11 @@ namespace FusionCrowd
 			_agents.find(agentId)->second.currentGoal = std::make_shared<PointGoal>(goalPos);
 		}
 
-		bool SetOperationComponent(size_t agentId, std::string newOperationComponent)
+		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
 		{
 			for(auto& c : _operComponents)
 			{
-				if(c->GetName() == newOperationComponent) {
+				if(c->GetId() == newOperationComponent) {
 					Agent & agent = _agents.find(agentId)->second;
 					std::shared_ptr<IOperationComponent> old = agent.opComponent;
 					if(old != nullptr)
@@ -125,11 +125,11 @@ namespace FusionCrowd
 			return false;
 		}
 
-		bool SetTacticComponent(size_t agentId, std::string newTactic)
+		bool SetTacticComponent(size_t agentId, ComponentId newTactic)
 		{
 			for(auto& c : _tacticComponents)
 			{
-				if(c->GetName() == newTactic) {
+				if(c->GetId() == newTactic) {
 					Agent & agent = _agents.find(agentId)->second;
 					std::shared_ptr<ITacticComponent> old = agent.tacticComponent;
 					if(old != nullptr)
@@ -146,11 +146,11 @@ namespace FusionCrowd
 			return false;
 		}
 
-		bool SetStrategyComponent(size_t agentId, std::string newStrategyComponent)
+		bool SetStrategyComponent(size_t agentId, ComponentId newStrategyComponent)
 		{
 			for(auto& c : _strategyComponents)
 			{
-				if(c->GetName() == newStrategyComponent) {
+				if(c->GetId() == newStrategyComponent) {
 					Agent & agent = _agents.find(agentId)->second;
 					std::shared_ptr<IStrategyComponent>& old = agent.stratComponent;
 					if(old != nullptr)
@@ -273,17 +273,17 @@ namespace FusionCrowd
 		return pimpl->AddAgent(maxAngleVel, radius, prefSpeed, maxSpeed, maxAccel, pos, goal);
 	}
 
-	bool Simulator::SetOperationComponent(size_t agentId, std::string newOperationComponent)
+	bool Simulator::SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
 	{
 		return pimpl->SetOperationComponent(agentId, newOperationComponent);
 	}
 
-	bool Simulator::SetTacticComponent(size_t agentId, std::string newTactic)
+	bool Simulator::SetTacticComponent(size_t agentId, ComponentId newTactic)
 	{
 		return pimpl->SetTacticComponent(agentId, newTactic);
 	}
 
-	bool Simulator::SetStrategyComponent(size_t agentId, std::string newStrategyComponent)
+	bool Simulator::SetStrategyComponent(size_t agentId, ComponentId newStrategyComponent)
 	{
 		return pimpl->SetStrategyComponent(agentId, newStrategyComponent);
 	}

@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "ComponentId.h"
 #include "ITacticComponent.h"
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
@@ -30,7 +31,7 @@ namespace FusionCrowd
 		unsigned int getNodeId(size_t agentId) const;
 		unsigned int getNodeId(size_t agentId, const std::string& grpName, bool searchAll = false);
 
-		std::string GetName() override { return "NavMeshComponent"; }
+		ComponentId GetId() override { return ComponentIds::NAVMESH_ID; }
 
 		~NavMeshComponent();
 

@@ -5,6 +5,7 @@
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
 #include "Util/spimpl.h"
+#include "ComponentId.h"
 
 #include <map>
 
@@ -30,13 +31,13 @@ namespace FusionCrowd
 			ZanlungoComponent(std::shared_ptr<NavSystem> navSystem);
 			ZanlungoComponent(std::shared_ptr<NavSystem> navSystem, float agentScale, float obstScale, float reactionTime, float forceDistance);
 
-			std::string GetName();
+			ComponentId GetId() override { return ComponentIds::ZANLUNGO_ID; }
 
-			void AddAgent(size_t id);
+			void AddAgent(size_t id) override;
 			void AddAgent(size_t id, float mass);
-			bool DeleteAgent(size_t id);
+			bool DeleteAgent(size_t id) override;
 
-			void Update(float timeStep);
+			void Update(float timeStep) override;
 
 		private:
 			class ZanlungoComponentImpl;

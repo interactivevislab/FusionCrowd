@@ -28,8 +28,6 @@ namespace FusionCrowd
 
 			~ZanlungoComponentImpl() = default;
 
-			std::string GetName() { return "zanlungo"; };
-
 			void AddAgent(size_t id)
 			{
 				AddAgent(id, 80.0f);
@@ -316,11 +314,6 @@ namespace FusionCrowd
 		ZanlungoComponent::ZanlungoComponent(std::shared_ptr<NavSystem> navSystem, float agentScale, float obstScale, float reactionTime, float forceDistance)
 			: pimpl(spimpl::make_unique_impl<ZanlungoComponentImpl>(navSystem, agentScale, obstScale, reactionTime, forceDistance))
 		{
-		}
-
-		std::string ZanlungoComponent::GetName()
-		{
-			return pimpl->GetName();
 		}
 
 		void ZanlungoComponent::AddAgent(size_t id)

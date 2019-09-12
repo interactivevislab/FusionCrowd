@@ -57,19 +57,19 @@ namespace TestFusionCrowd
 
 		std::shared_ptr<ISimulatorBuilder> builder(BuildSimulator(), BuilderDeleter);
 		builder->WithNavMesh("Resources/square.nav")
-			->WithOp(FusionCrowd::ZANLUNGO_ID);
+			->WithOp(FusionCrowd::ComponentIds::ZANLUNGO_ID);
 
 		std::shared_ptr<ISimulatorFacade> sim(builder->Build(), SimulatorFacadeDeleter);
 
 		for (int i = 0; i < (totalAgents / 2 - 1); i++)
 		{
-			size_t id = sim->AddAgent(RandFloat(2.0f, 4.0f), RandFloat(10.0f, 20.0f), ZANLUNGO_ID, -1);
+			size_t id = sim->AddAgent(RandFloat(2.0f, 4.0f), RandFloat(10.0f, 20.0f), ComponentIds::ZANLUNGO_ID, -1);
 			sim->SetAgentGoal(id, RandFloat(14.0f, 16.0f), RandFloat(10.0f, 20.0f));
 		}
 
 		for (int i = (totalAgents / 2 - 1); i < totalAgents; i++)
 		{
-			size_t id = sim->AddAgent(RandFloat(8.0f, 10.0f), RandFloat(20.0f, 25.0f), ZANLUNGO_ID, -1);
+			size_t id = sim->AddAgent(RandFloat(8.0f, 10.0f), RandFloat(20.0f, 25.0f), ComponentIds::ZANLUNGO_ID, -1);
 			sim->SetAgentGoal(id, RandFloat(8.0f, 10.0f), RandFloat(0.0f, 5.0f));
 		}
 
