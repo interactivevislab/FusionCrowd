@@ -24,6 +24,9 @@
     <ClInclude Include="ComponentId.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Export.h" />
+    <ClInclude Include="Navigation\FilteredDutRecording\DutCsvParser.h" />
+    <ClInclude Include="Navigation\FilteredDutRecording\FilteredDutRecordingSlice.h" />
+    <ClInclude Include="Navigation\FilteredDutRecording\FilteredDutRecording.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
     <ClInclude Include="Util\FCArray.h" />
@@ -76,6 +79,9 @@
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export.cpp" />
+    <ClCompile Include="Navigation\FilteredDutRecording\DutCsvParser.cpp" />
+    <ClCompile Include="Navigation\FilteredDutRecording\FilteredDutRecordingSlice.cpp" />
+    <ClCompile Include="Navigation\FilteredDutRecording\FilteredDutRecording.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.cpp" />
