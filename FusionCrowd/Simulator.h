@@ -63,6 +63,9 @@ namespace FusionCrowd
 		Agent & GetAgent(size_t id);
 
 		FCArray<AgentInfo> GetAgentsInfo();
+
+		// Must: output.len >= GetAgentCount();
+		bool GetAgentsInfo(FCArray<AgentInfo> & output);
 	private:
 		class SimulatorImpl;
 

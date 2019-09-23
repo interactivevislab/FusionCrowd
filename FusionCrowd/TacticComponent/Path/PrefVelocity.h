@@ -10,14 +10,18 @@ namespace FusionCrowd
 		class PrefVelocity
 		{
 		public:
-			PrefVelocity();
 			PrefVelocity(const DirectX::SimpleMath::Vector2& dir, float speed,
 			             const DirectX::SimpleMath::Vector2& target);
 			PrefVelocity(const DirectX::SimpleMath::Vector2& left, const DirectX::SimpleMath::Vector2& right,
 			             const DirectX::SimpleMath::Vector2& pref, float speed,
 			             const DirectX::SimpleMath::Vector2& target);
-			PrefVelocity(const PrefVelocity& vel);
-			PrefVelocity& operator=(const PrefVelocity& vel);
+
+			PrefVelocity();
+			PrefVelocity(const PrefVelocity& vel) = default;
+			PrefVelocity& operator=(const PrefVelocity& vel) = default;
+			PrefVelocity(PrefVelocity &&) = default;
+			PrefVelocity& operator=(PrefVelocity&& vel) = default;
+
 			inline DirectX::SimpleMath::Vector2 getLeft() const { return _left; }
 			inline DirectX::SimpleMath::Vector2 getRight() const { return _right; }
 			inline DirectX::SimpleMath::Vector2 getPreferred() const { return _preferred; }

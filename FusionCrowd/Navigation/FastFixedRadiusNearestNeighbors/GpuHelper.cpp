@@ -5,6 +5,8 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 
+#include "NeighborsSeekerShader.h"
+
 namespace FusionCrowd
 {
 
@@ -128,16 +130,18 @@ namespace FusionCrowd
 			// Finds the correct path for the shader file.
 			// This is only required for this sample to be run correctly from within the Sample Browser,
 			// in your own projects, these lines could be removed safely
+			/*
 			WCHAR str[MAX_PATH];
 			HRESULT hr = FindDXSDKShaderFileCch(str, MAX_PATH, pSrcFile);
 			if (FAILED(hr))
 				return hr;
+			*/
 
 			DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 #ifdef _DEBUG
 			// Set the D3DCOMPILE_DEBUG flag to embed debug information in the shaders.
-			// Setting this flag improves the shader debugging experience, but still allows 
-			// the shaders to be optimized and to run exactly the way they will run in 
+			// Setting this flag improves the shader debugging experience, but still allows
+			// the shaders to be optimized and to run exactly the way they will run in
 			// the release configuration of this program.
 			dwShaderFlags |= D3DCOMPILE_DEBUG;
 
@@ -153,9 +157,11 @@ namespace FusionCrowd
 
 #if D3D_COMPILER_VERSION >= 46
 
-			hr = D3DCompileFromFile(str, defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, pFunctionName, pProfile,
-				dwShaderFlags, 0, &pBlob, &pErrorBlob);
-
+			HRESULT hr = D3DCompile(
+				(LPCSTR) NEIGHBORS_SEEKER_COMPUTE_SHADER, strlen(NEIGHBORS_SEEKER_COMPUTE_SHADER), "NeighboursSeeker",
+				defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, pFunctionName, pProfile,
+				dwShaderFlags, 0, &pBlob, &pErrorBlob
+			);
 #else
 
 			hr = D3DX11CompileFromFile(str, defines, nullptr, pFunctionName, pProfile,
@@ -272,7 +278,7 @@ namespace FusionCrowd
 
 		//--------------------------------------------------------------------------------------
 		// Create Unordered Access View for Structured or Raw Buffers
-		//-------------------------------------------------------------------------------------- 
+		//--------------------------------------------------------------------------------------
 		_Use_decl_annotations_
 			HRESULT CreateBufferUAV(ID3D11Device* pDevice, ID3D11Buffer* pBuffer, ID3D11UnorderedAccessView** ppUAVOut)
 		{
@@ -312,7 +318,7 @@ namespace FusionCrowd
 		//--------------------------------------------------------------------------------------
 		// Create a CPU accessible buffer and download the content of a GPU buffer into it
 		// This function is very useful for debugging CS programs
-		//-------------------------------------------------------------------------------------- 
+		//--------------------------------------------------------------------------------------
 		_Use_decl_annotations_
 			ID3D11Buffer* CreateAndCopyToBuffer(ID3D11Device* pDevice, ID3D11DeviceContext* pd3dImmediateContext, ID3D11Buffer* pBuffer)
 		{
@@ -335,7 +341,7 @@ namespace FusionCrowd
 
 		//--------------------------------------------------------------------------------------
 		// Run CS
-		//-------------------------------------------------------------------------------------- 
+		//--------------------------------------------------------------------------------------
 		_Use_decl_annotations_
 			void RunComputeShader(ID3D11DeviceContext* pd3dImmediateContext,
 				ID3D11ComputeShader* pComputeShader,

@@ -9,9 +9,8 @@ namespace FusionCrowd
 	{
 		FCArray(const size_t len);
 
-		FCArray(FCArray && other);
-
-		FCArray & operator=(FCArray && other);
+		FCArray(FCArray &&);
+		FCArray & operator=(FCArray &&);
 
 		T & operator[](int index);
 
@@ -31,7 +30,7 @@ namespace FusionCrowd
 	}
 
 	template<typename T>
-	inline FCArray<T>::FCArray(FCArray && other)
+	inline FCArray<T>::FCArray(FCArray<T> && other)
 		: vals(other.vals), len(other.len)
 	{
 	}
@@ -51,7 +50,7 @@ namespace FusionCrowd
 	template<typename T>
 	inline T& FCArray<T>::operator[](int index)
 	{
-		if (index >= len || index < 0)			
+		if (index >= len || index < 0)
 			throw "Index is out of range";
 
 		return vals[index];
@@ -67,5 +66,11 @@ namespace FusionCrowd
 	inline FCArray<T>::~FCArray()
 	{
 		delete[] vals;
+	}
+
+	template<typename T>
+	void FCArrayDeallocate(FCArray<T> * array)
+	{
+		delete array;
 	}
 }

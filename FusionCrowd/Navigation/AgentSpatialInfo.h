@@ -23,12 +23,6 @@ namespace FusionCrowd
 
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
 
-		AgentSpatialInfo() { }
-		AgentSpatialInfo(const AgentSpatialInfo& other) = default;
-		AgentSpatialInfo& operator=(AgentSpatialInfo& other) = default;
-
-		~AgentSpatialInfo() = default;
-
 		PublicSpatialInfo ToPublicInfo() const
 		{
 			PublicSpatialInfo publicInfo;

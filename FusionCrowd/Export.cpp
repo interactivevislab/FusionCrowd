@@ -51,9 +51,9 @@ namespace FusionCrowd
 			return OperationStatus::OK;
 		}
 
-		FCArray<AgentInfo> GetAgents()
+		bool GetAgents(FCArray<AgentInfo> & output)
 		{
-			return _sim->GetAgentsInfo();
+			return _sim->GetAgentsInfo(output);
 		}
 
 		size_t AddAgent(

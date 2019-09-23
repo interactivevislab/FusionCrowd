@@ -3,7 +3,6 @@
 
 namespace FusionCrowd
 {
-
 	GpuCalculator::GpuCalculator()
 	{
 	}

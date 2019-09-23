@@ -84,7 +84,9 @@ namespace TestFusionCrowd
 			high_resolution_clock::time_point t2 = high_resolution_clock::now();
 			measures[i] = duration_cast<microseconds>(t2 - t1).count();
 
-			auto agents = sim->GetAgents();
+			FCArray<AgentInfo> agents(agentsCount);
+			sim->GetAgents(agents);
+
 			for (size_t i = 0; i < agentsCount; i++)
 			{
 				if (i > 0) myfile << ",";

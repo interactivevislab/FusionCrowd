@@ -23,6 +23,7 @@ namespace FusionCrowd
 		{
 		}
 
+		/*
 		PrefVelocity::PrefVelocity(const PrefVelocity& vel) : _left(vel._left),
 		                                                      _right(vel._right),
 		                                                      _speed(vel._speed),
@@ -46,6 +47,7 @@ namespace FusionCrowd
 			_target = vel._target;
 			return (*this);
 		}
+		*/
 
 		void PrefVelocity::setSpan(const Vector2& left, const Vector2& right,
 		                           const Vector2& preferred)

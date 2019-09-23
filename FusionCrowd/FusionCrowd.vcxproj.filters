@@ -101,6 +101,7 @@
     <ClInclude Include="Navigation\FilteredDutRecording\FilteredDutRecording.h" />
     <ClInclude Include="Navigation\FilteredDutRecording\FilteredDutRecordingSlice.h" />
     <ClInclude Include="Navigation\FilteredDutRecording\DutCsvParser.h" />
+    <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

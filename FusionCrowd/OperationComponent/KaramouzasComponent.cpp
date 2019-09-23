@@ -74,6 +74,13 @@ namespace FusionCrowd
 			}
 
 		private:
+
+			struct SpatialInfoWithCollisionTime
+			{
+				float tc;
+				AgentSpatialInfo info;
+			};
+
 			void ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep)
 			{
 				const float EPSILON = 0.01f; // this eps from Ioannis
@@ -83,7 +90,7 @@ namespace FusionCrowd
 				const float SAFE_DIST = _wallDistance + agent.radius;
 				const float SAFE_DIST2 = SAFE_DIST * SAFE_DIST;
 
-				for (auto obst : _navSystem->GetClosestObstacles(agent.id)) {
+				for (auto const & obst : _navSystem->GetClosestObstacles(agent.id)) {
 					// TODO: Interaction with obstacles is, currently, defined strictly
 					//	by COLLISIONS.  Only if I'm going to collide with an obstacle is
 					//	a force applied.  This may be too naive.
@@ -116,8 +123,10 @@ namespace FusionCrowd
 				bool VERBOSE = false; // _id == 1;
 				if (VERBOSE) std::cout << "Agent " << agent.id << "\n";
 				float totalTime = 1.f;
-				std::list< std::pair< float, const AgentSpatialInfo> > collidingSet;
-				for (const AgentSpatialInfo other : _navSystem->GetNeighbours(agent.id)) {
+
+				auto const & neighbours = _navSystem->GetNeighbours(agent.id);
+				for (const AgentSpatialInfo & other : neighbours)
+				{
 					float circRadius = _agents[agent.id]._perSpace + other.radius;
 					Vector2 relVel = desVel - other.vel;
 					Vector2 relPos = other.pos - agent.pos;
@@ -125,8 +134,11 @@ namespace FusionCrowd
 					if (relPos.LengthSquared() < circRadius * circRadius) { ///collision!
 						if (!colliding) {
 							colliding = true;
+
 							collidingSet.clear();
+							collidingSet.reserve(neighbours.size());
 						}
+						//collidingSet.push({.0f, other});
 						collidingSet.push_back({.0f, other});
 						if (static_cast<int>(collidingSet.size()) > collidingCount) ++collidingCount;
 						continue;
@@ -142,16 +154,23 @@ namespace FusionCrowd
 						if (VERBOSE) std::cout << "\tAgent " << other.id << " t_c: " << tc << "\n";
 						//totalTime += tc;
 						// insert into colliding set (in order)
+
+						/*
 						auto itr = collidingSet.begin();
-						while (itr != collidingSet.end() && tc > itr->first) ++itr;
+						while (itr != collidingSet.end() && tc > itr->tc) ++itr;
 						collidingSet.insert(itr, {tc, other});
+						*/
+						collidingSet.push_back({tc, other});
 					}
 				}
 
+				auto cmp = [](const SpatialInfoWithCollisionTime & left, const SpatialInfoWithCollisionTime & right) { return left.tc < right.tc; };
+				std::sort(collidingSet.begin(), collidingSet.end(), cmp);
+
 				int count = 0;
 				for (auto itr = collidingSet.begin(); itr != collidingSet.end(); ++itr) {
-					const AgentSpatialInfo & const other = itr->second;
-					float tc = itr->first;
+					AgentSpatialInfo const & other = itr->info;
+					float tc = itr->tc;
 					// future positions
 					Vector2 myPos = agent.pos + desVel * tc;
 					Vector2 hisPos = other.pos + other.vel * tc;
@@ -207,6 +226,7 @@ namespace FusionCrowd
 				agent.velNew = desVel + force * timeStep;	// assumes unit mass
 			}
 
+			std::vector<SpatialInfoWithCollisionTime> collidingSet;
 			std::shared_ptr<NavSystem> _navSystem;
 			std::map<int, AgentParamentrs> _agents;
 			float _orientWeight;

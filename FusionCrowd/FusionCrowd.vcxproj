@@ -24,6 +24,7 @@
     <ClInclude Include="ComponentId.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Export.h" />
+    <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="Navigation\FilteredDutRecording\DutCsvParser.h" />
     <ClInclude Include="Navigation\FilteredDutRecording\FilteredDutRecordingSlice.h" />
     <ClInclude Include="Navigation\FilteredDutRecording\FilteredDutRecording.h" />

@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowd", "FusionCrowd\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFusionCrowd", "TestFusionCrowd\TestFusionCrowd.vcxproj", "{BE99B8DB-0BD2-4457-A280-A4174C0762D3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdLinkUE4", "FusionCrowdLinkUE4\FusionCrowdLinkUE4.vcxproj", "{A94C0164-BEAD-476D-AAA3-A1AC72149B7A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -33,14 +31,6 @@ Global
 		{BE99B8DB-0BD2-4457-A280-A4174C0762D3}.Release|x64.Build.0 = Release|x64
 		{BE99B8DB-0BD2-4457-A280-A4174C0762D3}.Release|x86.ActiveCfg = Release|Win32
 		{BE99B8DB-0BD2-4457-A280-A4174C0762D3}.Release|x86.Build.0 = Release|Win32
-		{A94C0164-BEAD-476D-AAA3-A1AC72149B7A}.Debug|x64.ActiveCfg = Debug|x64
-		{A94C0164-BEAD-476D-AAA3-A1AC72149B7A}.Debug|x64.Build.0 = Debug|x64
-		{A94C0164-BEAD-476D-AAA3-A1AC72149B7A}.Debug|x86.ActiveCfg = Debug|Win32
-		{A94C0164-BEAD-476D-AAA3-A1AC72149B7A}.Debug|x86.Build.0 = Debug|Win32
-		{A94C0164-BEAD-476D-AAA3-A1AC72149B7A}.Release|x64.ActiveCfg = Release|x64
-		{A94C0164-BEAD-476D-AAA3-A1AC72149B7A}.Release|x64.Build.0 = Release|x64
-		{A94C0164-BEAD-476D-AAA3-A1AC72149B7A}.Release|x86.ActiveCfg = Release|Win32
-		{A94C0164-BEAD-476D-AAA3-A1AC72149B7A}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

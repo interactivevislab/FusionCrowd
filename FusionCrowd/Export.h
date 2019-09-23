@@ -43,7 +43,8 @@ namespace FusionCrowd
 			virtual OperationStatus SetAgentGoal(size_t agentId, float x, float y) = 0;
 
 			virtual size_t GetAgentCount() = 0;
-			virtual FCArray<AgentInfo> GetAgents() = 0;
+
+			virtual bool GetAgents(FCArray<AgentInfo> & output) = 0;
 
 			virtual size_t AddAgent(
 				float x, float y,

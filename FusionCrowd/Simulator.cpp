@@ -203,7 +203,19 @@ namespace FusionCrowd
 
 		FCArray<AgentInfo> GetAgentsInfo()
 		{
-			FCArray<AgentInfo> result(_agents.size());
+			FCArray<AgentInfo> output(_agents.size());
+
+			GetAgentsInfo(output);
+
+			return output;
+		}
+
+		bool GetAgentsInfo(FCArray<AgentInfo> & output)
+		{
+			if(output.len < _agents.size())
+			{
+				return false;
+			}
 
 			int i = 0;
 			for(auto & p : _agents)
@@ -211,19 +223,19 @@ namespace FusionCrowd
 				Agent & agent = p.second;
 				AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agent.id);
 				std::shared_ptr<Goal> g = GetAgentGoal(agent.id);
-				result[i] = AgentInfo {
+				output[i] = AgentInfo {
 					agent.id,
 					info.pos.x, info.pos.y,
 					info.vel.x, info.vel.y,
 					info.orient.x, info.orient.y,
 					info.radius,
-					-1, -1, -1, // ComponentIds
+					agent.opComponent->GetId(), agent.tacticComponent->GetId(), agent.stratComponent->GetId(),
 					g->getCentroid().x, g->getCentroid().y
 				};
 				i++;
 			}
 
-			return result;
+			return true;
 		}
 	private:
 		size_t _nextAgentId = 0;
@@ -340,6 +352,11 @@ namespace FusionCrowd
 	FCArray<AgentInfo> Simulator::GetAgentsInfo()
 	{
 		return pimpl->GetAgentsInfo();
+	}
+
+	bool Simulator::GetAgentsInfo(FCArray<AgentInfo> & output)
+	{
+		return pimpl->GetAgentsInfo(output);
 	}
 #pragma endregion
 }
