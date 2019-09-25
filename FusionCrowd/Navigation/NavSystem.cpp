@@ -146,6 +146,11 @@ namespace FusionCrowd
 		void UpdateOrient(AgentSpatialInfo & agent, float timeStep)
 		{
 			float speed = agent.vel.Length();
+			if (abs(speed) <= MathUtil::EPS)
+			{
+				speed = speed < 0 ? -MathUtil::EPS : MathUtil::EPS;
+			}
+
 			const float speedThresh = agent.prefSpeed / 3.f;
 			Vector2 newOrient(agent.orient); // by default new is old
 			Vector2 moveDir = agent.vel / speed;
@@ -155,7 +160,7 @@ namespace FusionCrowd
 			}
 			else
 			{
-				float frac = sqrtf(speed / speedThresh);
+				float frac = sqrtf(speed / speedThresh);				
 				Vector2 prefDir = agent.prefVelocity.getPreferred();
 				// prefDir *can* be zero if we've arrived at goal.  Only use it if it's non-zero.
 				if (prefDir.LengthSquared() > 0.000001f)

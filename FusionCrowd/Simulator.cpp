@@ -35,6 +35,8 @@ namespace FusionCrowd
 				tactic->Update(timeStep);
 			}
 
+			SwitchOpComponents();
+
 			for (auto oper : _operComponents)
 			{
 				oper->Update(timeStep);
@@ -99,6 +101,54 @@ namespace FusionCrowd
 			return info.id;
 		}
 
+		size_t AddAgent(
+			float x, float y,
+			ComponentId opId,
+			ComponentId strategyId
+		)
+		{
+			AgentSpatialInfo info;
+			auto agentId = GetNextId();
+			info.id = agentId;
+			info.pos = DirectX::SimpleMath::Vector2(x, y);
+			_navSystem->AddAgent(info);
+
+			Agent a(agentId);
+			a.currentGoal = std::make_shared<PointGoal>(DirectX::SimpleMath::Vector2(x, y));
+
+			_agents.insert({ agentId, a });
+			Agent & agent = _agents.find(agentId)->second;
+
+			//SetOperationComponent(info.id, opId);
+			for (auto& c : _operComponents) {
+				if (c->GetId() == opId) {
+					c->AddAgent(agentId);
+					agent.opComponent = c;
+					break;
+				}
+			}
+
+			//SetTacticComponent(agentId, ComponentIds::NAVMESH_ID);
+			for (auto& c : _tacticComponents) {
+				if (c->GetId() == ComponentIds::NAVMESH_ID) {
+					c->AddAgent(agentId);
+					agent.tacticComponent = c;
+					break;
+				}
+			}
+
+			//SetStrategyComponent(agentId, strategyId);
+			for (auto& c : _strategyComponents) {
+				if (c->GetId() == strategyId) {
+					c->AddAgent(agentId);
+					agent.stratComponent = c;
+					break;
+				}
+			}
+
+			return agentId;
+		}
+
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
 		{
 			_agents.find(agentId)->second.currentGoal = std::make_shared<PointGoal>(goalPos);
@@ -106,19 +156,9 @@ namespace FusionCrowd
 
 		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
 		{
-			for(auto& c : _operComponents)
-			{
-				if(c->GetId() == newOperationComponent) {
-					Agent & agent = _agents.find(agentId)->second;
-					std::shared_ptr<IOperationComponent> old = agent.opComponent;
-					if(old != nullptr)
-					{
-						old->DeleteAgent(agentId);
-					}
-
-					c->AddAgent(agentId);
-					agent.opComponent = c;
-
+			for (auto& c : _operComponents){
+				if (c->GetId() == newOperationComponent) {
+					_switchComponentTasks.insert({ agentId, newOperationComponent });
 					return true;
 				}
 			}
@@ -244,6 +284,36 @@ namespace FusionCrowd
 			return _nextAgentId++;
 		}
 
+		std::map<size_t, ComponentId> _switchComponentTasks;
+
+		void SwitchOpComponents() 
+		{
+			for (auto task : _switchComponentTasks) {
+
+				auto agentId = task.first;
+				auto newOperationComponent = task.second;
+
+				for (auto& c : _operComponents)
+				{
+					if (c->GetId() == newOperationComponent) {
+						Agent & agent = _agents.find(agentId)->second;
+						std::shared_ptr<IOperationComponent> old = agent.opComponent;
+						if (old != nullptr)
+						{
+							old->DeleteAgent(agentId);
+						}
+
+						c->AddAgent(agentId);
+						agent.opComponent = c;
+
+						break;
+					}
+				}
+			}
+
+			_switchComponentTasks.clear();
+		}
+
 		float _currentTime = 0;
 
 		std::shared_ptr<NavSystem> _navSystem;
@@ -337,6 +407,14 @@ namespace FusionCrowd
 	Agent& Simulator::GetAgent(size_t id)
 	{
 		return pimpl->GetAgent(id);
+	}
+
+	size_t Simulator::AddAgent(
+		float x, float y,
+		ComponentId opId,
+		ComponentId strategyId
+	) {
+		return pimpl->AddAgent(x, y, opId, strategyId);
 	}
 
 	size_t Simulator::AddAgent(DirectX::SimpleMath::Vector2 pos)
