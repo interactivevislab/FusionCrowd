@@ -37,7 +37,9 @@ namespace FusionCrowd
 
 		size_t i = 0;
 		for(auto & p : m_agentInfos)
-			ids.vals[i] = p.first;
+		{
+			ids[i++] = p.first;
+		}
 
 		return ids;
 	}

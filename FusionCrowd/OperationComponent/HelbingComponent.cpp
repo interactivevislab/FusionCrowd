@@ -47,7 +47,6 @@ namespace FusionCrowd
 			std::vector<AgentSpatialInfo> nearAgents = _navSystem->GetNeighbours(agent.id);
 			for (size_t i = 0; i < nearAgents.size(); ++i)
 			{
-				//const AgentSpatialInfo* otherBase = nearAgents[i];
 				AgentSpatialInfo other = nearAgents[i];
 
 				force += AgentForce(&agent, &other);
@@ -73,7 +72,6 @@ namespace FusionCrowd
 			const float D = _forceDistance;
 			Vector2 normal_ij = agent->pos - other->pos;
 			float distance_ij = normal_ij.Length();
-			normal_ij /= distance_ij;
 			float Radii_ij = agent->radius + other->radius;
 
 			float AGENT_SCALE = _agentScale;

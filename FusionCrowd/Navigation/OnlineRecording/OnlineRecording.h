@@ -6,6 +6,8 @@
 #include "Navigation/OnlineRecording/OnlineRecordingSlice.h"
 #include "Util/PublicSpatialInfo.h"
 
+#include "Util/FCArray.h"
+
 namespace FusionCrowd
 {
 	class OnlineRecording : public IRecording
@@ -30,6 +32,7 @@ namespace FusionCrowd
 		void Update(float timeStep);
 
 		AgentSpatialInfo & GetCurrentSpatialInfo(size_t agentId);
+		FCArray<size_t> GetAgentIds();
 	private:
 		class OnlineRecordingImpl;
 

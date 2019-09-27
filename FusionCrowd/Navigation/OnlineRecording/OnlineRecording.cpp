@@ -49,7 +49,7 @@ namespace FusionCrowd
 
 		AgentSpatialInfo & GetCurrentSpatialInfo(size_t agentId)
 		{
-			return m_slices[m_slices.size() - 1].GetInfo(agentId);
+			return m_currentSlice.GetInfo(agentId);
 		}
 
 		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId, float time)
@@ -77,6 +77,11 @@ namespace FusionCrowd
 		bool RemoveAgent(size_t id)
 		{
 			return m_currentSlice.RemoveAgent(id);
+		}
+
+		FCArray<size_t> GetAgentIds()
+		{
+			return m_currentSlice.GetAgentIds();
 		}
 
 		~OnlineRecordingImpl() {}
@@ -134,6 +139,11 @@ namespace FusionCrowd
 	bool OnlineRecording::RemoveAgent(size_t agentId)
 	{
 		return pimpl->RemoveAgent(agentId);
+	}
+
+	FCArray<size_t> OnlineRecording::GetAgentIds()
+	{
+		return pimpl->GetAgentIds();
 	}
 
 	OnlineRecording::OnlineRecording(OnlineRecording && other) = default;

@@ -13,14 +13,15 @@ namespace FusionCrowd
 		FCArray & operator=(FCArray &&);
 
 		T & operator[](int index);
+		size_t size() const;
 
 		T* begin();
 		T* end();
 
-		T* const vals;
-		const size_t len;
-
 		~FCArray();
+	private:
+		size_t len;
+		T* vals;
 	};
 
 	template<typename T>
@@ -33,6 +34,8 @@ namespace FusionCrowd
 	inline FCArray<T>::FCArray(FCArray<T> && other)
 		: vals(other.vals), len(other.len)
 	{
+		other.vals = nullptr;
+		other.len = 0;
 	}
 
 	template<typename T>
@@ -40,8 +43,11 @@ namespace FusionCrowd
 	{
 		if(this != &other)
 		{
-			std::move(other.vals, this.vals);
-			std::move(other.len, this.len);
+			this.vals = other.vals;
+			this.len = other.len;
+
+			other.vals = nullptr;
+			other.len = 0;
 		}
 
 		return *this;
@@ -63,9 +69,15 @@ namespace FusionCrowd
 	inline T* FCArray<T>::end() { return &vals[len]; }
 
 	template<typename T>
+	inline size_t FCArray<T>::size() const { return len; }
+
+	template<typename T>
 	inline FCArray<T>::~FCArray()
 	{
-		delete[] vals;
+		if(vals != nullptr)
+		{
+			delete[] vals;
+		}
 	}
 
 	template<typename T>

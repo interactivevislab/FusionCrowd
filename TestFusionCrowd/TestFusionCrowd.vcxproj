@@ -162,12 +162,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="TestCases\CrossingTestCase.h" />
     <ClInclude Include="TestCases\NeighbourSearchBenchCase.h" />
     <ClInclude Include="TestCases\ITestCase.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TestCases\ZanlungoCase.h" />
+    <ClInclude Include="ThirdParty\date.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TestCases\CrossingTestCase.cpp" />
     <ClCompile Include="TestCases\NeighbourSearchBenchCase.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

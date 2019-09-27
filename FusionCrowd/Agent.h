@@ -19,9 +19,9 @@ namespace FusionCrowd
 
 		size_t id;
 
-		std::shared_ptr<IOperationComponent> opComponent;
-		std::shared_ptr<ITacticComponent> tacticComponent;
-		std::shared_ptr<IStrategyComponent> stratComponent;
+		std::weak_ptr<IOperationComponent> opComponent;
+		std::weak_ptr<ITacticComponent> tacticComponent;
+		std::weak_ptr<IStrategyComponent> stratComponent;
 		std::shared_ptr<Goal> currentGoal;
 	};
 }

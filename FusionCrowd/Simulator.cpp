@@ -108,12 +108,13 @@ namespace FusionCrowd
 		{
 			for(auto& c : _operComponents)
 			{
-				if(c->GetId() == newOperationComponent) {
+				if(c->GetId() == newOperationComponent)
+				{
 					Agent & agent = _agents.find(agentId)->second;
-					std::shared_ptr<IOperationComponent> old = agent.opComponent;
-					if(old != nullptr)
+
+					if(!agent.opComponent.expired())
 					{
-						old->DeleteAgent(agentId);
+						agent.opComponent.lock()->DeleteAgent(agentId);
 					}
 
 					c->AddAgent(agentId);
@@ -131,10 +132,10 @@ namespace FusionCrowd
 			{
 				if(c->GetId() == newTactic) {
 					Agent & agent = _agents.find(agentId)->second;
-					std::shared_ptr<ITacticComponent> old = agent.tacticComponent;
-					if(old != nullptr)
+
+					if(!agent.tacticComponent.expired())
 					{
-						old->DeleteAgent(agentId);
+						agent.tacticComponent.lock()->DeleteAgent(agentId);
 					}
 
 					c->AddAgent(agentId);
@@ -152,10 +153,10 @@ namespace FusionCrowd
 			{
 				if(c->GetId() == newStrategyComponent) {
 					Agent & agent = _agents.find(agentId)->second;
-					std::shared_ptr<IStrategyComponent>& old = agent.stratComponent;
-					if(old != nullptr)
+
+					if(!agent.stratComponent.expired())
 					{
-						old->RemoveAgent(agentId);
+						agent.stratComponent.lock()->RemoveAgent(agentId);
 					}
 
 					c->AddAgent(agentId);
@@ -212,7 +213,7 @@ namespace FusionCrowd
 
 		bool GetAgentsInfo(FCArray<AgentInfo> & output)
 		{
-			if(output.len < _agents.size())
+			if(output.size() < _agents.size())
 			{
 				return false;
 			}
@@ -223,13 +224,30 @@ namespace FusionCrowd
 				Agent & agent = p.second;
 				AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agent.id);
 				std::shared_ptr<Goal> g = GetAgentGoal(agent.id);
+
+				ComponentId op = -1, tactic = -1, strat = -1;
+				if(!agent.opComponent.expired())
+				{
+					op = agent.opComponent.lock()->GetId();
+				}
+
+				if(!agent.tacticComponent.expired())
+				{
+					tactic = agent.tacticComponent.lock()->GetId();
+				}
+
+				if(!agent.stratComponent.expired())
+				{
+					strat = agent.stratComponent.lock()->GetId();
+				}
+
 				output[i] = AgentInfo {
 					agent.id,
 					info.pos.x, info.pos.y,
 					info.vel.x, info.vel.y,
 					info.orient.x, info.orient.y,
 					info.radius,
-					agent.opComponent->GetId(), agent.tacticComponent->GetId(), agent.stratComponent->GetId(),
+					op, tactic, strat,
 					g->getCentroid().x, g->getCentroid().y
 				};
 				i++;

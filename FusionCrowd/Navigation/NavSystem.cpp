@@ -23,7 +23,7 @@ namespace FusionCrowd
 	public:
 		NavSystemImpl(std::shared_ptr<NavMeshLocalizer> localizer)
 		{
-			m_recording = OnlineRecording();
+			_recording = OnlineRecording();
 			_navMeshQuery = std::make_unique<NavMeshSpatialQuery>(localizer);
 			_navMesh = localizer->getNavMesh();
 		}
@@ -32,13 +32,13 @@ namespace FusionCrowd
 
 		IRecording* GetRecording()
 		{
-			return &m_recording;
+			return &_recording;
 		}
 
 		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId)
 		{
 			PublicSpatialInfo publicInfo;
-			auto & info = _agentSpatialInfos[agentId];
+			auto & info = _recording.GetCurrentSpatialInfo(agentId);
 			publicInfo.id = agentId;
 
 			publicInfo.posX = info.pos.x;
@@ -78,17 +78,17 @@ namespace FusionCrowd
 			info.id = agentId;
 			info.pos = position;
 
-			_agentSpatialInfos.insert({agentId, info});
+			_recording.AddAgent(info);
 		}
 
 		void AddAgent(AgentSpatialInfo spatialInfo)
 		{
-			_agentSpatialInfos.insert({spatialInfo.id, spatialInfo});
+			_recording.AddAgent(spatialInfo);
 		}
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId)
 		{
-			return _agentSpatialInfos[agentId];
+			return _recording.GetCurrentSpatialInfo(agentId);
 		}
 
 		const std::vector<AgentSpatialInfo> & GetNeighbours(size_t agentId) const
@@ -101,9 +101,9 @@ namespace FusionCrowd
 			return result->second;
 		}
 
-		std::vector<Obstacle> GetClosestObstacles(size_t agentId) const
+		std::vector<Obstacle> GetClosestObstacles(size_t agentId)
 		{
-			AgentSpatialInfo agent = _agentSpatialInfos.at(agentId);
+			AgentSpatialInfo & agent = _recording.GetCurrentSpatialInfo(agentId);
 
 			std::vector<Obstacle> result;
 			for(size_t obstId : _navMeshQuery->ObstacleQuery(agent.pos))
@@ -116,16 +116,18 @@ namespace FusionCrowd
 
 		void Update(float timeStep)
 		{
-			for (auto & pair : _agentSpatialInfos)
+			auto ids = _recording.GetAgentIds();
+			for (size_t id : ids)
 			{
-				size_t id = pair.first;
-				AgentSpatialInfo & info = pair.second;
+				AgentSpatialInfo & info = _recording.GetCurrentSpatialInfo(id);
 
 				UpdatePos(info, timeStep);
 				UpdateOrient(info, timeStep);
 			}
 
-			if (_agentSpatialInfos.size() > 0) UpdateNeighbours();
+			_recording.Update(timeStep);
+
+			UpdateNeighbours();
 		}
 
 		void UpdatePos(AgentSpatialInfo & agent, float timeStep)
@@ -198,15 +200,15 @@ namespace FusionCrowd
 
 		void UpdateNeighbours()
 		{
-			int numAgents = _agentSpatialInfos.size();
+			int numAgents = _recording.GetAgentCount();
 
 			if(numAgents == 0)
 				return;
 
 			std::vector<AgentSpatialInfo> agentsInfos;
 			agentsInfos.reserve(numAgents);
-			for (auto & pair : _agentSpatialInfos) {
-				agentsInfos.push_back(pair.second);
+			for (size_t id : _recording.GetAgentIds()) {
+				agentsInfos.push_back(_recording.GetCurrentSpatialInfo(id));
 			}
 
 			float minX = std::numeric_limits<float>::max();
@@ -270,13 +272,12 @@ namespace FusionCrowd
 		}
 
 	private:
-		std::map<size_t, AgentSpatialInfo> _agentSpatialInfos;
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
 
 		NeighborsSeeker _neighborsSeeker;
-		OnlineRecording m_recording;
+		OnlineRecording _recording;
 		float _agentsSensitivityRadius = 1;
 	};
 
@@ -310,7 +311,7 @@ namespace FusionCrowd
 		return pimpl->CountNeighbors(agentId);
 	}
 
-	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId) const
+	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId)
 	{
 		return pimpl->GetClosestObstacles(agentId);
 	}

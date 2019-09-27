@@ -40,7 +40,7 @@ namespace FusionCrowd
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 
 		const std::vector<AgentSpatialInfo> & GetNeighbours(size_t agentId) const;
-		std::vector<Obstacle> GetClosestObstacles(size_t agentId) const;
+		std::vector<Obstacle> GetClosestObstacles(size_t agentId);
 
 		void Update(float timeStep);
 	private:
