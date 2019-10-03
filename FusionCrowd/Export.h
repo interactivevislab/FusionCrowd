@@ -53,7 +53,7 @@ namespace FusionCrowd
 			) = 0;
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
 
-			virtual IRecording* GetRecording() = 0;
+			virtual IRecording & GetRecording() = 0;
 		};
 
 		/*

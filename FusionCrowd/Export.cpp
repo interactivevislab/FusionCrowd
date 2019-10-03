@@ -76,7 +76,7 @@ namespace FusionCrowd
 			return OperationStatus::NotImplemented;
 		}
 
-		IRecording* GetRecording()
+		IRecording & GetRecording()
 		{
 			return _sim->GetNavSystem()->GetRecording();
 		}

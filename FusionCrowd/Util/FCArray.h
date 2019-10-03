@@ -20,8 +20,8 @@ namespace FusionCrowd
 
 		~FCArray();
 	private:
-		size_t len;
 		T* vals;
+		size_t len;
 	};
 
 	template<typename T>
