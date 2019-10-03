@@ -30,28 +30,14 @@ namespace FusionCrowd
 
 		~NavSystemImpl() { }
 
-		IRecording* GetRecording()
+		IRecording & GetRecording()
 		{
-			return &m_recording;
+			return m_recording;
 		}
 
 		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId)
 		{
-			PublicSpatialInfo publicInfo;
-			auto & info = _agentSpatialInfos[agentId];
-			publicInfo.id = agentId;
-
-			publicInfo.posX = info.pos.x;
-			publicInfo.posY = info.pos.y;
-
-			publicInfo.velX = info.vel.x;
-			publicInfo.velY = info.vel.y;
-
-			publicInfo.orientX = info.orient.x;
-			publicInfo.orientY = info.orient.y;
-			publicInfo.radius = info.radius;
-
-			return publicInfo;
+			return _agentSpatialInfos[agentId].ToPublicInfo();
 		}
 
 		//TEST METHOD, MUST BE DELETED
@@ -334,7 +320,7 @@ namespace FusionCrowd
 		return pimpl->GetPublicSpatialInfo(agentId);
 	}
 
-	IRecording* NavSystem::GetRecording()
+	IRecording & NavSystem::GetRecording()
 	{
 		return pimpl->GetRecording();
 	}

@@ -31,7 +31,7 @@ namespace FusionCrowd
 		void SetAgentsSensitivityRadius(float radius);
 		void SetGridCoeff(float coeff);
 
-		IRecording* GetRecording();
+		IRecording & GetRecording();
 
 		// Very confusing methods pair
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
