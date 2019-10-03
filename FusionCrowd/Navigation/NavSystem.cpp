@@ -38,6 +38,7 @@ namespace FusionCrowd
 		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId)
 		{
 			PublicSpatialInfo publicInfo;
+
 			auto & info = _recording.GetCurrentSpatialInfo(agentId);
 			publicInfo.id = agentId;
 
@@ -148,6 +149,11 @@ namespace FusionCrowd
 		void UpdateOrient(AgentSpatialInfo & agent, float timeStep)
 		{
 			float speed = agent.vel.Length();
+			if (abs(speed) <= MathUtil::EPS)
+			{
+				speed = speed < 0 ? -MathUtil::EPS : MathUtil::EPS;
+			}
+
 			const float speedThresh = agent.prefSpeed / 3.f;
 			Vector2 newOrient(agent.orient); // by default new is old
 			Vector2 moveDir = agent.vel / speed;

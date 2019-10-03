@@ -176,7 +176,7 @@ namespace FusionCrowd
 					Vector2 hisPos = other.pos + other.vel * tc;
 					Vector2 forceDir = myPos - hisPos;
 
-					float futureDist = forceDir.Length();
+					float futureDist = std::max(forceDir.Length(), EPSILON);
 					forceDir /= futureDist;
 					float collisionDist = futureDist - agent.radius - other.radius;
 					float D = std::max(desSpeed * tc + (collisionDist < 0 ? 0 : collisionDist), EPSILON);
