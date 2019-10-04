@@ -13,7 +13,7 @@ namespace FusionCrowd
 		class FUSION_CROWD_API IRecording
 		{
 		public:
-			virtual TimeSpan GetTimeSpan() const = 0;
+			virtual TimeSpan * GetTimeSpan() const = 0;
 			virtual const IRecordingSlice & GetSlice(float time) const = 0;
 
 			virtual ~IRecording() { }

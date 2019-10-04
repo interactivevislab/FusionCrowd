@@ -16,11 +16,11 @@ namespace FusionCrowd
 			m_currentSlice = OnlineRecordingSlice();
 		}
 
-		TimeSpan GetTimeSpan() const
+		TimeSpan * GetTimeSpan() const
 		{
-			TimeSpan result(m_snapshotTimes.size());
+			TimeSpan * result = new TimeSpan(m_snapshotTimes.size());
 
-			std::copy(m_snapshotTimes.begin(), m_snapshotTimes.end(), result.begin());
+			std::copy(m_snapshotTimes.begin(), m_snapshotTimes.end(), result->begin());
 
 			return result;
 		}
@@ -101,7 +101,7 @@ namespace FusionCrowd
 	{
 	}
 
-	TimeSpan OnlineRecording::GetTimeSpan() const
+	TimeSpan * OnlineRecording::GetTimeSpan() const
 	{
 		return pimpl->GetTimeSpan();
 	}

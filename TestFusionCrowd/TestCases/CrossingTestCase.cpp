@@ -95,7 +95,7 @@ namespace TestFusionCrowd
 			auto rec = _sim->GetRecording();
 
 			auto timespan = rec->GetTimeSpan();
-			for(float step : timespan)
+			for(float step : *timespan)
 			{
 				auto & slice = rec->GetSlice(step);
 

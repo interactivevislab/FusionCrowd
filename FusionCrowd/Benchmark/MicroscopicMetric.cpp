@@ -8,10 +8,10 @@ float FusionCrowd::MicroscopicMetrics::AbsoluteDifference(const IRecording & rec
 
 	auto ts = rec1.GetTimeSpan();
 
-	size_t remaining = ts.size();
+	size_t remaining = ts->size();
 	while(remaining --> 0)
 	{
-		float time = ts[remaining];
+		float time = (*ts)[remaining];
 
 		auto & slice1 = rec1.GetSlice(time);
 		auto & slice2 = rec2.GetSlice(time);

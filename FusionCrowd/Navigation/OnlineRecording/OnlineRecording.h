@@ -20,7 +20,7 @@ namespace FusionCrowd
 		~OnlineRecording();
 
 
-		TimeSpan GetTimeSpan() const override;
+		TimeSpan * GetTimeSpan() const override;
 		const OnlineRecordingSlice & GetSlice(float time) const override;
 
 

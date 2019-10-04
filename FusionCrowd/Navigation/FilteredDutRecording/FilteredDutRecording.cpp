@@ -51,9 +51,9 @@ namespace FusionCrowd
 	}
 
 
-	TimeSpan FilteredDutRecording::GetTimeSpan() const {
-		TimeSpan timeSpan(_recordingData.size());
-		auto target = timeSpan.begin();
+	TimeSpan * FilteredDutRecording::GetTimeSpan() const {
+		TimeSpan * timeSpan = new TimeSpan(_recordingData.size());
+		auto target = timeSpan->begin();
 		for (auto it = _recordingData.begin(); it != _recordingData.end(); it++) {
 			*target = it->first;
 			target++;
