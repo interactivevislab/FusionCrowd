@@ -4,7 +4,7 @@
 
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/OnlineRecording/OnlineRecordingSlice.h"
-#include "Util/PublicSpatialInfo.h"
+#include "Export.h"
 
 #include "Util/FCArray.h"
 
@@ -28,7 +28,7 @@ namespace FusionCrowd
 		void AddAgent(AgentSpatialInfo spatialInfo);
 		bool RemoveAgent(size_t agentId);
 
-		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId, float time);
+		AgentInfo GetAgentInfo(size_t agentId, float time);
 		void Update(float timeStep);
 
 		AgentSpatialInfo & GetCurrentSpatialInfo(size_t agentId);

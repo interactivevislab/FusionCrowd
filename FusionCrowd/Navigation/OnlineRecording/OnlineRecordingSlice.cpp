@@ -11,9 +11,9 @@ namespace FusionCrowd
 		return m_agentInfos.size();
 	};
 
-	PublicSpatialInfo OnlineRecordingSlice::GetAgentInfo(size_t agentId) const
+	AgentInfo OnlineRecordingSlice::GetAgentInfo(size_t agentId) const
 	{
-		return m_agentInfos.at(agentId).ToPublicInfo();
+		return m_agentInfos.at(agentId).ToAgentInfo();
 	};
 
 	AgentSpatialInfo& OnlineRecordingSlice::GetInfo(size_t agentId)

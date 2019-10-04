@@ -5,7 +5,7 @@
 #include <functional>
 
 #include "Math/Util.h"
-#include "Util/PublicSpatialInfo.h"
+#include "Export.h"
 #include "Util/IRecording.h"
 #include "Util/spimpl.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
@@ -24,7 +24,7 @@ namespace FusionCrowd
 		// Why do we need it?
 		void Init();
 
-		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId);
+		AgentInfo GetAgentInfo(size_t agentId);
 		int CountNeighbors(size_t agentId) const; //TEST METHOD, MUST BE DELETED
 
 		// Those looks very specific, are we sure they should be in public api?

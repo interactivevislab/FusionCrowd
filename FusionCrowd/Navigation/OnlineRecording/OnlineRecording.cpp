@@ -52,7 +52,7 @@ namespace FusionCrowd
 			return m_currentSlice.GetInfo(agentId);
 		}
 
-		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId, float time)
+		AgentInfo GetAgentInfo(size_t agentId, float time)
 		{
 			return GetSlice(time).GetAgentInfo(agentId);
 		}
@@ -121,9 +121,9 @@ namespace FusionCrowd
 		return pimpl->GetCurrentSpatialInfo(agentId);
 	}
 
-	PublicSpatialInfo OnlineRecording::GetPublicSpatialInfo(size_t agentId, float time)
+	AgentInfo OnlineRecording::GetAgentInfo(size_t agentId, float time)
 	{
-		return pimpl->GetPublicSpatialInfo(agentId, time);
+		return pimpl->GetAgentInfo(agentId, time);
 	}
 
 	void OnlineRecording::Update(float timeStep)

@@ -7,6 +7,8 @@
 
 namespace FusionCrowd
 {
+	class IRecording;
+
 	extern "C"
 	{
 		struct FUSION_CROWD_API AgentInfo // PublicSpatialInfo?

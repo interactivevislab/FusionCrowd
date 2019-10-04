@@ -18,8 +18,8 @@ namespace FusionCrowd
 	}
 
 
-	PublicSpatialInfo FilteredDutRecordingSlice::GetAgentInfo(size_t agentId) const {
-		return m_agentInfos.at(agentId).ToPublicInfo();
+	AgentInfo FilteredDutRecordingSlice::GetAgentInfo(size_t agentId) const {
+		return m_agentInfos.at(agentId).ToAgentInfo();
 	}
 
 

@@ -3,7 +3,7 @@
 #include "Math/Util.h"
 #include "TacticComponent/Path/PrefVelocity.h"
 #include "Util/IRecording.h"
-#include "Util/PublicSpatialInfo.h"
+#include "Export.h"
 
 namespace FusionCrowd
 {
@@ -23,9 +23,9 @@ namespace FusionCrowd
 
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
 
-		PublicSpatialInfo ToPublicInfo() const
+		AgentInfo ToAgentInfo() const
 		{
-			PublicSpatialInfo publicInfo;
+			AgentInfo publicInfo;
 
 			publicInfo.id = id;
 

@@ -4,6 +4,7 @@
 
 #include "Util/IRecording.h"
 #include "Navigation/AgentSpatialInfo.h"
+#include "Export.h"
 
 
 namespace FusionCrowd
@@ -15,7 +16,7 @@ namespace FusionCrowd
 		~FilteredDutRecordingSlice();
 
 		size_t GetAgentCount() const override;
-		PublicSpatialInfo GetAgentInfo(size_t agentId) const override;
+		AgentInfo GetAgentInfo(size_t agentId) const override;
 		FCArray<size_t> GetAgentIds() const override;
 
 		void AddAgent(AgentSpatialInfo info);

@@ -35,9 +35,9 @@ namespace FusionCrowd
 			return _recording;
 		}
 
-		PublicSpatialInfo GetPublicSpatialInfo(size_t agentId)
+		AgentInfo GetPublicSpatialInfo(size_t agentId)
 		{
-			PublicSpatialInfo publicInfo;
+			AgentInfo publicInfo;
 
 			auto & info = _recording.GetCurrentSpatialInfo(agentId);
 			publicInfo.id = agentId;
@@ -331,7 +331,7 @@ namespace FusionCrowd
 		pimpl->SetAgentsSensitivityRadius(radius);
 	}
 
-	PublicSpatialInfo NavSystem::GetPublicSpatialInfo(size_t agentId)
+	AgentInfo NavSystem::GetAgentInfo(size_t agentId)
 	{
 		return pimpl->GetPublicSpatialInfo(agentId);
 	}
