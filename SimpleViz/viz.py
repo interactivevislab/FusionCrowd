@@ -34,7 +34,6 @@ def read_trajectories(filename):
     steps = 0
     with open(filename) as csvfile:
         traj_file = csv.reader(csvfile, delimiter=',')
-        next(traj_file)  # skip header
 
         for row in traj_file:
             for i, pos in enumerate(grouper(row, 2)):

@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "ThirdParty/date.h"
+#include "Util/RecordingSerializer.h"
 
 using namespace FusionCrowd;
 using namespace std::chrono;
@@ -90,30 +91,10 @@ namespace TestFusionCrowd
 		if(_writeTrajectories)
 		{
 			std::cout << "Writing trajectories" << std::endl;
-			std::ofstream trajs(d + "crossing_trajs.csv");
 
+			std::string filename(d + "crossing_trajs.csv");
 			auto rec = _sim->GetRecording();
-
-			auto timespan = rec->GetTimeSpan();
-			for(float step : timespan)
-			{
-				auto & slice = rec->GetSlice(step);
-
-				auto ids = slice.GetAgentIds();
-				bool first = true;
-				for(size_t id : ids)
-				{
-					auto info = slice.GetAgentInfo(id);
-					if(!first)
-					{
-						trajs << ", ";
-					}
-
-					trajs << info.posX << ", " << info.posY;
-					first = false;
-				}
-				trajs << std::endl;
-			}
+			Recordings::Serialize(*rec, filename.c_str(), filename.size());
 		}
 
 		_sim = nullptr;

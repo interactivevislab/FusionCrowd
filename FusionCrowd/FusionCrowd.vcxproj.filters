@@ -43,6 +43,7 @@
     <ClCompile Include="Navigation\FilteredDutRecording\FilteredDutRecording.cpp" />
     <ClCompile Include="Navigation\FilteredDutRecording\FilteredDutRecordingSlice.cpp" />
     <ClCompile Include="Navigation\FilteredDutRecording\DutCsvParser.cpp" />
+    <ClCompile Include="Util\RecordingSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -102,6 +103,7 @@
     <ClInclude Include="Navigation\FilteredDutRecording\FilteredDutRecordingSlice.h" />
     <ClInclude Include="Navigation\FilteredDutRecording\DutCsvParser.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
+    <ClInclude Include="Util\RecordingSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

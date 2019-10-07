@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Util/FCArray.h"
-#include "StrategyComponent/IStrategyComponent.h"
 #include "Util/IRecording.h"
+#include "StrategyComponent/IStrategyComponent.h"
 #include "ComponentId.h"
+
 
 namespace FusionCrowd
 {
