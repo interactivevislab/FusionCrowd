@@ -20,7 +20,7 @@ namespace FusionCrowd
 
 		size_t GetAgentCount() const override;
 		AgentInfo GetAgentInfo(size_t agentId) const override;
-		FCArray<size_t> GetAgentIds() const override;
+		void GetAgentIds(FCArray<size_t> & outIds) const override;
 
 		AgentSpatialInfo & GetInfo(size_t agentId);
 		void AddAgent(AgentSpatialInfo info);

@@ -23,17 +23,12 @@ namespace FusionCrowd
 	}
 
 
-	FCArray<size_t> FilteredDutRecordingSlice::GetAgentIds() const {
-		FCArray<size_t> ids(m_agentInfos.size());
-
+	void FilteredDutRecordingSlice::GetAgentIds(FCArray<size_t> & outIds) const {
 		size_t i = 0;
 		for (auto & p : m_agentInfos)
 		{
-			ids[i] = p.first;
-			i++;
+			outIds[i++] = p.first;
 		}
-
-		return ids;
 	}
 
 

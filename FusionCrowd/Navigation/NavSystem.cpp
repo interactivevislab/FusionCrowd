@@ -117,7 +117,8 @@ namespace FusionCrowd
 
 		void Update(float timeStep)
 		{
-			auto ids = _recording.GetAgentIds();
+			FCArray<size_t> ids(_recording.GetAgentCount());
+			_recording.GetAgentIds(ids);
 			for (size_t id : ids)
 			{
 				AgentSpatialInfo & info = _recording.GetCurrentSpatialInfo(id);
@@ -213,7 +214,9 @@ namespace FusionCrowd
 
 			std::vector<AgentSpatialInfo> agentsInfos;
 			agentsInfos.reserve(numAgents);
-			for (size_t id : _recording.GetAgentIds()) {
+			FCArray<size_t> ids(_recording.GetAgentCount());
+			_recording.GetAgentIds(ids);
+			for (size_t id : ids) {
 				agentsInfos.push_back(_recording.GetCurrentSpatialInfo(id));
 			}
 

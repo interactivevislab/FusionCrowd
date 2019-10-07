@@ -20,7 +20,8 @@ namespace FusionCrowd
 		~OnlineRecording();
 
 
-		TimeSpan * GetTimeSpan() const override;
+		size_t GetSlicesCount() const override;
+		void GetTimeSpan(TimeSpan & outTimeSpan) const override;
 		const OnlineRecordingSlice & GetSlice(float time) const override;
 
 
@@ -32,7 +33,7 @@ namespace FusionCrowd
 		void Update(float timeStep);
 
 		AgentSpatialInfo & GetCurrentSpatialInfo(size_t agentId);
-		FCArray<size_t> GetAgentIds();
+		void GetAgentIds(FCArray<size_t> & outIds);
 	private:
 		class OnlineRecordingImpl;
 

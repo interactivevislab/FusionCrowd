@@ -16,13 +16,13 @@ namespace FusionCrowd
 			m_currentSlice = OnlineRecordingSlice();
 		}
 
-		TimeSpan * GetTimeSpan() const
+		size_t GetSlicesCount() const {
+			return m_slices.size();
+		}
+
+		void GetTimeSpan(TimeSpan & outTimeSpan) const
 		{
-			TimeSpan * result = new TimeSpan(m_snapshotTimes.size());
-
-			std::copy(m_snapshotTimes.begin(), m_snapshotTimes.end(), result->begin());
-
-			return result;
+			std::copy(m_snapshotTimes.begin(), m_snapshotTimes.end(), outTimeSpan.begin());
 		}
 
 		const OnlineRecordingSlice & GetSlice(float time) const
@@ -79,9 +79,9 @@ namespace FusionCrowd
 			return m_currentSlice.RemoveAgent(id);
 		}
 
-		FCArray<size_t> GetAgentIds()
+		void GetAgentIds(FCArray<size_t> & outIds)
 		{
-			return m_currentSlice.GetAgentIds();
+			m_currentSlice.GetAgentIds(outIds);
 		}
 
 		~OnlineRecordingImpl() {}
@@ -101,9 +101,13 @@ namespace FusionCrowd
 	{
 	}
 
-	TimeSpan * OnlineRecording::GetTimeSpan() const
+	size_t OnlineRecording::GetSlicesCount() const {
+		return pimpl->GetSlicesCount();
+	}
+
+	void OnlineRecording::GetTimeSpan(TimeSpan & outTimeSpan) const
 	{
-		return pimpl->GetTimeSpan();
+		pimpl->GetTimeSpan(outTimeSpan);
 	}
 
 	const OnlineRecordingSlice & OnlineRecording::GetSlice(float time) const
@@ -141,9 +145,9 @@ namespace FusionCrowd
 		return pimpl->RemoveAgent(agentId);
 	}
 
-	FCArray<size_t> OnlineRecording::GetAgentIds()
+	void OnlineRecording::GetAgentIds(FCArray<size_t> & outIds)
 	{
-		return pimpl->GetAgentIds();
+		pimpl->GetAgentIds(outIds);
 	}
 
 	OnlineRecording::OnlineRecording(OnlineRecording && other) = default;

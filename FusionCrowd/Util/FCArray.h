@@ -83,6 +83,6 @@ namespace FusionCrowd
 	template<typename T>
 	void FCArrayDeallocate(FCArray<T> * array)
 	{
-		//delete array;
+		delete array;
 	}
 }

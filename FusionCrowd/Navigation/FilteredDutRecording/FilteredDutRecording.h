@@ -13,7 +13,8 @@ namespace FusionCrowd
 		FilteredDutRecording();
 		~FilteredDutRecording();
 
-		TimeSpan * GetTimeSpan() const override;
+		size_t GetSlicesCount() const override;
+		void GetTimeSpan(TimeSpan & outTimeSpan) const override;
 		const FilteredDutRecordingSlice & GetSlice(float time) const override;
 
 		static FilteredDutRecording ReadFromCsv(std::string path);

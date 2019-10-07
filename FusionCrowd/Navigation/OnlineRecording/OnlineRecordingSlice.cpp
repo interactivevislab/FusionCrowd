@@ -31,17 +31,13 @@ namespace FusionCrowd
 		return m_agentInfos.erase(agentId) > 0;
 	}
 
-	FCArray<size_t> OnlineRecordingSlice::GetAgentIds() const
+	void OnlineRecordingSlice::GetAgentIds(FCArray<size_t> & outIds) const
 	{
-		FCArray<size_t> ids(m_agentInfos.size());
-
 		size_t i = 0;
 		for(auto & p : m_agentInfos)
 		{
-			ids[i++] = p.first;
+			outIds[i++] = p.first;
 		}
-
-		return ids;
 	}
 
 	OnlineRecordingSlice::OnlineRecordingSlice(const OnlineRecordingSlice & other) = default;

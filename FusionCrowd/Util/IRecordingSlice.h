@@ -15,7 +15,7 @@ namespace FusionCrowd
 		public:
 			virtual size_t GetAgentCount() const = 0;
 			virtual AgentInfo GetAgentInfo(size_t agentId) const = 0;
-			virtual FCArray<size_t> GetAgentIds() const = 0;
+			virtual void GetAgentIds(FCArray<size_t> & outIds) const = 0;
 
 			virtual ~IRecordingSlice() { }
 		};
