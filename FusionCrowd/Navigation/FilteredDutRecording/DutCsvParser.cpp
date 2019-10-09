@@ -23,7 +23,7 @@ namespace FusionCrowd
 		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 		FilteredDutRecording recording;
-		FilteredDutRecordingSlice currentSlice;
+		FilteredDutRecordingSlice currentSlice(0);
 		float currentFrame = -1;
 
 		while (!file.eof()) {
@@ -33,7 +33,7 @@ namespace FusionCrowd
 					recording.AddSlice(currentFrame, currentSlice);
 				}
 				currentFrame = lineData.first;
-				currentSlice = FilteredDutRecordingSlice();
+				currentSlice = FilteredDutRecordingSlice(currentFrame);
 			}
 			currentSlice.AddAgent(lineData.second);
 		}

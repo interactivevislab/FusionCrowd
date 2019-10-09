@@ -3,13 +3,19 @@
 
 namespace FusionCrowd
 {
-	FilteredDutRecordingSlice::FilteredDutRecordingSlice()
+	FilteredDutRecordingSlice::FilteredDutRecordingSlice(float time)
 	{
+		_time = time;
 	}
 
 
 	FilteredDutRecordingSlice::~FilteredDutRecordingSlice()
 	{
+	}
+
+
+	float FilteredDutRecordingSlice::GetTime() const {
+		return _time;
 	}
 
 

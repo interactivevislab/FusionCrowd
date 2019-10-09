@@ -13,7 +13,7 @@ namespace FusionCrowd
 	public:
 		OnlineRecordingImpl()
 		{
-			m_currentSlice = OnlineRecordingSlice();
+			m_currentSlice = OnlineRecordingSlice(0);
 		}
 
 		size_t GetSlicesCount() const {
@@ -66,7 +66,7 @@ namespace FusionCrowd
 			m_prevAgentCount = std::max(m_prevAgentCount, m_currentSlice.GetAgentCount());
 
 			m_currentTime += timeStep;
-			m_currentSlice = OnlineRecordingSlice(m_currentSlice);
+			m_currentSlice = OnlineRecordingSlice(m_currentSlice, m_currentTime);
 		}
 
 		void AddAgent(AgentSpatialInfo info)
@@ -88,7 +88,7 @@ namespace FusionCrowd
 
 	private:
 		float m_currentTime = 0;
-		OnlineRecordingSlice m_currentSlice;
+		OnlineRecordingSlice m_currentSlice = OnlineRecordingSlice(0);
 
 		size_t m_prevAgentCount = 0;
 		std::vector<float> m_snapshotTimes;

@@ -2,8 +2,13 @@
 
 namespace FusionCrowd
 {
-	OnlineRecordingSlice::OnlineRecordingSlice()
+	OnlineRecordingSlice::OnlineRecordingSlice(float time)
 	{
+		_time = time;
+	}
+
+	float OnlineRecordingSlice::GetTime() const {
+		return _time;
 	}
 
 	size_t OnlineRecordingSlice::GetAgentCount() const
@@ -41,6 +46,10 @@ namespace FusionCrowd
 	}
 
 	OnlineRecordingSlice::OnlineRecordingSlice(const OnlineRecordingSlice & other) = default;
+	OnlineRecordingSlice::OnlineRecordingSlice(const OnlineRecordingSlice & other, float newTime) {
+		*this = OnlineRecordingSlice(other);
+		_time = newTime;
+	}
 	OnlineRecordingSlice::OnlineRecordingSlice(OnlineRecordingSlice && other) = default;
 	OnlineRecordingSlice& OnlineRecordingSlice::operator=(const OnlineRecordingSlice & other) = default;
 	OnlineRecordingSlice& OnlineRecordingSlice::operator=(OnlineRecordingSlice && other) = default;

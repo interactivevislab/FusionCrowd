@@ -98,7 +98,7 @@ namespace TestFusionCrowd
 
 		myfile.close();
 
-		recording = sim->GetRecording();
+		recording = &(sim->GetRecording());
 	}
 
 	void ZanlungoCase::Post()

@@ -65,7 +65,7 @@ namespace FusionCrowd
 	}
 
 
-	const FilteredDutRecordingSlice & FilteredDutRecording::GetSlice(float time) const {
+	const void FilteredDutRecording::GetSlice(float time, IRecordingSlice & outSlice) const {
 		assert(time >= 0 && "Time must be non-negative");
 
 		auto it = std::next(_recordingData.begin());
@@ -73,7 +73,7 @@ namespace FusionCrowd
 			it++;
 		}
 
-		return std::prev(_recordingData.begin())->second;
+		outSlice = std::prev(_recordingData.begin())->second;
 	}
 
 	FilteredDutRecording FilteredDutRecording::ReadFromCsv(std::string path) {

@@ -40,9 +40,6 @@
     <ClCompile Include="OperationComponent\SwitchingComponent.cpp" />
     <ClCompile Include="Export.cpp" />
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
-    <ClCompile Include="Navigation\FilteredDutRecording\FilteredDutRecording.cpp" />
-    <ClCompile Include="Navigation\FilteredDutRecording\FilteredDutRecordingSlice.cpp" />
-    <ClCompile Include="Navigation\FilteredDutRecording\DutCsvParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -98,9 +95,6 @@
     <ClInclude Include="Util\spimpl.h" />
     <ClInclude Include="Export.h" />
     <ClInclude Include="ComponentId.h" />
-    <ClInclude Include="Navigation\FilteredDutRecording\FilteredDutRecording.h" />
-    <ClInclude Include="Navigation\FilteredDutRecording\FilteredDutRecordingSlice.h" />
-    <ClInclude Include="Navigation\FilteredDutRecording\DutCsvParser.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
   </ItemGroup>
   <ItemGroup>
