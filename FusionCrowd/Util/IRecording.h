@@ -16,6 +16,8 @@ namespace FusionCrowd
 			virtual size_t GetSlicesCount() const = 0;
 			virtual void GetTimeSpan(TimeSpan & outTimeSpan) const = 0;
 			virtual const IRecordingSlice & GetSlice(float time) const = 0;
+			virtual const IRecordingSlice * Begin() const = 0;
+			virtual const IRecordingSlice * End() const = 0;
 
 			virtual ~IRecording() { }
 		};

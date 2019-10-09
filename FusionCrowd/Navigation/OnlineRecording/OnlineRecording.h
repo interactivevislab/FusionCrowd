@@ -23,6 +23,8 @@ namespace FusionCrowd
 		size_t GetSlicesCount() const override;
 		void GetTimeSpan(TimeSpan & outTimeSpan) const override;
 		const OnlineRecordingSlice & GetSlice(float time) const override;
+		const IRecordingSlice * Begin() const override;
+		const IRecordingSlice * End() const override;
 
 
 		size_t GetAgentCount() const;

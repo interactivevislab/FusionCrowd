@@ -42,6 +42,14 @@ namespace FusionCrowd
 			return m_slices[i];
 		}
 
+		const IRecordingSlice * Begin() const {
+			return m_slices.begin()._Ptr;
+		}
+
+		const IRecordingSlice * End() const {
+			return m_slices.end()._Ptr;
+		}
+
 		size_t GetAgentCount() const
 		{
 			return std::max(m_prevAgentCount, m_currentSlice.GetAgentCount());
@@ -113,6 +121,16 @@ namespace FusionCrowd
 	const OnlineRecordingSlice & OnlineRecording::GetSlice(float time) const
 	{
 		return pimpl->GetSlice(time);
+	}
+
+	const IRecordingSlice * OnlineRecording::Begin() const
+	{
+		return pimpl->Begin();
+	}
+
+	const IRecordingSlice * OnlineRecording::End() const
+	{
+		return pimpl->End();
 	}
 
 	size_t OnlineRecording::GetAgentCount() const

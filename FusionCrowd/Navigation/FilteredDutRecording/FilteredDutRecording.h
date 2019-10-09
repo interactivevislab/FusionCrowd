@@ -16,6 +16,8 @@ namespace FusionCrowd
 		size_t GetSlicesCount() const override;
 		void GetTimeSpan(TimeSpan & outTimeSpan) const override;
 		const IRecordingSlice & GetSlice(float time) const override;
+		const IRecordingSlice * Begin() const override;
+		const IRecordingSlice * End() const override;
 
 		static FilteredDutRecording ReadFromCsv(std::string path);
 		void AddSlice(float frame, FilteredDutRecordingSlice slice);
