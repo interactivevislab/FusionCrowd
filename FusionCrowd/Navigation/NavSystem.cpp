@@ -209,7 +209,7 @@ namespace FusionCrowd
 		{
 			int numAgents = _recording.GetAgentCount();
 
-			if(numAgents == 0)
+			if(numAgents < 2)
 				return;
 
 			std::vector<AgentSpatialInfo> agentsInfos;
