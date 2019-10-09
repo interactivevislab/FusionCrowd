@@ -92,14 +92,17 @@ namespace TestFusionCrowd
 			std::cout << "Writing trajectories" << std::endl;
 			std::ofstream trajs(d + "crossing_trajs.csv");
 
-			auto rec = _sim->GetRecording();
+			auto & rec = _sim->GetRecording();
 
-			auto timespan = rec->GetTimeSpan();
-			for(float step : *timespan)
+			TimeSpan timeSpan(rec.GetSlicesCount());
+			rec.GetTimeSpan(timeSpan);
+
+			for(float step : timeSpan)
 			{
-				auto & slice = rec->GetSlice(step);
+				auto & slice = rec.GetSlice(step);
 
-				auto ids = slice.GetAgentIds();
+				FCArray<size_t> ids(slice.GetAgentCount());
+				slice.GetAgentIds(ids);
 				bool first = true;
 				for(size_t id : ids)
 				{
