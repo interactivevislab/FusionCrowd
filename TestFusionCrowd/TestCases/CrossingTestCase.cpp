@@ -40,7 +40,7 @@ namespace TestFusionCrowd
 		for (int i = (_agentsNum / 2 - 1); i < _agentsNum; i++)
 		{
 			size_t id = _sim->AddAgent(RandFloat(0.0f, 40.0f), RandFloat(80.0f, 120.0f), _opComponent, -1);
-			_sim->SetAgentGoal(id, RandFloat(160.0f, 200.0f), RandFloat(80.0f, 12.0f));
+			_sim->SetAgentGoal(id, RandFloat(160.0f, 200.0f), RandFloat(80.0f, 120.0f));
 		}
 
 		std::cout << "done." << std::endl;
