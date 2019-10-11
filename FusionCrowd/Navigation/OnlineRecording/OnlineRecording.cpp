@@ -42,6 +42,10 @@ namespace FusionCrowd
 			return m_slices[i];
 		}
 
+		const OnlineRecordingSlice & GetCurrentSlice() const {
+			return m_currentSlice;
+		}
+
 		const IRecordingSlice * Begin() const {
 			return m_slices.begin()._Ptr;
 		}
@@ -121,6 +125,11 @@ namespace FusionCrowd
 	const OnlineRecordingSlice & OnlineRecording::GetSlice(float time) const
 	{
 		return pimpl->GetSlice(time);
+	}
+
+	const OnlineRecordingSlice & OnlineRecording::GetCurrentSlice() const
+	{
+		return pimpl->GetCurrentSlice();
 	}
 
 	const IRecordingSlice * OnlineRecording::Begin() const
