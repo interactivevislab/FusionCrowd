@@ -49,9 +49,12 @@ namespace FusionCrowd
 
 		size_t GetAgentCount() const { return _agents.size(); }
 
-		std::shared_ptr<NavSystem> GetNavSystem()
-		{
-			return _navSystem;
+		AgentSpatialInfo & GetSpatialInfo(size_t agentId) {
+			return _navSystem->GetSpatialInfo(agentId);
+		}
+
+		IRecording & GetRecording() {
+			return _navSystem->GetRecording();
 		}
 
 		std::shared_ptr<Goal> GetAgentGoal(size_t agentId) {
@@ -361,9 +364,12 @@ namespace FusionCrowd
 		return pimpl->GetAgentCount();
 	}
 
-	std::shared_ptr<NavSystem> Simulator::GetNavSystem()
-	{
-		return pimpl->GetNavSystem();
+	AgentSpatialInfo & Simulator::GetSpatialInfo(size_t agentId) {
+		return pimpl->GetSpatialInfo(agentId);
+	}
+
+	IRecording & Simulator::GetRecording() {
+		return pimpl->GetRecording();
 	}
 
 	std::shared_ptr<Goal> Simulator::GetAgentGoal(size_t agentId) {

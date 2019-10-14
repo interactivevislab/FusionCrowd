@@ -24,7 +24,6 @@ namespace FusionCrowd
 		// Why do we need it?
 		void Init();
 
-		AgentInfo GetAgentInfo(size_t agentId);
 		int CountNeighbors(size_t agentId) const; //TEST METHOD, MUST BE DELETED
 
 		// Those looks very specific, are we sure they should be in public api?

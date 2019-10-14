@@ -35,26 +35,6 @@ namespace FusionCrowd
 			return _recording;
 		}
 
-		AgentInfo GetPublicSpatialInfo(size_t agentId)
-		{
-			AgentInfo publicInfo;
-
-			auto & info = _recording.GetCurrentSpatialInfo(agentId);
-			publicInfo.id = agentId;
-
-			publicInfo.posX = info.pos.x;
-			publicInfo.posY = info.pos.y;
-
-			publicInfo.velX = info.vel.x;
-			publicInfo.velY = info.vel.y;
-
-			publicInfo.orientX = info.orient.x;
-			publicInfo.orientY = info.orient.y;
-			publicInfo.radius = info.radius;
-
-			return publicInfo;
-		}
-
 		//TEST METHOD, MUST BE DELETED
 		int CountNeighbors(size_t agentId) const
 		{
@@ -332,11 +312,6 @@ namespace FusionCrowd
 
 	void NavSystem::SetAgentsSensitivityRadius(float radius) {
 		pimpl->SetAgentsSensitivityRadius(radius);
-	}
-
-	AgentInfo NavSystem::GetAgentInfo(size_t agentId)
-	{
-		return pimpl->GetPublicSpatialInfo(agentId);
 	}
 
 	IRecording & NavSystem::GetRecording()

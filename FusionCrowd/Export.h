@@ -11,7 +11,7 @@ namespace FusionCrowd
 
 	extern "C"
 	{
-		struct FUSION_CROWD_API AgentInfo // PublicSpatialInfo?
+		struct FUSION_CROWD_API AgentInfo
 		{
 			size_t id;
 
