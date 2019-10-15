@@ -4,6 +4,7 @@
 #include "Navigation/AgentSpatialInfo.h"
 #include "TacticComponent/NavMeshComponent.h"
 #include "StrategyComponent/Goal/PointGoal.h"
+#include "Navigation/OnlineRecording/OnlineRecording.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -15,6 +16,7 @@ namespace FusionCrowd
 	public:
 		SimulatorImpl()
 		{
+			_recording = OnlineRecording();
 		}
 
 		~SimulatorImpl() = default;
@@ -43,15 +45,19 @@ namespace FusionCrowd
 			}
 
 			_navSystem->Update(timeStep);
+			_recording.MakeRecord(GetAgentsInfo(), timeStep);
 
 			return true;
 		}
 
 		size_t GetAgentCount() const { return _agents.size(); }
 
-		std::shared_ptr<NavSystem> GetNavSystem()
-		{
-			return _navSystem;
+		AgentSpatialInfo & GetSpatialInfo(size_t agentId) {
+			return _navSystem->GetSpatialInfo(agentId);
+		}
+
+		IRecording & GetRecording() {
+			return _recording;
 		}
 
 		std::shared_ptr<Goal> GetAgentGoal(size_t agentId) {
@@ -262,7 +268,7 @@ namespace FusionCrowd
 			{
 				Agent & agent = p.second;
 				AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agent.id);
-				std::shared_ptr<Goal> g = GetAgentGoal(agent.id);
+				std::shared_ptr<Goal> g = agent.currentGoal;
 
 				ComponentId op = -1, tactic = -1, strat = -1;
 				if(!agent.opComponent.expired())
@@ -337,6 +343,7 @@ namespace FusionCrowd
 		float _currentTime = 0;
 
 		std::shared_ptr<NavSystem> _navSystem;
+		OnlineRecording _recording;
 
 		std::map<size_t, FusionCrowd::Agent> _agents;
 		std::vector<std::shared_ptr<IStrategyComponent>> _strategyComponents;
@@ -361,9 +368,12 @@ namespace FusionCrowd
 		return pimpl->GetAgentCount();
 	}
 
-	std::shared_ptr<NavSystem> Simulator::GetNavSystem()
-	{
-		return pimpl->GetNavSystem();
+	AgentSpatialInfo & Simulator::GetSpatialInfo(size_t agentId) {
+		return pimpl->GetSpatialInfo(agentId);
+	}
+
+	IRecording & Simulator::GetRecording() {
+		return pimpl->GetRecording();
 	}
 
 	std::shared_ptr<Goal> Simulator::GetAgentGoal(size_t agentId) {

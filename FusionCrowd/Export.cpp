@@ -63,12 +63,6 @@ namespace FusionCrowd
 		)
 		{
 			return _sim->AddAgent(x, y, opId, strategyId);
-			//size_t agentId = _sim->AddAgent(DirectX::SimpleMath::Vector2(x, y));
-			//_sim->SetOperationComponent(agentId, opId);
-			//_sim->SetTacticComponent(agentId, ComponentIds::NAVMESH_ID);
-			//_sim->SetStrategyComponent(agentId, strategyId);
-
-			//return agentId;
 		}
 
 		OperationStatus RemoveAgent(size_t agentId)
@@ -78,7 +72,7 @@ namespace FusionCrowd
 
 		IRecording & GetRecording()
 		{
-			return _sim->GetNavSystem()->GetRecording();
+			return _sim->GetRecording();
 		}
 
 		size_t GetAgentCount()

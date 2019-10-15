@@ -37,7 +37,9 @@ namespace FusionCrowd
 		bool SetStrategyComponent(size_t agentId, ComponentId newStrategyComponent);
 		void SetNavSystem(std::shared_ptr<NavSystem> navSystem);
 
-		std::shared_ptr<NavSystem> GetNavSystem();
+		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
+
+		IRecording & GetRecording();
 
 		float GetElapsedTime();
 

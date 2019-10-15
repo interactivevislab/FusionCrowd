@@ -27,15 +27,10 @@ namespace FusionCrowd
 		const IRecordingSlice * Begin() const override;
 		const IRecordingSlice * End() const override;
 
-
 		size_t GetAgentCount() const;
-		void AddAgent(AgentSpatialInfo spatialInfo);
-		bool RemoveAgent(size_t agentId);
 
-		AgentInfo GetAgentInfo(size_t agentId, float time);
-		void Update(float timeStep);
+		void MakeRecord(FCArray<AgentInfo> agentsInfos, float timeStep);
 
-		AgentSpatialInfo & GetCurrentSpatialInfo(size_t agentId);
 		void GetAgentIds(FCArray<size_t> & outIds);
 	private:
 		class OnlineRecordingImpl;
