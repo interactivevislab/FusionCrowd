@@ -30,13 +30,12 @@ namespace FusionCrowd
 		void SetAgentsSensitivityRadius(float radius);
 		void SetGridCoeff(float coeff);
 
-		IRecording & GetRecording();
-
 		// Very confusing methods pair
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
 		void AddAgent(AgentSpatialInfo spatialInfo);
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
+		std::map<size_t, AgentSpatialInfo> GetAgentsSpatialInfos();
 
 		const std::vector<AgentSpatialInfo> & GetNeighbours(size_t agentId) const;
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId);

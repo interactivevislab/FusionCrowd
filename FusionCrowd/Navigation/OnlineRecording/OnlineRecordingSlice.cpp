@@ -46,8 +46,8 @@ namespace FusionCrowd
 	}
 
 	OnlineRecordingSlice::OnlineRecordingSlice(const OnlineRecordingSlice & other) = default;
-	OnlineRecordingSlice::OnlineRecordingSlice(const OnlineRecordingSlice & other, float newTime) {
-		*this = OnlineRecordingSlice(other);
+	OnlineRecordingSlice::OnlineRecordingSlice(std::map<size_t, AgentSpatialInfo> agentsSpatialInfos, float newTime) {
+		m_agentInfos = agentsSpatialInfos;
 		_time = newTime;
 	}
 	OnlineRecordingSlice::OnlineRecordingSlice(OnlineRecordingSlice && other) = default;

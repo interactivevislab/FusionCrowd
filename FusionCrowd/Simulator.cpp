@@ -4,6 +4,7 @@
 #include "Navigation/AgentSpatialInfo.h"
 #include "TacticComponent/NavMeshComponent.h"
 #include "StrategyComponent/Goal/PointGoal.h"
+#include "Navigation/OnlineRecording/OnlineRecording.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -15,6 +16,7 @@ namespace FusionCrowd
 	public:
 		SimulatorImpl()
 		{
+			_recording = OnlineRecording();
 		}
 
 		~SimulatorImpl() = default;
@@ -43,6 +45,7 @@ namespace FusionCrowd
 			}
 
 			_navSystem->Update(timeStep);
+			_recording.MakeRecord(_navSystem->GetAgentsSpatialInfos(), timeStep);
 
 			return true;
 		}
@@ -54,7 +57,7 @@ namespace FusionCrowd
 		}
 
 		IRecording & GetRecording() {
-			return _navSystem->GetRecording();
+			return _recording;
 		}
 
 		std::shared_ptr<Goal> GetAgentGoal(size_t agentId) {
@@ -340,6 +343,7 @@ namespace FusionCrowd
 		float _currentTime = 0;
 
 		std::shared_ptr<NavSystem> _navSystem;
+		OnlineRecording _recording;
 
 		std::map<size_t, FusionCrowd::Agent> _agents;
 		std::vector<std::shared_ptr<IStrategyComponent>> _strategyComponents;

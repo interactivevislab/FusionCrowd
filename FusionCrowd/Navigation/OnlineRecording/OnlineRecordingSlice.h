@@ -14,7 +14,7 @@ namespace FusionCrowd
 	public:
 		OnlineRecordingSlice(float time);
 		OnlineRecordingSlice(const OnlineRecordingSlice & other);
-		OnlineRecordingSlice(const OnlineRecordingSlice & other, float newTime);
+		OnlineRecordingSlice(std::map<size_t, AgentSpatialInfo> agentsSpatialInfos, float newTime);
 		OnlineRecordingSlice(OnlineRecordingSlice && other);
 		OnlineRecordingSlice& operator=(const OnlineRecordingSlice & other);
 		OnlineRecordingSlice& operator=(OnlineRecordingSlice && other);
