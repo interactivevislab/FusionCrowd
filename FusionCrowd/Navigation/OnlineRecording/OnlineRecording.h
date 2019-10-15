@@ -29,9 +29,8 @@ namespace FusionCrowd
 
 		size_t GetAgentCount() const;
 
-		void MakeRecord(std::map<size_t, AgentSpatialInfo> agentsSpatialInfos, float timeStep);
+		void MakeRecord(FCArray<AgentInfo> agentsInfos, float timeStep);
 
-		AgentSpatialInfo & GetCurrentSpatialInfo(size_t agentId);
 		void GetAgentIds(FCArray<size_t> & outIds);
 	private:
 		class OnlineRecordingImpl;

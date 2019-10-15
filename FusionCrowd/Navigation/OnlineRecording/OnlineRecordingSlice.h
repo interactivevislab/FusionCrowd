@@ -13,9 +13,10 @@ namespace FusionCrowd
 	{
 	public:
 		OnlineRecordingSlice(float time);
+		OnlineRecordingSlice(FCArray<AgentInfo> agentsInfos, float newTime);
 		OnlineRecordingSlice(const OnlineRecordingSlice & other);
-		OnlineRecordingSlice(std::map<size_t, AgentSpatialInfo> agentsSpatialInfos, float newTime);
 		OnlineRecordingSlice(OnlineRecordingSlice && other);
+
 		OnlineRecordingSlice& operator=(const OnlineRecordingSlice & other);
 		OnlineRecordingSlice& operator=(OnlineRecordingSlice && other);
 
@@ -24,12 +25,11 @@ namespace FusionCrowd
 		AgentInfo GetAgentInfo(size_t agentId) const override;
 		void GetAgentIds(FCArray<size_t> & outIds) const override;
 
-		AgentSpatialInfo & GetInfo(size_t agentId);
-		void AddAgent(AgentSpatialInfo info);
+		void AddAgent(AgentInfo info);
 		bool RemoveAgent(size_t agentId);
 
 	private:
 		float _time;
-		std::map<size_t, AgentSpatialInfo> m_agentInfos;
+		std::map<size_t, AgentInfo> m_agentInfos;
 	};
 }

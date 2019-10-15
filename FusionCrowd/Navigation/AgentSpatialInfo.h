@@ -22,24 +22,5 @@ namespace FusionCrowd
 		float maxAngVel = 6.28f;
 
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
-
-		AgentInfo ToAgentInfo() const
-		{
-			AgentInfo publicInfo;
-
-			publicInfo.id = id;
-
-			publicInfo.posX = pos.x;
-			publicInfo.posY = pos.y;
-
-			publicInfo.velX = vel.x;
-			publicInfo.velY = vel.y;
-
-			publicInfo.orientX = orient.x;
-			publicInfo.orientY = orient.y;
-			publicInfo.radius = radius;
-
-			return publicInfo;
-		}
 	};
 }

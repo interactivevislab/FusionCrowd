@@ -45,7 +45,7 @@ namespace FusionCrowd
 			}
 
 			_navSystem->Update(timeStep);
-			_recording.MakeRecord(_navSystem->GetAgentsSpatialInfos(), timeStep);
+			_recording.MakeRecord(GetAgentsInfo(), timeStep);
 
 			return true;
 		}
@@ -268,7 +268,7 @@ namespace FusionCrowd
 			{
 				Agent & agent = p.second;
 				AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agent.id);
-				std::shared_ptr<Goal> g = GetAgentGoal(agent.id);
+				std::shared_ptr<Goal> g = agent.currentGoal;
 
 				ComponentId op = -1, tactic = -1, strat = -1;
 				if(!agent.opComponent.expired())

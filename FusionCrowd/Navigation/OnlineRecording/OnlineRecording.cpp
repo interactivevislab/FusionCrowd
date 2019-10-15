@@ -59,17 +59,12 @@ namespace FusionCrowd
 			return std::max(m_prevAgentCount, m_currentSlice.GetAgentCount());
 		}
 
-		AgentSpatialInfo & GetCurrentSpatialInfo(size_t agentId)
-		{
-			return m_currentSlice.GetInfo(agentId);
-		}
-
 		AgentInfo GetAgentInfo(size_t agentId, float time)
 		{
 			return GetSlice(time).GetAgentInfo(agentId);
 		}
 
-		void MakeRecord(std::map<size_t, AgentSpatialInfo> agentsSpatialInfos, float timeStep)
+		void MakeRecord(FCArray<AgentInfo> agentsInfos, float timeStep)
 		{
 			assert(timeStep > 0 && "Time step must be positive");
 
@@ -78,7 +73,7 @@ namespace FusionCrowd
 			m_prevAgentCount = std::max(m_prevAgentCount, m_currentSlice.GetAgentCount());
 
 			m_currentTime += timeStep;
-			m_currentSlice = OnlineRecordingSlice(agentsSpatialInfos, m_currentTime);
+			m_currentSlice = OnlineRecordingSlice(std::move(agentsInfos), m_currentTime);
 		}
 
 		void GetAgentIds(FCArray<size_t> & outIds)
@@ -137,14 +132,9 @@ namespace FusionCrowd
 		return pimpl->GetAgentCount();
 	}
 
-	AgentSpatialInfo& OnlineRecording::GetCurrentSpatialInfo(size_t agentId)
+	void OnlineRecording::MakeRecord(FCArray<AgentInfo> agentsInfos, float timeStep)
 	{
-		return pimpl->GetCurrentSpatialInfo(agentId);
-	}
-
-	void OnlineRecording::MakeRecord(std::map<size_t, AgentSpatialInfo> agentsSpatialInfos, float timeStep)
-	{
-		pimpl->MakeRecord(agentsSpatialInfos, timeStep);
+		pimpl->MakeRecord(std::move(agentsInfos), timeStep);
 	}
 
 	void OnlineRecording::GetAgentIds(FCArray<size_t> & outIds)

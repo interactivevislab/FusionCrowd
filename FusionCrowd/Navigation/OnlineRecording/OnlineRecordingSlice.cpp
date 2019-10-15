@@ -18,15 +18,10 @@ namespace FusionCrowd
 
 	AgentInfo OnlineRecordingSlice::GetAgentInfo(size_t agentId) const
 	{
-		return m_agentInfos.at(agentId).ToAgentInfo();
+		return m_agentInfos.at(agentId);
 	};
 
-	AgentSpatialInfo& OnlineRecordingSlice::GetInfo(size_t agentId)
-	{
-		return m_agentInfos[agentId];
-	};
-
-	void OnlineRecordingSlice::AddAgent(AgentSpatialInfo info)
+	void OnlineRecordingSlice::AddAgent(AgentInfo info)
 	{
 		m_agentInfos.insert({info.id, info});
 	}
@@ -46,11 +41,14 @@ namespace FusionCrowd
 	}
 
 	OnlineRecordingSlice::OnlineRecordingSlice(const OnlineRecordingSlice & other) = default;
-	OnlineRecordingSlice::OnlineRecordingSlice(std::map<size_t, AgentSpatialInfo> agentsSpatialInfos, float newTime) {
-		m_agentInfos = agentsSpatialInfos;
-		_time = newTime;
-	}
 	OnlineRecordingSlice::OnlineRecordingSlice(OnlineRecordingSlice && other) = default;
 	OnlineRecordingSlice& OnlineRecordingSlice::operator=(const OnlineRecordingSlice & other) = default;
 	OnlineRecordingSlice& OnlineRecordingSlice::operator=(OnlineRecordingSlice && other) = default;
+
+	OnlineRecordingSlice::OnlineRecordingSlice(FCArray<AgentInfo> agentsInfos, float newTime) {
+		for (auto info : agentsInfos) {
+			m_agentInfos.insert({ info.id, info });
+		}
+		_time = newTime;
+	}
 }
