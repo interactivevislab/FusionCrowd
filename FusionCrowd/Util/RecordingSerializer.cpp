@@ -14,6 +14,8 @@ namespace FusionCrowd
 			std::string filename(destFilePath, pathLen);
 			std::ofstream trajs(filename);
 
+			std::string separator = ",";
+
 			size_t slicesCount = rec.GetSlicesCount();
 			TimeSpan timespan(slicesCount);
 			rec.GetTimeSpan(timespan);
@@ -31,10 +33,10 @@ namespace FusionCrowd
 					auto info = slice.GetAgentInfo(id);
 					if(!first)
 					{
-						trajs << ", ";
+						trajs << separator;
 					}
 
-					trajs << info.posX << ", " << info.posY;
+					trajs << id << separator << info.posX << separator << info.posY;
 					first = false;
 				}
 				trajs << std::endl;

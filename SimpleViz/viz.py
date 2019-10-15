@@ -1,4 +1,5 @@
 import csv
+import math
 import random
 import argparse
 from tkinter import *
@@ -29,7 +30,7 @@ def pairwise(iterable):
 
 
 def read_trajectories(filename):
-    result = defaultdict(list)
+    result = defaultdict(dict)
 
     minx, miny = 1000000, 1000000
     maxx, maxy = -1000000, -1000000
@@ -37,15 +38,15 @@ def read_trajectories(filename):
     with open(filename) as csvfile:
         traj_file = csv.reader(csvfile, delimiter=',')
 
-        for row in traj_file:
-            for i, pos in enumerate(grouper(row, 2)):
-                x, y = map(float, pos)
+        for step, row in enumerate(traj_file):
+            for agent_id, x, y in grouper(row, 3):
+                agent_id, x, y = int(agent_id), float(x), float(y)
                 minx = min(x, minx)
                 miny = min(y, miny)
                 maxx = max(x, maxx)
                 maxy = max(y, maxy)
 
-                result[i].append((x, y))
+                result[agent_id][step] = x, y
 
         for vals in result.values():
             steps = max(steps, len(vals))
@@ -60,13 +61,12 @@ def draw_trajectories(canvas, tr, scale=1.0):
             yield y
 
     for id, positions in tr.pos.items():
-        scaled = flat((scale * x, scale * y) for x, y in positions)
+        scaled = flat((scale * x, scale * y) for x, y in positions.values())
         canvas.create_line(*scaled, fill=all_colors[id])
 
 
 def redraw_positions(canvas, tr, frame, scale, size=1.0, ovals=None):
-    def coords(pos):
-        x, y = pos
+    def coords(x, y):
         return ((x - size) * scale,
                 (y - size) * scale,
                 (x + size) * scale,
@@ -74,13 +74,19 @@ def redraw_positions(canvas, tr, frame, scale, size=1.0, ovals=None):
 
     if ovals is None:
         ovals = dict()
-        for id, positions in tr.pos.items():
-            ovals[id] = canvas.create_oval(*coords(positions[frame]), fill=all_colors[id],outline="white")
-    else:
-        for id, positions in tr.pos.items():
-            frame = max(0, min(frame, len(positions) - 1))
 
-            canvas.coords(ovals[id], *coords(positions[frame]))
+    for agent_id, positions in tr.pos.items():
+        if frame not in positions:
+            if agent_id in ovals:
+                canvas.itemconfigure(ovals[agent_id], state='hidden')
+            continue
+
+        x, y = positions[frame]
+        if agent_id in ovals:
+            canvas.itemconfigure(ovals[agent_id], state='normal')
+            canvas.coords(ovals[agent_id], *coords(x, y))
+        else:
+            ovals[agent_id] = canvas.create_oval(*coords(x, y), fill=all_colors[agent_id], outline="white")
 
     return ovals
 
