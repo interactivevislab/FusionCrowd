@@ -27,6 +27,7 @@
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
+    <ClInclude Include="Util\RecordingSerializer.h" />
     <ClInclude Include="Util\FCArray.h" />
     <ClInclude Include="Math\Util.h" />
     <ClInclude Include="Benchmark\MicroscopicMetrics.h" />
@@ -88,6 +89,7 @@
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
+    <ClCompile Include="Util\RecordingSerializer.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />

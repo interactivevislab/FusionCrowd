@@ -40,6 +40,7 @@
     <ClCompile Include="OperationComponent\SwitchingComponent.cpp" />
     <ClCompile Include="Export.cpp" />
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
+    <ClCompile Include="Util\RecordingSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -96,6 +97,7 @@
     <ClInclude Include="Export.h" />
     <ClInclude Include="ComponentId.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
+    <ClInclude Include="Util\RecordingSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

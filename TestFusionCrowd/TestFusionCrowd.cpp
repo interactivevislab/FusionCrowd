@@ -6,6 +6,7 @@
 #include "TestCases/NeighbourSearchBenchCase.h"
 #include "TestCases/ZanlungoCase.h"
 #include "TestCases/CrossingTestCase.h"
+#include "TestCases/PinholeTestCase.h"
 
 #include "ComponentId.h"
 
@@ -15,13 +16,17 @@ int main()
 {
 	NeighbourSearchBenchCase case1;
 	ZanlungoCase case2;
-	CrossingTestCase corridorCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, true);
+	CrossingTestCase crossingCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, true);
+	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::ORCA_ID, 200, 1000, true);
 
-	corridorCase.Pre();
+	crossingCase.Pre();
+	crossingCase.Run(0);
+	crossingCase.Post();
 
-	corridorCase.Run(0);
+	pinholeCase.Pre();
+	pinholeCase.Run(0);
+	pinholeCase.Post();
 
-	corridorCase.Post();
 
 	/*
 	case1.Pre();

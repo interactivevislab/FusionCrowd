@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "CrossingTestCase.h"
+#include "PinholeTestCase.h"
 #include <iostream>
 #include <fstream>
 
@@ -12,7 +12,7 @@ using namespace std::chrono;
 
 namespace TestFusionCrowd
 {
-	CrossingTestCase::CrossingTestCase(FusionCrowd::ComponentId opComponent, size_t agentsNum, size_t simulationSteps, bool writeTrajectories):
+	PinholeTestCase::PinholeTestCase(FusionCrowd::ComponentId opComponent, size_t agentsNum, size_t simulationSteps, bool writeTrajectories):
 		_opComponent(opComponent),
 		_agentsNum(agentsNum),
 		_simulationSteps(simulationSteps),
@@ -22,33 +22,27 @@ namespace TestFusionCrowd
 	{
 	}
 
-	void CrossingTestCase::Pre()
+	void PinholeTestCase::Pre()
 	{
-		std::cout << "Corridor test case setting up... ";
+		std::cout << "Pinhole test case setting up... ";
 		std::unique_ptr<ISimulatorBuilder, decltype(&BuilderDeleter)> builder(BuildSimulator(), BuilderDeleter);
-		builder->WithNavMesh("Resources/crossing.nav")
+		builder->WithNavMesh("Resources/pinhole.nav")
 			->WithOp(_opComponent);
 
 		_sim = std::unique_ptr<ISimulatorFacade, decltype(&SimulatorFacadeDeleter)>(builder->Build(), SimulatorFacadeDeleter);
 
-		for (int i = 0; i < (_agentsNum / 2 - 1); i++)
+		for (int i = 0; i < _agentsNum; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(80.0f, 120.0f), RandFloat(0.0f, 40.0f), _opComponent, -1);
-			_sim->SetAgentGoal(id, RandFloat(80.0f, 120.0f), RandFloat(160.0f, 200.0f));
-		}
-
-		for (int i = (_agentsNum / 2 - 1); i < _agentsNum; i++)
-		{
-			size_t id = _sim->AddAgent(RandFloat(0.0f, 40.0f), RandFloat(80.0f, 120.0f), _opComponent, -1);
-			_sim->SetAgentGoal(id, RandFloat(160.0f, 200.0f), RandFloat(80.0f, 120.0f));
+			size_t id = _sim->AddAgent(RandFloat(1.0f, 11.0f), RandFloat(1.0f, 4.0f), _opComponent, -1);
+			_sim->SetAgentGoal(id, RandFloat(35.0f, 37.0f), RandFloat(5.0f, 7.0f));
 		}
 
 		std::cout << "done." << std::endl;
 	}
 
-	void CrossingTestCase::Run(const float& args)
+	void PinholeTestCase::Run(const float& args)
 	{
-		std::cout << "Running Corridor test case" << std::endl;
+		std::cout << "Running pinhole test case" << std::endl;
 
 		_startTime = system_clock::now();
 		for (int i = 0; i < _simulationSteps; i++)
@@ -69,17 +63,17 @@ namespace TestFusionCrowd
 			}
 		}
 
-		std::cout << "Corridor test case finished" << std::endl;
+		std::cout << "Pinhole test case finished" << std::endl;
 	}
 
-	void CrossingTestCase::Post()
+	void PinholeTestCase::Post()
 	{
-		std::cout << "Corridor test case cleaning up... " << std::endl;
+		std::cout << "Pinhole test case cleaning up... " << std::endl;
 
 		std::string d = date::format("%Y%m%d_%H%M%S, ", _startTime);
 
 		{ // RAII
-			std::ofstream time_measures(d + "crossing_step_times_microseconds.csv");
+			std::ofstream time_measures(d + "pinhole_step_times_microseconds.csv");
 			std::cout << "Writing step times" << std::endl;
 
 			for(auto val : _measures)
@@ -92,7 +86,7 @@ namespace TestFusionCrowd
 		{
 			std::cout << "Writing trajectories" << std::endl;
 
-			std::string filename(d + "crossing_trajs.csv");
+			std::string filename(d + "pinhole_trajs.csv");
 			auto & rec = _sim->GetRecording();
 			Recordings::Serialize(rec, filename.c_str(), filename.size());
 		}
@@ -101,7 +95,7 @@ namespace TestFusionCrowd
 		std::cout << "Cleaned." << std::endl;
 	}
 
-	float CrossingTestCase::RandFloat(float min, float max)
+	float PinholeTestCase::RandFloat(float min, float max)
 	{
 		return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
 	}
