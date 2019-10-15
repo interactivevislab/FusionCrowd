@@ -152,6 +152,15 @@ def draw_mesh(canvas, mesh: NavMesh, scale):
             fill="#ccc"
         )
 
+    for id, (vx, vy) in mesh.vertices.items():
+        canvas.create_text(
+            vx * scale,
+            vy * scale,
+            anchor=NW,
+            text="{:0}, {:0}".format(vx, vy),
+            fill="#ccc"
+        )
+
     for id, node in mesh.nodes.items():
         for v0, v1 in pairwise(node.vertices):
             draw_line(v0, v1)
@@ -183,7 +192,7 @@ if __name__ == "__main__":
     W, H = scale * max(tr.xmax, mesh.xmax), scale * max(tr.ymax, mesh.ymax)
 
     window = Tk()
-    window.title(args.source_file)
+    window.title("{}, {}x{}".format(args.source_file, W / scale, H / scale))
     canvas = Canvas(window, width=W, height=H, bg="black")
     canvas.pack()
 

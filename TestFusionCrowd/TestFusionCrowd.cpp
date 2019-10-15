@@ -17,7 +17,7 @@ int main()
 	NeighbourSearchBenchCase case1;
 	ZanlungoCase case2;
 	CrossingTestCase crossingCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, true);
-	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::ORCA_ID, 200, 1000, true);
+	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, true);
 
 	crossingCase.Pre();
 	crossingCase.Run(0);
