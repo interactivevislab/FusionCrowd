@@ -7,6 +7,7 @@
 #include "TestCases/ZanlungoCase.h"
 #include "TestCases/CrossingTestCase.h"
 #include "TestCases/PinholeTestCase.h"
+#include "TestCases/TshapedFancyTestCase.h"
 
 #include "ComponentId.h"
 
@@ -18,6 +19,7 @@ int main()
 	ZanlungoCase case2;
 	CrossingTestCase crossingCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, true);
 	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, true);
+	TshapedFancyTestCase tshapedCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, true);
 
 	crossingCase.Pre();
 	crossingCase.Run(0);
@@ -26,6 +28,10 @@ int main()
 	pinholeCase.Pre();
 	pinholeCase.Run(0);
 	pinholeCase.Post();
+
+	tshapedCase.Pre();
+	tshapedCase.Run(0);
+	tshapedCase.Post();
 
 
 	/*

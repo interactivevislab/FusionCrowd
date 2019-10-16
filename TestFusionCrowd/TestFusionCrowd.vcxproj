@@ -169,6 +169,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="TestCases\ZanlungoCase.h" />
     <ClInclude Include="ThirdParty\date.h" />
+    <ClInclude Include="TestCases\TshapedFancyTestCase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCases\PinholeTestCase.cpp" />
@@ -182,6 +183,7 @@
     </ClCompile>
     <ClCompile Include="TestCases\ZanlungoCase.cpp" />
     <ClCompile Include="TestFusionCrowd.cpp" />
+    <ClCompile Include="TestCases\TshapedFancyTestCase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

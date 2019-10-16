@@ -36,6 +36,9 @@
     <ClInclude Include="TestCases\PinholeTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestCases\TshapedFancyTestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -54,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestCases\PinholeTestCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases\TshapedFancyTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
