@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "Math/Util.h"
-#include "Util/IRecording.h"
+#include "Export/IRecording.h"
 
 namespace TestFusionCrowd
 {

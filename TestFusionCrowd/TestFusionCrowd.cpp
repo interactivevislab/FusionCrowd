@@ -8,7 +8,7 @@
 #include "TestCases/CrossingTestCase.h"
 #include "TestCases/PinholeTestCase.h"
 
-#include "ComponentId.h"
+#include "Export/ComponentId.h"
 
 using namespace TestFusionCrowd;
 

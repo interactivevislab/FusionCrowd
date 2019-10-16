@@ -1,8 +1,8 @@
 #pragma once
 
 #include "TestCases/ITestCase.h"
-#include "ComponentId.h"
-#include "Export.h"
+#include "Export/ComponentId.h"
+#include "Export/Export.h"
 
 #include <memory>
 #include <vector>
