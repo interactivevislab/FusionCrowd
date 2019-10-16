@@ -19,7 +19,7 @@ int main()
 	ZanlungoCase case2;
 	CrossingTestCase crossingCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, true);
 	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, true);
-	TshapedFancyTestCase tshapedCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, true);
+	TshapedFancyTestCase tshapedCase(FusionCrowd::ComponentIds::ZANLUNGO_ID, 200, 1000, true);
 
 	crossingCase.Pre();
 	crossingCase.Run(0);
