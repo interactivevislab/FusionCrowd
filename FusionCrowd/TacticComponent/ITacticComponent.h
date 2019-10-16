@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Config.h"
-#include "ComponentId.h"
+#include "Export/Config.h"
+#include "Export/ComponentId.h"
 
 namespace FusionCrowd
 {

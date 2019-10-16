@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Util/IRecording.h"
-#include "Util/FCArray.h"
-#include "Config.h"
+#include "Export/IRecording.h"
+#include "Export/FCArray.h"
+#include "Export/Config.h"
 
 namespace FusionCrowd
 {

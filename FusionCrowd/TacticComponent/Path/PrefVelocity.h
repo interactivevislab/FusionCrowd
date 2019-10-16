@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Config.h"
+#include "Export/Config.h"
 #include "Math/Util.h"
 
 namespace FusionCrowd

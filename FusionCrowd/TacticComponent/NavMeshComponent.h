@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "ComponentId.h"
+#include "Export/ComponentId.h"
 #include "ITacticComponent.h"
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"

@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 
-#include "Config.h"
+#include "Export/Config.h"
 
 namespace FusionCrowd
 {

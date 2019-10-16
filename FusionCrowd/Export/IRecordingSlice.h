@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Config.h"
-#include "Util/FCArray.h"
+#include "Export/Config.h"
+#include "Export/FCArray.h"
 #include "Export.h"
 
 namespace FusionCrowd

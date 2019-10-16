@@ -6,7 +6,7 @@
 #include "OperationComponent/IOperationComponent.h"
 
 #include "Util/spimpl.h"
-#include "ComponentId.h"
+#include "Export/ComponentId.h"
 
 #include <memory>
 

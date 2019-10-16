@@ -5,7 +5,7 @@
 #include "Navigation/NavMesh/NavMesh.h"
 #include "StrategyComponent/Goal/Goal.h"
 #include "Agent.h"
-#include "Config.h"
+#include "Export/Config.h"
 #include "Math/Util.h"
 
 #include <memory>

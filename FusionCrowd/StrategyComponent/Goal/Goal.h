@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Math/Geometry2D.h"
-#include "Config.h"
+#include "Export/Config.h"
 #include "Math/Util.h"
 
 namespace FusionCrowd

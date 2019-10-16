@@ -4,7 +4,7 @@
 #include "Simulator.h"
 #include "Navigation/NavSystem.h"
 #include "OperationComponent/IOperationComponent.h"
-#include "ComponentId.h"
+#include "Export/ComponentId.h"
 
 #include <map>
 

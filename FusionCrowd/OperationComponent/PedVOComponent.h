@@ -8,7 +8,7 @@
 #include "Math/Util.h"
 #include "Math/Line.h"
 
-#include "ComponentId.h"
+#include "Export/ComponentId.h"
 
 #include <map>
 

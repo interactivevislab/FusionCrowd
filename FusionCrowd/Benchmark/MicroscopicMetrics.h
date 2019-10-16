@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Config.h"
-#include "Util/IRecording.h"
+#include "Export/Config.h"
+#include "Export/IRecording.h"
 
 namespace FusionCrowd
 {

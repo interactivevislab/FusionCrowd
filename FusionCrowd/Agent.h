@@ -2,7 +2,7 @@
 
 #include "OperationComponent/IOperationComponent.h"
 #include "TacticComponent/ITacticComponent.h"
-#include "StrategyComponent/IStrategyComponent.h"
+#include "Export/IStrategyComponent.h"
 
 #include <memory>
 

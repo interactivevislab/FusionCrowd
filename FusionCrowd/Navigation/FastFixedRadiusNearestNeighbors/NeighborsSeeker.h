@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GpuCalculator.h"
-#include "Config.h"
+#include "Export/Config.h"
 #include <string>
 
 namespace FusionCrowd
