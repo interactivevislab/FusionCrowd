@@ -38,6 +38,9 @@ namespace FusionCrowd
 		InputBufferDesc _bufferDescriptions[3];
 		bool _isCalculatorReady = false;
 
+		int lastNumberOfPoints = 0;
+		int lastNumberOfCells = 0;
+
 		void FillCellDictioanary();
 		void CountIndeces();
 		void SortPoints();
@@ -48,9 +51,9 @@ namespace FusionCrowd
 		bool IsInsideCell(float pointX, float pointY, int cellX, int cellY);
 		bool IsCircleCrossesCell(float circleX, float circleY, int cellX, int cellY);
 
-		void AllocateMemory();
+		void PrepareMemory();
 		void FreeMemory();
-		void ClearOldData(bool useGpu);
+		void InitData(bool useGpu);
 		void FindNeighborsCpu();
 		void FindNeighborsGpu();
 		void PrepareGpuCalculator();

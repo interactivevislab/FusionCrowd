@@ -40,11 +40,26 @@ namespace FusionCrowd
 	float NeighborsSeeker::gridCellCoeff = 1.f;
 
 
-	void NeighborsSeeker::AllocateMemory() {
-		cells = new GridCell[numberOfCells];
-		sortedPointsId = new int[numberOfPoints];
-		pointsCells = new int[numberOfPoints];
-		pointsInCells = new int[numberOfCells];
+	void NeighborsSeeker::PrepareMemory() {
+		if (lastNumberOfPoints < numberOfPoints)
+		{
+			lastNumberOfPoints = max(3 * lastNumberOfPoints / 2, numberOfPoints);
+			delete[] sortedPointsId;
+			sortedPointsId = new int[lastNumberOfPoints];
+			delete[] pointsCells;
+			pointsCells = new int[lastNumberOfPoints];
+			delete[] pointNeighbors;
+			pointNeighbors = new PointNeighbors[lastNumberOfPoints];
+		}
+
+		if (lastNumberOfCells < numberOfCells)
+		{
+			lastNumberOfCells = max(3 * lastNumberOfCells / 2, numberOfCells);
+			delete[] cells;
+			cells = new GridCell[lastNumberOfCells];
+			delete[] pointsInCells;
+			pointsInCells = new int[lastNumberOfCells];
+		}
 	}
 
 
@@ -62,18 +77,13 @@ namespace FusionCrowd
 	}
 
 
-	void NeighborsSeeker::ClearOldData(bool useGpu) {
+	void NeighborsSeeker::InitData(bool useGpu) {
 		cells[0].startIndex = 0;
 		for (int i = 0; i < numberOfCells; i++) {
 			pointsInCells[i] = 0;
 			cells[i].pointsCount = 0;
 		}
-		if (useGpu) {
-			delete[] pointNeighbors;
-			pointNeighbors = nullptr;
-		}
-		else
-		{
+		if (!useGpu) {
 			if (pointNeighbors == nullptr) {
 				pointNeighbors = new PointNeighbors[numberOfPoints];
 				for (int i = 0; i < numberOfPoints; i++) {
@@ -173,8 +183,7 @@ namespace FusionCrowd
 		float cellsInRadius = ceil(gridCellCoeff) + 1;
 		maxNearCells = cellsInRadius * cellsInRadius;
 
-		FreeMemory();
-		AllocateMemory();
+		PrepareMemory();
 
 		_isCalculatorReady = false;
 	}
@@ -251,12 +260,13 @@ namespace FusionCrowd
 		CpuConstants constants = { cellSize , cellsInRow , cellsInColumn , searchRadius };
 		_calculator.SetConstantBuffer(sizeof(CpuConstants), 1, &constants);
 		_calculator.RunShader();
-		pointNeighbors = (PointNeighbors*)_calculator.GetResult();
+
+		_calculator.GetResult(pointNeighbors);
 	}
 
 
 	NeighborsSeeker::PointNeighbors* NeighborsSeeker::FindNeighbors(bool useGpu) {
-		ClearOldData(useGpu);
+		InitData(useGpu);
 
 		FillCellDictioanary();
 		CountIndeces();

@@ -42,7 +42,7 @@ namespace FusionCrowd
 		void SetOutputBuffer(int elementSize, int elementsCount); //+ CreatingView
 		void SetConstantBuffer(int elementSize, int elementsCount, void* initDataSource);
 		void RunShader();
-		void* GetResult();
+		void GetResult(void* outResult);
 		void FreeUnusedMemory();
 	};
 
