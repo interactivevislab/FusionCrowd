@@ -1,7 +1,7 @@
 #pragma once
 
 #include "WayPortal.h"
-#include "Config.h"
+#include "Export/Config.h"
 
 #include <vector>
 

@@ -21,10 +21,8 @@ namespace FusionCrowd
 
 		~SimulatorImpl() = default;
 
-		bool DoStep()
+		bool DoStep(float timeStep)
 		{
-			const float timeStep = 0.1f;
-
 			_currentTime += timeStep;
 
 			for (auto strategy : _strategyComponents)
@@ -358,9 +356,9 @@ namespace FusionCrowd
 	{
 	}
 
-	bool Simulator::DoStep()
+	bool Simulator::DoStep(float timeStep)
 	{
-		return pimpl->DoStep();
+		return pimpl->DoStep(timeStep);
 	}
 
 	size_t Simulator::GetAgentCount() const

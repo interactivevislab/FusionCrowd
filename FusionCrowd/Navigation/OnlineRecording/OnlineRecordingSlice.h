@@ -2,9 +2,9 @@
 
 #include <map>
 
-#include "Util/IRecording.h"
-#include "Util/FCArray.h"
-#include "Export.h"
+#include "Export/IRecording.h"
+#include "Export/FCArray.h"
+#include "Export/Export.h"
 #include "Navigation/AgentSpatialInfo.h"
 
 namespace FusionCrowd

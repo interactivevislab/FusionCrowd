@@ -25,9 +25,9 @@ namespace FusionCrowd
 		{
 		}
 
-		void DoStep()
+		void DoStep(float timeStep)
 		{
-			_sim->DoStep();
+			_sim->DoStep(timeStep);
 		}
 
 		OperationStatus SetAgentOp(size_t agentId, ComponentId opId)

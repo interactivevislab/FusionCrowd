@@ -4,9 +4,9 @@
 
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/OnlineRecording/OnlineRecordingSlice.h"
-#include "Export.h"
+#include "Export/Export.h"
 
-#include "Util/FCArray.h"
+#include "Export/FCArray.h"
 
 namespace FusionCrowd
 {

@@ -1,6 +1,6 @@
 #include "RecordingSerializer.h"
 
-#include "Util/IRecordingSlice.h"
+#include "Export/IRecordingSlice.h"
 
 #include <fstream>
 #include <string>

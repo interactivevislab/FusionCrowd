@@ -38,13 +38,12 @@
     <ClCompile Include="OperationComponent\HelbingComponent.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="OperationComponent\SwitchingComponent.cpp" />
-    <ClCompile Include="Export.cpp" />
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Util\RecordingSerializer.cpp" />
+    <ClCompile Include="Export\Export.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
-    <ClInclude Include="Config.h" />
     <ClInclude Include="Simulator.h" />
     <ClInclude Include="Math\Geometry2D.h" />
     <ClInclude Include="Math\consts.h" />
@@ -56,7 +55,6 @@
     <ClInclude Include="StrategyComponent\Goal\Goal.h" />
     <ClInclude Include="StrategyComponent\Goal\GoalSet.h" />
     <ClInclude Include="StrategyComponent\Goal\PointGoal.h" />
-    <ClInclude Include="StrategyComponent\IStrategyComponent.h" />
     <ClInclude Include="TacticComponent\Path\Funnel.h" />
     <ClInclude Include="TacticComponent\Path\MinHeap.h" />
     <ClInclude Include="TacticComponent\Path\PathPlanner.h" />
@@ -84,20 +82,22 @@
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.h" />
     <ClInclude Include="Util\PublicSpatialInfo.h" />
-    <ClInclude Include="Util\IRecordingSlice.h" />
-    <ClInclude Include="Util\IRecording.h" />
     <ClInclude Include="Navigation\OnlineRecording\OnlineRecording.h" />
     <ClInclude Include="Navigation\OnlineRecording\OnlineRecordingSlice.h" />
     <ClInclude Include="OperationComponent\HelbingComponent.h" />
-    <ClInclude Include="Util\FCArray.h" />
     <ClInclude Include="Benchmark\MicroscopicMetrics.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
     <ClInclude Include="Util\spimpl.h" />
-    <ClInclude Include="Export.h" />
-    <ClInclude Include="ComponentId.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
+    <ClInclude Include="Export\Export.h" />
+    <ClInclude Include="Export\Config.h" />
+    <ClInclude Include="Export\ComponentId.h" />
+    <ClInclude Include="Export\IStrategyComponent.h" />
+    <ClInclude Include="Export\FCArray.h" />
+    <ClInclude Include="Export\IRecording.h" />
+    <ClInclude Include="Export\IRecordingSlice.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

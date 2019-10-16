@@ -9,7 +9,7 @@
 #include "TestCases/PinholeTestCase.h"
 #include "TestCases/TshapedFancyTestCase.h"
 
-#include "ComponentId.h"
+#include "Export/ComponentId.h"
 
 using namespace TestFusionCrowd;
 

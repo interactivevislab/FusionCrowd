@@ -2,7 +2,7 @@
 
 #include "TacticComponent/Path/PrefVelocity.h"
 #include "Navigation/NavMesh/NavMeshEdge.h"
-#include "Config.h"
+#include "Export/Config.h"
 #include "Math/Util.h"
 
 namespace FusionCrowd

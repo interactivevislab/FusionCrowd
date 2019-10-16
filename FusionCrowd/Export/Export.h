@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Util/FCArray.h"
-#include "Util/IRecording.h"
-#include "StrategyComponent/IStrategyComponent.h"
-#include "ComponentId.h"
+#include "Export/FCArray.h"
+#include "Export/IRecording.h"
+#include "Export/IStrategyComponent.h"
+#include "Export/ComponentId.h"
 
 
 namespace FusionCrowd
@@ -39,7 +39,7 @@ namespace FusionCrowd
 		class FUSION_CROWD_API ISimulatorFacade
 		{
 		public:
-			virtual void DoStep() = 0;
+			virtual void DoStep(float timeStep = 0.1f) = 0;
 
 			virtual OperationStatus SetAgentOp(size_t agentId, ComponentId opId) = 0;
 			virtual OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId) = 0;

@@ -5,8 +5,8 @@
 #include <functional>
 
 #include "Math/Util.h"
-#include "Export.h"
-#include "Util/IRecording.h"
+#include "Export/Export.h"
+#include "Export/IRecording.h"
 #include "Util/spimpl.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 
