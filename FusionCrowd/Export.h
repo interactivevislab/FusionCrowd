@@ -39,7 +39,7 @@ namespace FusionCrowd
 		class FUSION_CROWD_API ISimulatorFacade
 		{
 		public:
-			virtual void DoStep() = 0;
+			virtual void DoStep(float timeStep = 0.1f) = 0;
 
 			virtual OperationStatus SetAgentOp(size_t agentId, ComponentId opId) = 0;
 			virtual OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId) = 0;

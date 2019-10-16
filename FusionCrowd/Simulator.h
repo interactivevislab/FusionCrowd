@@ -30,7 +30,7 @@ namespace FusionCrowd
 		Simulator & AddStrategy(std::shared_ptr<IStrategyComponent> strategyComponent);
 		Simulator & UseNavSystem(std::shared_ptr<NavSystem> system);
 
-		bool DoStep();
+		bool DoStep(float timeStep);
 
 		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent);
 		bool SetTacticComponent(size_t agentId, ComponentId newTactic);
