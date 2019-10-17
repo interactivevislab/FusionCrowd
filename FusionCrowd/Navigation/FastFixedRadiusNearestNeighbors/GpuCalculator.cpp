@@ -53,7 +53,8 @@ namespace FusionCrowd
 		_inputBuffers = new ID3D11Buffer*[numberOfBuffers];
 		_inputBuffersSRV = new ID3D11ShaderResourceView*[numberOfBuffers];
 		for (int i = 0; i < numberOfBuffers; i++) {
-			GpuHelper::CreateStructuredBuffer(_device, descriptions[i].elementSize, descriptions[i].elementsCount, descriptions[i].initDataSource, &_inputBuffers[i]);
+			GpuHelper::CreateStructuredBuffer(_device, descriptions[i].elementSize, descriptions[i].elementsCount, descriptions[i].initDataSource, 
+				D3D11_CPU_ACCESS_WRITE, &_inputBuffers[i]);
 			GpuHelper::CreateBufferSRV(_device, _inputBuffers[i], &_inputBuffersSRV[i]);
 		}
 	}
@@ -69,7 +70,7 @@ namespace FusionCrowd
 
 		_outputElementsSize = elementSize;
 		_outputElementsCount = elementsCount;
-		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, nullptr, &_outputBuffer);
+		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, nullptr, D3D11_CPU_ACCESS_READ ,&_outputBuffer);
 		GpuHelper::CreateBufferUAV(_device, _outputBuffer, &_outputBufferUAV);
 	}
 
@@ -81,7 +82,7 @@ namespace FusionCrowd
 
 		_constantElementsSize = elementSize;
 		_constantElementsCount = elementsCount;
-		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, &_constantBuffer);
+		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, D3D11_CPU_ACCESS_WRITE, &_constantBuffer);
 		_context->CSSetConstantBuffers(0, 1, &_constantBuffer);
 	}
 
@@ -92,12 +93,10 @@ namespace FusionCrowd
 
 
 	void GpuCalculator::GetResult(void* outResult) {
-		ID3D11Buffer* resultBuffer = GpuHelper::CreateAndCopyToBuffer(_device, _context, _outputBuffer);
 		D3D11_MAPPED_SUBRESOURCE MappedResource;
-		_context->Map(resultBuffer, 0, D3D11_MAP_READ, 0, &MappedResource);
+		_context->Map(_outputBuffer, 0, D3D11_MAP_READ, 0, &MappedResource);
 		std::memcpy(outResult, MappedResource.pData, _outputElementsSize * _outputElementsCount);
-		_context->Unmap(resultBuffer, 0);
-		resultBuffer->Release();
+		_context->Unmap(_outputBuffer, 0);
 	}
 
 	void GpuCalculator::FreeUnusedMemory() {

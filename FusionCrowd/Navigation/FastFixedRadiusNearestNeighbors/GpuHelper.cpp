@@ -192,7 +192,8 @@ namespace FusionCrowd
 		// Create Structured Buffer
 		//--------------------------------------------------------------------------------------
 		_Use_decl_annotations_
-			HRESULT CreateStructuredBuffer(ID3D11Device* pDevice, UINT uElementSize, UINT uCount, void* pInitData, ID3D11Buffer** ppBufOut)
+			HRESULT CreateStructuredBuffer(ID3D11Device* pDevice, UINT uElementSize, UINT uCount, void* pInitData,
+				D3D11_CPU_ACCESS_FLAG cpuAccessFlag, ID3D11Buffer** ppBufOut)
 		{
 			*ppBufOut = nullptr;
 
@@ -202,6 +203,7 @@ namespace FusionCrowd
 			desc.ByteWidth = uElementSize * uCount;
 			desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 			desc.StructureByteStride = uElementSize;
+			desc.CPUAccessFlags = cpuAccessFlag;
 
 			if (pInitData)
 			{

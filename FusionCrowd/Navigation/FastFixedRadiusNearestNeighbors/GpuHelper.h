@@ -23,7 +23,7 @@ namespace FusionCrowd
 		HRESULT CreateComputeShader(_In_z_ LPCWSTR pSrcFile, _In_z_ LPCSTR pFunctionName, const D3D_SHADER_MACRO defines[],
 			_In_ ID3D11Device* pDevice, _Outptr_ ID3D11ComputeShader** ppShaderOut);
 		HRESULT CreateStructuredBuffer(_In_ ID3D11Device* pDevice, _In_ UINT uElementSize, _In_ UINT uCount,
-			_In_reads_(uElementSize*uCount) void* pInitData,
+			_In_reads_(uElementSize*uCount) void* pInitData, D3D11_CPU_ACCESS_FLAG cpuAccessFlag,
 			_Outptr_ ID3D11Buffer** ppBufOut);
 		HRESULT CreateRawBuffer(_In_ ID3D11Device* pDevice, _In_ UINT uSize, _In_reads_(uSize) void* pInitData, _Outptr_ ID3D11Buffer** ppBufOut);
 		HRESULT CreateBufferSRV(_In_ ID3D11Device* pDevice, _In_ ID3D11Buffer* pBuffer, _Outptr_ ID3D11ShaderResourceView** ppSRVOut);
