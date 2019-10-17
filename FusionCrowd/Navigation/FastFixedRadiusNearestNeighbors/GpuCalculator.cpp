@@ -77,11 +77,16 @@ namespace FusionCrowd
 
 	void GpuCalculator::SetConstantBuffer(int elementSize, int elementsCount, void* initDataSource) {
 		if (_constantBuffer != nullptr) {
-			_constantBuffer->Release();
+			if (elementSize * elementsCount <= _constantElementsSize * _constantElementsCount) {
+				GpuHelper::WriteDataToBuffer(_constantBuffer, initDataSource, elementSize * elementsCount, _context);
+				return;
+			}
+			else 
+			{
+				_constantBuffer->Release();
+			}
 		}
 
-		_constantElementsSize = elementSize;
-		_constantElementsCount = elementsCount;
 		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, D3D11_CPU_ACCESS_WRITE, &_constantBuffer);
 		_context->CSSetConstantBuffers(0, 1, &_constantBuffer);
 	}
@@ -93,15 +98,12 @@ namespace FusionCrowd
 
 
 	void GpuCalculator::GetResult(void* outResult) {
-		D3D11_MAPPED_SUBRESOURCE MappedResource;
-		_context->Map(_outputBuffer, 0, D3D11_MAP_READ, 0, &MappedResource);
-		std::memcpy(outResult, MappedResource.pData, _outputElementsSize * _outputElementsCount);
-		_context->Unmap(_outputBuffer, 0);
+		GpuHelper::ReadDataFromBuffer(_outputBuffer, outResult, _outputElementsSize * _outputElementsCount, _context);
 	}
+
 
 	void GpuCalculator::FreeUnusedMemory() {
 		_context->ClearState();
 		_context->Flush();
 	}
-
 }

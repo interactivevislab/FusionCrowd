@@ -36,7 +36,6 @@ namespace FusionCrowd
 
 		GpuCalculator _calculator;
 		InputBufferDesc _bufferDescriptions[3];
-		bool _isCalculatorReady = false;
 
 		int lastNumberOfPoints = 0;
 		int lastNumberOfCells = 0;
@@ -45,18 +44,19 @@ namespace FusionCrowd
 		void CountIndeces();
 		void SortPoints();
 
-		int GetCellOffset(float coordinateOffset);
-		int GetCellIndex(int cellX, float cellY);
-		int GetCellIndex(float xCoord, float yCoord);
-		bool IsInsideCell(float pointX, float pointY, int cellX, int cellY);
-		bool IsCircleCrossesCell(float circleX, float circleY, int cellX, int cellY);
+		inline int GetCellOffset(float coordinateOffset);
+		inline int GetCellIndex(int cellX, float cellY);
+		inline int GetCellIndex(float xCoord, float yCoord);
+		inline bool IsInsideCell(float pointX, float pointY, int cellX, int cellY);
+		inline bool IsCircleCrossesCell(float circleX, float circleY, int cellX, int cellY);
 
 		void PrepareMemory();
 		void FreeMemory();
-		void InitData(bool useGpu);
+		void SetInitialData(bool useGpu);
 		void FindNeighborsCpu();
 		void FindNeighborsGpu();
-		void PrepareGpuCalculator();
+
+		void Init(Point* points, int numberOfPoints, float worldWidth, float worldHeight, float searchRadius);
 
 		struct FUSION_CROWD_API CpuConstants {
 			float cellSize;
@@ -77,8 +77,7 @@ namespace FusionCrowd
 			int neighborsID[NUMBER_OF_NEIGHBORS];
 		};
 
-		void Init(Point* points, int numberOfPoints, float worldWidth, float worldHeight, float searchRadius);
-		PointNeighbors* FindNeighbors(bool useGpu = true);
+		PointNeighbors* FindNeighbors(Point* points, int numberOfPoints, float worldWidth, float worldHeight, float searchRadius, bool useGpu = true);
 	};
 
 

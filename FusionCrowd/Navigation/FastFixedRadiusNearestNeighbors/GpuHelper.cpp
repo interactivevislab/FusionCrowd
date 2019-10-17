@@ -317,6 +317,20 @@ namespace FusionCrowd
 			return pDevice->CreateUnorderedAccessView(pBuffer, &desc, ppUAVOut);
 		}
 
+		void WriteDataToBuffer(ID3D11Buffer* buffer, void* dataSource, size_t dataSize, ID3D11DeviceContext* context) {
+			D3D11_MAPPED_SUBRESOURCE mappedResource;
+			context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+			memcpy(mappedResource.pData, dataSource, dataSize);
+			context->Unmap(buffer, 0);
+		}
+
+		void ReadDataFromBuffer(ID3D11Buffer* buffer, void* dataDest, size_t dataSize, ID3D11DeviceContext* context) {
+			D3D11_MAPPED_SUBRESOURCE mappedResource;
+			context->Map(buffer, 0, D3D11_MAP_READ, 0, &mappedResource);
+			memcpy(dataDest, mappedResource.pData, dataSize);
+			context->Unmap(buffer, 0);
+		}
+
 		//--------------------------------------------------------------------------------------
 		// Create a CPU accessible buffer and download the content of a GPU buffer into it
 		// This function is very useful for debugging CS programs
