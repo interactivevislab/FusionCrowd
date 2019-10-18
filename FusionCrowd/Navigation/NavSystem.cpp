@@ -211,6 +211,10 @@ namespace FusionCrowd
 			}
 
 			auto allNeighbors = _neighborsSeeker.FindNeighbors(agentsPositions, numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, true);
+			//NeighborsSeeker::PointNeighbors *allNeighbors = new NeighborsSeeker::PointNeighbors[numAgents];
+			//for (int i = 0; i < numAgents; i++) {
+			//	allNeighbors[i] = { i, 0 };
+			//}
 
 			_agentsNeighbours.reserve(numAgents);
 			i = 0;
