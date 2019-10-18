@@ -89,7 +89,7 @@ namespace FusionCrowd
 			}
 
 			GpuHelper::CreateStructuredBuffer(_device, currentDesc.elementSize, currentDesc.elementsCount, currentDesc.initDataSource,
-				D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC, &currentBuffer);
+				D3D11_CPU_ACCESS_WRITE, &currentBuffer);
 			GpuHelper::CreateBufferSRV(_device, currentBuffer, &currentSRV);
 		}
 	}
@@ -110,36 +110,27 @@ namespace FusionCrowd
 		_outputElementsSize = elementSize;
 		_outputElementsCount = elementsCount;
 
-		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, nullptr, D3D11_CPU_ACCESS_READ, D3D11_USAGE_DEFAULT, &_outputBuffer);
+		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, nullptr, D3D11_CPU_ACCESS_READ, &_outputBuffer);
 		GpuHelper::CreateBufferUAV(_device, _outputBuffer, &_outputBufferUAV);
 	}
 
 
 	void GpuCalculator::SetConstantBuffer(int elementSize, int elementsCount, void* initDataSource) {
-		//if (_constantBuffer != nullptr) {
-		//	if (elementSize * elementsCount <= _constantElementsSize * _constantElementsCount) {
-		//		GpuHelper::WriteDataToBuffer(_constantBuffer, initDataSource, elementSize * elementsCount, _context);
-		//		return;
-		//	}
-		//	else 
-		//	{
-		//		_constantBuffer->Release();
-		//	}
-		//}
-
-		//_constantElementsSize = elementSize;
-		//_constantElementsCount = elementsCount;
-
-		//GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC, &_constantBuffer);
-		//_context->CSSetConstantBuffers(0, 1, &_constantBuffer);
-
+		if (_constantBuffer != nullptr) {
+			if (elementSize * elementsCount <= _constantElementsSize * _constantElementsCount) {
+				GpuHelper::WriteDataToBuffer(_constantBuffer, initDataSource, elementSize * elementsCount, _context);
+				_context->CSSetConstantBuffers(0, 1, &_constantBuffer);
+				return;
+			}
+		}
 		if (_constantBuffer != nullptr) {
 			_constantBuffer->Release();
 		}
 
 		_constantElementsSize = elementSize;
 		_constantElementsCount = elementsCount;
-		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC, &_constantBuffer);
+
+		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, D3D11_CPU_ACCESS_WRITE, &_constantBuffer);
 		_context->CSSetConstantBuffers(0, 1, &_constantBuffer);
 	}
 
