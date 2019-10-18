@@ -40,6 +40,7 @@ namespace FusionCrowd
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 
 		IRecording & GetRecording();
+		void SetIsRecording(bool isRecording);
 
 		float GetElapsedTime();
 

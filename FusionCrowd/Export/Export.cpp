@@ -75,6 +75,10 @@ namespace FusionCrowd
 			return _sim->GetRecording();
 		}
 
+		void SetIsRecording(bool isRecording) {
+			_sim->SetIsRecording(isRecording);
+		}
+
 		size_t GetAgentCount()
 		{
 			return _sim->GetAgentCount();
