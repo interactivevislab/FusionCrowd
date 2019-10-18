@@ -53,8 +53,8 @@ namespace FusionCrowd
 		_inputBuffers = new ID3D11Buffer*[numberOfBuffers];
 		_inputBuffersSRV = new ID3D11ShaderResourceView*[numberOfBuffers];
 		for (int i = 0; i < numberOfBuffers; i++) {
-			GpuHelper::CreateStructuredBuffer(_device, descriptions[i].elementSize, descriptions[i].elementsCount, descriptions[i].initDataSource, 
-				D3D11_CPU_ACCESS_WRITE, &_inputBuffers[i]);
+			GpuHelper::CreateStructuredBuffer(_device, descriptions[i].elementSize, descriptions[i].elementsCount, descriptions[i].initDataSource,
+				D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC, &_inputBuffers[i]);
 			GpuHelper::CreateBufferSRV(_device, _inputBuffers[i], &_inputBuffersSRV[i]);
 		}
 	}
@@ -70,7 +70,7 @@ namespace FusionCrowd
 
 		_outputElementsSize = elementSize;
 		_outputElementsCount = elementsCount;
-		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, nullptr, D3D11_CPU_ACCESS_READ ,&_outputBuffer);
+		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, nullptr, D3D11_CPU_ACCESS_READ, D3D11_USAGE_DEFAULT, &_outputBuffer);
 		GpuHelper::CreateBufferUAV(_device, _outputBuffer, &_outputBufferUAV);
 	}
 
@@ -87,7 +87,10 @@ namespace FusionCrowd
 			}
 		}
 
-		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, D3D11_CPU_ACCESS_WRITE, &_constantBuffer);
+		_constantElementsSize = elementSize;
+		_constantElementsCount = elementsCount;
+
+		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, D3D11_CPU_ACCESS_WRITE, D3D11_USAGE_DYNAMIC, &_constantBuffer);
 		_context->CSSetConstantBuffers(0, 1, &_constantBuffer);
 	}
 

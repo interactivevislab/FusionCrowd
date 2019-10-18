@@ -193,7 +193,7 @@ namespace FusionCrowd
 		//--------------------------------------------------------------------------------------
 		_Use_decl_annotations_
 			HRESULT CreateStructuredBuffer(ID3D11Device* pDevice, UINT uElementSize, UINT uCount, void* pInitData,
-				D3D11_CPU_ACCESS_FLAG cpuAccessFlag, ID3D11Buffer** ppBufOut)
+				D3D11_CPU_ACCESS_FLAG cpuAccessFlag, D3D11_USAGE usageFlag, ID3D11Buffer** ppBufOut)
 		{
 			*ppBufOut = nullptr;
 
@@ -204,6 +204,7 @@ namespace FusionCrowd
 			desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 			desc.StructureByteStride = uElementSize;
 			desc.CPUAccessFlags = cpuAccessFlag;
+			//desc.Usage = usageFlag;
 
 			if (pInitData)
 			{
@@ -319,7 +320,7 @@ namespace FusionCrowd
 
 		void WriteDataToBuffer(ID3D11Buffer* buffer, void* dataSource, size_t dataSize, ID3D11DeviceContext* context) {
 			D3D11_MAPPED_SUBRESOURCE mappedResource;
-			context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+			context->Map(buffer, 0, D3D11_MAP_WRITE, 0, &mappedResource);
 			memcpy(mappedResource.pData, dataSource, dataSize);
 			context->Unmap(buffer, 0);
 		}
