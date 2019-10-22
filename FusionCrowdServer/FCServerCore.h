@@ -3,7 +3,7 @@
 #include <WinSock2.h>
 
 
-class FCServer
+class FCServerCore
 {
 private:
 	SOCKET _serverSocket;
@@ -13,8 +13,8 @@ private:
 	char _receiveBuffer[_bufferSize];
 
 public:
-	FCServer();
-	~FCServer();
+	FCServerCore();
+	~FCServerCore();
 
 	void Start();
 	void Bind(const char* ipAdress, short port);

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "FCClient.h"
+#include "FCClientCore.h"
 #include "WsException.h"
 #include <string.h>
 
@@ -9,7 +9,7 @@ int main()
     std::cout << "---Fusion Crowd Client---" << std::endl;
 
 	try {
-		FCClient client;
+		FCClientCore client;
 		std::cout << "Starting..." << std::endl;
 		client.Start();
 

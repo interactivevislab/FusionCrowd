@@ -1,25 +1,24 @@
 #pragma once
 
-#include <exception>
+#include <stdexcept>
 #include<WinSock2.h>
 #include <cstring>
 #include <string.h>
 
-using RuntimeError = std::exception;
+using RuntimeError = std::runtime_error;
 
 
-struct  WsException : RuntimeError
+struct WsException : RuntimeError
 {
-	WsException() {
-		WsException("WsException");
+private:
+	int _errorCode;
+
+public:
+	WsException(const char* message) : RuntimeError(message) {
+		_errorCode = WSAGetLastError();
 	}
 
-	WsException(const char* message) {
-		size_t fullMessageSize = std::strlen(message) + 20;
-		char *fullMessage = new char[fullMessageSize];
-		strcpy_s(fullMessage, fullMessageSize, message);
-		strcat_s(fullMessage, fullMessageSize, "; Error Code: " + WSAGetLastError());
-		RuntimeError::exception(fullMessage);
-		delete[] fullMessage;
+	int GetWSErrorCode() {
+		return _errorCode;
 	}
 };

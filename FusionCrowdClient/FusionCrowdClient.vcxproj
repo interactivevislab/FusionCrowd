@@ -93,6 +93,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowdServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,6 +126,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowdServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,12 +153,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FCClient.cpp" />
+    <ClCompile Include="FCClientCore.cpp" />
     <ClCompile Include="FusionCrowdClient.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FCClient.h" />
-    <ClInclude Include="WsException.h" />
+    <ClInclude Include="FCClientCore.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FusionCrowdServer\FusionCrowdServer.vcxproj">
+      <Project>{ca5008de-ded8-43fa-9373-1b78c883d621}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

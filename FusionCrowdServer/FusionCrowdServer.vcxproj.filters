@@ -18,15 +18,15 @@
     <ClCompile Include="FusionCrowdServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FCServer.cpp">
+    <ClCompile Include="FCServerCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FCServer.h">
+    <ClInclude Include="WsException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WsException.h">
+    <ClInclude Include="FCServerCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

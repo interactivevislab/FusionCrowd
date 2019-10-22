@@ -1,5 +1,5 @@
 #include <iostream>
-#include "FCServer.h"
+#include "FCServerCore.h"
 #include "WsException.h"
 #include <string.h>
 
@@ -9,7 +9,7 @@ int main()
     std::cout << "---Fusion Crowd Server---" << std::endl;
 
 	try {
-		FCServer server;
+		FCServerCore server;
 		std::cout << "Starting..." << std::endl;
 		server.Start();
 		std::cout << "Binging..." << std::endl;

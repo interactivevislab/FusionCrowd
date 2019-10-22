@@ -151,11 +151,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FCServer.cpp" />
+    <ClCompile Include="FCServerCore.cpp" />
     <ClCompile Include="FusionCrowdServer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FCServer.h" />
+    <ClInclude Include="FCServerCore.h" />
     <ClInclude Include="WsException.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

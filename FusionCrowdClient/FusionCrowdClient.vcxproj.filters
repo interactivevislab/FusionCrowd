@@ -18,15 +18,12 @@
     <ClCompile Include="FusionCrowdClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FCClient.cpp">
+    <ClCompile Include="FCClientCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FCClient.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WsException.h">
+    <ClInclude Include="FCClientCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
