@@ -2,22 +2,29 @@
 
 #include <WinSock2.h>
 
+namespace FusionCrowdWeb {
 
-class FCClientCore
-{
-private:
-	SOCKET _clientSocket;
+	class FCClientCore
+	{
+	private:
+		SOCKET _clientSocket;
 
-	const static size_t _bufferSize = 512;
-	char _receiveBuffer[_bufferSize];
+		size_t _bufferSize = 512;
+		char *_receiveBuffer = new char[_bufferSize]; // _bufferSize + 1 ?
 
-public:
-	FCClientCore();
-	~FCClientCore();
+	public:
+		FCClientCore();
+		~FCClientCore();
 
-	void Start();
-	void Connect(const char* ipAdress, short port);
-	void Send(const char* data);
-	char* Receive();
-	void Shutdown();
-};
+		void Start();
+		void Connect(const char* ipAdress, short port);
+
+		void SendString(const char* data);
+		void Send(const char* data, size_t dataSize);
+		const char* ReceiveString();
+		const char* Receive(size_t dataSize);
+
+		void Shutdown();
+	};
+
+}

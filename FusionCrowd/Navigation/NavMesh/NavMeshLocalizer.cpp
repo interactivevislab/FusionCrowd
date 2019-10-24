@@ -112,7 +112,7 @@ namespace FusionCrowd
 			_navMesh = NavMesh::Load(f);
 		} else
 		{
-			std::cout << "Can't load navmesh from " << name << std::endl;
+			throw std::ios_base::failure("Can't load navmesh");
 		}
 
 		const size_t NODE_COUNT = _navMesh->getNodeCount();

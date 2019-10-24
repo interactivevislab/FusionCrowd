@@ -5,20 +5,22 @@
 #include <cstring>
 #include <string.h>
 
-using RuntimeError = std::runtime_error;
 
+namespace FusionCrowdWeb {
 
-struct WsException : RuntimeError
-{
-private:
-	int _errorCode;
+	struct WsException : std::runtime_error
+	{
+	private:
+		int _errorCode;
 
-public:
-	WsException(const char* message) : RuntimeError(message) {
-		_errorCode = WSAGetLastError();
-	}
+	public:
+		WsException(const char* message) : std::runtime_error(message) {
+			_errorCode = WSAGetLastError();
+		}
 
-	int GetWSErrorCode() {
-		return _errorCode;
-	}
-};
+		int GetWSErrorCode() {
+			return _errorCode;
+		}
+	};
+
+}

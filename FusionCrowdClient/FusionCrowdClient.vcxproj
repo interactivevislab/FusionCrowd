@@ -154,7 +154,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FCClientCore.cpp" />
-    <ClCompile Include="FusionCrowdClient.cpp" />
+    <ClCompile Include="ClientMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FCClientCore.h" />

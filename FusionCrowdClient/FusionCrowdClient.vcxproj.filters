@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FusionCrowdClient.cpp">
+    <ClCompile Include="FCClientCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FCClientCore.cpp">
+    <ClCompile Include="ClientMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
