@@ -43,7 +43,10 @@ namespace FusionCrowd
 		public:
 			IFsm* Build() override
 			{
-				return new FsmImpl(_initial, _final, _dict);
+				auto result = new FsmImpl(_initial, _final, _dict);
+				_dict.clear();
+
+				return result;
 			}
 
 			IBuilderAddTransitions* Add(State from, State to, Event when) override

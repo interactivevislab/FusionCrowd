@@ -45,7 +45,7 @@ namespace FusionCrowd
 			}
 
 			_navSystem->Update(timeStep);
-			_recording.MakeRecord(GetAgentsInfo(), timeStep);
+			if (_isRecording) _recording.MakeRecord(GetAgentsInfo(), timeStep);
 
 			return true;
 		}
@@ -58,6 +58,10 @@ namespace FusionCrowd
 
 		IRecording & GetRecording() {
 			return _recording;
+		}
+
+		void SetIsRecording(bool isRecording) {
+			_isRecording = isRecording;
 		}
 
 		std::shared_ptr<Goal> GetAgentGoal(size_t agentId) {
@@ -350,6 +354,7 @@ namespace FusionCrowd
 
 		std::shared_ptr<NavSystem> _navSystem;
 		OnlineRecording _recording;
+		bool _isRecording = false;
 
 		std::map<size_t, FusionCrowd::Agent> _agents;
 		std::map<ComponentId, std::shared_ptr<IStrategyComponent>> _strategyComponents;
@@ -380,6 +385,10 @@ namespace FusionCrowd
 
 	IRecording & Simulator::GetRecording() {
 		return pimpl->GetRecording();
+	}
+
+	void Simulator::SetIsRecording(bool isRecording) {
+		pimpl->SetIsRecording(isRecording);
 	}
 
 	std::shared_ptr<Goal> Simulator::GetAgentGoal(size_t agentId) {

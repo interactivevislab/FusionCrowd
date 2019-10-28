@@ -96,6 +96,8 @@ namespace TestFusionCrowd
 		float const x4 = 28.0f; float const y4 = 12.0f;
 
 		_sim = std::unique_ptr<ISimulatorFacade, decltype(&SimulatorFacadeDeleter)>(builder->Build(), SimulatorFacadeDeleter);
+		_sim->SetIsRecording(_writeTrajectories);
+
 		IStrategyComponent* tmp = _sim->GetStrategy(ComponentIds::FSM_ID);
 		auto * fsmStrat = dynamic_cast<Fsm::IStrategyConfigurator *>(tmp);
 

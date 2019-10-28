@@ -40,11 +40,26 @@ namespace FusionCrowd
 	float NeighborsSeeker::gridCellCoeff = 1.f;
 
 
-	void NeighborsSeeker::AllocateMemory() {
-		cells = new GridCell[numberOfCells];
-		sortedPointsId = new int[numberOfPoints];
-		pointsCells = new int[numberOfPoints];
-		pointsInCells = new int[numberOfCells];
+	void NeighborsSeeker::PrepareMemory() {
+		if (lastNumberOfPoints < numberOfPoints)
+		{
+			lastNumberOfPoints = max(3 * lastNumberOfPoints / 2, numberOfPoints);
+			delete[] sortedPointsId;
+			sortedPointsId = new int[lastNumberOfPoints];
+			delete[] pointsCells;
+			pointsCells = new int[lastNumberOfPoints];
+			delete[] pointNeighbors;
+			pointNeighbors = new PointNeighbors[lastNumberOfPoints];
+		}
+
+		if (lastNumberOfCells < numberOfCells)
+		{
+			lastNumberOfCells = max(3 * lastNumberOfCells / 2, numberOfCells);
+			delete[] cells;
+			cells = new GridCell[lastNumberOfCells];
+			delete[] pointsInCells;
+			pointsInCells = new int[lastNumberOfCells];
+		}
 	}
 
 
@@ -62,18 +77,13 @@ namespace FusionCrowd
 	}
 
 
-	void NeighborsSeeker::ClearOldData(bool useGpu) {
+	void NeighborsSeeker::SetInitialData(bool useGpu) {
 		cells[0].startIndex = 0;
 		for (int i = 0; i < numberOfCells; i++) {
 			pointsInCells[i] = 0;
 			cells[i].pointsCount = 0;
 		}
-		if (useGpu) {
-			delete[] pointNeighbors;
-			pointNeighbors = nullptr;
-		}
-		else
-		{
+		if (!useGpu) {
 			if (pointNeighbors == nullptr) {
 				pointNeighbors = new PointNeighbors[numberOfPoints];
 				for (int i = 0; i < numberOfPoints; i++) {
@@ -86,6 +96,106 @@ namespace FusionCrowd
 		}
 	}
 
+
+	void NeighborsSeeker::Init(Point* points, int numberOfPoints, float worldWidth, float worldHeight, float searchRadius) {
+		this->points = points;
+		this->numberOfPoints = numberOfPoints;
+
+		this->searchRadius = searchRadius;
+		cellSize = 2.f * searchRadius / gridCellCoeff;
+		cellsInRow = ceil(worldWidth / cellSize);
+		cellsInColumn = ceil(worldHeight / cellSize);
+		numberOfCells = cellsInRow * cellsInColumn;
+		float cellsInRadius = ceil(gridCellCoeff) + 1;
+		maxNearCells = cellsInRadius * cellsInRadius;
+
+		PrepareMemory();
+	}
+
+
+	void NeighborsSeeker::FindNeighborsCpu() {
+		for (int i = 0; i < numberOfPoints; i++) {
+			Point point = points[i]; // i = id
+			int startCellX = GetCellOffset(point.x - searchRadius);
+			int startCellY = GetCellOffset(point.y - searchRadius);
+			int endCellX = GetCellOffset(point.x + searchRadius);
+			int endCellY = GetCellOffset(point.y + searchRadius);
+
+			if (startCellX < 0) startCellX = 0;
+			if (startCellY < 0) startCellY = 0;
+			if (endCellX >= cellsInRow) endCellX = cellsInRow - 1;
+			if (endCellY >= cellsInColumn) endCellY = cellsInColumn - 1;
+
+			int* nearCellsIndeces = new int[maxNearCells];
+			int numberOfNearCells = 0;
+			for (int cellY = startCellY; cellY <= endCellY; cellY++) {
+				for (int cellX = startCellX; cellX <= endCellX; cellX++) {
+					if (IsCircleCrossesCell(point.x, point.y, cellX, cellY)) {
+						nearCellsIndeces[numberOfNearCells] = GetCellIndex(cellX, cellY);
+						numberOfNearCells++;
+					}
+				}
+			}
+
+			bool enoughNeighbors = false;
+			for (int cellIndexIndex = 0; cellIndexIndex < numberOfNearCells; cellIndexIndex++) {
+				GridCell cell = cells[nearCellsIndeces[cellIndexIndex]];
+				for (int pointIndex = cell.startIndex; pointIndex < cell.startIndex + cell.pointsCount; pointIndex++) {
+					int otherPointIndex = sortedPointsId[pointIndex];
+					if (i == otherPointIndex) continue;
+					Point otherPoint = points[otherPointIndex];
+					if (point.InRange(otherPoint, searchRadius)) {
+						PointNeighbors* neighbors = &pointNeighbors[i];
+						neighbors->neighborsID[neighbors->neighborsCount] = otherPointIndex;
+						neighbors->neighborsCount++;
+						if (neighbors->neighborsCount == NUMBER_OF_NEIGHBORS) {
+							enoughNeighbors = true;
+							break;
+						}
+					}
+				}
+				if (enoughNeighbors) break;
+			}
+
+			delete[] nearCellsIndeces;
+		}
+	}
+
+
+	void NeighborsSeeker::FindNeighborsGpu() {
+		_calculator.FreeUnusedMemory();
+
+		_bufferDescriptions[0] = { sizeof(Point), numberOfPoints, points };
+		_bufferDescriptions[1] = { sizeof(GridCell), numberOfCells, cells };
+		_bufferDescriptions[2] = { sizeof(int), numberOfPoints, sortedPointsId };
+
+		CpuConstants constants = { cellSize , cellsInRow , cellsInColumn , searchRadius };
+		
+		_calculator.SetInputBuffers(3, _bufferDescriptions);
+		_calculator.SetConstantBuffer(sizeof(CpuConstants), 1, &constants);
+		_calculator.SetOutputBuffer(sizeof(PointNeighbors), numberOfPoints);
+
+		_calculator.RunShader();
+		_calculator.GetResult(pointNeighbors);
+	}
+
+
+	NeighborsSeeker::PointNeighbors* NeighborsSeeker::FindNeighbors(Point* points, int numberOfPoints, 
+		float worldWidth, float worldHeight, float searchRadius, bool useGpu)
+	{
+		Init(points, numberOfPoints, worldWidth, worldHeight, searchRadius);
+		SetInitialData(useGpu);
+
+		FillCellDictioanary();
+		CountIndeces();
+		SortPoints();
+
+		useGpu ? FindNeighborsGpu() : FindNeighborsCpu();
+
+		return pointNeighbors;
+	}
+
+#pragma region CpuLogic
 
 	int NeighborsSeeker::GetCellOffset(float coordinateOffset) {
 		return (int)floor(coordinateOffset / cellSize);
@@ -161,121 +271,10 @@ namespace FusionCrowd
 	}
 
 
-	void NeighborsSeeker::Init(Point* points, int numberOfPoints, float worldWidth, float worldHeight, float searchRadius) {
-		this->points = points;
-		this->numberOfPoints = numberOfPoints;
-
-		this->searchRadius = searchRadius;
-		cellSize = 2.f * searchRadius / gridCellCoeff;
-		cellsInRow = ceil(worldWidth / cellSize);
-		cellsInColumn = ceil(worldHeight / cellSize);
-		numberOfCells = cellsInRow * cellsInColumn;
-		float cellsInRadius = ceil(gridCellCoeff) + 1;
-		maxNearCells = cellsInRadius * cellsInRadius;
-
-		FreeMemory();
-		AllocateMemory();
-
-		_isCalculatorReady = false;
-	}
-
-
-	void NeighborsSeeker::FindNeighborsCpu() {
-		for (int i = 0; i < numberOfPoints; i++) {
-			Point point = points[i]; // i = id
-			int startCellX = GetCellOffset(point.x - searchRadius);
-			int startCellY = GetCellOffset(point.y - searchRadius);
-			int endCellX = GetCellOffset(point.x + searchRadius);
-			int endCellY = GetCellOffset(point.y + searchRadius);
-
-			if (startCellX < 0) startCellX = 0;
-			if (startCellY < 0) startCellY = 0;
-			if (endCellX >= cellsInRow) endCellX = cellsInRow - 1;
-			if (endCellY >= cellsInColumn) endCellY = cellsInColumn - 1;
-
-			int* nearCellsIndeces = new int[maxNearCells];
-			int numberOfNearCells = 0;
-			for (int cellY = startCellY; cellY <= endCellY; cellY++) {
-				for (int cellX = startCellX; cellX <= endCellX; cellX++) {
-					if (IsCircleCrossesCell(point.x, point.y, cellX, cellY)) {
-						nearCellsIndeces[numberOfNearCells] = GetCellIndex(cellX, cellY);
-						numberOfNearCells++;
-					}
-				}
-			}
-
-			bool enoughNeighbors = false;
-			for (int cellIndexIndex = 0; cellIndexIndex < numberOfNearCells; cellIndexIndex++) {
-				GridCell cell = cells[nearCellsIndeces[cellIndexIndex]];
-				for (int pointIndex = cell.startIndex; pointIndex < cell.startIndex + cell.pointsCount; pointIndex++) {
-					int otherPointIndex = sortedPointsId[pointIndex];
-					if (i == otherPointIndex) continue;
-					Point otherPoint = points[otherPointIndex];
-					if (point.InRange(otherPoint, searchRadius)) {
-						PointNeighbors* neighbors = &pointNeighbors[i];
-						neighbors->neighborsID[neighbors->neighborsCount] = otherPointIndex;
-						neighbors->neighborsCount++;
-						if (neighbors->neighborsCount == NUMBER_OF_NEIGHBORS) {
-							enoughNeighbors = true;
-							break;
-						}
-					}
-				}
-				if (enoughNeighbors) break;
-			}
-
-			delete[] nearCellsIndeces;
-		}
-	}
-
-
-	void NeighborsSeeker::PrepareGpuCalculator() {
-		_bufferDescriptions[0] = { sizeof(Point), numberOfPoints, points };
-		_bufferDescriptions[1] = { sizeof(GridCell), numberOfCells, cells };
-		_bufferDescriptions[2] = { sizeof(int), numberOfPoints, sortedPointsId };
-
-		_calculator.SetOutputBuffer(sizeof(PointNeighbors), numberOfPoints);
-
-		_isCalculatorReady = true;
-	}
-
-
-	void NeighborsSeeker::FindNeighborsGpu() {
-		_calculator.FreeUnusedMemory();
-
-		if (!_isCalculatorReady) {
-			PrepareGpuCalculator();
-		}
-
-		_calculator.SetInputBuffers(3, _bufferDescriptions);
-		CpuConstants constants = { cellSize , cellsInRow , cellsInColumn , searchRadius };
-		_calculator.SetConstantBuffer(sizeof(CpuConstants), 1, &constants);
-		_calculator.RunShader();
-		pointNeighbors = (PointNeighbors*)_calculator.GetResult();
-	}
-
-
-	NeighborsSeeker::PointNeighbors* NeighborsSeeker::FindNeighbors(bool useGpu) {
-		ClearOldData(useGpu);
-
-		FillCellDictioanary();
-		CountIndeces();
-		SortPoints();
-
-		if (useGpu) {
-			FindNeighborsGpu();
-		}
-		else
-		{
-			FindNeighborsCpu();
-		}
-
-		return pointNeighbors;
-	}
-
-
 	bool Point::InRange(Point otherPoint, float range) {
 		return FusionCrowd::InRange(x, y, otherPoint.x, otherPoint.y, range);
 	}
+
+#pragma endregion
 
 }

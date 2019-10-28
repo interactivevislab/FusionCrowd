@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Export/Config.h"
+#include <vector>
+
 
 namespace FusionCrowd
 {
@@ -29,5 +31,9 @@ namespace FusionCrowd
 		FUSION_CROWD_API const ComponentId NAVMESH_ID = 200;
 
 		FUSION_CROWD_API const ComponentId FSM_ID        = 300;
+
+		constexpr ComponentId allOperationComponentTypes[6] = {
+			KARAMOUZAS_ID, HELBING_ID, ORCA_ID, ZANLUNGO_ID, PEDVO_ID, SWITCHING
+		};
 	}
 }

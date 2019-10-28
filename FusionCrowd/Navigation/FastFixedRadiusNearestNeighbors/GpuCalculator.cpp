@@ -42,24 +42,64 @@ namespace FusionCrowd
 
 
 	void GpuCalculator::SetInputBuffers(int numberOfBuffers, InputBufferDesc descriptions[]) {
-		for (int i = 0; i < _numberOfInputBuffers; i++) {
-			_inputBuffers[i]->Release();
-			_inputBuffersSRV[i]->Release();
-		}
-		delete[] _inputBuffers;
-		delete[] _inputBuffersSRV;
 
-		_numberOfInputBuffers = numberOfBuffers;
-		_inputBuffers = new ID3D11Buffer*[numberOfBuffers];
-		_inputBuffersSRV = new ID3D11ShaderResourceView*[numberOfBuffers];
+		if (_numberOfInputBuffers < numberOfBuffers) {
+			for (int i = 0; i < _numberOfInputBuffers; i++) {
+				_inputBuffers[i]->Release();
+				_inputBuffersSRV[i]->Release();
+			}
+			delete[] _inputBuffers;
+			delete[] _inputBuffersSRV;
+
+			_numberOfInputBuffers = numberOfBuffers;
+			_inputBuffers = new ID3D11Buffer*[numberOfBuffers];
+			_inputBuffersSRV = new ID3D11ShaderResourceView*[numberOfBuffers];
+
+			for (int i = 0; i < _numberOfInputBuffers; i++) {
+				_inputBuffers[i] = nullptr;
+				_inputBuffersSRV[i] = nullptr;
+			}
+		}
+
 		for (int i = 0; i < numberOfBuffers; i++) {
-			GpuHelper::CreateStructuredBuffer(_device, descriptions[i].elementSize, descriptions[i].elementsCount, descriptions[i].initDataSource, &_inputBuffers[i]);
-			GpuHelper::CreateBufferSRV(_device, _inputBuffers[i], &_inputBuffersSRV[i]);
+
+			auto & currentBuffer = _inputBuffers[i];
+			auto & currentSRV = _inputBuffersSRV[i];
+			auto & currentDesc = descriptions[i];
+
+			if (currentBuffer != nullptr) {
+
+				D3D11_BUFFER_DESC *pDesc = new D3D11_BUFFER_DESC;
+				currentBuffer->GetDesc(pDesc);
+				auto currentSize = pDesc->ByteWidth;
+				delete pDesc;
+
+				if (currentDesc.elementSize * currentDesc.elementsCount <= currentSize) {
+					GpuHelper::WriteDataToBuffer(currentBuffer, currentDesc.initDataSource,
+						currentDesc.elementSize * currentDesc.elementsCount, _context);
+					continue;
+				}
+			}
+
+			if (currentBuffer != nullptr) {
+				currentBuffer->Release();
+			}
+			if (currentSRV != nullptr) {
+				currentSRV->Release();
+			}
+
+			GpuHelper::CreateStructuredBuffer(_device, currentDesc.elementSize, currentDesc.elementsCount, currentDesc.initDataSource,
+				D3D11_CPU_ACCESS_WRITE, &currentBuffer);
+			GpuHelper::CreateBufferSRV(_device, currentBuffer, &currentSRV);
 		}
 	}
 
 
 	void GpuCalculator::SetOutputBuffer(int elementSize, int elementsCount) {
+		if ((_outputBuffer != nullptr) && (elementSize * elementsCount <= _constantElementsSize * _constantElementsCount)) {
+			return;
+		}
+
 		if (_outputBuffer != nullptr) {
 			_outputBuffer->Release();
 		}
@@ -69,19 +109,28 @@ namespace FusionCrowd
 
 		_outputElementsSize = elementSize;
 		_outputElementsCount = elementsCount;
-		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, nullptr, &_outputBuffer);
+
+		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, nullptr, D3D11_CPU_ACCESS_READ, &_outputBuffer);
 		GpuHelper::CreateBufferUAV(_device, _outputBuffer, &_outputBufferUAV);
 	}
 
 
 	void GpuCalculator::SetConstantBuffer(int elementSize, int elementsCount, void* initDataSource) {
 		if (_constantBuffer != nullptr) {
+			if (elementSize * elementsCount <= _constantElementsSize * _constantElementsCount) {
+				GpuHelper::WriteDataToBuffer(_constantBuffer, initDataSource, elementSize * elementsCount, _context);
+				_context->CSSetConstantBuffers(0, 1, &_constantBuffer);
+				return;
+			}
+		}
+		if (_constantBuffer != nullptr) {
 			_constantBuffer->Release();
 		}
 
 		_constantElementsSize = elementSize;
 		_constantElementsCount = elementsCount;
-		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, &_constantBuffer);
+
+		GpuHelper::CreateStructuredBuffer(_device, elementSize, elementsCount, initDataSource, D3D11_CPU_ACCESS_WRITE, &_constantBuffer);
 		_context->CSSetConstantBuffers(0, 1, &_constantBuffer);
 	}
 
@@ -91,20 +140,13 @@ namespace FusionCrowd
 	}
 
 
-	void* GpuCalculator::GetResult() {
-		ID3D11Buffer* resultBuffer = GpuHelper::CreateAndCopyToBuffer(_device, _context, _outputBuffer);
-		D3D11_MAPPED_SUBRESOURCE MappedResource;
-		_context->Map(resultBuffer, 0, D3D11_MAP_READ, 0, &MappedResource);
-		void *result = ::operator new[](_outputElementsSize * _outputElementsCount);
-		std::memcpy(result, MappedResource.pData, _outputElementsSize * _outputElementsCount);
-		_context->Unmap(resultBuffer, 0);
-		resultBuffer->Release();
-		return result;
+	void GpuCalculator::GetResult(void* outResult) {
+		GpuHelper::ReadDataFromBuffer(_outputBuffer, outResult, _outputElementsSize * _outputElementsCount, _context);
 	}
+
 
 	void GpuCalculator::FreeUnusedMemory() {
 		_context->ClearState();
 		_context->Flush();
 	}
-
 }

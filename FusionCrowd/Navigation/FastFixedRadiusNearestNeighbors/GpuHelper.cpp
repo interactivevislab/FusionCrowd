@@ -192,7 +192,8 @@ namespace FusionCrowd
 		// Create Structured Buffer
 		//--------------------------------------------------------------------------------------
 		_Use_decl_annotations_
-			HRESULT CreateStructuredBuffer(ID3D11Device* pDevice, UINT uElementSize, UINT uCount, void* pInitData, ID3D11Buffer** ppBufOut)
+			HRESULT CreateStructuredBuffer(ID3D11Device* pDevice, UINT uElementSize, UINT uCount, void* pInitData,
+				D3D11_CPU_ACCESS_FLAG cpuAccessFlag, ID3D11Buffer** ppBufOut)
 		{
 			*ppBufOut = nullptr;
 
@@ -202,6 +203,7 @@ namespace FusionCrowd
 			desc.ByteWidth = uElementSize * uCount;
 			desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 			desc.StructureByteStride = uElementSize;
+			desc.CPUAccessFlags = cpuAccessFlag;
 
 			if (pInitData)
 			{
@@ -313,6 +315,20 @@ namespace FusionCrowd
 				}
 
 			return pDevice->CreateUnorderedAccessView(pBuffer, &desc, ppUAVOut);
+		}
+
+		void WriteDataToBuffer(ID3D11Buffer* buffer, void* dataSource, size_t dataSize, ID3D11DeviceContext* context) {
+			D3D11_MAPPED_SUBRESOURCE mappedResource;
+			context->Map(buffer, 0, D3D11_MAP_WRITE, 0, &mappedResource);
+			memcpy(mappedResource.pData, dataSource, dataSize);
+			context->Unmap(buffer, 0);
+		}
+
+		void ReadDataFromBuffer(ID3D11Buffer* buffer, void* dataDest, size_t dataSize, ID3D11DeviceContext* context) {
+			D3D11_MAPPED_SUBRESOURCE mappedResource;
+			context->Map(buffer, 0, D3D11_MAP_READ, 0, &mappedResource);
+			memcpy(dataDest, mappedResource.pData, dataSize);
+			context->Unmap(buffer, 0);
 		}
 
 		//--------------------------------------------------------------------------------------

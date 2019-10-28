@@ -13,8 +13,6 @@ struct GridCell {
 	int startIndex;
 };
 
-//static const int MAX_NEIGHBORS = 10;
-
 struct PointNeighbors {
 	int pointID;
 	int neighborsCount;
@@ -51,7 +49,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
 	if (endCellX >= cellsInRow) endCellX = cellsInRow - 1;
 	if (endCellY >= cellsInColumn) endCellY = cellsInColumn - 1;
 
-	int nearCellsIndeces[100];
+	int nearCellsIndeces[25];
 	int numberOfNearCells = 0;
 	for (int cellY = startCellY; cellY <= endCellY; cellY++) {
 		for (int cellX = startCellX; cellX <= endCellX; cellX++) {

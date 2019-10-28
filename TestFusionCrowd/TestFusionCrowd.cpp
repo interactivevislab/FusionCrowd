@@ -21,7 +21,7 @@ int main()
 	CrossingTestCase crossingCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false);
 	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, false);
 	TshapedFancyTestCase tshapedCase(FusionCrowd::ComponentIds::ZANLUNGO_ID, 200, 1000, false);
-	FsmTestCase fsmTestCase(FusionCrowd::ComponentIds::ORCA_ID, 1000, 1500, true);
+	FsmTestCase fsmTestCase(FusionCrowd::ComponentIds::ORCA_ID, 200, 2000, true);
 
 	/*crossingCase.Pre();
 	crossingCase.Run(0);

@@ -7,6 +7,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowd", "FusionCrowd\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFusionCrowd", "TestFusionCrowd\TestFusionCrowd.vcxproj", "{BE99B8DB-0BD2-4457-A280-A4174C0762D3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdClient", "FusionCrowdClient\FusionCrowdClient.vcxproj", "{9D29E00E-4270-49AD-910C-3A2C5CA16A79}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdServer", "FusionCrowdServer\FusionCrowdServer.vcxproj", "{CA5008DE-DED8-43FA-9373-1B78C883D621}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +35,22 @@ Global
 		{BE99B8DB-0BD2-4457-A280-A4174C0762D3}.Release|x64.Build.0 = Release|x64
 		{BE99B8DB-0BD2-4457-A280-A4174C0762D3}.Release|x86.ActiveCfg = Release|Win32
 		{BE99B8DB-0BD2-4457-A280-A4174C0762D3}.Release|x86.Build.0 = Release|Win32
+		{9D29E00E-4270-49AD-910C-3A2C5CA16A79}.Debug|x64.ActiveCfg = Debug|x64
+		{9D29E00E-4270-49AD-910C-3A2C5CA16A79}.Debug|x64.Build.0 = Debug|x64
+		{9D29E00E-4270-49AD-910C-3A2C5CA16A79}.Debug|x86.ActiveCfg = Debug|Win32
+		{9D29E00E-4270-49AD-910C-3A2C5CA16A79}.Debug|x86.Build.0 = Debug|Win32
+		{9D29E00E-4270-49AD-910C-3A2C5CA16A79}.Release|x64.ActiveCfg = Release|x64
+		{9D29E00E-4270-49AD-910C-3A2C5CA16A79}.Release|x64.Build.0 = Release|x64
+		{9D29E00E-4270-49AD-910C-3A2C5CA16A79}.Release|x86.ActiveCfg = Release|Win32
+		{9D29E00E-4270-49AD-910C-3A2C5CA16A79}.Release|x86.Build.0 = Release|Win32
+		{CA5008DE-DED8-43FA-9373-1B78C883D621}.Debug|x64.ActiveCfg = Debug|x64
+		{CA5008DE-DED8-43FA-9373-1B78C883D621}.Debug|x64.Build.0 = Debug|x64
+		{CA5008DE-DED8-43FA-9373-1B78C883D621}.Debug|x86.ActiveCfg = Debug|Win32
+		{CA5008DE-DED8-43FA-9373-1B78C883D621}.Debug|x86.Build.0 = Debug|Win32
+		{CA5008DE-DED8-43FA-9373-1B78C883D621}.Release|x64.ActiveCfg = Release|x64
+		{CA5008DE-DED8-43FA-9373-1B78C883D621}.Release|x64.Build.0 = Release|x64
+		{CA5008DE-DED8-43FA-9373-1B78C883D621}.Release|x86.ActiveCfg = Release|Win32
+		{CA5008DE-DED8-43FA-9373-1B78C883D621}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
