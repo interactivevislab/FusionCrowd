@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Export/Config.h"
-#include "ComponentId.h"
+#include "Export/ComponentId.h"
+#include "Export/ModelAgentParams.h"
+
 
 namespace FusionCrowd
 {
@@ -11,6 +13,8 @@ namespace FusionCrowd
 		virtual void AddAgent(size_t id) = 0;
 		virtual bool RemoveAgent(size_t id) = 0;
 		virtual void Update(float timeStep) = 0;
+
+		virtual void SetAgentParams(size_t id, ModelAgentParams & params) = 0;
 
 		virtual ComponentId GetId() = 0;
 

@@ -16,6 +16,8 @@
 #include "OperationComponent/ZanlungoComponent.h"
 #include "OperationComponent/PedVOComponent.h"
 
+#include "StrategyComponent/FSM/FsmStartegy.h"
+
 namespace FusionCrowd
 {
 	class SimulatorFacadeImpl : public ISimulatorFacade
@@ -79,6 +81,16 @@ namespace FusionCrowd
 		{
 			return _sim->GetAgentCount();
 		}
+
+		void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params)
+		{
+			_sim->SetAgentStrategyParam(agentId, strategyId, params);
+		}
+
+		IStrategyComponent* GetStrategy(ComponentId strategyId) const
+		{
+			return _sim->GetStrategy(strategyId);
+		}
 	private:
 		std::shared_ptr<Simulator> _sim;
 	};
@@ -132,7 +144,14 @@ namespace FusionCrowd
 
 		ISimulatorBuilder* WithStrategy(ComponentId strategyId)
 		{
-
+			switch (strategyId)
+			{
+				case ComponentIds::FSM_ID:
+					sim->AddStrategy(std::make_shared<FsmStrategy>(sim, navSystem));
+					break;
+				default:
+					break;
+			}
 			return this;
 		}
 

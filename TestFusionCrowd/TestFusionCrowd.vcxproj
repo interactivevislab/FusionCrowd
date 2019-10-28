@@ -162,6 +162,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="TestCases\FsmTestCase.h" />
     <ClInclude Include="TestCases\PinholeTestCase.h" />
     <ClInclude Include="TestCases\CrossingTestCase.h" />
     <ClInclude Include="TestCases\NeighbourSearchBenchCase.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="TestCases\TshapedFancyTestCase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TestCases\FsmTestCase.cpp" />
     <ClCompile Include="TestCases\PinholeTestCase.cpp" />
     <ClCompile Include="TestCases\CrossingTestCase.cpp" />
     <ClCompile Include="TestCases\NeighbourSearchBenchCase.cpp" />

@@ -8,6 +8,7 @@
 #include "TestCases/CrossingTestCase.h"
 #include "TestCases/PinholeTestCase.h"
 #include "TestCases/TshapedFancyTestCase.h"
+#include "TestCases/FsmTestCase.h"
 
 #include "Export/ComponentId.h"
 
@@ -17,11 +18,12 @@ int main()
 {
 	NeighbourSearchBenchCase case1;
 	ZanlungoCase case2;
-	CrossingTestCase crossingCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, true);
-	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, true);
-	TshapedFancyTestCase tshapedCase(FusionCrowd::ComponentIds::ZANLUNGO_ID, 200, 1000, true);
+	CrossingTestCase crossingCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false);
+	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, false);
+	TshapedFancyTestCase tshapedCase(FusionCrowd::ComponentIds::ZANLUNGO_ID, 200, 1000, false);
+	FsmTestCase fsmTestCase(FusionCrowd::ComponentIds::ORCA_ID, 1000, 1500, true);
 
-	crossingCase.Pre();
+	/*crossingCase.Pre();
 	crossingCase.Run(0);
 	crossingCase.Post();
 
@@ -31,7 +33,11 @@ int main()
 
 	tshapedCase.Pre();
 	tshapedCase.Run(0);
-	tshapedCase.Post();
+	tshapedCase.Post();*/
+
+	fsmTestCase.Pre();
+	fsmTestCase.Run(0);
+	fsmTestCase.Post();
 
 
 	/*

@@ -1,5 +1,7 @@
 #include "Simulator.h"
 
+#include "Export/ComponentId.h"
+
 #include "Navigation/NavSystem.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include "TacticComponent/NavMeshComponent.h"
@@ -25,9 +27,9 @@ namespace FusionCrowd
 		{
 			_currentTime += timeStep;
 
-			for (auto strategy : _strategyComponents)
+			for (auto & strategy : _strategyComponents)
 			{
-				strategy->Update(timeStep);
+				strategy.second->Update(timeStep);
 			}
 
 			for (auto tactic : _tacticComponents)
@@ -142,13 +144,10 @@ namespace FusionCrowd
 			}
 
 			//SetStrategyComponent(agentId, strategyId);
-			for (auto& c : _strategyComponents) {
-				if (c->GetId() == strategyId) {
-					c->AddAgent(agentId);
-					agent.stratComponent = c;
-					break;
-				}
-			}
+
+			auto & c = _strategyComponents[strategyId];
+			c->AddAgent(agentId);
+			agent.stratComponent = c;
 
 			return agentId;
 		}
@@ -192,23 +191,21 @@ namespace FusionCrowd
 
 		bool SetStrategyComponent(size_t agentId, ComponentId newStrategyComponent)
 		{
-			for(auto& c : _strategyComponents)
+			if(_strategyComponents.find(newStrategyComponent) == _strategyComponents.end())
 			{
-				if(c->GetId() == newStrategyComponent) {
-					Agent & agent = _agents.find(agentId)->second;
-
-					if(!agent.stratComponent.expired())
-					{
-						agent.stratComponent.lock()->RemoveAgent(agentId);
-					}
-
-					c->AddAgent(agentId);
-					agent.stratComponent = c;
-
-					return true;
-				}
+				return false;
 			}
-			return false;
+
+			auto & agent = _agents.find(agentId)->second;
+			if(auto oldStrat = agent.stratComponent.lock())
+			{
+				oldStrat->RemoveAgent(agentId);
+			}
+
+			_strategyComponents[newStrategyComponent]->AddAgent(agentId);
+			agent.stratComponent = _strategyComponents[newStrategyComponent];
+
+			return true;
 		}
 
 		void AddOperComponent(std::shared_ptr<IOperationComponent> operComponent)
@@ -223,7 +220,7 @@ namespace FusionCrowd
 
 		void AddStrategyComponent(std::shared_ptr<IStrategyComponent> strategyComponent)
 		{
-			_strategyComponents.push_back(strategyComponent);
+			_strategyComponents[strategyComponent->GetId()] = strategyComponent;
 		}
 
 		void InitSimulator() {
@@ -298,6 +295,17 @@ namespace FusionCrowd
 
 			return true;
 		}
+
+		void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params)
+		{
+			_strategyComponents[strategyId]->SetAgentParams(agentId, params);
+		}
+
+		IStrategyComponent* GetStrategy(ComponentId strategyId) const
+		{
+			return _strategyComponents.find(strategyId)->second.get();
+		}
+
 	private:
 		size_t _nextAgentId = 0;
 		size_t GetNextId()
@@ -344,7 +352,7 @@ namespace FusionCrowd
 		OnlineRecording _recording;
 
 		std::map<size_t, FusionCrowd::Agent> _agents;
-		std::vector<std::shared_ptr<IStrategyComponent>> _strategyComponents;
+		std::map<ComponentId, std::shared_ptr<IStrategyComponent>> _strategyComponents;
 		std::vector<std::shared_ptr<ITacticComponent>> _tacticComponents;
 		std::vector<std::shared_ptr<IOperationComponent>> _operComponents;
 	};
@@ -463,6 +471,16 @@ namespace FusionCrowd
 	bool Simulator::GetAgentsInfo(FCArray<AgentInfo> & output)
 	{
 		return pimpl->GetAgentsInfo(output);
+	}
+
+	void Simulator::SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params)
+	{
+		pimpl->SetAgentStrategyParam(agentId, strategyId, params);
+	}
+
+	IStrategyComponent* Simulator::GetStrategy(ComponentId strategyId) const
+	{
+		return pimpl->GetStrategy(strategyId);
 	}
 #pragma endregion
 }

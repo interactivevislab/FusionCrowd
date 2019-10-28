@@ -5,16 +5,18 @@
 
 #include "Agent.h"
 
-#include "Util/spimpl.h"
+#include "Export/ComponentId.h"
+#include "Export/Export.h"
 #include "Export/FCArray.h"
-#include "Math/Util.h"
 #include "Export/IStrategyComponent.h"
+
 #include "StrategyComponent/Goal/Goal.h"
 #include "TacticComponent/ITacticComponent.h"
 #include "OperationComponent/IOperationComponent.h"
 #include "Navigation/NavSystem.h"
-#include "Export/Export.h"
-#include "Export/ComponentId.h"
+
+#include "Util/spimpl.h"
+#include "Math/Util.h"
 
 namespace FusionCrowd
 {
@@ -30,12 +32,16 @@ namespace FusionCrowd
 		Simulator & AddStrategy(std::shared_ptr<IStrategyComponent> strategyComponent);
 		Simulator & UseNavSystem(std::shared_ptr<NavSystem> system);
 
+		void SetNavSystem(std::shared_ptr<NavSystem> navSystem);
+
 		bool DoStep(float timeStep);
 
 		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent);
 		bool SetTacticComponent(size_t agentId, ComponentId newTactic);
 		bool SetStrategyComponent(size_t agentId, ComponentId newStrategyComponent);
-		void SetNavSystem(std::shared_ptr<NavSystem> navSystem);
+
+		void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params);
+		IStrategyComponent* GetStrategy(ComponentId strategyId) const;
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 
@@ -43,8 +49,6 @@ namespace FusionCrowd
 
 		float GetElapsedTime();
 
-		// Need to remove following methods.
-		// 1. Move to agent?
 		size_t GetAgentCount() const;
 		std::shared_ptr<Goal> GetAgentGoal(size_t agentId);
 

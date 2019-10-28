@@ -41,6 +41,8 @@
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Util\RecordingSerializer.cpp" />
     <ClCompile Include="Export\Export.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -98,6 +100,10 @@
     <ClInclude Include="Export\FCArray.h" />
     <ClInclude Include="Export\IRecording.h" />
     <ClInclude Include="Export\IRecordingSlice.h" />
+    <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
+    <ClInclude Include="Export\Fsm\IStrategyConfigurator.h" />
+    <ClInclude Include="Export\Fsm\IFsm.h" />
+    <ClInclude Include="Export\ModelAgentParams.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

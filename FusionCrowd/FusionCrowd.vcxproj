@@ -24,9 +24,13 @@
     <ClInclude Include="Export\ComponentId.h" />
     <ClInclude Include="Export\Config.h" />
     <ClInclude Include="Export\Export.h" />
+    <ClInclude Include="Export\Fsm\IFsm.h" />
+    <ClInclude Include="Export\Fsm\IStrategyConfigurator.h" />
+    <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
+    <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
     <ClInclude Include="Export\FCArray.h" />
     <ClInclude Include="Math\Util.h" />
@@ -78,6 +82,7 @@
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export\Export.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.cpp" />
@@ -89,6 +94,7 @@
     <ClCompile Include="OperationComponent\ORCAComponent.cpp" />
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
+    <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
     <ClCompile Include="Util\RecordingSerializer.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />

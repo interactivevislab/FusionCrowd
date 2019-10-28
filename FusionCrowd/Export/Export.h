@@ -4,7 +4,7 @@
 #include "Export/IRecording.h"
 #include "Export/IStrategyComponent.h"
 #include "Export/ComponentId.h"
-
+#include "Export/ModelAgentParams.h"
 
 namespace FusionCrowd
 {
@@ -43,6 +43,7 @@ namespace FusionCrowd
 
 			virtual OperationStatus SetAgentOp(size_t agentId, ComponentId opId) = 0;
 			virtual OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId) = 0;
+			virtual void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params) = 0;
 			virtual OperationStatus SetAgentGoal(size_t agentId, float x, float y) = 0;
 
 			virtual size_t GetAgentCount() = 0;
@@ -57,6 +58,7 @@ namespace FusionCrowd
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
 
 			virtual IRecording & GetRecording() = 0;
+			virtual IStrategyComponent* GetStrategy(ComponentId strategyId) const = 0;
 		};
 
 		/*

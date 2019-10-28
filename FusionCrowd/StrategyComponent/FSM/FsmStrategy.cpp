@@ -1,92 +1,86 @@
-#include "FsmStrategy.h"
+#include "FsmStartegy.h"
+#include "Navigation/AgentSpatialInfo.h"
 
+using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	namespace Strategy
+	FsmStrategy::FsmStrategy(std::shared_ptr<Simulator> simulator, std::shared_ptr<NavSystem> navSystem)
+		: _sim(simulator), _navSystem(navSystem)
 	{
-		FsmStrategy::FsmStrategy()
-		{
-		}
+	}
 
-		FsmStrategy::~FsmStrategy()
-		{
-		}
+	size_t FsmStrategy::AddMachine(Fsm::IFsm* machine)
+	{
+		size_t id = _nextMachineId++;
 
-		bool FsmStrategy::BuildFSM()
+		_machines.insert({ id, std::unique_ptr<Fsm::IFsm>(machine) });
+		return id;
+	}
+
+	void FsmStrategy::CreateGoToAction(Fsm::State duringState, float goalX, float goalY)
+	{
+		_gotoActions.insert({duringState, Vector2(goalX, goalY)});
+	}
+
+	void FsmStrategy::SetTickEvent(Fsm::Event fireEvt)
+	{
+		_tickEvent = fireEvt;
+	}
+
+	void FsmStrategy::CreateCloseToEvent(Fsm::Event fireEvt, float pointX, float pointY)
+	{
+		_closeToEvents.push_back({Vector2(pointX, pointY), fireEvt});
+	}
+
+	void FsmStrategy::AddAgent(size_t id, size_t machine_id)
+	{
+		_agentFsms.insert({id, { machine_id, _machines[machine_id]->GetInitialState() }});
+	}
+
+	void FsmStrategy::AddAgent(size_t id)
+	{
+		AddAgent(id, _nextMachineId - 1);
+	}
+
+	bool FsmStrategy::RemoveAgent(size_t id)
+	{
+		return false;
+	}
+
+	void FsmStrategy::SetAgentParams(size_t id, ModelAgentParams & params)
+	{
+		Fsm::AgentParams & aParams = static_cast<Fsm::AgentParams &>(params);
+
+		_agentFsms[id] = { aParams.FsmId, _machines[aParams.FsmId]->GetInitialState() };
+	}
+
+	void FsmStrategy::Update(float timeStep)
+	{
+		for(auto & p: _agentFsms)
 		{
-			for (int i = 0; i < _agents.size(); i++)
+			size_t agentId = p.first;
+			size_t fsmId = p.second.fsmId;
+			Fsm::State oldState = p.second.state;
+			Fsm::State state = oldState;
+
+			auto & agentInfo = _navSystem->GetSpatialInfo(agentId);
+
+			state = _machines[fsmId]->Advance(oldState, _tickEvent);
+			for (CloseToEventDesc & desc : _closeToEvents)
 			{
-				bool isCorrectly = false;
-				for (int j = 0; j < _states.size(); j++)
+				if((desc.target-agentInfo.pos).LengthSquared() < 0.2 * 0.2)
 				{
-					if (_states[j]->GetName() == _agents[i]._startStateName)
-					{
-						_agents[i]._state = _states[j];
-						isCorrectly = true;
-					}
-				}
-				if (!isCorrectly)
-				{
-					return false;
+					state = _machines[fsmId]->Advance(state, desc.eventToFire);
 				}
 			}
-			for (int i =0; i < _transitions.size(); i++)
+
+			if(state != oldState && _gotoActions.find(state) != _gotoActions.end())
 			{
-				bool isCorrectlyFrom = false;
-				bool isCorrectlyTo = false;
-				for (int j = 0; j < _states.size(); j++)
-				{
-					if (_states[j]->GetName() == _transitions[i]->GetFrom())
-					{
-						_states[j]->AddTransition(_transitions[i]);
-						isCorrectlyFrom = true;
-					}
-					if (_states[j]->GetName() == _transitions[i]->GetTo())
-					{
-						_transitions[i]->SetNextState(_states[j]);
-						isCorrectlyTo = true;
-					}
-				}
-				if ((!isCorrectlyFrom)||(!isCorrectlyTo))
-				{
-					return false;
-				}
+				_sim->SetAgentGoal(agentId, _gotoActions[state]);
 			}
 
-			return true;
-		}
-
-		void FsmStrategy::Update()
-		{
-			for (int i = 0; i < _agents.size(); i++)
-			{
-				FSM::IFsmState * newState = NULL;
-				_agents[i]._state->Update(_agents[i]._idAgent, newState);
-				if (newState != NULL)
-				{
-					_agents[i]._state = newState;
-				}
-			}
-		}
-
-		Goal* FsmStrategy::GetGoal(int idAgent)
-		{
-			return _agents[idAgent]._state->GetGoal();
-		}
-
-		void FsmStrategy::AddState(FSM::IFsmState* state)
-		{
-			_states.push_back(state);
-		}
-
-		void FsmStrategy::AddTransitions(FSM::IFsmTransition* transition)
-		{
-			_transitions.push_back(transition);
-		}
-		void FsmStrategy::AddAgent(Agent* agent, std::string stateName)
-		{
-			_agents.push_back(FSM::FsmAgentInfo(agent, stateName, NULL));
+			p.second.state = state;
 		}
 	}
 }
