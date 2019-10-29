@@ -188,6 +188,9 @@ def draw_mesh(canvas, mesh: NavMesh, scale):
     for v0, v1 in mesh.obstacles:
         draw_line(v0, v1, color="red")
 
+PLAYING = 1
+PAUSED = 0
+PLAYER_STATE = PAUSED
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -206,7 +209,7 @@ if __name__ == "__main__":
     W, H = scale * max(tr.xmax, mesh.xmax), scale * max(tr.ymax, mesh.ymax)
 
     window = Tk()
-    window.title("{}, {}x{}".format(args.source_file, W / scale, H / scale))
+    window.title("{}, {}x{}. Controls: left, right, space".format(args.source_file, W / scale, H / scale))
     canvas = Canvas(window, width=W, height=H, bg="black")
     canvas.pack()
 
@@ -218,4 +221,19 @@ if __name__ == "__main__":
     timeline = Scale(window, length=W, from_=0, to=tr.steps, orient=HORIZONTAL, command=redraw)
     timeline.pack()
 
+    def tick(omit=None):
+        if PLAYER_STATE == PLAYING:
+            timeline.set(timeline.get() + 1)
+
+        timeline.after(100, tick)
+
+    def toggle_player(omit=None):
+        global PLAYER_STATE
+        PLAYER_STATE = PAUSED if PLAYER_STATE == PLAYING else PLAYING
+
+    window.bind("<Right>", lambda key: timeline.set(timeline.get() + 1))
+    window.bind("<Left>", lambda key: timeline.set(timeline.get() - 1))
+    window.bind("<space>", toggle_player)
+
+    tick()
     window.mainloop()
