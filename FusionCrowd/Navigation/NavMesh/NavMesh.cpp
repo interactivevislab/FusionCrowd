@@ -261,12 +261,10 @@ namespace FusionCrowd
 #pragma region Obstacle
 	void NavMesh::SetObstacleCount(size_t count)
 	{
-		if (obstCount)
-		{
-			delete[] obstacles;
-		}
 		obstCount = count;
-		obstacles = new NavMeshObstacle[obstCount];
+		obstacles.reserve(obstCount);
+		for(size_t i = 0; i < count; i++)
+			obstacles.push_back(NavMeshObstacle());
 	}
 
 	NavMeshObstacle& NavMesh::GetObstacle(unsigned int i)

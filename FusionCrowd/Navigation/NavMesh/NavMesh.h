@@ -73,7 +73,7 @@ namespace FusionCrowd
 		int eCount;
 		NavMeshEdge* edges;
 		int obstCount;
-		NavMeshObstacle* obstacles;
+		std::vector<NavMeshObstacle> obstacles;
 		int nCount;
 		NavMeshNode* nodes;
 		std::map<const std::string, NMNodeGroup> nodeGroups;
