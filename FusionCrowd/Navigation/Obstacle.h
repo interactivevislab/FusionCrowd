@@ -19,6 +19,11 @@ namespace FusionCrowd
 		Obstacle();
 		~Obstacle();
 
+		inline size_t getId() const
+		{
+			return _id;
+		}
+
 		inline DirectX::SimpleMath::Vector2 normal() const
 		{
 			return DirectX::SimpleMath::Vector2(_unitDir.y, -_unitDir.x);
