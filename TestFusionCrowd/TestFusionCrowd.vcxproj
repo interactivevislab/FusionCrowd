@@ -163,11 +163,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="TestCases\FsmTestCase.h" />
+    <ClInclude Include="TestCases\ITestCase.h" />
     <ClInclude Include="TestCases\PinholeTestCase.h" />
     <ClInclude Include="TestCases\CrossingTestCase.h" />
     <ClInclude Include="TestCases\NeighbourSearchBenchCase.h" />
-    <ClInclude Include="TestCases\ITestCase.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="TestCases\Utils.h" />
     <ClInclude Include="TestCases\ZanlungoCase.h" />
     <ClInclude Include="ThirdParty\date.h" />
     <ClInclude Include="TestCases\TshapedFancyTestCase.h" />

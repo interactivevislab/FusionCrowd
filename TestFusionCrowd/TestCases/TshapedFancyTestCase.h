@@ -10,7 +10,7 @@
 
 namespace TestFusionCrowd
 {
-	class TshapedFancyTestCase : public ITestCase<float>
+	class TshapedFancyTestCase : public ITestCase
 	{
 	public:
 		TshapedFancyTestCase(
@@ -21,12 +21,11 @@ namespace TestFusionCrowd
 		);
 
 		void Pre() override;
-		void Run(const float& args) override;
+		void Run() override;
 		void Post() override;
+		std::string GetName() const override { return "TshapedFancyTestCase"; };
 
 	private:
-		float RandFloat(float min, float max);
-
 		FusionCrowd::ComponentId _opComponent;
 		std::unique_ptr<FusionCrowd::ISimulatorFacade, decltype(&FusionCrowd::SimulatorFacadeDeleter)> _sim;
 

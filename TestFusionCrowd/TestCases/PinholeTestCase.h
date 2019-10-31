@@ -10,7 +10,7 @@
 
 namespace TestFusionCrowd
 {
-	class PinholeTestCase : public ITestCase<float>
+	class PinholeTestCase : public ITestCase
 	{
 	public:
 		PinholeTestCase(
@@ -21,12 +21,12 @@ namespace TestFusionCrowd
 		);
 
 		void Pre() override;
-		void Run(const float& args) override;
+		void Run() override;
 		void Post() override;
 
-	private:
-		float RandFloat(float min, float max);
+		std::string GetName() const override { return "Pinhole"; };
 
+	private:
 		FusionCrowd::ComponentId _opComponent;
 		std::unique_ptr<FusionCrowd::ISimulatorFacade, decltype(&FusionCrowd::SimulatorFacadeDeleter)> _sim;
 

@@ -9,6 +9,7 @@
 #include "TestCases/PinholeTestCase.h"
 #include "TestCases/TshapedFancyTestCase.h"
 #include "TestCases/FsmTestCase.h"
+#include "TestCases/ITestCase.h"
 
 #include "Export/ComponentId.h"
 
@@ -16,7 +17,7 @@ using namespace TestFusionCrowd;
 
 int main()
 {
-	NeighbourSearchBenchCase case1;
+	NeighbourSearchBenchCase case1(0.5f);
 	ZanlungoCase case2;
 	CrossingTestCase crossingCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false);
 	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, false);
@@ -36,9 +37,15 @@ int main()
 	tshapedCase.Post();*/
 
 	fsmTestCase.Pre();
-	fsmTestCase.Run(0);
+	fsmTestCase.Run();
 	fsmTestCase.Post();
 
+	std::vector<std::shared_ptr<ITestCase>> cases;
+
+	for(auto testCase : cases)
+	{
+
+	}
 
 	/*
 	case1.Pre();

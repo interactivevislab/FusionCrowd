@@ -1,14 +1,17 @@
 #include "pch.h"
 
 #include "FsmTestCase.h"
-#include <iostream>
-#include <fstream>
 
 #include "ThirdParty/date.h"
 #include "Util/RecordingSerializer.h"
 
 #include "Export/Fsm/IStrategyConfigurator.h"
 #include "Export/Fsm/IFsm.h"
+
+#include "TestCases/Utils.h"
+
+#include <iostream>
+#include <fstream>
 
 using namespace FusionCrowd;
 using namespace std::chrono;
@@ -131,7 +134,7 @@ namespace TestFusionCrowd
 		std::cout << "done." << std::endl;
 	}
 
-	void FsmTestCase::Run(const float& args)
+	void FsmTestCase::Run()
 	{
 		std::cout << "Running Fsm test case" << std::endl;
 
@@ -185,10 +188,4 @@ namespace TestFusionCrowd
 		_sim = nullptr;
 		std::cout << "Cleaned." << std::endl;
 	}
-
-	float FsmTestCase::RandFloat(float min, float max)
-	{
-		return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
-	}
-
 }

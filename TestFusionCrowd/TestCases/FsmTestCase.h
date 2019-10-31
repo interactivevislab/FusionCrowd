@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ITestCase.h"
+#include "TestCases/ITestCase.h"
 #include "Export/ComponentId.h"
 #include "Export/Export.h"
 
@@ -10,7 +10,7 @@
 
 namespace TestFusionCrowd
 {
-	class FsmTestCase : ITestCase<float>
+	class FsmTestCase : ITestCase
 	{
 	public:
 		FsmTestCase(
@@ -21,12 +21,12 @@ namespace TestFusionCrowd
 		);
 
 		void Pre() override;
-		void Run(const float& args) override;
+		void Run() override;
 		void Post() override;
 
-	private:
-		float RandFloat(float min, float max);
+		std::string GetName() const override { return "fsm"; };
 
+	private:
 		std::unique_ptr<FusionCrowd::ISimulatorFacade, decltype(&FusionCrowd::SimulatorFacadeDeleter)> _sim;
 
 		FusionCrowd::ComponentId _opComponent;

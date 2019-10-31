@@ -7,6 +7,8 @@
 #include "ThirdParty/date.h"
 #include "Util/RecordingSerializer.h"
 
+#include "TestCases/Utils.h"
+
 using namespace FusionCrowd;
 using namespace std::chrono;
 
@@ -48,7 +50,7 @@ namespace TestFusionCrowd
 		std::cout << "done." << std::endl;
 	}
 
-	void TshapedFancyTestCase::Run(const float& args)
+	void TshapedFancyTestCase::Run()
 	{
 		std::cout << "Running TshapedFancyTestCase test case" << std::endl;
 
@@ -101,10 +103,5 @@ namespace TestFusionCrowd
 
 		_sim = nullptr;
 		std::cout << "Cleaned." << std::endl;
-	}
-
-	float TshapedFancyTestCase::RandFloat(float min, float max)
-	{
-		return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
 	}
 }

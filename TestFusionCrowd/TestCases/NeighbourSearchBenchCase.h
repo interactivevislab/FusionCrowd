@@ -11,19 +11,18 @@
 
 namespace TestFusionCrowd
 {
-	class NeighbourSearchBenchCase : public ITestCase<float>
+	class NeighbourSearchBenchCase : public ITestCase
 	{
 	public:
-		NeighbourSearchBenchCase();
+		NeighbourSearchBenchCase(float coef);
 
 		void Pre() override;
-		void Run(const float & coef) override;
+		void Run() override;
 		void Post() override;
 
-		~NeighbourSearchBenchCase();
+		std::string GetName() const override { return "NeighbourSearch"; };
 
-	private:
-		float RandFloat(float min, float max);
+		~NeighbourSearchBenchCase();
 
 	private:
 		static const size_t stepsTotal = 100;
@@ -44,5 +43,6 @@ namespace TestFusionCrowd
 
 		int control1 = 0;
 		int control2 = 0;
+		float _coef;
 	};
 }

@@ -1,11 +1,14 @@
 #include "pch.h"
 
 #include "CrossingTestCase.h"
-#include <iostream>
-#include <fstream>
 
 #include "ThirdParty/date.h"
 #include "Util/RecordingSerializer.h"
+
+#include "TestCases/Utils.h"
+
+#include <iostream>
+#include <fstream>
 
 using namespace FusionCrowd;
 using namespace std::chrono;
@@ -46,7 +49,7 @@ namespace TestFusionCrowd
 		std::cout << "done." << std::endl;
 	}
 
-	void CrossingTestCase::Run(const float& args)
+	void CrossingTestCase::Run()
 	{
 		std::cout << "Running Corridor test case" << std::endl;
 
@@ -100,10 +103,4 @@ namespace TestFusionCrowd
 		_sim = nullptr;
 		std::cout << "Cleaned." << std::endl;
 	}
-
-	float CrossingTestCase::RandFloat(float min, float max)
-	{
-		return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
-	}
-
 }

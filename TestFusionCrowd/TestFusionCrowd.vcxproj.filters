@@ -18,9 +18,6 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestCases\ITestCase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestCases\NeighbourSearchBenchCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -40,6 +37,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestCases\FsmTestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases\ITestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases\Utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

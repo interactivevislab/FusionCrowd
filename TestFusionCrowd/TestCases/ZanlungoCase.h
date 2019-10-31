@@ -11,19 +11,19 @@
 
 namespace TestFusionCrowd
 {
-	class ZanlungoCase : public ITestCase<float>
+	class ZanlungoCase : public ITestCase
 	{
 	public:
 		ZanlungoCase();
 
 		void Pre() override;
-		void Run(const float & coef) override;
+		void Run() override;
 		void Post() override;
+		std::string GetName() const override { return "Zanlungo"; };
 
 		~ZanlungoCase();
 
 	private:
-		float RandFloat(float min, float max);
 		static const size_t stepsTotal = 5000;
 		long long measures[stepsTotal];
 

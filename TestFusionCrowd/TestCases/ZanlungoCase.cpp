@@ -12,6 +12,7 @@
 #include "Math/consts.h"
 #include "Benchmark/MicroscopicMetrics.h"
 #include "Export/Export.h"
+#include "TestCases/Utils.h"
 
 namespace TestFusionCrowd
 {
@@ -25,11 +26,6 @@ namespace TestFusionCrowd
 		{
 			positions.push_back(std::vector<Vector2>());
 		}
-	}
-
-	float ZanlungoCase::RandFloat(float min, float max)
-	{
-		return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
 	}
 
 	void ZanlungoCase::Pre()
@@ -51,7 +47,7 @@ namespace TestFusionCrowd
 		std::cout << "totalAgents = " << totalAgents << std::endl;
 	}
 
-	void ZanlungoCase::Run(const float & coeff)
+	void ZanlungoCase::Run()
 	{
 		std::string navPath = "Resources/square.nav";
 

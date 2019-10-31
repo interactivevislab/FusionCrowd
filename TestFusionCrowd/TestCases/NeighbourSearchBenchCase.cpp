@@ -13,6 +13,7 @@
 #include "Benchmark/MicroscopicMetrics.h"
 #include "Export/Export.h"
 
+#include "TestCases/Utils.h"
 
 namespace TestFusionCrowd
 {
@@ -20,12 +21,7 @@ namespace TestFusionCrowd
 	using namespace std::chrono;
 	using namespace FusionCrowd;
 
-	float NeighbourSearchBenchCase::RandFloat(float min, float max)
-	{
-		return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
-	}
-
-	NeighbourSearchBenchCase::NeighbourSearchBenchCase()
+	NeighbourSearchBenchCase::NeighbourSearchBenchCase(float coef) : _coef(coef)
 	{
 		for(size_t i = 0; i < 4; i++)
 		{
@@ -52,7 +48,7 @@ namespace TestFusionCrowd
 		std::cout << "totalAgents = " << totalAgents << std::endl;
 	}
 
-	void NeighbourSearchBenchCase::Run(const float & coeff)
+	void NeighbourSearchBenchCase::Run()
 	{
 		std::string navPath = "Resources/square.nav";
 
