@@ -1,5 +1,6 @@
 #include "GCFComponent.h"
-#include "../Math/geomQuery.h"
+#include "Math/geomQuery.h"
+#include "Navigation/AgentSpatialInfo.h"
 
 #include <algorithm>
 
@@ -26,17 +27,18 @@ namespace FusionCrowd
 			return left + right;
 		}
 
-		GCFComponent::GCFComponent()
+		GCFComponent::GCFComponent(std::shared_ptr<NavSystem> navSystem) : _navSystem(navSystem)
 		{
 			_reactionTime = 0.5f;
 			_nuAgent = 0.3f;
 			_maxAgentDist = 2.0f;
 			_maxAgentForse = 3.0f;
-			_agentInterpWidth = 0.12f;
+			_agentInterpWidth = 0.1f;
 			_speedColor = false;
 		}
 
-		GCFComponent::GCFComponent(float reactionTime, float nuAgent, float maxAgentDist, float maxAgentForse, float agentInterpWidth, bool speedColor)
+		GCFComponent::GCFComponent(std::shared_ptr<NavSystem> navSystem, float reactionTime, float nuAgent, float maxAgentDist, float maxAgentForse, float agentInterpWidth, bool speedColor)
+			: _navSystem(navSystem)
 		{
 			_reactionTime = reactionTime;
 			_nuAgent = nuAgent;
@@ -51,93 +53,99 @@ namespace FusionCrowd
 		{
 		}
 
-		void GCFComponent::AddAgent(FusionCrowd::Agent* agent, float mass)
+		bool GCFComponent::DeleteAgent(size_t id)
 		{
-			_agents[agent->_id] = AgentParamentrs();
-			UpdateEllipse(agent);
+			if(_agents.find(id) == _agents.end())
+				return false;
+
+			_agents.erase(id);
+
+			return true;
 		}
 
-		void GCFComponent::DeleteAgent(int idAgent)
-		{
-			_agents.erase(idAgent);
-		}
-
-		void GCFComponent::Update(FusionCrowd::Agent* agent, float timeStep)
+		void GCFComponent::Update(float timeStep)
 		{
 			_timeStep = timeStep;
-			ComputeNewVelocity(agent);
-
-			float delV = (agent->_vel - agent->_velNew).Length();
-
-			if (delV > agent->_maxAccel * timeStep) {
-				float w = agent->_maxAccel * timeStep / delV;
-				agent->_vel = (1.f - w) *  agent->_vel + w * agent->_velNew;
+			for(auto & pair : _agents)
+			{
+				auto & info = _navSystem->GetSpatialInfo(pair.first);
+				UpdateEllipse(info);
 			}
-			else {
-				agent->_vel = agent->_velNew;
+
+			for(auto & pair : _agents)
+			{
+				auto & info = _navSystem->GetSpatialInfo(pair.first);
+
+				ComputeNewVelocity(info);
 			}
-			Vector2 t = agent->_vel * timeStep;
-
-			agent->_pos += agent->_vel * timeStep;
-
-			agent->UpdateOrient(timeStep);
-			UpdateEllipse(agent);
 		}
 
-		void GCFComponent::ComputeNewVelocity(FusionCrowd::Agent* agent)
+		void GCFComponent::AddAgent(size_t agentId)
 		{
-			Vector2 force(DriveForce(agent));  // driving force
+			_agents[agentId] = AgentParamentrs();
+			UpdateEllipse(_navSystem->GetSpatialInfo(agentId));
+		}
 
-// Pedestrians
-			for (size_t j = 0; j < agent->_nearAgents.size(); ++j) {
-				const Agent* otherBase = agent->_nearAgents[j].agent;
-				const Agent* const other = static_cast<const Agent*>(otherBase);
+		void GCFComponent::ComputeNewVelocity(AgentSpatialInfo & agentInfo)
+		{
+			Vector2 force(DriveForce(agentInfo));  // driving force
+
+			for (const AgentSpatialInfo & other : _navSystem->GetNeighbours(agentInfo.id))
+			{
 				float effDist, K_ij, response, velScale, magnitude;
 				Vector2 forceDir;
-				if (GetRepulsionParameters(agent, other, effDist, forceDir, K_ij, response, velScale, magnitude) ==
-					0) {
+				if (GetRepulsionParameters(agentInfo, other, effDist, forceDir, K_ij, response, velScale, magnitude) == 0)
+				{
 					force += forceDir * magnitude;
 				}
 			}
 
 			// Obstacles
-			const float SPEED = agent->_vel.Length();
+			const float SPEED = agentInfo.vel.Length();
 			if (SPEED > 0.0001f) {
 				// No obstacle force if basically stationary
-				for (size_t i = 0; i < agent->_nearObstacles.size(); ++i) {
-					const Obstacle* obst = agent->_nearObstacles[i].obstacle;
-					force += ObstacleForce(agent, obst);
+				for (Obstacle & obst : _navSystem->GetClosestObstacles(agentInfo.id))
+				{
+					force += ObstacleForce(agentInfo, obst);
 				}
 			}
 
 			// We're assuming unit mass
-			agent->_velNew = agent->_vel + force * _timeStep;
+			agentInfo.velNew = agentInfo.vel + force * _timeStep;
 		}
 
-		void GCFComponent::UpdateEllipse(FusionCrowd::Agent* agent)
+		void GCFComponent::UpdateEllipse(const AgentSpatialInfo & agentInfo)
 		{
-			float speed = agent->_vel.Length();
+			float speed = agentInfo.vel.Length();
+
+			AgentParamentrs & agentParams = _agents[agentInfo.id];
 			// update ellipse
-			_agents[agent->_id]._ellipse.SetCenter(agent->_pos);
-			_agents[agent->_id]._ellipse.SetOrientation(agent->_orient);
+			agentParams._ellipse.SetCenter(agentInfo.pos);
+			agentParams._ellipse.SetOrientation(agentInfo.orient);
 			// compute major and minor axis values based on speed
-			float major = _agents[agent->_id]._aMin + _agents[agent->_id]._aRate * speed;
-			float minor = _agents[agent->_id]._bMax - _agents[agent->_id]._bGrowth * speed / 1.3f;
-			_agents[agent->_id]._ellipse.SetAxes(major, minor);
+			float major = agentParams._aMin + agentParams._aRate * speed;
+			float minor = agentParams._bMax - agentParams._bGrowth * speed / 1.3f;
+			agentParams._ellipse.SetAxes(major, minor);
 		}
 
-		Vector2 GCFComponent::DriveForce(FusionCrowd::Agent* agent) const
+		Vector2 GCFComponent::DriveForce(const AgentSpatialInfo & agentInfo) const
 		{
-			return (agent->_velPref.getPreferredVel() - agent->_vel) / _reactionTime;
+			return (agentInfo.prefVelocity.getPreferredVel() - agentInfo.vel) / _reactionTime;
 		}
 
-		int GCFComponent::GetRepulsionParameters(FusionCrowd::Agent* agent, const Agent* other, float& effDist, DirectX::SimpleMath::Vector2& forceDir,
+		int GCFComponent::GetRepulsionParameters(
+			const AgentSpatialInfo & agent, const AgentSpatialInfo & other,
+			float& effDist, DirectX::SimpleMath::Vector2& forceDir,
 			float& K_ij, float& response, float& velScale, float& magnitude) const
 		{
-			const float PREF_SPEED = agent->_velPref.getPreferredVel().Length();
-			forceDir = _agents.at(agent->_id)._ellipse.ellipseCenterDisplace(_agents.at(other->_id)._ellipse);
+			const float PREF_SPEED = agent.prefVelocity.getPreferredVel().Length();
+
+			const AgentParamentrs & agentParams = _agents.at(agent.id);
+			const AgentParamentrs & otherParams = _agents.at(other.id);
+
+			forceDir = agentParams._ellipse.ellipseCenterDisplace(otherParams._ellipse);
 			float centerDist = forceDir.Length();
-			float dca = _agents.at(agent->_id)._ellipse.DistanceOfClosestApproach(_agents.at(other->_id)._ellipse);
+			float dca = agentParams._ellipse.DistanceOfClosestApproach(otherParams._ellipse);
 			effDist = centerDist - dca;
 
 			float dist = forceDir.Length();
@@ -150,7 +158,7 @@ namespace FusionCrowd
 			}
 
 			// field of view
-			K_ij = agent->_orient.Dot(forceDir);
+			K_ij = agent.orient.Dot(forceDir);
 
 			// This represents 360 degree sensitivity, with the maximum sensitivity in the oriented
 			//	direction fading to zero in the opposite direction
@@ -158,7 +166,7 @@ namespace FusionCrowd
 			K_ij = (K_ij * 0.45f) - 0.55f;
 
 			// relative velocities
-			Vector2 relVel = agent->_vel - other->_vel;
+			Vector2 relVel = agent.vel - other.vel;
 
 			float velWeight = relVel.Dot(forceDir);
 			velScale = _nuAgent * PREF_SPEED;
@@ -175,25 +183,26 @@ namespace FusionCrowd
 			return 0;
 		}
 
-		Vector2 GCFComponent::ObstacleForce(Agent* agent,const Obstacle* obst) const
+		Vector2 GCFComponent::ObstacleForce(const AgentSpatialInfo & agent, Obstacle & obst) const
 		{
 			Vector2 force(0.f, 0.f);
 
-			if (obst->length() < 0.1f) {
+			if (obst.length() < 0.1f) {
 				return force;  // ignore short obstacles
 			}
 			// force from three points: nearest point, and point along wall in front
 			//	and point along wall behind.
 			Vector2 nearPt;  // gets set by distanceSqToPoint
 			float distSq;    // gets set by distanceSqToPoint
-			if (obst->distanceSqToPoint(agent->_pos, nearPt, distSq) == Obstacle::LAST) {
+			if (obst.distanceSqToPoint(agent.pos, nearPt, distSq) == Obstacle::LAST)
+			{
 				return force;
 			}
 
 			// No force if the agent is ON the point
 			if (distSq < 0.0001f) return force;
 
-			Vector2 disp = nearPt - agent->_pos;
+			Vector2 disp = nearPt - agent.pos;
 			float dist = sqrtf(distSq);
 			Vector2 dir = disp / dist;
 
@@ -201,19 +210,19 @@ namespace FusionCrowd
 			// away.  This makes *no* sense.  Even from a vision perspective, this doesn't make sense
 			// if the wall extends out in *front* of the agent.
 			// test visibility
-			float cosTheta = agent->_orient.Dot(dir);
+			float cosTheta = agent.orient.Dot(dir);
 			// No force if the point is more than 90 degrees away from
 			//	movement direction
 			if (cosTheta < -0.5f) return force;
 
 			// This is an APPROXIMATION of the actual distance to the wall
-			float boundDist = _agents.at(agent->_id)._ellipse.ApproximateMinimumDistance(nearPt);
+			float boundDist = _agents.at(agent.id)._ellipse.ApproximateMinimumDistance(nearPt);
 			float Bij = 1.f - dist / boundDist;
 
 			//// No force if the point lies inside the ellipse
 			if (Bij > 0.f) return force;
 
-			const float PREF_SPEED = agent->_velPref.getPreferredVel().Length();
+			const float PREF_SPEED = agent.prefVelocity.getPreferredVel().Length();
 			force = dir * Bij * PREF_SPEED;
 
 			return force;
@@ -226,7 +235,7 @@ namespace FusionCrowd
   //
   //          0.0        interpWidth          maxDist-interpWidth   maxDist
   //	     ----|-------------|--------------------------|--------------|----
-  //       5   |     4       |            3             |      2       | 1
+  //         5   |     4       |            3             |      2       | 1
 			const float maxDist = _maxAgentDist;
 			const float interpWidth = _agentInterpWidth;
 			const float maxForce = _maxAgentForse;

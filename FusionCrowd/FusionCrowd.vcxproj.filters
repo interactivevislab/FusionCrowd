@@ -43,6 +43,7 @@
     <ClCompile Include="Export\Export.cpp" />
     <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
     <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
+    <ClCompile Include="OperationComponent\GCFComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -104,6 +105,7 @@
     <ClInclude Include="Export\Fsm\IStrategyConfigurator.h" />
     <ClInclude Include="Export\Fsm\IFsm.h" />
     <ClInclude Include="Export\ModelAgentParams.h" />
+    <ClInclude Include="OperationComponent\GCFComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

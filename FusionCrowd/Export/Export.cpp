@@ -15,6 +15,7 @@
 #include "OperationComponent/ORCAComponent.h"
 #include "OperationComponent/ZanlungoComponent.h"
 #include "OperationComponent/PedVOComponent.h"
+#include "OperationComponent/GCFComponent.h"
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
 
@@ -139,6 +140,9 @@ namespace FusionCrowd
 					break;
 				case ComponentIds::PEDVO_ID:
 					sim->AddOpModel(std::make_shared<PedVO::PedVOComponent>(navSystem));
+					break;
+				case ComponentIds::GCF_ID:
+					sim->AddOpModel(std::make_shared<GCF::GCFComponent>(navSystem));
 					break;
 				default:
 					break;

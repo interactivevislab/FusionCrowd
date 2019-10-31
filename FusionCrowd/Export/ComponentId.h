@@ -27,6 +27,8 @@ namespace FusionCrowd
 		FUSION_CROWD_API const ComponentId ZANLUNGO_ID   = 103;
 		FUSION_CROWD_API const ComponentId PEDVO_ID      = 104;
 		FUSION_CROWD_API const ComponentId SWITCHING     = 105;
+		FUSION_CROWD_API const ComponentId GCF_ID        = 106;
+
 
 		FUSION_CROWD_API const ComponentId NAVMESH_ID = 200;
 

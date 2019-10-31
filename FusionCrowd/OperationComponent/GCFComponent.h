@@ -1,18 +1,20 @@
-/*#pragma once
-#include "OperationComponent/IOperationComponent.h"
-#include "Agent.h"
-#include "Config.h"
+#pragma once
+
 #include "Math/Util.h"
 #include "Math/Line.h"
 #include "AgentShape/Ellipse.h"
+#include "OperationComponent/IOperationComponent.h"
+#include "Navigation/NavSystem.h"
+#include "Export/ComponentId.h"
 
 #include <map>
+#include <memory>
 
 namespace FusionCrowd
 {
 	namespace GCF
 	{
-		struct FUSION_CROWD_API AgentParamentrs
+		struct AgentParamentrs
 		{
 			AgentShape::Ellipse _ellipse;
 			float _aMin;
@@ -38,29 +40,32 @@ namespace FusionCrowd
 
 		};
 
-		class FUSION_CROWD_API GCFComponent
+		class GCFComponent : public IOperationComponent
 		{
 		public:
-			GCFComponent();
-			GCFComponent(float reactionTime, float nuAgent, float maxAgentDist, float maxAgentForse, float agentInterpWidth, bool speedColor);
+			GCFComponent(std::shared_ptr<NavSystem> navSystem);
+			GCFComponent(std::shared_ptr<NavSystem> navSystem, float reactionTime, float nuAgent, float maxAgentDist, float maxAgentForse, float agentInterpWidth, bool speedColor);
 			~GCFComponent();
 
-			void AddAgent(FusionCrowd::Agent* agent, float mass);
-			void DeleteAgent(int idAgent);
+			ComponentId GetId() override { return ComponentIds::GCF_ID; };
+			void AddAgent(size_t id) override;
+			bool DeleteAgent(size_t id) override;
+			void Update(float timeStep) override;
 
-			void Update(FusionCrowd::Agent* agent, float timeStep);
-			void ComputeNewVelocity(FusionCrowd::Agent* agent);
+			void ComputeNewVelocity(AgentSpatialInfo & agentInfo);
 
 
-			void UpdateEllipse(FusionCrowd::Agent* agent);
-			DirectX::SimpleMath::Vector2 DriveForce(FusionCrowd::Agent* agent) const;
-			int GetRepulsionParameters(FusionCrowd::Agent* agent, const Agent* other, float& effDist, DirectX::SimpleMath::Vector2& forceDir,
+			void UpdateEllipse(const AgentSpatialInfo & agentInfo);
+			DirectX::SimpleMath::Vector2 DriveForce(const AgentSpatialInfo & agentInfo) const;
+			int GetRepulsionParameters(const AgentSpatialInfo & agent, const AgentSpatialInfo & other,
+				float& effDist, DirectX::SimpleMath::Vector2& forceDir,
 				float& K_ij, float& response, float& velScale, float& magnitude) const;
-			DirectX::SimpleMath::Vector2 ObstacleForce(FusionCrowd::Agent* agent, const Obstacle* obst) const;
+			DirectX::SimpleMath::Vector2 ObstacleForce(const AgentSpatialInfo & agent, Obstacle & obst) const;
 			float ComputeDistanceResponse(float effDist) const;
 
 		private:
-			std::map<int, AgentParamentrs> _agents;
+			std::shared_ptr<NavSystem> _navSystem;
+			std::map<size_t, AgentParamentrs> _agents;
 			float _timeStep;
 
 			float _reactionTime;
@@ -72,5 +77,3 @@ namespace FusionCrowd
 		};
 	}
 }
-
-*/
