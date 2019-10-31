@@ -149,9 +149,12 @@ namespace FusionCrowd
 
 			//SetStrategyComponent(agentId, strategyId);
 
-			auto & c = _strategyComponents[strategyId];
-			c->AddAgent(agentId);
-			agent.stratComponent = c;
+			if(_strategyComponents.find(strategyId) != _strategyComponents.end())
+			{
+				auto & c = _strategyComponents[strategyId];
+				c->AddAgent(agentId);
+				agent.stratComponent = c;
+			}
 
 			return agentId;
 		}

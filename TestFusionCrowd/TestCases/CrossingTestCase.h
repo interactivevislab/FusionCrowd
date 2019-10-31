@@ -21,19 +21,9 @@ namespace TestFusionCrowd
 		);
 
 		void Pre() override;
-		void Run() override;
-		void Post() override;
-
 		std::string GetName() const override { return "Crossing"; };
 
 	private:
 		FusionCrowd::ComponentId _opComponent;
-		std::unique_ptr<FusionCrowd::ISimulatorFacade, decltype(&FusionCrowd::SimulatorFacadeDeleter)> _sim;
-
-		const size_t _agentsNum;
-		const size_t _simulationSteps;
-		const bool _writeTrajectories;
-		std::chrono::time_point<std::chrono::system_clock> _startTime;
-		std::vector<long long> _measures;
 	};
 }

@@ -2,19 +2,12 @@
 
 #include "FsmTestCase.h"
 
-#include "ThirdParty/date.h"
-#include "Util/RecordingSerializer.h"
-
 #include "Export/Fsm/IStrategyConfigurator.h"
 #include "Export/Fsm/IFsm.h"
 
 #include "TestCases/Utils.h"
 
-#include <iostream>
-#include <fstream>
-
 using namespace FusionCrowd;
-using namespace std::chrono;
 
 namespace TestFusionCrowd
 {
@@ -39,19 +32,13 @@ namespace TestFusionCrowd
 	};
 
 	FsmTestCase::FsmTestCase(FusionCrowd::ComponentId opComponent, size_t agentsNum, size_t simulationSteps, bool writeTrajectories):
-		_opComponent(opComponent),
-		_agentsNum(agentsNum),
-		_simulationSteps(simulationSteps),
-		_sim(nullptr, nullptr),
-		_startTime(),
-		_writeTrajectories(writeTrajectories)
+		ITestCase(agentsNum, simulationSteps, writeTrajectories),
+		_opComponent(opComponent)
 	{
 	}
 
 	void FsmTestCase::Pre()
 	{
-		std::cout << "Fsm test case setting up... ";
-
 		std::unique_ptr<Fsm::IBuilder, decltype(&Fsm::BuilderDeleter)> fsmBuilder(Fsm::Builder(), Fsm::BuilderDeleter);
 
 		auto * flowCW = fsmBuilder
@@ -99,7 +86,7 @@ namespace TestFusionCrowd
 		float const x4 = 28.0f; float const y4 = 12.0f;
 
 		_sim = std::unique_ptr<ISimulatorFacade, decltype(&SimulatorFacadeDeleter)>(builder->Build(), SimulatorFacadeDeleter);
-		_sim->SetIsRecording(_writeTrajectories);
+		_sim->SetIsRecording(WriteTrajectories);
 
 		IStrategyComponent* tmp = _sim->GetStrategy(ComponentIds::FSM_ID);
 		auto * fsmStrat = dynamic_cast<Fsm::IStrategyConfigurator *>(tmp);
@@ -130,62 +117,5 @@ namespace TestFusionCrowd
 			size_t id = _sim->AddAgent(RandFloat(x2 - 1, x2 + 1), RandFloat(y2 - 1, y2 + 1), _opComponent, ComponentIds::FSM_ID);
 			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, ccwMachine);
 		}
-
-		std::cout << "done." << std::endl;
-	}
-
-	void FsmTestCase::Run()
-	{
-		std::cout << "Running Fsm test case" << std::endl;
-
-		_startTime = system_clock::now();
-		for (int i = 0; i < _simulationSteps; i++)
-		{
-			high_resolution_clock::time_point t1 = high_resolution_clock::now();
-			_sim->DoStep();
-
-			high_resolution_clock::time_point t2 = high_resolution_clock::now();
-			long long duration = duration_cast<microseconds>(t2 - t1).count();
-			_measures.push_back(duration);
-
-			if(i % 10 == 0)
-			{
-				std::cout << "  Simulation step "
-						  << i << "/" << _simulationSteps
-			              << " in " << duration << " microseconds"
-			              << std::endl;
-			}
-		}
-
-		std::cout << "Fsm test case finished" << std::endl;
-	}
-
-	void FsmTestCase::Post()
-	{
-		std::cout << "Fsm test case cleaning up... " << std::endl;
-
-		std::string d = date::format("%Y%m%d_%H%M%S, ", _startTime);
-
-		{ // RAII
-			std::ofstream time_measures(d + "fsm_step_times_microseconds.csv");
-			std::cout << "Writing step times" << std::endl;
-
-			for(auto val : _measures)
-			{
-				time_measures << val << std::endl;
-			}
-		}
-
-		if(_writeTrajectories)
-		{
-			std::cout << "Writing trajectories" << std::endl;
-
-			std::string filename(d + "fsm_trajs.csv");
-			auto & rec = _sim->GetRecording();
-			Recordings::Serialize(rec, filename.c_str(), filename.size());
-		}
-
-		_sim = nullptr;
-		std::cout << "Cleaned." << std::endl;
 	}
 }

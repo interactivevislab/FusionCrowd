@@ -2,6 +2,9 @@
 
 #include "pch.h"
 #include <iostream>
+#include <fstream>
+#include <iterator>
+#include <direct.h>
 
 #include "TestCases/NeighbourSearchBenchCase.h"
 #include "TestCases/ZanlungoCase.h"
@@ -12,54 +15,135 @@
 #include "TestCases/ITestCase.h"
 
 #include "Export/ComponentId.h"
+#include "Export/Export.h"
+#include "Util/RecordingSerializer.h"
+
+#include "ThirdParty/date.h"
 
 using namespace TestFusionCrowd;
 
+using time_point = std::chrono::time_point<std::chrono::system_clock>;
+
+void Run(std::shared_ptr<ITestCase> testCase, std::vector<long long> & outMeasurements, time_point & outStartTime)
+{
+	std::vector<long long> measurements;
+
+
+	using namespace std::chrono;
+
+	auto steps = testCase->GetStepCount();
+	auto sim = testCase->GetSim();
+	bool verobseSteps = testCase->VerboseSteps;
+
+	outStartTime = system_clock::now();
+	for (size_t i = 0; i < steps; i++)
+	{
+		high_resolution_clock::time_point t1 = high_resolution_clock::now();
+		sim->DoStep();
+
+		high_resolution_clock::time_point t2 = high_resolution_clock::now();
+
+		long long duration = duration_cast<microseconds>(t2 - t1).count();
+		measurements.push_back(duration);
+
+		if(verobseSteps && i % 10 == 0)
+		{
+			std::cout << "  Step " << i << "/" << steps
+		              << " in " << duration << " microseconds"
+		              << std::endl;
+		}
+	}
+
+	outMeasurements.clear();
+	std::copy(measurements.begin(), measurements.end(), std::back_inserter(outMeasurements));
+
+	std::sort(measurements.begin(), measurements.end());
+
+	std::cout << "  Step time stats:"
+		<< " min=" << measurements[0]
+		<< " Q1="  << measurements[steps / 4]
+		<< " Q2="  << measurements[steps / 2]
+		<< " Q3="  << measurements[steps * 3 / 4]
+		<< " Q95=" << measurements[steps * 95 / 100]
+		<< " max=" << measurements[steps - 1]
+		<< std::endl;
+}
+
+void WriteToFile(std::shared_ptr<ITestCase> testCase, std::vector<long long> measurements, time_point startTime, std::string folder)
+{
+	std::string d = date::format("%Y%m%d_%H%M%S", startTime);
+	std::string prefix = folder + "\\" + d + "_" + testCase->GetName();
+
+	if(testCase->WriteTime)
+	{
+		std::cout << "  1. Writing step times" << std::endl;
+		std::ofstream time_measures(prefix + "_step_times_microsec.csv");
+
+		for(auto val : measurements)
+		{
+			time_measures << val << std::endl;
+		}
+	}
+
+	if(testCase->WriteTrajectories)
+	{
+		std::cout << "  2. Writing trajectories" << std::endl;
+
+		std::string filename(prefix + "_trajs.csv");
+		auto & rec = testCase->GetSim()->GetRecording();
+		FusionCrowd::Recordings::Serialize(rec, filename.c_str(), filename.size());
+	}
+}
+
 int main()
 {
-	NeighbourSearchBenchCase case1(0.5f);
-	ZanlungoCase case2;
-	CrossingTestCase crossingCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false);
-	PinholeTestCase pinholeCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000, false);
-	TshapedFancyTestCase tshapedCase(FusionCrowd::ComponentIds::ZANLUNGO_ID, 200, 1000, false);
-	FsmTestCase fsmTestCase(FusionCrowd::ComponentIds::GCF_ID, 50, 2000, true);
+	std::vector<std::shared_ptr<ITestCase>> cases =
+	{
+		std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::GCF_ID, 50, 2000, true)),
+		std::shared_ptr<ITestCase>((ITestCase*) new ZanlungoCase()),
+		std::shared_ptr<ITestCase>((ITestCase*) new CrossingTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false)),
+		std::shared_ptr<ITestCase>((ITestCase*) new PinholeTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000)),
+		std::shared_ptr<ITestCase>((ITestCase*) new TshapedFancyTestCase(FusionCrowd::ComponentIds::ZANLUNGO_ID, 200, 1000)),
+	};
 
-	/*crossingCase.Pre();
-	crossingCase.Run(0);
-	crossingCase.Post();
+	/*
+	// Overclocking setup
+	cases.push_back(std::shared_ptr<ITestCase>((ITestCase*) new NeighbourSearchBenchCase(3.0f)));
+	cases.push_back(std::shared_ptr<ITestCase>((ITestCase*) new NeighbourSearchBenchCase(3.0f)));
+	for (float coeff = 0.5; coeff < 10; coeff += 0.25)
+	{
+		cases.push_back(std::shared_ptr<ITestCase>((ITestCase*) new NeighbourSearchBenchCase(coeff)));
+	}
+	*/
 
-	pinholeCase.Pre();
-	pinholeCase.Run(0);
-	pinholeCase.Post();
+	std::vector<long long> measurements;
+	time_point startTime;
 
-	tshapedCase.Pre();
-	tshapedCase.Run(0);
-	tshapedCase.Post();*/
-
-	fsmTestCase.Pre();
-	fsmTestCase.Run();
-	fsmTestCase.Post();
-
-	std::vector<std::shared_ptr<ITestCase>> cases;
+	std::string folderName = date::format("%Y%m%d_%H%M%S", std::chrono::system_clock::now());
+	_mkdir(folderName.c_str());
 
 	for(auto testCase : cases)
 	{
+		std::cout << "Case " << testCase->GetName() << std::endl
+		          << " #agents=" << testCase->GetAgentCount() << ", #step=" << testCase->GetStepCount() << std::endl;
 
+		std::cout << " 1. Setting up..." << std::endl;
+		testCase->Pre();
+		std::cout << "  Done." << std::endl;
+
+		std::cout << " 2. Running..." << std::endl;
+		Run(testCase, measurements, startTime);
+		std::cout << "  Done." << std::endl;
+
+		std::cout << " 3. Saving results..." << std::endl;
+		WriteToFile(testCase, measurements, startTime, folderName);
+		std::cout << "  Done." << std::endl;
+
+		std::cout << " 4. Cleaning up ..." << std::endl;
+		testCase->Post();
+		std::cout << "  Done." << std::endl;
+
+		std::cout << std::endl << std::endl;
 	}
 
-	/*
-	case1.Pre();
-	case2.Pre();
-
-	std::cout << "Overclocking launch... ";
-	case1.Run(3.0f);
-	case2.Run(3.0f);
-	std::cout << "complete" << std::endl;
-
-	for (float coeff = 0.5; coeff < 10; coeff += 0.25) {
-		std::cout << "coeff = " << coeff << '\t';
-		case1.Run(coeff);
-		case1.Post();
-	}
-	*/
 }

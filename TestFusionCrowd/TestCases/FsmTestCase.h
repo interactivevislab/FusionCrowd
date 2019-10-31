@@ -21,19 +21,10 @@ namespace TestFusionCrowd
 		);
 
 		void Pre() override;
-		void Run() override;
-		void Post() override;
 
 		std::string GetName() const override { return "fsm"; };
 
 	private:
-		std::unique_ptr<FusionCrowd::ISimulatorFacade, decltype(&FusionCrowd::SimulatorFacadeDeleter)> _sim;
-
 		FusionCrowd::ComponentId _opComponent;
-		const size_t _agentsNum;
-		const size_t _simulationSteps;
-		const bool _writeTrajectories;
-		std::chrono::time_point<std::chrono::system_clock> _startTime;
-		std::vector<long long> _measures;
 	};
 }
