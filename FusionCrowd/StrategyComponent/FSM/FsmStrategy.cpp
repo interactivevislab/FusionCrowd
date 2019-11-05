@@ -6,7 +6,7 @@ using namespace DirectX::SimpleMath;
 namespace FusionCrowd
 {
 	FsmStrategy::FsmStrategy(std::shared_ptr<Simulator> simulator, std::shared_ptr<NavSystem> navSystem)
-		: _sim(simulator), _navSystem(navSystem)
+		: _sim(simulator), _navSystem(navSystem), _random_engine(std::random_device()())
 	{
 	}
 
@@ -18,19 +18,27 @@ namespace FusionCrowd
 		return id;
 	}
 
-	void FsmStrategy::CreateGoToAction(Fsm::State duringState, float goalX, float goalY)
+	void FsmStrategy::CreateGoToAction(const Fsm::State duringState, const Fsm::Point goal)
 	{
-		_gotoActions.insert({duringState, Vector2(goalX, goalY)});
+		_gotoActions.insert({ duringState, Vector2(goal.x, goal.y) });
 	}
 
-	void FsmStrategy::SetTickEvent(Fsm::Event fireEvt)
+	void FsmStrategy::SetTickEvent(const Fsm::Event fireEvt)
 	{
 		_tickEvent = fireEvt;
 	}
 
-	void FsmStrategy::CreateCloseToEvent(Fsm::Event fireEvt, float pointX, float pointY)
+	void FsmStrategy::CreatePointReachEvent(const Fsm::Event fireEvt, const Fsm::Point point, const float radius)
 	{
-		_closeToEvents.push_back({Vector2(pointX, pointY), fireEvt});
+		_closeToEvents.push_back({Vector2(point.x, point.y), fireEvt, radius * radius});
+	}
+
+	void FsmStrategy::CreateAnyPointReachEvent(const Fsm::Event fireEvt, const FCArray<Fsm::Point> & points, const float radius)
+	{
+		for(const Fsm::Point & p : points)
+		{
+			_closeToEvents.push_back({Vector2(p.x, p.y), fireEvt, radius * radius});
+		}
 	}
 
 	void FsmStrategy::AddAgent(size_t id, size_t machine_id)
@@ -69,7 +77,7 @@ namespace FusionCrowd
 			state = _machines[fsmId]->Advance(oldState, _tickEvent);
 			for (CloseToEventDesc & desc : _closeToEvents)
 			{
-				if((desc.target-agentInfo.pos).LengthSquared() < 0.2 * 0.2)
+				if((desc.target-agentInfo.pos).LengthSquared() < desc.radiusSqr)
 				{
 					state = _machines[fsmId]->Advance(state, desc.eventToFire);
 				}

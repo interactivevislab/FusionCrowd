@@ -10,6 +10,7 @@
 
 #include <map>
 #include <memory>
+#include <random>
 
 #include <Math/Util.h>
 
@@ -24,9 +25,11 @@ namespace FusionCrowd
 		);
 
 		size_t AddMachine(Fsm::IFsm* machine) override;
-		void CreateGoToAction(Fsm::State duringState, float goalX, float goalY) override;
-		void SetTickEvent(Fsm::Event fireEvt) override;
-		void CreateCloseToEvent(Fsm::Event fireEvt, float pointX, float pointY) override;
+		void CreateGoToAction(const Fsm::State duringState, const Fsm::Point goal) override;
+		void CreatePointReachEvent(const Fsm::Event fireEvt, const Fsm::Point point, const float radius) override;
+		void CreateAnyPointReachEvent(const Fsm::Event fireEvt, const FCArray<Fsm::Point> & points, const float radius) override;
+
+		void SetTickEvent(const Fsm::Event fireEvt) override;
 
 		void AddAgent(size_t id) override;
 		void AddAgent(size_t id, size_t machine_id);
@@ -44,6 +47,7 @@ namespace FusionCrowd
 		{
 			DirectX::SimpleMath::Vector2 target;
 			Fsm::Event eventToFire;
+			float radiusSqr;
 		};
 
 		struct AgentFsmInfo
@@ -56,6 +60,7 @@ namespace FusionCrowd
 
 		Fsm::Event _tickEvent;
 
+		std::default_random_engine _random_engine;
 		std::shared_ptr<Simulator> _sim;
 		std::shared_ptr<NavSystem> _navSystem;
 		std::map<size_t, std::unique_ptr<Fsm::IFsm>> _machines;

@@ -41,23 +41,17 @@ namespace TestFusionCrowd
 	{
 		std::unique_ptr<Fsm::IBuilder, decltype(&Fsm::BuilderDeleter)> fsmBuilder(Fsm::Builder(), Fsm::BuilderDeleter);
 
-		auto * flowCW = fsmBuilder
-			->WithStates()
-				->Initial(States::Initial)
-				->Intermediate(States::HeadingTo1)
-				->Intermediate(States::HeadingTo2)
-				->Intermediate(States::HeadingTo3)
-				->Intermediate(States::HeadingTo4)
-				->Final(States::Final)
-			->WithTransitions()
-				->Add(States::Initial,    States::HeadingTo1, Events::Tick)
-				->Add(States::HeadingTo1, States::HeadingTo4, Events::Reached1)
-				->Add(States::HeadingTo4, States::HeadingTo3, Events::Reached4)
-				->Add(States::HeadingTo3, States::HeadingTo2, Events::Reached3)
-				->Add(States::HeadingTo2, States::Final,      Events::Reached2)
-			->Build();
+		FCArray<Fsm::State> start(2);
+		start[0] = States::HeadingTo3;
+		start[1] = States::HeadingTo4;
 
-		auto * flowCCW = fsmBuilder
+		FCArray<Fsm::State> heading1234(4);
+		heading1234[0] = States::HeadingTo1;
+		heading1234[1] = States::HeadingTo2;
+		heading1234[2] = States::HeadingTo3;
+		heading1234[3] = States::HeadingTo4;
+
+		auto * flow = fsmBuilder
 			->WithStates()
 				->Initial(States::Initial)
 				->Intermediate(States::HeadingTo1)
@@ -66,11 +60,11 @@ namespace TestFusionCrowd
 				->Intermediate(States::HeadingTo4)
 				->Final(States::Final)
 			->WithTransitions()
-				->Add(States::Initial,    States::HeadingTo2, Events::Tick)
-				->Add(States::HeadingTo2, States::HeadingTo3, Events::Reached2)
-				->Add(States::HeadingTo3, States::HeadingTo4, Events::Reached3)
-				->Add(States::HeadingTo4, States::HeadingTo1, Events::Reached4)
-				->Add(States::HeadingTo1, States::Final,      Events::Reached1)
+				->AddRandom(States::Initial, start, Events::Tick)
+				->AddRandom(States::HeadingTo3, heading1234, Events::Reached3)
+				->AddRandom(States::HeadingTo4, heading1234, Events::Reached4)
+				->Add(States::HeadingTo1, States::Final, Events::Reached1)
+				->Add(States::HeadingTo2, States::Final, Events::Reached2)
 			->Build();
 
 		std::unique_ptr<ISimulatorBuilder, decltype(&BuilderDeleter)> builder(BuildSimulator(), BuilderDeleter);
@@ -79,11 +73,10 @@ namespace TestFusionCrowd
 			->WithOp(_opComponent)
 		    ->WithStrategy(ComponentIds::FSM_ID);
 
-		float const x1 = 4.0f; float const y1 = 2.0f;
-		float const x2 = 3.0f; float const y2 = 17.0f;
-
-		float const x3 = 28.0f; float const y3 = 6.5f;
-		float const x4 = 28.0f; float const y4 = 12.0f;
+		const Fsm::Point p1 = {4.0f, 2.0f};
+		const Fsm::Point p2 = {3.0f, 17.0f};
+		const Fsm::Point p3 = {28.0f, 6.5f};
+		const Fsm::Point p4 = {28.0f, 12.0f};
 
 		_sim = std::unique_ptr<ISimulatorFacade, decltype(&SimulatorFacadeDeleter)>(builder->Build(), SimulatorFacadeDeleter);
 		_sim->SetIsRecording(WriteTrajectories);
@@ -91,31 +84,30 @@ namespace TestFusionCrowd
 		IStrategyComponent* tmp = _sim->GetStrategy(ComponentIds::FSM_ID);
 		auto * fsmStrat = dynamic_cast<Fsm::IStrategyConfigurator *>(tmp);
 
-		fsmStrat->CreateGoToAction(States::HeadingTo1, x1, y1);
-		fsmStrat->CreateGoToAction(States::HeadingTo2, x2, y2);
-		fsmStrat->CreateGoToAction(States::HeadingTo3, x3, y3);
-		fsmStrat->CreateGoToAction(States::HeadingTo4, x4, y4);
+		fsmStrat->CreateGoToAction(States::HeadingTo1, p1);
+		fsmStrat->CreateGoToAction(States::HeadingTo2, p2);
+		fsmStrat->CreateGoToAction(States::HeadingTo3, p3);
+		fsmStrat->CreateGoToAction(States::HeadingTo4, p4);
 
 		fsmStrat->SetTickEvent(Events::Tick);
-		fsmStrat->CreateCloseToEvent(Events::Reached1, x1, y1);
-		fsmStrat->CreateCloseToEvent(Events::Reached2, x2, y2);
-		fsmStrat->CreateCloseToEvent(Events::Reached3, x3, y3);
-		fsmStrat->CreateCloseToEvent(Events::Reached4, x4, y4);
+		fsmStrat->CreatePointReachEvent(Events::Reached1, p1, 2.0f);
+		fsmStrat->CreatePointReachEvent(Events::Reached2, p2, 2.0f);
+		fsmStrat->CreatePointReachEvent(Events::Reached3, p3, 2.0f);
+		fsmStrat->CreatePointReachEvent(Events::Reached4, p4, 2.0f);
 
-		Fsm::AgentParams ccwMachine; ccwMachine.FsmId = fsmStrat->AddMachine(flowCCW);
-		Fsm::AgentParams cwMachine;   cwMachine.FsmId = fsmStrat->AddMachine(flowCW);
+		Fsm::AgentParams flowMachineParams; flowMachineParams.FsmId = fsmStrat->AddMachine(flow);
 
 		size_t firstHalf = _agentsNum / 2;
 		for (int i = 0; i < firstHalf; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(x1 - 1, x1 + 1), RandFloat(y1 - 1, y1 + 1), _opComponent, ComponentIds::FSM_ID);
-			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, cwMachine);
+			size_t id = _sim->AddAgent(RandFloat(p1.x - 1, p1.x + 1), RandFloat(p1.y - 1, p1.y + 1), _opComponent, ComponentIds::FSM_ID);
+			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, flowMachineParams);
 		}
 
 		for (int i = firstHalf; i < _agentsNum; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(x2 - 1, x2 + 1), RandFloat(y2 - 1, y2 + 1), _opComponent, ComponentIds::FSM_ID);
-			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, ccwMachine);
+			size_t id = _sim->AddAgent(RandFloat(p2.x - 1, p2.x + 1), RandFloat(p2.y - 1, p2.y + 1), _opComponent, ComponentIds::FSM_ID);
+			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, flowMachineParams);
 		}
 	}
 }

@@ -12,6 +12,7 @@
 #include "TestCases/PinholeTestCase.h"
 #include "TestCases/TshapedFancyTestCase.h"
 #include "TestCases/FsmTestCase.h"
+#include "TestCases/StenkaNaStenkuTestCase.h"
 #include "TestCases/ITestCase.h"
 
 #include "Export/ComponentId.h"
@@ -99,11 +100,13 @@ int main()
 {
 	std::vector<std::shared_ptr<ITestCase>> cases =
 	{
-		std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::GCF_ID, 50, 2000, true)),
-		std::shared_ptr<ITestCase>((ITestCase*) new ZanlungoCase()),
-		std::shared_ptr<ITestCase>((ITestCase*) new CrossingTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false)),
-		std::shared_ptr<ITestCase>((ITestCase*) new PinholeTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000)),
-		std::shared_ptr<ITestCase>((ITestCase*) new TshapedFancyTestCase(FusionCrowd::ComponentIds::ZANLUNGO_ID, 200, 1000)),
+
+		std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::ORCA_ID, 50, 2000, true)),
+		// std::shared_ptr<ITestCase>((ITestCase*) new ZanlungoCase()),
+		// std::shared_ptr<ITestCase>((ITestCase*) new CrossingTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false)),
+		// std::shared_ptr<ITestCase>((ITestCase*) new PinholeTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000)),
+		// std::shared_ptr<ITestCase>((ITestCase*) new TshapedFancyTestCase(FusionCrowd::ComponentIds::ZANLUNGO_ID, 200, 1000)),
+		// std::shared_ptr<ITestCase>((ITestCase*) new StenkaNaStenkuTestCase(10000, 5000, false)),
 	};
 
 	/*
@@ -119,7 +122,7 @@ int main()
 	std::vector<long long> measurements;
 	time_point startTime;
 
-	std::string folderName = date::format("%Y%m%d_%H%M%S", std::chrono::system_clock::now());
+	std::string folderName = date::format("%Y%m%d", std::chrono::system_clock::now());
 	_mkdir(folderName.c_str());
 
 	for(auto testCase : cases)

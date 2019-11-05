@@ -1,18 +1,52 @@
 #include "Export/Fsm/IFsm.h"
 
-#include <unordered_map>
+#include <map>
+#include <random>
 
 namespace FusionCrowd
 {
 	namespace Fsm
 	{
-		using FsmTransitions = std::unordered_map<Event, State>;
-		using FsmDict = std::unordered_map<State, FsmTransitions>;
+		using FsmTransitions = std::map<Event, std::unique_ptr<IFsmTransition>>;
+		using FsmDict = std::map<State, FsmTransitions>;
+
+		class SingleTransition : public IFsmTransition
+		{
+		public:
+			SingleTransition(State target, Event when) : _target(target), _when(when) { }
+
+			Event When() const override { return _when; }
+			State GetNext() override { return _target; }
+		private:
+			Event _when;
+			State _target;
+		};
+
+		class RandomTransition : public IFsmTransition
+		{
+		public:
+			RandomTransition(FCArray<State> targets, Event when) :
+				_targets(targets), _when(when), _random_engine((std::random_device())())
+			{
+			}
+
+			Event When() const override { return _when; }
+			State GetNext()
+			{
+				std::uniform_int_distribution<int> gen(0, _targets.size() - 1);
+
+				return _targets[gen(_random_engine)];
+			}
+		private:
+			Event _when;
+			FCArray<State> _targets;
+			std::mt19937 _random_engine;
+		};
 
 		class FsmImpl : public IFsm
 		{
 		public:
-			FsmImpl(State initial, State final, FsmDict transitions) : _transitions(transitions), _initial(initial), _final(final)
+			FsmImpl(State initial, State final, FsmDict && transitions) : _initial(initial), _final(final), _transitions(std::move(transitions))
 			{
 			}
 
@@ -24,12 +58,12 @@ namespace FusionCrowd
 				if(_transitions.find(currentState) == _transitions.end())
 					return currentState;
 
-				auto & transMap = _transitions.find(currentState)->second;
+				auto & transitionsMap = _transitions[currentState];
 
-				if(transMap.find(input) == transMap.end())
+				if(transitionsMap.find(input) == transitionsMap.end())
 					return currentState;
 
-				return transMap[input];
+				return transitionsMap[input]->GetNext();
 			}
 
 		private:
@@ -43,7 +77,7 @@ namespace FusionCrowd
 		public:
 			IFsm* Build() override
 			{
-				auto result = new FsmImpl(_initial, _final, _dict);
+				auto result = new FsmImpl(_initial, _final, std::move(_dict));
 				_dict.clear();
 
 				return result;
@@ -51,7 +85,14 @@ namespace FusionCrowd
 
 			IBuilderAddTransitions* Add(State from, State to, Event when) override
 			{
-				_dict[from].insert({when, to});
+				_dict[from].insert({ when, std::make_unique<SingleTransition>(to, when) });
+
+				return this;
+			}
+
+			IBuilderAddTransitions* AddRandom(State from, FCArray<State> destOptions, Event when) override
+			{
+				_dict[from].insert({ when, std::make_unique<RandomTransition>(destOptions, when) });
 
 				return this;
 			}

@@ -2,6 +2,7 @@
 
 #include "Export/Config.h"
 #include "Export/Export.h"
+#include "Export/FCArray.h"
 
 namespace FusionCrowd
 {
@@ -20,11 +21,19 @@ namespace FusionCrowd
 				virtual State Advance(State currentState, Event input) = 0;
 			};
 
+			class FUSION_CROWD_API IFsmTransition
+			{
+			public:
+				virtual Event When() const = 0;
+				virtual State GetNext() = 0;
+				virtual ~IFsmTransition() { };
+			};
 
 			class FUSION_CROWD_API IBuilderAddTransitions
 			{
 			public:
 				virtual IBuilderAddTransitions* Add(State from, State to, Event when) = 0;
+				virtual IBuilderAddTransitions* AddRandom(State from, FCArray<State> destOptions, Event when) = 0;
 
 				virtual IFsm* Build() = 0;
 			};
