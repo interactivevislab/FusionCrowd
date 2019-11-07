@@ -18,45 +18,70 @@ namespace FusionCrowd
 		return id;
 	}
 
-	void FsmStrategy::CreateGoToAction(const Fsm::State duringState, const Fsm::Point goal)
+	void FsmStrategy::CreateGoToAction(const MachineId machineId, const Fsm::State duringState, const Fsm::Point goal)
 	{
-		_gotoActions.insert({ duringState, Vector2(goal.x, goal.y) });
+		if(_gotoActions.find(machineId) == _gotoActions.end())
+		{
+			_gotoActions.insert({ machineId, { } });
+		}
+
+		_gotoActions[machineId].insert({ duringState, Vector2(goal.x, goal.y) });
 	}
 
-	void FsmStrategy::SetTickEvent(const Fsm::Event fireEvt)
+	void FsmStrategy::SetTickEvent(const MachineId machineId, const Fsm::Event fireEvt)
 	{
-		_tickEvent = fireEvt;
+		_tickEvents.insert({ machineId, fireEvt });
 	}
 
-	void FsmStrategy::CreatePointReachEvent(const Fsm::Event fireEvt, const Fsm::Point point, const float radius)
+	void FsmStrategy::CreatePointReachEvent(const MachineId machineId, const Fsm::Event fireEvt, const Fsm::Point point, const float radius)
 	{
-		_closeToEvents.push_back({Vector2(point.x, point.y), fireEvt, radius * radius});
+		if(_closeToEvents.find(machineId) == _closeToEvents.end())
+		{
+			_closeToEvents.insert({ machineId, { } });
+		}
+
+		_closeToEvents[machineId].push_back({Vector2(point.x, point.y), fireEvt, radius * radius});
 	}
 
-	void FsmStrategy::CreateAnyPointReachEvent(const Fsm::Event fireEvt, const FCArray<Fsm::Point> & points, const float radius)
+	void FsmStrategy::CreateAnyPointReachEvent(const MachineId machineId, const Fsm::Event fireEvt, const FCArray<Fsm::Point> & points, const float radius)
 	{
+		if(_closeToEvents.find(machineId) == _closeToEvents.end())
+		{
+			_closeToEvents.insert({ machineId, { } });
+		}
+
 		for(const Fsm::Point & p : points)
 		{
-			_closeToEvents.push_back({Vector2(p.x, p.y), fireEvt, radius * radius});
+			_closeToEvents[machineId].push_back({Vector2(p.x, p.y), fireEvt, radius * radius});
 		}
 	}
 
-	void FsmStrategy::AddAgent(size_t id, size_t machine_id)
+	void FsmStrategy::CreateTimerEvent(const MachineId machineId, const Fsm::State duringState, const Fsm::Event fireEvt, const float minWaitTime, const float maxWaitTime)
+	{
+		if(_timerEvents.find(machineId) == _timerEvents.end())
+		{
+			_timerEvents.insert({ machineId, { }});
+		}
+
+		_timerEvents[machineId].push_back({duringState, fireEvt, minWaitTime, maxWaitTime});
+	}
+
+	void FsmStrategy::AddAgent(AgentId id, MachineId machine_id)
 	{
 		_agentFsms.insert({id, { machine_id, _machines[machine_id]->GetInitialState() }});
 	}
 
-	void FsmStrategy::AddAgent(size_t id)
+	void FsmStrategy::AddAgent(AgentId id)
 	{
 		AddAgent(id, _nextMachineId - 1);
 	}
 
-	bool FsmStrategy::RemoveAgent(size_t id)
+	bool FsmStrategy::RemoveAgent(AgentId id)
 	{
 		return false;
 	}
 
-	void FsmStrategy::SetAgentParams(size_t id, ModelAgentParams & params)
+	void FsmStrategy::SetAgentParams(AgentId id, ModelAgentParams & params)
 	{
 		Fsm::AgentParams & aParams = static_cast<Fsm::AgentParams &>(params);
 
@@ -67,25 +92,71 @@ namespace FusionCrowd
 	{
 		for(auto & p: _agentFsms)
 		{
-			size_t agentId = p.first;
-			size_t fsmId = p.second.fsmId;
-			Fsm::State oldState = p.second.state;
-			Fsm::State state = oldState;
+			AgentId agentId = p.first;
+			MachineId fsmId = p.second.fsmId;
+			Fsm::State state = p.second.state;
+			Fsm::State oldState = state;
 
 			auto & agentInfo = _navSystem->GetSpatialInfo(agentId);
 
-			state = _machines[fsmId]->Advance(oldState, _tickEvent);
-			for (CloseToEventDesc & desc : _closeToEvents)
+			state = _machines[fsmId]->Advance(state, _tickEvents[fsmId]);
+
+			if(state == oldState)
 			{
-				if((desc.target-agentInfo.pos).LengthSquared() < desc.radiusSqr)
+				for (auto & desc : _closeToEvents[fsmId])
 				{
+					if((desc.target - agentInfo.pos).LengthSquared() >= desc.radiusSqr)
+					{
+						continue;
+					}
+
 					state = _machines[fsmId]->Advance(state, desc.eventToFire);
+
+					if(state != oldState)
+					{
+						break;
+					}
 				}
 			}
 
-			if(state != oldState && _gotoActions.find(state) != _gotoActions.end())
+			if(state == oldState && _activeTimers.find(agentId) != _activeTimers.end())
 			{
-				_sim->SetAgentGoal(agentId, _gotoActions[state]);
+				for(auto & timer : _activeTimers[agentId])
+				{
+					timer.timeLeft -= timeStep;
+					if(timer.timeLeft <= 0)
+					{
+						state = _machines[fsmId]->Advance(state, timer.eventToFire);
+						if(state != oldState)
+						{
+							break;
+						}
+					}
+				}
+			}
+
+			if(state != oldState)
+			{
+				_activeTimers[agentId].clear();
+				if(_timerEvents.find(fsmId) != _timerEvents.end())
+				{
+					for(auto & desc : _timerEvents[fsmId])
+					{
+						if(state != desc.state)
+						{
+							continue;
+						}
+
+						std::uniform_real_distribution<float> gen(desc.minTime, desc.maxTime);
+						_activeTimers[agentId].push_back({desc.eventToFire, gen(_random_engine)});
+					}
+				}
+
+				auto & actions = _gotoActions[fsmId];
+				if(actions.find(state) != actions.end())
+				{
+					_sim->SetAgentGoal(agentId, actions[state]);
+				}
 			}
 
 			p.second.state = state;

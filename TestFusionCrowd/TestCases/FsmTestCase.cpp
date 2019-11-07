@@ -14,6 +14,7 @@ namespace TestFusionCrowd
 	enum States : Fsm::State
 	{
 		Initial,
+		Deciding,
 		HeadingTo1,
 		HeadingTo2,
 		HeadingTo3,
@@ -54,13 +55,15 @@ namespace TestFusionCrowd
 		auto * flow = fsmBuilder
 			->WithStates()
 				->Initial(States::Initial)
+				->Intermediate(States::Deciding)
 				->Intermediate(States::HeadingTo1)
 				->Intermediate(States::HeadingTo2)
 				->Intermediate(States::HeadingTo3)
 				->Intermediate(States::HeadingTo4)
 				->Final(States::Final)
 			->WithTransitions()
-				->AddRandom(States::Initial, start, Events::Tick)
+				->Add(States::Initial, States::Deciding, Events::Tick)
+				->AddRandom(States::Deciding, start, Events::TimerExpired)
 				->AddRandom(States::HeadingTo3, heading1234, Events::Reached3)
 				->AddRandom(States::HeadingTo4, heading1234, Events::Reached4)
 				->Add(States::HeadingTo1, States::Final, Events::Reached1)
@@ -84,18 +87,21 @@ namespace TestFusionCrowd
 		IStrategyComponent* tmp = _sim->GetStrategy(ComponentIds::FSM_ID);
 		auto * fsmStrat = dynamic_cast<Fsm::IStrategyConfigurator *>(tmp);
 
-		fsmStrat->CreateGoToAction(States::HeadingTo1, p1);
-		fsmStrat->CreateGoToAction(States::HeadingTo2, p2);
-		fsmStrat->CreateGoToAction(States::HeadingTo3, p3);
-		fsmStrat->CreateGoToAction(States::HeadingTo4, p4);
+		size_t fsmId = fsmStrat->AddMachine(flow);
 
-		fsmStrat->SetTickEvent(Events::Tick);
-		fsmStrat->CreatePointReachEvent(Events::Reached1, p1, 2.0f);
-		fsmStrat->CreatePointReachEvent(Events::Reached2, p2, 2.0f);
-		fsmStrat->CreatePointReachEvent(Events::Reached3, p3, 2.0f);
-		fsmStrat->CreatePointReachEvent(Events::Reached4, p4, 2.0f);
+		fsmStrat->CreateGoToAction(fsmId, States::HeadingTo1, p1);
+		fsmStrat->CreateGoToAction(fsmId, States::HeadingTo2, p2);
+		fsmStrat->CreateGoToAction(fsmId, States::HeadingTo3, p3);
+		fsmStrat->CreateGoToAction(fsmId, States::HeadingTo4, p4);
 
-		Fsm::AgentParams flowMachineParams; flowMachineParams.FsmId = fsmStrat->AddMachine(flow);
+		fsmStrat->SetTickEvent(fsmId, Events::Tick);
+		fsmStrat->CreateTimerEvent(fsmId, States::Deciding, Events::TimerExpired, 0.0f, 100.0f);
+		fsmStrat->CreatePointReachEvent(fsmId, Events::Reached1, p1, 2.0f);
+		fsmStrat->CreatePointReachEvent(fsmId, Events::Reached2, p2, 2.0f);
+		fsmStrat->CreatePointReachEvent(fsmId, Events::Reached3, p3, 2.0f);
+		fsmStrat->CreatePointReachEvent(fsmId, Events::Reached4, p4, 2.0f);
+
+		Fsm::AgentParams flowMachineParams; flowMachineParams.FsmId = fsmId;
 
 		size_t firstHalf = _agentsNum / 2;
 		for (int i = 0; i < firstHalf; i++)

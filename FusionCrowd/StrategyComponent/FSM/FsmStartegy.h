@@ -16,6 +16,9 @@
 
 namespace FusionCrowd
 {
+	using AgentId = size_t;
+	using MachineId = size_t;
+
 	class FsmStrategy : public IStrategyComponent, public Fsm::IStrategyConfigurator
 	{
 	public:
@@ -24,23 +27,23 @@ namespace FusionCrowd
 			std::shared_ptr<NavSystem> navSystem
 		);
 
-		size_t AddMachine(Fsm::IFsm* machine) override;
-		void CreateGoToAction(const Fsm::State duringState, const Fsm::Point goal) override;
-		void CreatePointReachEvent(const Fsm::Event fireEvt, const Fsm::Point point, const float radius) override;
-		void CreateAnyPointReachEvent(const Fsm::Event fireEvt, const FCArray<Fsm::Point> & points, const float radius) override;
+		MachineId AddMachine(Fsm::IFsm* machine) override;
+		void CreateGoToAction(const MachineId machineId, const Fsm::State duringState, const Fsm::Point goal) override;
+		void CreatePointReachEvent(const MachineId machineId, const Fsm::Event fireEvt, const Fsm::Point point, const float radius) override;
+		void CreateAnyPointReachEvent(const MachineId machineId, const Fsm::Event fireEvt, const FCArray<Fsm::Point> & points, const float radius) override;
+		void CreateTimerEvent(const MachineId machineId, const Fsm::State duringState, const Fsm::Event fireEvt, const float minWaitTime, const float maxWaitTime) override;
 
-		void SetTickEvent(const Fsm::Event fireEvt) override;
+		void SetTickEvent(const MachineId machineId, const Fsm::Event fireEvt) override;
 
-		void AddAgent(size_t id) override;
-		void AddAgent(size_t id, size_t machine_id);
+		void AddAgent(AgentId id) override;
+		void AddAgent(AgentId id, MachineId machine_id);
 
-		bool RemoveAgent(size_t id) override;
+		bool RemoveAgent(AgentId id) override;
 		void Update(float timeStep) override;
 
-		void SetAgentParams(size_t id, ModelAgentParams & params) override;
+		void SetAgentParams(AgentId id, ModelAgentParams & params) override;
 
 		ComponentId GetId() override { return ComponentIds::FSM_ID; };
-
 
 	private:
 		struct CloseToEventDesc
@@ -50,23 +53,46 @@ namespace FusionCrowd
 			float radiusSqr;
 		};
 
+		struct TimerEventDesc
+		{
+			Fsm::State state;
+			Fsm::Event eventToFire;
+			float minTime;
+			float maxTime;
+		};
+
+		struct ActiveTimer
+		{
+			Fsm::Event eventToFire;
+			float timeLeft;
+		};
+
 		struct AgentFsmInfo
 		{
-			size_t fsmId;
+			MachineId fsmId;
 			Fsm::State state;
+		};
+
+		struct GoToAction
+		{
+			Fsm::State state;
+			DirectX::SimpleMath::Vector2 target;
 		};
 
 		size_t _nextMachineId = 0;
 
-		Fsm::Event _tickEvent;
-
 		std::default_random_engine _random_engine;
 		std::shared_ptr<Simulator> _sim;
 		std::shared_ptr<NavSystem> _navSystem;
-		std::map<size_t, std::unique_ptr<Fsm::IFsm>> _machines;
-		std::map<size_t, AgentFsmInfo> _agentFsms;
+		std::map<MachineId, std::unique_ptr<Fsm::IFsm>> _machines;
+		std::map<AgentId, AgentFsmInfo> _agentFsms;
 
-		std::vector<CloseToEventDesc> _closeToEvents;
-		std::map<Fsm::State, DirectX::SimpleMath::Vector2> _gotoActions;
+		std::map<MachineId, std::vector<CloseToEventDesc>> _closeToEvents;
+
+		std::map<MachineId, Fsm::Event> _tickEvents;
+		std::map<MachineId, std::vector<TimerEventDesc>> _timerEvents;
+		std::map<AgentId, std::vector<ActiveTimer>> _activeTimers;
+
+		std::map<MachineId, std::map<Fsm::State, DirectX::SimpleMath::Vector2>> _gotoActions;
 	};
 }
