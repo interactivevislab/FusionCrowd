@@ -28,6 +28,12 @@ namespace FusionCrowd
 					const Point goal
 				) = 0;
 
+				virtual void CreateGoToAnyAction(
+					const size_t machineId,
+					const State duringState,
+					const FCArray<Point> & goals
+				) = 0;
+
 				virtual void CreatePointReachEvent(
 					const size_t machineId,
 					const Event fireEvt,

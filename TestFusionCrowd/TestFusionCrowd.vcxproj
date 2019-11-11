@@ -173,6 +173,7 @@
     <ClInclude Include="TestCases\ZanlungoCase.h" />
     <ClInclude Include="ThirdParty\date.h" />
     <ClInclude Include="TestCases\TshapedFancyTestCase.h" />
+    <ClInclude Include="TestCases\TradeshowTestCase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCases\StenkaNaStenkuTestCase.cpp" />
@@ -189,6 +190,7 @@
     <ClCompile Include="TestCases\ZanlungoCase.cpp" />
     <ClCompile Include="TestFusionCrowd.cpp" />
     <ClCompile Include="TestCases\TshapedFancyTestCase.cpp" />
+    <ClCompile Include="TestCases\TradeshowTestCase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -196,6 +198,7 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="Resources\square.nav" />
+    <None Include="Resources\TradeshowAgents.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FusionCrowd\FusionCrowd.vcxproj">

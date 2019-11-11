@@ -2,6 +2,7 @@
 
 #include "FsmTestCase.h"
 
+#include "Export/Export.h"
 #include "Export/Fsm/IStrategyConfigurator.h"
 #include "Export/Fsm/IFsm.h"
 

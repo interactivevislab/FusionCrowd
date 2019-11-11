@@ -48,6 +48,9 @@
     <ClInclude Include="TestCases\StenkaNaStenkuTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestCases\TradeshowTestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -77,6 +80,9 @@
     <ClCompile Include="TestCases\StenkaNaStenkuTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestCases\TradeshowTestCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\simple.nav">
@@ -84,5 +90,6 @@
     </None>
     <None Include="packages.config" />
     <None Include="Resources\square.nav" />
+    <None Include="Resources\TradeshowAgents.txt" />
   </ItemGroup>
 </Project>

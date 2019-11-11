@@ -11,6 +11,7 @@
 #include <map>
 #include <memory>
 #include <random>
+#include <vector>
 
 #include <Math/Util.h>
 
@@ -29,6 +30,7 @@ namespace FusionCrowd
 
 		MachineId AddMachine(Fsm::IFsm* machine) override;
 		void CreateGoToAction(const MachineId machineId, const Fsm::State duringState, const Fsm::Point goal) override;
+		void CreateGoToAnyAction(const size_t machineId, const Fsm::State duringState, const FCArray<Fsm::Point> & goals) override;
 		void CreatePointReachEvent(const MachineId machineId, const Fsm::Event fireEvt, const Fsm::Point point, const float radius) override;
 		void CreateAnyPointReachEvent(const MachineId machineId, const Fsm::Event fireEvt, const FCArray<Fsm::Point> & points, const float radius) override;
 		void CreateTimerEvent(const MachineId machineId, const Fsm::State duringState, const Fsm::Event fireEvt, const float minWaitTime, const float maxWaitTime) override;
@@ -73,12 +75,6 @@ namespace FusionCrowd
 			Fsm::State state;
 		};
 
-		struct GoToAction
-		{
-			Fsm::State state;
-			DirectX::SimpleMath::Vector2 target;
-		};
-
 		size_t _nextMachineId = 0;
 
 		std::default_random_engine _random_engine;
@@ -94,5 +90,6 @@ namespace FusionCrowd
 		std::map<AgentId, std::vector<ActiveTimer>> _activeTimers;
 
 		std::map<MachineId, std::map<Fsm::State, DirectX::SimpleMath::Vector2>> _gotoActions;
+		std::map<MachineId, std::map<Fsm::State, std::vector<DirectX::SimpleMath::Vector2>>> _gotoAnyActions;
 	};
 }

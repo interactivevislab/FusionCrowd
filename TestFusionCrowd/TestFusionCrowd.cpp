@@ -6,6 +6,7 @@
 #include <iterator>
 #include <direct.h>
 
+#include "TestCases/TradeshowTestCase.h"
 #include "TestCases/NeighbourSearchBenchCase.h"
 #include "TestCases/ZanlungoCase.h"
 #include "TestCases/CrossingTestCase.h"
@@ -101,7 +102,8 @@ int main()
 	std::vector<std::shared_ptr<ITestCase>> cases =
 	{
 
-		std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::ORCA_ID, 50, 2000, true)),
+		//std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::ORCA_ID, 50, 2000, true)),
+		std::shared_ptr<ITestCase>((ITestCase*) new TradeshowTestCase(1025, 5000, false)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new ZanlungoCase()),
 		// std::shared_ptr<ITestCase>((ITestCase*) new CrossingTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new PinholeTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000)),

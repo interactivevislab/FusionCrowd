@@ -2,7 +2,6 @@
 
 #include "TestCases/ITestCase.h"
 #include "Export/ComponentId.h"
-#include "Export/Export.h"
 
 #include <memory>
 #include <chrono>

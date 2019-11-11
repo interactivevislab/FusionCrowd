@@ -22,10 +22,26 @@ namespace FusionCrowd
 	{
 		if(_gotoActions.find(machineId) == _gotoActions.end())
 		{
-			_gotoActions.insert({ machineId, { } });
+			_gotoActions.insert({machineId, { }});
 		}
 
 		_gotoActions[machineId].insert({ duringState, Vector2(goal.x, goal.y) });
+	}
+
+	void FsmStrategy::CreateGoToAnyAction(const size_t machineId, const Fsm::State duringState, const FCArray<Fsm::Point> & goals)
+	{
+		if(_gotoAnyActions.find(machineId) == _gotoAnyActions.end())
+		{
+			_gotoAnyActions.insert({machineId, { }});
+		}
+
+		std::vector<Vector2> goalsVector;
+		for(auto & p : goals)
+		{
+			goalsVector.push_back(Vector2(p.x, p.y));
+		}
+
+		_gotoAnyActions[machineId].insert({ duringState, goalsVector});
 	}
 
 	void FsmStrategy::SetTickEvent(const MachineId machineId, const Fsm::Event fireEvt)
@@ -156,6 +172,15 @@ namespace FusionCrowd
 				if(actions.find(state) != actions.end())
 				{
 					_sim->SetAgentGoal(agentId, actions[state]);
+				}
+
+				auto & anyActions = _gotoAnyActions[fsmId];
+				if(anyActions.find(state) != anyActions.end())
+				{
+					auto & goals = anyActions[state];
+
+					std::uniform_int_distribution<int> gen(0, goals.size() - 1);
+					_sim->SetAgentGoal(agentId, goals[gen(_random_engine)]);
 				}
 			}
 

@@ -61,16 +61,16 @@ def draw_trajectories(canvas, tr, scale=1.0):
             yield y
 
     for id, positions in tr.pos.items():
-        scaled = flat((scale * x, scale * y) for x, y in positions.values())
-        canvas.create_line(*scaled, fill=all_colors[id])
+        scaled = flat((scale * (x - tr.xmin), scale * y) for x, y in positions.values())
+        canvas.create_line(*scaled, fill=all_colors[id % len(all_colors)])
 
 
-def redraw_positions(canvas, tr, frame, scale, size=1.0, ovals=None):
+def redraw_positions(canvas, tr, frame, scale, xmin, ymin, size=1.0, ovals=None):
     def coords(x, y):
-        return ((x - size) * scale,
-                (y - size) * scale,
-                (x + size) * scale,
-                (y + size) * scale)
+        return ((x - xmin - size) * scale,
+                (y - ymin - size) * scale,
+                (x - xmin + size) * scale,
+                (y - ymin + size) * scale)
 
     if ovals is None:
         ovals = dict()
@@ -86,7 +86,7 @@ def redraw_positions(canvas, tr, frame, scale, size=1.0, ovals=None):
             canvas.itemconfigure(ovals[agent_id], state='normal')
             canvas.coords(ovals[agent_id], *coords(x, y))
         else:
-            ovals[agent_id] = canvas.create_oval(*coords(x, y), fill=all_colors[agent_id], outline="white")
+            ovals[agent_id] = canvas.create_oval(*coords(x, y), fill=all_colors[agent_id % len(all_colors)], outline="white")
 
     return ovals
 
@@ -153,24 +153,25 @@ def read_mesh(filename):
     return NavMesh(vertices=vertices, edges=edges, nodes=nodes, obstacles=obstacles, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
 
 
-def draw_mesh(canvas, mesh: NavMesh, scale):
+def draw_mesh(canvas, mesh: NavMesh, scale, xmin, ymin, show_text=True):
     def draw_line(v0, v1, color="#ccc"):
         x0, y0 = mesh.vertices[v0]
         x1, y1 = mesh.vertices[v1]
         canvas.create_line(
-            x0 * scale, y0 * scale,
-            x1 * scale, y1 * scale,
+            (x0 - xmin) * scale, (y0 - ymin) * scale,
+            (x1 - xmin) * scale, (y1 - ymin) * scale,
             fill=color
         )
 
-    for id, (vx, vy) in mesh.vertices.items():
-        canvas.create_text(
-            vx * scale,
-            vy * scale,
-            anchor=NW,
-            text="{:0}, {:0}".format(vx, vy),
-            fill="#ccc"
-        )
+    if show_text:
+        for id, (vx, vy) in mesh.vertices.items():
+            canvas.create_text(
+                (vx - xmin) * scale,
+                (vy - ymin) * scale,
+                anchor=NW,
+                text="{:0}, {:0}".format(vx, vy),
+                fill="#ccc"
+            )
 
     for id, node in mesh.nodes.items():
         for v0, v1 in pairwise(node.vertices):
@@ -178,19 +179,22 @@ def draw_mesh(canvas, mesh: NavMesh, scale):
 
         draw_line(node.vertices[-1], node.vertices[0])
 
-        canvas.create_text(
-            node.center[0] * scale,
-            node.center[1] * scale,
-            text=str(id),
-            fill="#ccc"
-        )
+        if show_text:
+            canvas.create_text(
+                (node.center[0] - xmin) * scale,
+                (node.center[1] - ymin) * scale,
+                text=str(id),
+                fill="#ccc"
+            )
 
     for v0, v1 in mesh.obstacles:
         draw_line(v0, v1, color="red")
 
+
 PLAYING = 1
 PAUSED = 0
 PLAYER_STATE = PAUSED
+PLAY_SPEED = 100
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -198,26 +202,35 @@ if __name__ == "__main__":
     parser.add_argument("navmesh_file")
     parser.add_argument("--scale", default=1)
     parser.add_argument("--agent_size", default=1)
+    parser.add_argument("--hide_trajectory", action='store_true')
+    parser.add_argument("--hide_mesh_text", action='store_true')
 
     args = parser.parse_args()
     scale = float(args.scale)
     agent_size = float(args.agent_size)
+    hide_trajectory = args.hide_trajectory
 
     tr = read_trajectories(args.source_file)
     mesh = read_mesh(args.navmesh_file)
 
-    W, H = scale * max(tr.xmax, mesh.xmax), scale * max(tr.ymax, mesh.ymax)
+    global_xmin, global_ymin = min(tr.xmin, mesh.xmin), min(tr.ymin, mesh.ymin)
+
+    W, H = max(tr.xmax, mesh.xmax), max(tr.ymax, mesh.ymax)
+    W, H = (W - global_xmin) * scale, (H - global_ymin) * scale,
 
     window = Tk()
     window.title("{}, {}x{}. Controls: left, right, space".format(args.source_file, W / scale, H / scale))
     canvas = Canvas(window, width=W, height=H, bg="black")
     canvas.pack()
 
-    draw_mesh(canvas, mesh, scale=scale)
-    draw_trajectories(canvas, tr, scale=scale)
-    ovals = redraw_positions(canvas, tr=tr, scale=scale, size=agent_size, frame=0)
+    draw_mesh(canvas, mesh, scale=scale, xmin=global_xmin, ymin=global_ymin, show_text=not args.hide_mesh_text)
 
-    redraw = lambda new_frame: redraw_positions(canvas, tr=tr, scale=scale, frame=int(new_frame), size=agent_size, ovals=ovals)
+    if not hide_trajectory:
+        draw_trajectories(canvas, tr, scale=scale)
+
+    ovals = redraw_positions(canvas, tr=tr, scale=scale, size=agent_size, xmin=global_xmin, ymin=global_ymin, frame=0)
+
+    redraw = lambda new_frame: redraw_positions(canvas, tr=tr, scale=scale, frame=int(new_frame), size=agent_size, xmin=global_xmin, ymin=global_ymin, ovals=ovals)
     timeline = Scale(window, length=W, from_=0, to=tr.steps, orient=HORIZONTAL, command=redraw)
     timeline.pack()
 
@@ -225,14 +238,22 @@ if __name__ == "__main__":
         if PLAYER_STATE == PLAYING:
             timeline.set(timeline.get() + 1)
 
-        timeline.after(100, tick)
+        timeline.after(PLAY_SPEED, tick)
 
     def toggle_player(omit=None):
         global PLAYER_STATE
         PLAYER_STATE = PAUSED if PLAYER_STATE == PLAYING else PLAYING
 
+    def modify_speed(change):
+        global PLAY_SPEED
+        PLAY_SPEED = min(max(PLAY_SPEED, 20) + change, 1000)
+
     window.bind("<Right>", lambda key: timeline.set(timeline.get() + 1))
     window.bind("<Left>", lambda key: timeline.set(timeline.get() - 1))
+
+    window.bind("<Up>", lambda key: modify_speed(25))
+    window.bind("<Down>", lambda key: modify_speed(-25))
+
     window.bind("<space>", toggle_player)
 
     tick()
