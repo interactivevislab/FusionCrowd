@@ -36,6 +36,11 @@ namespace FusionCrowd
 		const float X = point.x;
 		const float Y = point.y;
 
+		if(X < minX || X > maxX || Y < minY || Y > maxY)
+		{
+			return false;
+		}
+
 		int count = 0; // number of intersections
 		for (size_t e = 0; e < vertCount; ++e)
 		{
