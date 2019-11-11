@@ -43,7 +43,6 @@ namespace TestFusionCrowd
 			->WithStrategy(ComponentIds::FSM_ID);
 
 		_sim = std::shared_ptr<ISimulatorFacade>(builder->Build(), SimulatorFacadeDeleter);
-		_sim->SetIsRecording(true);
 
 		std::unique_ptr<Fsm::IBuilder, decltype(&Fsm::BuilderDeleter)> fsmBuilder(Fsm::Builder(), Fsm::BuilderDeleter);
 

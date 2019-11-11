@@ -28,6 +28,7 @@ using time_point = std::chrono::time_point<std::chrono::system_clock>;
 
 void Run(std::shared_ptr<ITestCase> testCase, std::vector<long long> & outMeasurements, time_point & outStartTime)
 {
+
 	std::vector<long long> measurements;
 
 
@@ -36,6 +37,8 @@ void Run(std::shared_ptr<ITestCase> testCase, std::vector<long long> & outMeasur
 	auto steps = testCase->GetStepCount();
 	auto sim = testCase->GetSim();
 	bool verobseSteps = testCase->VerboseSteps;
+
+	sim->SetIsRecording(testCase->WriteTrajectories);
 
 	outStartTime = system_clock::now();
 	for (size_t i = 0; i < steps; i++)

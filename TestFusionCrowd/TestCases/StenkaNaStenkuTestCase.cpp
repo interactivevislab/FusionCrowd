@@ -27,7 +27,6 @@ namespace TestFusionCrowd
 			->WithOp(op);
 
 		_sim = std::shared_ptr<FusionCrowd::ISimulatorFacade>(builder->Build(), SimulatorFacadeDeleter);
-		_sim->SetIsRecording(WriteTrajectories);
 
 		float z = sqrt(_agentsNum / 2.0f);
 
