@@ -300,7 +300,7 @@ namespace FusionCrowd
 		return true;
 	}
 
-	NavMeshNode& NavMesh::GetNode(unsigned int i)
+	NavMeshNode& NavMesh::GetNode(unsigned int i) const
 	{
 		return nodes[i];
 	}

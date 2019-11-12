@@ -62,9 +62,12 @@ namespace FusionCrowd
 		int getObstacleCount() { return obstCount; }
 		//Node
 		bool AddGroup(const std::string& grpName, size_t grpSize);
-		NavMeshNode& GetNode(unsigned int i);
+		NavMeshNode& GetNode(unsigned int i) const;
 		inline size_t getNodeCount() const { return nCount; }
 		const NMNodeGroup* getNodeGroup(const std::string& grpName) const;
+
+		inline NavMeshNode* begin() const { return &nodes[0]; }
+		inline NavMeshNode* end() const { return &nodes[nCount - 1]; }
 
 	protected:
 		std::string fileName;

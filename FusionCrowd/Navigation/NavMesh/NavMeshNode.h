@@ -6,6 +6,8 @@
 #include "NavMeshObstacle.h"
 #include "NavMeshPoly.h"
 
+#include "Math/BoundingBox.h"
+
 namespace FusionCrowd
 {
 	// Forward declarations
@@ -13,6 +15,7 @@ namespace FusionCrowd
 	class NavMeshEdge;
 	class PathPlanner;
 	class NavMeshObstacle;
+
 
 	class NavMeshNode
 	{
@@ -55,6 +58,8 @@ namespace FusionCrowd
 			return _poly.containsPoint(point);
 		}
 
+		const BoundingBox & GetBB() const { return _poly.getBB(); };
+
 		bool loadFromAscii(std::istream& f);
 
 		inline float getElevation(const DirectX::SimpleMath::Vector2& p) const
@@ -63,6 +68,8 @@ namespace FusionCrowd
 		}
 
 		inline DirectX::SimpleMath::Vector2 getGradient() const { return _poly.getGradient(); }
+
+
 
 		friend class NavMesh;
 		friend class NavMeshEdge;
