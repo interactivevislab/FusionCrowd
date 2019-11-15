@@ -28,6 +28,11 @@ namespace FusionCrowd
 			float goalX, goalY;
 		};
 
+		struct FUSION_CROWD_API NavMeshVetrex
+		{
+			float X, Y;
+		};
+
 		enum FUSION_CROWD_API OperationStatus
 		{
 			OK,
@@ -61,6 +66,13 @@ namespace FusionCrowd
 
 			virtual IStrategyComponent* GetStrategy(ComponentId strategyId) const = 0;
 			virtual void SetIsRecording(bool isRecording) = 0;
+
+			//nav mesh draw export
+			virtual size_t GetVertexCount() = 0;
+			virtual bool GetVertices(FCArray<NavMeshVetrex> & output) = 0;
+			virtual size_t GetNodesCount() = 0;
+			virtual size_t GetNodeVertexCount(size_t node_id) = 0;
+			virtual bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id) = 0;
 		};
 
 		/*

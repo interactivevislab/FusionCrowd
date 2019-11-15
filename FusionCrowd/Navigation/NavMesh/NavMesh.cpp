@@ -347,4 +347,43 @@ namespace FusionCrowd
 	{
 		clear();
 	}
+
+
+	size_t NavMesh::GetVertexCount() {
+		return vCount;
+	}
+
+	bool NavMesh::GetVertices(FCArray<NavMeshVetrex> & output) {
+
+		if (output.size() < vCount)
+		{
+			return false;
+		}
+
+		int i = 0;
+		for (int i = 0; i < vCount; i++)
+		{
+			NavMeshVetrex vertex = NavMeshVetrex();
+			vertex.X = vertices[i].x;
+			vertex.Y = vertices[i].y;
+			output[i] = vertex;
+		}
+
+		return true;
+	}
+
+
+	size_t NavMesh::GetNodesCount() {
+		return nCount;
+	}
+	size_t NavMesh::GetNodeVertexCount(size_t node_id) {
+		return nodes[node_id]._poly.vertCount;
+	}
+
+	bool NavMesh::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
+		for (int i = 0; i < nodes[node_id]._poly.vertCount; i++) {
+			output[i] = nodes[node_id]._poly.vertIDs[i];
+		}
+		return true;
+	}
 }

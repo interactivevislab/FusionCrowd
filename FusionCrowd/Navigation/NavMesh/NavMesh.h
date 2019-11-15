@@ -4,6 +4,8 @@
 #include <map>
 #include <vector>
 
+#include "Export/FCArray.h"
+#include "Export/Export.h"
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h"
 #include "NavMeshNode.h"
@@ -65,6 +67,13 @@ namespace FusionCrowd
 		NavMeshNode& GetNode(unsigned int i);
 		inline size_t getNodeCount() const { return nCount; }
 		const NMNodeGroup* getNodeGroup(const std::string& grpName) const;
+
+		//nav mesh draw export
+		size_t GetVertexCount();
+		bool GetVertices(FCArray<NavMeshVetrex> & output);
+		size_t GetNodesCount();
+		size_t GetNodeVertexCount(size_t node_id);
+		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id);
 
 	protected:
 		std::string fileName;
