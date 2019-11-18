@@ -1,6 +1,4 @@
 #include <fstream>
-#include <vector>
-
 #include "NavMesh.h"
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h";
@@ -264,7 +262,9 @@ namespace FusionCrowd
 	void NavMesh::SetObstacleCount(size_t count)
 	{
 		obstCount = count;
-		obstacles = std::unique_ptr<NavMeshObstacle[]>(new NavMeshObstacle[obstCount]);
+		obstacles.reserve(obstCount);
+		for(size_t i = 0; i < count; i++)
+			obstacles.push_back(NavMeshObstacle());
 	}
 
 	NavMeshObstacle& NavMesh::GetObstacle(unsigned int i)
@@ -300,7 +300,7 @@ namespace FusionCrowd
 		return true;
 	}
 
-	NavMeshNode& NavMesh::GetNode(unsigned int i) const
+	NavMeshNode& NavMesh::GetNode(unsigned int i)
 	{
 		return nodes[i];
 	}

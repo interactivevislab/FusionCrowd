@@ -48,17 +48,12 @@ namespace FusionCrowd
 
 		const size_t OBST_COUNT = node.getObstacleCount();
 		std::set<size_t> result;
-		for (size_t o = 0; o < OBST_COUNT; ++o)
-		{
+		for (size_t o = 0; o < OBST_COUNT; ++o) {
 			const NavMeshObstacle * obst = node.getObstacle(o);
-			if (obst->pointOutside(pt))
-			{
+			if (obst->pointOutside(pt)) {
 				float distance = distSqPointLineSegment(obst->getP0(), obst->getP1(), pt);
 
-				if(distance < rangeSq)
-				{
-					result.insert(obst->getId());
-				}
+				if(distance < rangeSq) result.insert(obst->getId());
 			}
 		}
 

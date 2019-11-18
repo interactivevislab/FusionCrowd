@@ -1,6 +1,5 @@
 #pragma once
 
-#include "QuadTree.h"
 #include "NavMesh.h"
 #include "NavMeshNode.h"
 #include "Agent.h"
@@ -83,7 +82,6 @@ namespace FusionCrowd
 		unsigned int testNeighbors(const NavMeshNode& node, const DirectX::SimpleMath::Vector2& p) const;
 
 	private:
-		std::unique_ptr<QuadTree> _nodeBBTree;
 		std::shared_ptr<PathPlanner> _planner;
 		std::shared_ptr<NavMesh> _navMesh;
 		bool _trackAll;

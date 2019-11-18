@@ -101,7 +101,7 @@ namespace FusionCrowd
 				const float COS_FOV = -0.8f;  // cos( HALFPI );// cos( PI / 4.f ); //
 				bool interacts = false;
 				T_i = MathUtil::INFTY;
-//#define COLLIDE_PRIORITY
+#define COLLIDE_PRIORITY
 #ifdef COLLIDE_PRIORITY
 				float t_collision = T_i;
 #endif
@@ -162,8 +162,8 @@ namespace FusionCrowd
 							}
 						}
 #else
-						// note: relPos points from other agent to this agent, so they need to point in
-						// OPPOSITE directions for convergence
+	// note: relPos points from other agent to this agent, so they need to point in
+	// OPPOSITE directions for convergence
 						float dp = -relPos.Dot(relVel);
 						if (dp > 0.f) {
 							float t_ij = dp / relVel.LengthSquared();

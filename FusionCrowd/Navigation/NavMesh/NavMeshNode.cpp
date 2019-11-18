@@ -145,12 +145,6 @@ namespace FusionCrowd
 		}
 		return true;
 	}
-
-	void NavMeshNode::setVertices(const DirectX::SimpleMath::Vector2* vertices)
-	{
-		_poly.SetVertices(vertices);
-	}
-
 }
 #ifdef _WIN32
 #pragma warning( default : 4312 )

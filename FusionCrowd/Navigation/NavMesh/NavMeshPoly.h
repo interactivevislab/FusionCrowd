@@ -4,7 +4,6 @@
 #include <string>
 
 #include "Math/Util.h"
-#include "Math/BoundingBox.h"
 
 namespace FusionCrowd
 {
@@ -26,16 +25,13 @@ namespace FusionCrowd
 		unsigned int* vertIDs;
 		size_t vertCount;
 		const DirectX::SimpleMath::Vector2* vertices;
-
-		void SetVertices(const DirectX::SimpleMath::Vector2* vertices);
-
+		float minX;
+		float maxX;
+		float minY;
+		float maxY;
 		void setBB(const DirectX::SimpleMath::Vector2* vertices);
-		const BoundingBox & getBB() const;
-
 		float A;
 		float B;
 		float C;
-	private:
-		BoundingBox _box;
 	};
 }

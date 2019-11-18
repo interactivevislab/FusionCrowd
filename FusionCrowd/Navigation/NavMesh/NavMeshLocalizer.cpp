@@ -123,8 +123,6 @@ namespace FusionCrowd
 			std::shared_ptr<PathPlanner> planner = std::make_shared<PathPlanner>(_navMesh);
 			setPlanner(planner);
 		}
-
-		_nodeBBTree = std::make_unique<QuadTree>(*_navMesh.get());
 	}
 
 	NavMeshLocalizer::~NavMeshLocalizer()
@@ -134,27 +132,29 @@ namespace FusionCrowd
 
 	unsigned int NavMeshLocalizer::getNodeId(const Vector2& p) const
 	{
-		return findNodeBlind(p, 0.f);
+		return findNodeBlind(p);
 	}
 
 	unsigned int NavMeshLocalizer::findNodeBlind(const Vector2& p, float tgtElev) const
 	{
+		// TODO(curds01) 10/1/2016 - This cast is bad because I can lose precision
+		//	(after I get 4 billion nodes...)
+		const unsigned int nCount = static_cast<unsigned int>(_navMesh->getNodeCount());
 		float elevDiff = 1e6f;
 		unsigned int maxNode = NavMeshLocation::NO_NODE;
-		for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
+		for (unsigned int n = 0; n < nCount; ++n)
 		{
-			const NavMeshNode& node = _navMesh->GetNode(nodeId);
+			const NavMeshNode& node = _navMesh->GetNode(n);
 			if (node.containsPoint(p))
 			{
 				float hDiff = fabs(node.getElevation(p) - tgtElev);
 				if (hDiff < elevDiff)
 				{
-					maxNode = nodeId;
+					maxNode = n;
 					elevDiff = hDiff;
 				}
 			}
 		}
-
 		return maxNode;
 	}
 
