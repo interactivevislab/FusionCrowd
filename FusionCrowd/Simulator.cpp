@@ -313,6 +313,28 @@ namespace FusionCrowd
 			return _strategyComponents.find(strategyId)->second.get();
 		}
 
+		//nav mesh draw export
+		size_t GetVertexCount() {
+			return _navSystem->GetVertexCount();
+		}
+
+		bool GetVertices(FCArray<NavMeshVetrex> & output) {
+			return _navSystem->GetVertices(output);
+		}
+
+		size_t GetNodesCount() {
+			return _navSystem->GetNodesCount();
+		}
+
+		size_t GetNodeVertexCount(size_t node_id) {
+			return _navSystem->GetNodeVertexCount(node_id);
+		}
+
+		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
+			return _navSystem->GetNodeVertexInfo(output, node_id);
+		}
+
+
 	private:
 		size_t _nextAgentId = 0;
 		size_t GetNextId()
@@ -483,6 +505,27 @@ namespace FusionCrowd
 	bool Simulator::GetAgentsInfo(FCArray<AgentInfo> & output)
 	{
 		return pimpl->GetAgentsInfo(output);
+	}
+
+	//nav mesh draw export
+	size_t  Simulator::GetVertexCount(){
+		return pimpl->GetVertexCount();
+	}
+
+	bool  Simulator::GetVertices(FCArray<NavMeshVetrex> & output) {
+		return pimpl->GetVertices(output);
+	}
+
+	size_t Simulator::GetNodesCount() {
+		return pimpl->GetNodesCount();
+	}
+
+	size_t Simulator::GetNodeVertexCount(size_t node_id) {
+		return pimpl->GetNodeVertexCount(node_id);
+	}
+
+	bool Simulator::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
+		return pimpl->GetNodeVertexInfo(output, node_id);
 	}
 
 	void Simulator::SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params)

@@ -52,6 +52,7 @@ namespace FusionCrowd
 		NavMeshEdge* getEdge(size_t i) { return _edges[i]; }
 		const NavMeshEdge* getEdge(size_t i) const { return _edges[i]; }
 		NavMeshEdge* getConnection(unsigned nodeID);
+		NavMeshPoly getPoly();
 
 		bool containsPoint(const DirectX::SimpleMath::Vector2& point) const
 		{

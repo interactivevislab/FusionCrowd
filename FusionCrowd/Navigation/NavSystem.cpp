@@ -253,6 +253,27 @@ namespace FusionCrowd
 			_neighborsSeeker.gridCellCoeff = coeff;
 		}
 
+		//nav mesh draw export
+		size_t GetVertexCount() {
+			return _navMesh->GetVertexCount();
+		}
+
+		bool GetVertices(FCArray<NavMeshVetrex> & output) {
+			return _navMesh->GetVertices(output);
+		}
+
+		size_t GetNodesCount() {
+			return _navMesh->GetNodesCount();
+		}
+
+		size_t GetNodeVertexCount(size_t node_id) {
+			return _navMesh->GetNodeVertexCount(node_id);
+		}
+
+		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
+			return _navMesh->GetNodeVertexInfo(output, node_id);
+		}
+
 	private:
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
@@ -318,4 +339,29 @@ namespace FusionCrowd
 	void NavSystem::SetGridCoeff(float coeff) {
 		pimpl->SetGridCoeff(coeff);
 	}
+
+
+	//nav mesh draw export
+	size_t NavSystem::GetVertexCount() {
+		return pimpl->GetVertexCount();
+	}
+
+	bool NavSystem::GetVertices(FCArray<NavMeshVetrex> & output) {
+		return pimpl->GetVertices(output);
+	}
+
+
+	size_t NavSystem::GetNodesCount() {
+		return pimpl->GetNodesCount();
+	}
+
+	size_t NavSystem::GetNodeVertexCount(size_t node_id) {
+		return pimpl->GetNodeVertexCount(node_id);
+	}
+
+	bool NavSystem::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
+		return pimpl->GetNodeVertexInfo(output, node_id);
+	}
+
+
 }

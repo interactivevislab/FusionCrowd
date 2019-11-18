@@ -87,6 +87,7 @@ namespace FusionCrowd
 			return _sim->GetAgentCount();
 		}
 
+
 		void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params)
 		{
 			_sim->SetAgentStrategyParam(agentId, strategyId, params);
@@ -96,6 +97,28 @@ namespace FusionCrowd
 		{
 			return _sim->GetStrategy(strategyId);
 		}
+
+		//nav mesh draw export
+		size_t GetVertexCount() {
+			return _sim->GetVertexCount();
+		}
+
+		bool GetVertices(FCArray<NavMeshVetrex> & output) {
+			return _sim->GetVertices(output);
+		}
+
+		size_t GetNodesCount() {
+			return _sim->GetNodesCount();
+		}
+
+		size_t GetNodeVertexCount(size_t node_id) {
+			return _sim->GetNodeVertexCount(node_id);
+		}
+
+		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
+			return _sim->GetNodeVertexInfo(output, node_id);
+		}
+
 	private:
 		std::shared_ptr<Simulator> _sim;
 	};
