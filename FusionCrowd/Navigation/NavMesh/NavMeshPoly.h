@@ -27,6 +27,8 @@ namespace FusionCrowd
 		size_t vertCount;
 		const DirectX::SimpleMath::Vector2* vertices;
 
+		void SetVertices(const DirectX::SimpleMath::Vector2* vertices);
+
 		void setBB(const DirectX::SimpleMath::Vector2* vertices);
 		const BoundingBox & getBB() const;
 

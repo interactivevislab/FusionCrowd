@@ -215,4 +215,8 @@ namespace FusionCrowd
 		return _box;
 	}
 
+	void NavMeshPoly::SetVertices(const DirectX::SimpleMath::Vector2* vertices)
+	{
+		this->vertices = vertices;
+	}
 }

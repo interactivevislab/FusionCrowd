@@ -41,7 +41,7 @@ namespace FusionCrowd
 		}
 
 		size_t getVertexCount() const { return _poly.vertCount; }
-		void setVertices(const DirectX::SimpleMath::Vector2* vertices) { _poly.vertices = vertices; }
+		void setVertices(const DirectX::SimpleMath::Vector2* vertices);
 		unsigned int getVertexID(size_t i) const { return _poly.vertIDs[i]; }
 		size_t getObstacleCount() const { return _obstCount; }
 		const NavMeshObstacle* getObstacle(size_t i) const { return _obstacles[i]; }
