@@ -2,7 +2,6 @@
 
 #include <string>
 #include <map>
-#include <vector>
 
 #include "Export/FCArray.h"
 #include "Export/Export.h"
@@ -86,7 +85,7 @@ namespace FusionCrowd
 		int eCount;
 		NavMeshEdge* edges;
 		int obstCount;
-		std::vector<NavMeshObstacle> obstacles;
+		std::unique_ptr<NavMeshObstacle[]> obstacles;
 		int nCount;
 		NavMeshNode* nodes;
 		std::map<const std::string, NMNodeGroup> nodeGroups;

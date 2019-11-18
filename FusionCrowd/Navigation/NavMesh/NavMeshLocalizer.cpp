@@ -134,7 +134,7 @@ namespace FusionCrowd
 
 	unsigned int NavMeshLocalizer::getNodeId(const Vector2& p) const
 	{
-		return findNodeBlind(p);
+		return findNodeBlind(p, 0.f);
 	}
 
 	unsigned int NavMeshLocalizer::findNodeBlind(const Vector2& p, float tgtElev) const

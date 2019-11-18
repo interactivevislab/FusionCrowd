@@ -7,8 +7,8 @@ using namespace FusionCrowd;
 
 namespace TestFusionCrowd
 {
-	PinholeTestCase::PinholeTestCase(FusionCrowd::ComponentId opComponent, size_t agentsNum, size_t simulationSteps):
-		ITestCase(agentsNum, simulationSteps),
+	PinholeTestCase::PinholeTestCase(FusionCrowd::ComponentId opComponent, size_t agentsNum, size_t simulationSteps, bool writeTraj):
+		ITestCase(agentsNum, simulationSteps, writeTraj),
 		_opComponent(opComponent)
 	{
 	}
