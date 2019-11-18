@@ -134,7 +134,7 @@ namespace FusionCrowd
 			bool apexMoved = false;
 			while (!_right.empty())
 			{
-				std::list<FunnelEdge>::iterator itr = _right.begin();
+				auto itr = _right.begin();
 				Vector2 dir = pLeft - itr->_origin;
 				if (itr->isOnRight(dir))
 				{
@@ -160,7 +160,7 @@ namespace FusionCrowd
 			}
 			else
 			{
-				std::list<FunnelEdge>::reverse_iterator itr = _left.rbegin();
+				auto itr = _left.rbegin();
 				while (!_left.empty())
 				{
 					Vector2 dir = pLeft - itr->_origin;
@@ -190,7 +190,7 @@ namespace FusionCrowd
 			apexMoved = false;
 			while (!_left.empty())
 			{
-				std::list<FunnelEdge>::iterator itr = _left.begin();
+				auto itr = _left.begin();
 				Vector2 dir = pRight - itr->_origin;
 				if (itr->isOnLeft(dir))
 				{
@@ -214,7 +214,7 @@ namespace FusionCrowd
 			}
 			else
 			{
-				std::list<FunnelEdge>::reverse_iterator itr = _right.rbegin();
+				auto itr = _right.rbegin();
 				while (!_right.empty())
 				{
 					Vector2 dir = pRight - itr->_origin;
@@ -246,7 +246,7 @@ namespace FusionCrowd
 		bool apexMoved = false;
 		while (!_left.empty())
 		{
-			std::list<FunnelEdge>::iterator itr = _left.begin();
+			auto itr = _left.begin();
 			goalDir = goalPt - itr->_origin;
 			if (itr->isOnLeft(goalDir))
 			{
@@ -274,7 +274,7 @@ namespace FusionCrowd
 			// apexMoved is already false -- it is the only way to reach this branch
 			while (!_right.empty())
 			{
-				std::list<FunnelEdge>::iterator itr = _right.begin();
+				auto itr = _right.begin();
 				goalDir = goalPt - itr->_origin;
 				if (itr->isOnRight(goalDir))
 				{

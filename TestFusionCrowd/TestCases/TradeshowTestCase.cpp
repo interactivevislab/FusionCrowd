@@ -96,7 +96,8 @@ namespace TestFusionCrowd
 		Fsm::AgentParams flowMachineParams; flowMachineParams.FsmId = fsmId;
 
 		std::ifstream agentPositions("Resources/TradeshowAgents.txt");
-		while(agentPositions >> x >> y)
+		size_t agentCount = 0;
+		while(agentCount++ < _agentsNum && (agentPositions >> x >> y))
 		{
 			size_t id = _sim->AddAgent(x, y, ComponentIds::ORCA_ID, ComponentIds::FSM_ID);
 			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, flowMachineParams);

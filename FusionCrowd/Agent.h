@@ -15,8 +15,6 @@ namespace FusionCrowd
 	public:
 		Agent(size_t id);
 
-		~Agent();
-
 		size_t id;
 
 		std::weak_ptr<IOperationComponent> opComponent;

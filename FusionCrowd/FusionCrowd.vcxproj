@@ -27,10 +27,12 @@
     <ClInclude Include="Export\Fsm\IFsm.h" />
     <ClInclude Include="Export\Fsm\IStrategyConfigurator.h" />
     <ClInclude Include="Export\ModelAgentParams.h" />
+    <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
+    <ClInclude Include="Navigation\NavMesh\QuadTree.h" />
     <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
     <ClInclude Include="Export\FCArray.h" />
@@ -84,6 +86,7 @@
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export\Export.cpp" />
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
+    <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
     <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
