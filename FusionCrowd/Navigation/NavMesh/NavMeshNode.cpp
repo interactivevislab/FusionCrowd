@@ -79,6 +79,10 @@ namespace FusionCrowd
 		return _poly;
 	}
 
+	NavMeshPoly* NavMeshNode::getPolyRef() {
+		return &_poly;
+	}
+
 #ifdef _WIN32
 	// This disables a 64-bit compatibility warning - pushing a 32-bit value into a 64-bit value.
 	// This can cause problems with SIGN EXTENSION.

@@ -334,6 +334,10 @@ namespace FusionCrowd
 			return _navSystem->GetNodeVertexInfo(output, node_id);
 		}
 
+		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
+			return _navSystem->CutPolygonFromMesh(polygon);
+		}
+
 
 	private:
 		size_t _nextAgentId = 0;
@@ -526,6 +530,10 @@ namespace FusionCrowd
 
 	bool Simulator::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
 		return pimpl->GetNodeVertexInfo(output, node_id);
+	}
+
+	float Simulator::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
+		return pimpl->CutPolygonFromMesh(polygon);
 	}
 
 	void Simulator::SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params)

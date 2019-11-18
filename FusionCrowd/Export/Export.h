@@ -73,6 +73,9 @@ namespace FusionCrowd
 			virtual size_t GetNodesCount() = 0;
 			virtual size_t GetNodeVertexCount(size_t node_id) = 0;
 			virtual bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id) = 0;
+
+			//nav mesh modification
+			virtual float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) = 0;
 		};
 
 		/*

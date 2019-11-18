@@ -119,6 +119,11 @@ namespace FusionCrowd
 			return _sim->GetNodeVertexInfo(output, node_id);
 		}
 
+
+		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
+			return _sim->CutPolygonFromMesh(polygon);
+		}
+
 	private:
 		std::shared_ptr<Simulator> _sim;
 	};

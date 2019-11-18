@@ -48,6 +48,7 @@ namespace FusionCrowd
 		size_t GetNodesCount();
 		size_t GetNodeVertexCount(size_t node_id);
 		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id);
+		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
 
 	private:
 		class NavSystemImpl;
