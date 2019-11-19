@@ -12,35 +12,40 @@ namespace FusionCrowd
 	class QuadTree
 	{
 	public:
-		QuadTree(const NavMesh & navMesh);
+		struct Box
+		{
+			Box(BoundingBox bb, size_t objectId) : bb(bb), objectId(objectId) { };
 
+			BoundingBox bb;
+			size_t objectId;
+		};
+
+		QuadTree(std::vector<Box> boxes, size_t maxLevels = 5);
+
+	public:
 		std::vector<size_t> GetContainingBBIds(DirectX::SimpleMath::Vector2 point);
+		std::vector<size_t> GetIntersectingBBIds(BoundingBox box);
 	private:
-		struct QuadTreeNode
+		struct Node
 		{
 			bool LeafNode = false;
-			float xmid, ymid;
 
-			std::unique_ptr<QuadTreeNode> topLeft;
-			std::unique_ptr<QuadTreeNode> topRight;
-			std::unique_ptr<QuadTreeNode> bottomLeft;
-			std::unique_ptr<QuadTreeNode> bottomRight;
+			BoundingBox topLeftBB;
+			BoundingBox topRightBB;
+			BoundingBox bottomLeftBB;
+			BoundingBox bottomRightBB;
+
+			std::unique_ptr<Node> topLeft;
+			std::unique_ptr<Node> topRight;
+			std::unique_ptr<Node> bottomLeft;
+			std::unique_ptr<Node> bottomRight;
 
 			std::vector<size_t> meshNodeIds;
 		};
 
-		struct BoxWithId
-		{
-			BoxWithId(BoundingBox box, size_t id) : box(box), nodeId(id)
-			{};
+		void BuildSubTree(Node& node, BoundingBox box, std::vector<Box> & boxes, size_t level);
 
-			BoundingBox box;
-			size_t nodeId;
-		};
-
-		void BuildSubTree(QuadTreeNode& node, BoundingBox box, const NavMesh & navMesh, std::vector<BoxWithId> & ids, size_t level);
-
-		const size_t _maxLevel = 5;
-		std::unique_ptr<QuadTreeNode> _rootNode;
+		const size_t _maxLevel;
+		std::unique_ptr<Node> _rootNode;
 	};
 }

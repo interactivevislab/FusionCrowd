@@ -55,7 +55,7 @@ namespace FusionCrowd
 	typedef OccupantSet::const_iterator OccupantSetCItr;
 
 
-	class FUSION_CROWD_API NavMeshLocalizer
+	class NavMeshLocalizer
 	{
 	public:
 		NavMeshLocalizer(const std::string& fileName, bool usePlanner);

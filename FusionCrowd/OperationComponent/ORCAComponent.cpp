@@ -172,21 +172,22 @@ namespace FusionCrowd
 				const Vector2 obstDir = flip ? -obst._unitDir : obst._unitDir;
 				const bool p0Convex = flip ? obst.p1Convex(true) : obst.p0Convex(true);
 				const bool p1Convex = flip ? obst.p0Convex(true) : obst.p1Convex(true);
-				const Obstacle* const leftNeighbor =
-					flip ? obst._nextObstacle : obst._prevObstacle;
-				const Obstacle* const rightNeighbor =
-					flip ? obst._prevObstacle : obst._nextObstacle;
+
+				const Obstacle* const leftNeighbor  = flip ? obst._nextObstacle : obst._prevObstacle;
+				const Obstacle* const rightNeighbor = flip ? obst._prevObstacle : obst._nextObstacle;
 
 				const Vector2 relativePosition1 = P0 - agentInfo.pos;
 				const Vector2 relativePosition2 = P1 - agentInfo.pos;
 
 				bool alreadyCovered = false;
 
-				for (size_t j = 0; j < _orcaLines.size(); ++j) {
-					if (MathUtil::det(invTau * relativePosition1 - _orcaLines[j]._point,
-						_orcaLines[j]._direction) - invTau * agentInfo.radius >=
-						-FusionCrowd::MathUtil::EPS && MathUtil::det(invTau * relativePosition2 - _orcaLines[j]._point,
-							_orcaLines[j]._direction) - invTau * agentInfo.radius >= -FusionCrowd::MathUtil::EPS) {
+				for (size_t j = 0; j < _orcaLines.size(); ++j)
+				{
+					auto & line = _orcaLines[j];
+					if (MathUtil::det(invTau * relativePosition1 - line._point, line._direction) - invTau * agentInfo.radius >= -FusionCrowd::MathUtil::EPS
+						&&
+						MathUtil::det(invTau * relativePosition2 - line._point, line._direction) - invTau * agentInfo.radius >= -FusionCrowd::MathUtil::EPS)
+					{
 						alreadyCovered = true;
 						break;
 					}
@@ -218,8 +219,9 @@ namespace FusionCrowd
 				else if (s > LENGTH && distSq2 <= radiusSq) {
 					/* Collision with right vertex. Ignore if non-convex
 					* or if it will be taken care of by neighoring obstace */
-					if ((obst._nextObstacle == 0x0) || (p1Convex && MathUtil::det(relativePosition2,
-						obst._nextObstacle->_unitDir) >= 0)) {
+					if ((obst._nextObstacle == 0x0) ||
+						(p1Convex && MathUtil::det(relativePosition2, obst._nextObstacle->_unitDir) >= 0))
+					{
 						line._point = Vector2(0.f, 0.f);
 						Vector2(-relativePosition2.y, relativePosition2.x).Normalize(line._direction);
 
@@ -251,14 +253,10 @@ namespace FusionCrowd
 					nextIsCurrent = true;
 
 					const float leg1 = std::sqrt(distSq1 - radiusSq);
-					leftLegDirection = Vector2(relativePosition1.x * leg1 -
-						relativePosition1.y * agentInfo.radius,
-						relativePosition1.x * agentInfo.radius +
-						relativePosition1.y * leg1) / distSq1;
-					rightLegDirection = Vector2(relativePosition1.x * leg1 +
-						relativePosition1.y * agentInfo.radius,
-						-relativePosition1.x * agentInfo.radius +
-						relativePosition1.y * leg1) / distSq1;
+					leftLegDirection = Vector2(relativePosition1.x * leg1 - relativePosition1.y * agentInfo.radius,
+											   relativePosition1.x * agentInfo.radius + relativePosition1.y * leg1) / distSq1;
+					rightLegDirection = Vector2(relativePosition1.x * leg1 + relativePosition1.y * agentInfo.radius,
+											   -relativePosition1.x * agentInfo.radius + relativePosition1.y * leg1) / distSq1;
 				}
 				else if (s > LENGTH && distSqLine <= radiusSq) {
 					/*
@@ -272,23 +270,17 @@ namespace FusionCrowd
 					prevIsCurrent = true;
 
 					const float leg2 = std::sqrt(distSq2 - radiusSq);
-					leftLegDirection = Vector2(relativePosition2.x * leg2 -
-						relativePosition2.y * agentInfo.radius,
-						relativePosition2.x * agentInfo.radius +
-						relativePosition2.y * leg2) / distSq2;
-					rightLegDirection = Vector2(relativePosition2.x * leg2 +
-						relativePosition2.y * agentInfo.radius,
-						-relativePosition2.x * agentInfo.radius +
-						relativePosition2.y * leg2) / distSq2;
+					leftLegDirection = Vector2(relativePosition2.x * leg2 - relativePosition2.y * agentInfo.radius,
+											   relativePosition2.x * agentInfo.radius + relativePosition2.y * leg2) / distSq2;
+					rightLegDirection = Vector2(relativePosition2.x * leg2 + relativePosition2.y * agentInfo.radius,
+											   -relativePosition2.x * agentInfo.radius + relativePosition2.y * leg2) / distSq2;
 				}
 				else {
 					/* Usual situation. */
 					if (p0Convex) {
 						const float leg1 = std::sqrt(distSq1 - radiusSq);
-						leftLegDirection = Vector2(relativePosition1.x * leg1 -
-							relativePosition1.y * agentInfo.radius,
-							relativePosition1.x * agentInfo.radius +
-							relativePosition1.y * leg1) / distSq1;
+						leftLegDirection = Vector2(relativePosition1.x * leg1 - relativePosition1.y * agentInfo.radius,
+					    						   relativePosition1.x * agentInfo.radius + relativePosition1.y * leg1) / distSq1;
 					}
 					else {
 						/* Left vertex non-convex; left leg extends cut-off line. */
@@ -297,10 +289,8 @@ namespace FusionCrowd
 
 					if (p1Convex) {
 						const float leg2 = std::sqrt(distSq2 - radiusSq);
-						rightLegDirection = Vector2(relativePosition2.x * leg2 +
-							relativePosition2.y * agentInfo.radius,
-							-relativePosition2.x * agentInfo.radius +
-							relativePosition2.y * leg2) / distSq2;
+						rightLegDirection = Vector2(relativePosition2.x * leg2 + relativePosition2.y * agentInfo.radius,
+							                       -relativePosition2.x * agentInfo.radius + relativePosition2.y * leg2) / distSq2;
 					}
 					else {
 						/* Right vertex non-convex; right leg extends cut-off line. */
@@ -337,8 +327,7 @@ namespace FusionCrowd
 				}
 
 				/* Compute cut-off centers. */
-				const Vector2 leftCutoff = invTau *
-					(prevIsCurrent ? relativePosition2 : relativePosition1);
+				const Vector2 leftCutoff = invTau * (prevIsCurrent ? relativePosition2 : relativePosition1);
 				const Vector2 rightCutoff = nextIsCurrent ? leftCutoff : (invTau * relativePosition2);
 				const Vector2 cutoffVec = rightCutoff - leftCutoff;
 				const bool obstaclesSame = nextIsCurrent || prevIsCurrent;
@@ -346,8 +335,7 @@ namespace FusionCrowd
 
 				/* Project current velocity on velocity obstacle. */
 				/* Check if current velocity is projected on cutoff circles. */
-				const float t = obstaclesSame ?
-					0.5f : (agentInfo.vel - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared());
+				const float t = obstaclesSame ? 0.5f : (agentInfo.vel - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared());
 				const float tLeft = (agentInfo.vel - leftCutoff).Dot(leftLegDirection);
 				const float tRight = (agentInfo.vel - rightCutoff).Dot(rightLegDirection);
 
@@ -429,8 +417,7 @@ namespace FusionCrowd
 
 				for (size_t i = 0; i < lineNo; ++i) {
 					const float denominator = MathUtil::det(lines[lineNo]._direction, lines[i]._direction);
-					const float numerator = MathUtil::det(lines[i]._direction,
-						lines[lineNo]._point - lines[i]._point);
+					const float numerator = MathUtil::det(lines[i]._direction, lines[lineNo]._point - lines[i]._point);
 
 					if (std::fabs(denominator) <= FusionCrowd::MathUtil::EPS) {
 						/* Lines lineNo and i are (almost) parallel. */
@@ -530,8 +517,7 @@ namespace FusionCrowd
 				for (size_t i = beginLine; i < lines.size(); ++i) {
 					if (MathUtil::det(lines[i]._direction, lines[i]._point - result) > distance) {
 						/* Result does not satisfy constraint of line i. */
-						std::vector<FusionCrowd::Math::Line> projLines(lines.begin(),
-							lines.begin() + numObstLines);
+						std::vector<FusionCrowd::Math::Line> projLines(lines.begin(),lines.begin() + numObstLines);
 
 						for (size_t j = numObstLines; j < i; ++j) {
 							FusionCrowd::Math::Line line;
@@ -560,8 +546,9 @@ namespace FusionCrowd
 						}
 
 						const Vector2 tempResult = result;
-						if (LinearProgram2(projLines, radius, Vector2(-lines[i]._direction.y,
-							lines[i]._direction.x), true, result) < projLines.size()) {
+						if (LinearProgram2(projLines, radius,
+										   Vector2(-lines[i]._direction.y, lines[i]._direction.x), true,
+										   result) < projLines.size()) {
 							/* This should in principle not happen.  The result is by definition
 							* already in the feasible region of this linear program. If it fails,
 							* it is due to small floating point error, and the current result is

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Util.h"
+#include "Math/BoundingBox.h"
 
 namespace FusionCrowd
 {
@@ -19,10 +20,8 @@ namespace FusionCrowd
 		Obstacle();
 		~Obstacle();
 
-		inline size_t getId() const
-		{
-			return _id;
-		}
+		inline size_t getId() const { return _id; }
+		BoundingBox GetBB() const;
 
 		inline DirectX::SimpleMath::Vector2 normal() const
 		{

@@ -124,7 +124,13 @@ namespace FusionCrowd
 			setPlanner(planner);
 		}
 
-		_nodeBBTree = std::make_unique<QuadTree>(*_navMesh.get());
+		std::vector<QuadTree::Box> nodeBoxes;
+		for(size_t nodeId = 0; nodeId < NODE_COUNT; nodeId++)
+		{
+			nodeBoxes.push_back({_navMesh->GetNode(nodeId).GetBB(), nodeId });
+		}
+
+		_nodeBBTree = std::make_unique<QuadTree>(nodeBoxes);
 	}
 
 	NavMeshLocalizer::~NavMeshLocalizer()

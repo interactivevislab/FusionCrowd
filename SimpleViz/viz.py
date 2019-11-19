@@ -1,5 +1,4 @@
 import csv
-import math
 import random
 import argparse
 from tkinter import *
@@ -85,8 +84,20 @@ def redraw_positions(canvas, tr, frame, scale, xmin, ymin, size=1.0, ovals=None)
         if agent_id in ovals:
             canvas.itemconfigure(ovals[agent_id], state='normal')
             canvas.coords(ovals[agent_id], *coords(x, y))
+            #canvas.coords(
+            #    ovals[agent_id],
+            #    (x - xmin) * scale,
+            #    (y - ymin) * scale
+            #)
         else:
             ovals[agent_id] = canvas.create_oval(*coords(x, y), fill=all_colors[agent_id % len(all_colors)], outline="white")
+            #ovals[agent_id] = canvas.create_text(
+            #    (x - xmin) * scale,
+            #    (y - ymin) * scale,
+            #    text=str(agent_id),
+            #    fill=all_colors[agent_id % len(all_colors)],
+            #    anchor=CENTER
+            #)
 
     return ovals
 
