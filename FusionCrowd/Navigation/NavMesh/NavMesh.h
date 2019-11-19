@@ -19,6 +19,7 @@ namespace FusionCrowd
 	class NavMeshEdge;
 	class NavMeshLocalizer;
 	class PathPlanner;
+	class NavMeshModifyer;
 
 	class NMNodeGroup
 	{
@@ -75,8 +76,6 @@ namespace FusionCrowd
 		size_t GetNodeVertexCount(size_t node_id);
 		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id);
 
-		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
-
 	protected:
 		std::string fileName;
 		size_t vCount;
@@ -89,7 +88,6 @@ namespace FusionCrowd
 		NavMeshNode* nodes;
 		std::map<const std::string, NMNodeGroup> nodeGroups;
 
-		//cut polygon
-		float DivideNode(NavMeshNode* node, DirectX::SimpleMath::Vector2* v0, DirectX::SimpleMath::Vector2* v1);
+		friend NavMeshModifyer;
 	};
 }

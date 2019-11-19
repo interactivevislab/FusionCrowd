@@ -28,6 +28,7 @@
     <ClInclude Include="Export\Fsm\IStrategyConfigurator.h" />
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
+    <ClInclude Include="Navigation\NavMesh\NavMeshModifyer.h" />
     <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
@@ -83,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export\Export.cpp" />
+    <ClCompile Include="Navigation\NavMesh\NavMeshModifyer.cpp" />
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
     <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
