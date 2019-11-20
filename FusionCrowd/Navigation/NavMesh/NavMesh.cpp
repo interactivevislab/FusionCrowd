@@ -383,6 +383,7 @@ namespace FusionCrowd
 	bool NavMesh::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
 		for (int i = 0; i < nodes[node_id]._poly.vertCount; i++) {
 			output[i] = nodes[node_id]._poly.vertIDs[i];
+			//if (nodes[node_id]._poly.vertIDs[i] < 0) return false;
 		}
 		return true;
 	}
