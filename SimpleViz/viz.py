@@ -1,5 +1,4 @@
 import csv
-import math
 import random
 import argparse
 from tkinter import *
@@ -54,14 +53,14 @@ def read_trajectories(filename):
     return Trajectories(result, steps, xmin=minx, ymin=miny, xmax=maxx, ymax=maxy)
 
 
-def draw_trajectories(canvas, tr, scale=1.0):
+def draw_trajectories(canvas, tr, xmin, ymin, scale=1.0):
     def flat(pos):
         for x, y in pos:
             yield x
             yield y
 
     for id, positions in tr.pos.items():
-        scaled = flat((scale * (x - tr.xmin), scale * y) for x, y in positions.values())
+        scaled = flat((scale * (x - xmin), scale * (y - ymin)) for x, y in positions.values())
         canvas.create_line(*scaled, fill=all_colors[id % len(all_colors)])
 
 
@@ -85,8 +84,20 @@ def redraw_positions(canvas, tr, frame, scale, xmin, ymin, size=1.0, ovals=None)
         if agent_id in ovals:
             canvas.itemconfigure(ovals[agent_id], state='normal')
             canvas.coords(ovals[agent_id], *coords(x, y))
+            #canvas.coords(
+            #    ovals[agent_id],
+            #    (x - xmin) * scale,
+            #    (y - ymin) * scale
+            #)
         else:
             ovals[agent_id] = canvas.create_oval(*coords(x, y), fill=all_colors[agent_id % len(all_colors)], outline="white")
+            #ovals[agent_id] = canvas.create_text(
+            #    (x - xmin) * scale,
+            #    (y - ymin) * scale,
+            #    text=str(agent_id),
+            #    fill=all_colors[agent_id % len(all_colors)],
+            #    anchor=CENTER
+            #)
 
     return ovals
 
@@ -226,7 +237,7 @@ if __name__ == "__main__":
     draw_mesh(canvas, mesh, scale=scale, xmin=global_xmin, ymin=global_ymin, show_text=not args.hide_mesh_text)
 
     if not hide_trajectory:
-        draw_trajectories(canvas, tr, scale=scale)
+        draw_trajectories(canvas, tr, xmin=global_xmin, ymin=global_ymin, scale=scale)
 
     ovals = redraw_positions(canvas, tr=tr, scale=scale, size=agent_size, xmin=global_xmin, ymin=global_ymin, frame=0)
 

@@ -66,6 +66,8 @@ namespace FusionCrowd
 
 		inline DirectX::SimpleMath::Vector2 getGradient() const { return _poly.getGradient(); }
 
+		const BoundingBox & GetBB() const;
+
 		friend class NavMesh;
 		friend class NavMeshEdge;
 		//protected:

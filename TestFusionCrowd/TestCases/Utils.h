@@ -6,8 +6,7 @@ namespace TestFusionCrowd
 {
 	namespace
 	{
-		std::random_device rd;
-		std::default_random_engine e2(rd());
+		std::mt19937 e2(10);
 	}
 
 	inline float RandFloat(float min, float max)

@@ -44,6 +44,7 @@
     <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
     <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
+    <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshModifyer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +108,7 @@
     <ClInclude Include="Export\Fsm\IFsm.h" />
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="OperationComponent\GCFComponent.h" />
+    <ClInclude Include="Navigation\NavMesh\QuadTree.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshModifyer.h" />
   </ItemGroup>
   <ItemGroup>

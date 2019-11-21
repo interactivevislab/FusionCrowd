@@ -4,6 +4,7 @@
 #include "NavMeshNode.h"
 #include "Agent.h"
 #include "Math/Util.h"
+#include "Navigation/NavMesh/QuadTree.h"
 
 #include <set>
 
@@ -54,7 +55,7 @@ namespace FusionCrowd
 	typedef OccupantSet::const_iterator OccupantSetCItr;
 
 
-	class FUSION_CROWD_API NavMeshLocalizer
+	class NavMeshLocalizer
 	{
 	public:
 		NavMeshLocalizer(const std::string& fileName, bool usePlanner);
@@ -85,5 +86,6 @@ namespace FusionCrowd
 		std::shared_ptr<PathPlanner> _planner;
 		std::shared_ptr<NavMesh> _navMesh;
 		bool _trackAll;
+		std::unique_ptr<QuadTree> _nodeBBTree;
 	};
 }

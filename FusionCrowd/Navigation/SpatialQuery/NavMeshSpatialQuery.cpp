@@ -4,9 +4,9 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	NavMeshSpatialQuery::NavMeshSpatialQuery(std::shared_ptr<NavMeshLocalizer> nml)
+	NavMeshSpatialQuery::NavMeshSpatialQuery(std::shared_ptr<NavMeshLocalizer> nml) :
+		_localizer(nml)
 	{
-		_localizer = nml;
 		ProcessObstacles();
 	}
 
@@ -19,6 +19,8 @@ namespace FusionCrowd
 	{
 		// Compute obstacle convexity -- this assumes all closed polygons
 		std::shared_ptr<NavMesh> navMesh = _localizer->getNavMesh();
+		std::vector<QuadTree::Box> boxes;
+
 		const unsigned int OBST_COUNT = static_cast<unsigned int>(navMesh->getObstacleCount());
 		for (unsigned int o = 0; o < OBST_COUNT; ++o) {
 			NavMeshObstacle & obst = navMesh->GetObstacle(o);
@@ -29,31 +31,37 @@ namespace FusionCrowd
 			else {
 				obst._isConvex = true;
 			}
+
+			boxes.push_back({ obst.GetBB(), obst.getId()});
 		}
+
+		_obstacleBBTree = std::make_unique<QuadTree>(boxes);
 	}
 
 	std::set<size_t> NavMeshSpatialQuery::ObstacleQuery(Vector2 pt) const
 	{
-		float range = 10.0f;
+		float range = 3.2f;
 		return ObstacleQuery(pt, range);
 	}
 
-	std::set<size_t> NavMeshSpatialQuery::ObstacleQuery(Vector2 pt, float rangeSq) const
+	std::set<size_t> NavMeshSpatialQuery::ObstacleQuery(Vector2 pt, float range) const
 	{
-		const size_t nodeId = _localizer->getNodeId(pt);
-		if(nodeId == NavMeshLocation::NO_NODE)
-			return std::set<size_t>();
+		const float rangeSq = range * range;
+		auto obstacleIds = _obstacleBBTree->GetIntersectingBBIds(BoundingBox(pt.x - range, pt.y - range, pt.x + range, pt.y + range));
 
-		const NavMeshNode & node = _localizer->getNavMesh()->GetNode(nodeId);
-
-		const size_t OBST_COUNT = node.getObstacleCount();
+		auto mesh = _localizer->getNavMesh();
 		std::set<size_t> result;
-		for (size_t o = 0; o < OBST_COUNT; ++o) {
-			const NavMeshObstacle * obst = node.getObstacle(o);
-			if (obst->pointOutside(pt)) {
-				float distance = distSqPointLineSegment(obst->getP0(), obst->getP1(), pt);
 
-				if(distance < rangeSq) result.insert(obst->getId());
+		for(size_t obstacleId : obstacleIds)
+		{
+			const NavMeshObstacle & obst = mesh->GetObstacle(obstacleId);
+			if (obst.pointOutside(pt))
+			{
+				float distance = distSqPointLineSegment(obst.getP0(), obst.getP1(), pt);
+				if(distance < rangeSq)
+				{
+					result.insert(obst.getId());
+				}
 			}
 		}
 

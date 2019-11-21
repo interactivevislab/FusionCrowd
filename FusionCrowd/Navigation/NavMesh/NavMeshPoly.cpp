@@ -36,7 +36,7 @@ namespace FusionCrowd
 		const float X = point.x;
 		const float Y = point.y;
 
-		if(X < minX || X > maxX || Y < minY || Y > maxY)
+		if(!_box.Contains(X, Y))
 		{
 			return false;
 		}
@@ -193,15 +193,30 @@ namespace FusionCrowd
 
 	void NavMeshPoly::setBB(const Vector2* vertices)
 	{
-		minX = minY = 1e6f;
-		maxX = maxY = -minX;
+		float xmin = 1e6f;
+		float ymin = 1e6f;
+		float xmax = -1e6f;
+		float ymax = -1e6f;
+
 		for (size_t v = 0; v < vertCount; ++v)
 		{
 			const Vector2& p0 = vertices[vertIDs[v]];
-			if (p0.x < minX) minX = p0.x;
-			if (p0.x > maxX) maxX = p0.x;
-			if (p0.y < minY) minY = p0.y;
-			if (p0.y > maxY) maxY = p0.y;
+			if (p0.x < xmin) xmin = p0.x;
+			if (p0.x > xmax) xmax = p0.x;
+			if (p0.y < ymin) ymin = p0.y;
+			if (p0.y > ymax) ymax = p0.y;
 		}
+
+		_box = {xmin, ymin, xmax, ymax};
+	}
+
+	const BoundingBox& NavMeshPoly::getBB() const
+	{
+		return _box;
+	}
+
+	void NavMeshPoly::SetVertices(const DirectX::SimpleMath::Vector2* vertices)
+	{
+		this->vertices = vertices;
 	}
 }

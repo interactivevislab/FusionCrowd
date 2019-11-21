@@ -1,4 +1,11 @@
 TestFusionCrowd/*.csv
+
+# Sourcetrail stuff
+compile_commands.json
+*.srctrlbm
+*.srctrldb
+*.srctrlprj
+
 .idea/
 __pycache__/
 
@@ -258,24 +265,3 @@ _Pvt_Extensions
 
 *.opendb
 *.db
-
-!Samples/SouthCity/GeoAPI.dll
-!Samples/SouthCity/Proj4Net.dll
-Samples/ForumProject/NewData/
-Samples/ForumProject/Content/City/full.fbx
-Samples/FloodVision3/SensorsData/NewSensors/
-Samples/FloodVision3/zlib1.dll
-Samples/FloodVision3/xdr.dll
-Samples/FloodVision3/vcruntime140.dll
-Samples/FloodVision3/mfhdf.dll
-Samples/FloodVision3/libcurl.dll
-Samples/FloodVision3/hdf5_tools.dll
-Samples/FloodVision3/hdf5_hl_cpp.dll
-Samples/FloodVision3/hdf5_cpp.dll
-Samples/FloodVision3/hdf5.dll
-Samples/FloodVision3/hdf.dll
-Samples/FloodVision3/nc-config
-Samples/FloodVision3/msvcp140.dll
-Samples/FloodVision3/hdf5_hl.dll
-Samples/FloodVision3/jpeg.dll
-Samples/FloodVision3/netcdf.dll

@@ -16,6 +16,14 @@ Obstacle::~Obstacle()
 {
 }
 
+BoundingBox Obstacle::GetBB() const
+{
+	auto p0 = getP0();
+	auto p1 = getP1();
+
+	return BoundingBox(p0.x, p0.y, p0.x, p0.y).Union(BoundingBox(p1.x, p1.y, p1.x, p1.y));
+}
+
 Vector2 Obstacle::getP1() const
 {
 	if (_nextObstacle != 0x0) {

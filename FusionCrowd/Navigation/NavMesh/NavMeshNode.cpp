@@ -83,6 +83,11 @@ namespace FusionCrowd
 		return &_poly;
 	}
 
+	const BoundingBox& NavMeshNode::GetBB() const
+	{
+		return _poly.getBB();
+	}
+
 #ifdef _WIN32
 	// This disables a 64-bit compatibility warning - pushing a 32-bit value into a 64-bit value.
 	// This can cause problems with SIGN EXTENSION.
