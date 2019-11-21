@@ -1,6 +1,5 @@
 #include "Agent.h"
 #include "StrategyComponent/Goal/Goal.h"
-#include "Navigation/SpatialQuery/SpatialQueryStructs.h"
 
 using namespace DirectX::SimpleMath;
 
