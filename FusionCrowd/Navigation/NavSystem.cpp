@@ -274,6 +274,10 @@ namespace FusionCrowd
 			return _navMesh->GetNodeVertexInfo(output, node_id);
 		}
 
+		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
+			return _navMesh->CutPolygonFromMesh(polygon);
+		}
+
 	private:
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
@@ -363,5 +367,8 @@ namespace FusionCrowd
 		return pimpl->GetNodeVertexInfo(output, node_id);
 	}
 
+	float NavSystem::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
+		return pimpl->CutPolygonFromMesh(polygon);
+	}
 
 }

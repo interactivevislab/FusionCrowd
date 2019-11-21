@@ -79,6 +79,15 @@ namespace FusionCrowd
 		return _poly;
 	}
 
+	NavMeshPoly* NavMeshNode::getPolyRef() {
+		return &_poly;
+	}
+
+	const BoundingBox& NavMeshNode::GetBB() const
+	{
+		return _poly.getBB();
+	}
+
 #ifdef _WIN32
 	// This disables a 64-bit compatibility warning - pushing a 32-bit value into a 64-bit value.
 	// This can cause problems with SIGN EXTENSION.
@@ -141,12 +150,6 @@ namespace FusionCrowd
 		}
 		return true;
 	}
-
-	void NavMeshNode::setVertices(const DirectX::SimpleMath::Vector2* vertices)
-	{
-		_poly.SetVertices(vertices);
-	}
-
 }
 #ifdef _WIN32
 #pragma warning( default : 4312 )

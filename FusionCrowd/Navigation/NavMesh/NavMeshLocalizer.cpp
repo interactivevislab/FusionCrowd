@@ -160,7 +160,6 @@ namespace FusionCrowd
 				}
 			}
 		}
-
 		return maxNode;
 	}
 

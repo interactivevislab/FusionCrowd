@@ -1,6 +1,6 @@
 #pragma once
 
-#include <deque>
+#include <list>
 #include "Math/Util.h"
 
 namespace FusionCrowd
@@ -80,8 +80,8 @@ namespace FusionCrowd
 		                     size_t startPortal = 0);
 #ifndef SIMPLE_FUNNEL
 	protected:
-		std::deque<FunnelEdge> _left;
-		std::deque<FunnelEdge> _right;
+		std::list<FunnelEdge> _left;
+		std::list<FunnelEdge> _right;
 #endif
 	};
 }
