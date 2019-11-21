@@ -58,7 +58,10 @@ namespace FusionCrowd
 			if (obst.pointOutside(pt))
 			{
 				float distance = distSqPointLineSegment(obst.getP0(), obst.getP1(), pt);
-
+				if(distance < rangeSq)
+				{
+					result.insert(obst.getId());
+				}
 			}
 		}
 
