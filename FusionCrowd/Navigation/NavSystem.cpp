@@ -24,6 +24,7 @@ namespace FusionCrowd
 	public:
 		NavSystemImpl(std::shared_ptr<NavMeshLocalizer> localizer)
 		{
+			_localizer = localizer;
 			_navMeshQuery = std::make_unique<NavMeshSpatialQuery>(localizer);
 			_navMesh = localizer->getNavMesh();
 		}
@@ -276,13 +277,14 @@ namespace FusionCrowd
 		}
 
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
-			return NavMeshModifyer(*_navMesh).CutPolygonFromMesh(polygon);
+			return NavMeshModifyer(*_navMesh, _localizer).CutPolygonFromMesh(polygon);
 		}
 
 	private:
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
+		std::shared_ptr<NavMeshLocalizer> _localizer;
 
 		NeighborsSeeker _neighborsSeeker;
 		std::map<size_t, AgentSpatialInfo> _agentsInfo;

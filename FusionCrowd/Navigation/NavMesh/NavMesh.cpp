@@ -368,7 +368,6 @@ namespace FusionCrowd
 			vertex.Y = vertices[i].y;
 			output[i] = vertex;
 		}
-
 		return true;
 	}
 
@@ -381,6 +380,7 @@ namespace FusionCrowd
 	}
 
 	bool NavMesh::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
+		NavMeshNode* node = nullptr;
 		for (int i = 0; i < nodes[node_id]._poly.vertCount; i++) {
 			output[i] = nodes[node_id]._poly.vertIDs[i];
 			//if (nodes[node_id]._poly.vertIDs[i] < 0) return false;
