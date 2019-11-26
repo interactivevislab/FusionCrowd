@@ -55,6 +55,7 @@ namespace FusionCrowd
 			void AddAgent(size_t id, float perSpace, float anticipation)
 			{
 				_agents[id] = AgentParamentrs(perSpace, anticipation);
+				_navSystem->GetSpatialInfo(id).inertiaEnabled = true;
 			}
 
 			bool DeleteAgent(size_t id)

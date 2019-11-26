@@ -151,6 +151,7 @@ namespace FusionCrowd
 		void HelbingComponent::AddAgent(size_t id, float mass)
 		{
 			_agents[id] = AgentParamentrs(mass);
+			_navSystem->GetSpatialInfo(id).inertiaEnabled = false;
 		}
 
 		void HelbingComponent::AddAgent(size_t id)

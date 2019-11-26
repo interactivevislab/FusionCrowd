@@ -110,7 +110,7 @@ namespace FusionCrowd
 		{
 			float delV = (agent.vel - agent.velNew).Length();
 
-			if (delV > agent.maxAccel * timeStep) {
+			if (agent.inertiaEnabled && delV > agent.maxAccel * timeStep) {
 				float w = agent.maxAccel * timeStep / delV;
 				agent.vel = (1.f - w) * agent.vel + w * agent.velNew;
 			}
@@ -123,6 +123,13 @@ namespace FusionCrowd
 
 		void UpdateOrient(AgentSpatialInfo & agent, float timeStep)
 		{
+			if(!agent.inertiaEnabled)
+			{
+				agent.orient = agent.vel;
+				agent.orient.Normalize();
+				return;
+			}
+
 			float speed = agent.vel.Length();
 			if (abs(speed) <= MathUtil::EPS)
 			{

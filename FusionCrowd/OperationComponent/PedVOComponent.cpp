@@ -40,6 +40,7 @@ namespace FusionCrowd
 		void PedVOComponent::AddAgent(size_t agentId, float timeHorizon, float timeHorizonObst, float turningBias, bool denseAware, float factor, float buffer)
 		{
 			_agents[agentId] = AgentParamentrs(timeHorizon, timeHorizonObst, turningBias, denseAware, factor, buffer);
+			_navSystem->GetSpatialInfo(agentId).inertiaEnabled = false;
 		}
 
 		bool PedVOComponent::DeleteAgent(size_t agentId)
@@ -55,11 +56,11 @@ namespace FusionCrowd
 				AgentParamentrs & params = p.second;
 				AgentSpatialInfo & spatialInfo = _navSystem->GetSpatialInfo(id);
 
-				ComputeNewVelocity(params, spatialInfo);
+				ComputeNewVelocity(params, spatialInfo, timeStep);
 			}
 		}
 
-		void PedVOComponent::ComputeNewVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo)
+		void PedVOComponent::ComputeNewVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo, float timeStep)
 		{
 			AdaptPreferredVelocity(agentParams, agentInfo);
 
@@ -67,7 +68,7 @@ namespace FusionCrowd
 			Vector2 prefDir;
 			float prefSpeed;
 
-			const size_t numObstLines = ComputeORCALinesTurning(agentParams, agentInfo, optVel, prefDir, prefSpeed);
+			const size_t numObstLines = ComputeORCALinesTurning(agentParams, agentInfo, optVel, prefDir, timeStep, prefSpeed);
 
 			size_t lineFail = LinearProgram2(_orcaLines, agentInfo.maxSpeed, optVel, false, agentParams._turningBias, agentInfo.velNew);
 
@@ -154,7 +155,9 @@ namespace FusionCrowd
 			}
 		}
 
-		size_t PedVOComponent::ComputeORCALinesTurning(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo, DirectX::SimpleMath::Vector2& optVel, DirectX::SimpleMath::Vector2& prefDir, float& prefSpeed)
+		size_t PedVOComponent::ComputeORCALinesTurning(
+			AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo,
+			DirectX::SimpleMath::Vector2& optVel, DirectX::SimpleMath::Vector2& prefDir, float timeStep, float& prefSpeed)
 		{
 			_orcaLines.clear();
 
@@ -270,7 +273,7 @@ namespace FusionCrowd
 				}
 				else {
 					/* Collision. Project on cut-off circle of time timeStep. */
-					const float invTimeStep = 1.0f / _timeStep;
+					const float invTimeStep = 1.0f / timeStep;
 
 					/* Vector from cutoff center to relative velocity. */
 					const Vector2 w = relativeVelocity - invTimeStep * relativePosition;

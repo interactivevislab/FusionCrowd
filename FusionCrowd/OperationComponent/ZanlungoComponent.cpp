@@ -36,6 +36,7 @@ namespace FusionCrowd
 			void AddAgent(size_t id, float mass)
 			{
 				_agents[id] = ZAgentParamentrs(mass);
+				_navSystem->GetSpatialInfo(id).inertiaEnabled = true;
 			}
 
 			bool DeleteAgent(size_t id)

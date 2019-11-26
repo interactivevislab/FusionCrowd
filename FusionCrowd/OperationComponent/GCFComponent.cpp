@@ -83,6 +83,7 @@ namespace FusionCrowd
 		void GCFComponent::AddAgent(size_t agentId)
 		{
 			_agents[agentId] = AgentParamentrs();
+			_navSystem->GetSpatialInfo(agentId).inertiaEnabled = true;
 			UpdateEllipse(_navSystem->GetSpatialInfo(agentId));
 		}
 

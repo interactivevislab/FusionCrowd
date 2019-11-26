@@ -36,6 +36,7 @@ namespace FusionCrowd
 			void AddAgent(size_t id)
 			{
 				_agents.insert(id);
+				_navSystem->GetSpatialInfo(id).inertiaEnabled = false;
 			}
 
 			bool DeleteAgent(size_t id)
@@ -55,7 +56,7 @@ namespace FusionCrowd
 
 			void ComputeNewVelocity(size_t agentId)
 			{
-				const size_t numObstLines = ComputeORCALines(agentId);
+ 				const size_t numObstLines = ComputeORCALines(agentId);
 				auto & agentInfo = _navSystem->GetSpatialInfo(agentId);
 
 				Vector2 velPref(agentInfo.prefVelocity.getPreferredVel());
@@ -184,9 +185,9 @@ namespace FusionCrowd
 				for (size_t j = 0; j < _orcaLines.size(); ++j)
 				{
 					auto & line = _orcaLines[j];
-					if (MathUtil::det(invTau * relativePosition1 - line._point, line._direction) - invTau * agentInfo.radius >= -FusionCrowd::MathUtil::EPS
-						&&
-						MathUtil::det(invTau * relativePosition2 - line._point, line._direction) - invTau * agentInfo.radius >= -FusionCrowd::MathUtil::EPS)
+					auto d1 = MathUtil::det(invTau * relativePosition1 - line._point, line._direction) - invTau * agentInfo.radius;
+					auto d2 = MathUtil::det(invTau * relativePosition2 - line._point, line._direction) - invTau * agentInfo.radius;
+					if (d1 >= -FusionCrowd::MathUtil::EPS && d2 >= -FusionCrowd::MathUtil::EPS)
 					{
 						alreadyCovered = true;
 						break;

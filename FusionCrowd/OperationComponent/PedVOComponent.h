@@ -74,10 +74,12 @@ namespace FusionCrowd
 			bool DeleteAgent(size_t idAgent)  override;
 			void Update(float timeStep) override;
 
-			void ComputeNewVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo);
+			void ComputeNewVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo, float timeStep);
 
 			void AdaptPreferredVelocity(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo);
-			size_t ComputeORCALinesTurning(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo, DirectX::SimpleMath::Vector2& optVel, DirectX::SimpleMath::Vector2& prefDir,
+			size_t ComputeORCALinesTurning(
+				AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo,
+				DirectX::SimpleMath::Vector2& optVel, DirectX::SimpleMath::Vector2& prefDir, float timeStep,
 				float& prefSpeed);
 			void ObstacleLine(AgentParamentrs & agentParams, AgentSpatialInfo & agentInfo, Obstacle & obst, const float invTau, bool flip);
 
@@ -101,7 +103,6 @@ namespace FusionCrowd
 			std::vector<FusionCrowd::Math::Line> _orcaLines;
 			float _cosObstTurn;
 			float _sinObstTurn;
-			float _timeStep;
 		};
 	}
 }

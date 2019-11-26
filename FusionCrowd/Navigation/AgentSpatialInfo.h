@@ -16,10 +16,12 @@ namespace FusionCrowd
 		DirectX::SimpleMath::Vector2 orient = DirectX::SimpleMath::Vector2(1.f, 0.f);
 
 		float radius    = 0.19f;
-		float maxSpeed  = 2.5f;
-		float maxAccel  = 2.f;
-		float prefSpeed = 1.34f;
-		float maxAngVel = 6.28f;
+		float maxSpeed  = 2.f;
+		float maxAccel  = 5.f;
+		float prefSpeed = 1.04f;
+		float maxAngVel = 3.14f;
+
+		bool inertiaEnabled = true;
 
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
 	};
