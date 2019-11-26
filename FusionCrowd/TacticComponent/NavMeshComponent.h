@@ -4,11 +4,9 @@
 
 #include "Export/ComponentId.h"
 #include "ITacticComponent.h"
+
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
-#include "TacticComponent/Path/PrefVelocity.h"
-#include "StrategyComponent/Goal/Goal.h"
-#include "Agent.h"
 #include "Simulator.h"
 
 namespace FusionCrowd
@@ -45,13 +43,6 @@ namespace FusionCrowd
 
 		void setPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
 		unsigned int updateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const;
-
-		/*
-		PortalPath * getPath(size_t id);
-		void setPath(size_t agentID, PortalPath * path);
-		void clearPath(size_t agentID);
-		void setNode(size_t agentID, unsigned int nodeID);
-		*/
 
 		std::shared_ptr<Simulator> _simulator;
 

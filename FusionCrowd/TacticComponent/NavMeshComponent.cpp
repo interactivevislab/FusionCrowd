@@ -1,16 +1,20 @@
 #include "NavMeshComponent.h"
+
 #include "Path/PortalPath.h"
 #include "Path/PathPlanner.h"
 #include "Path/Route.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NavSystem.h"
+#include "StrategyComponent/Goal/Goal.h"
+#include "TacticComponent/Path/PrefVelocity.h"
+#include "Math/consts.h"
 
 using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
 	NavMeshComponent::NavMeshComponent(std::shared_ptr<Simulator> simulator, std::shared_ptr<NavMeshLocalizer> localizer) :
-		_simulator(simulator), _localizer(localizer), _navMesh(localizer->getNavMesh())
+		_simulator(simulator), _localizer(localizer), _navMesh(localizer->getNavMesh()), _headingDevCos(cos(MathUtil::PI))
 	{
 	}
 

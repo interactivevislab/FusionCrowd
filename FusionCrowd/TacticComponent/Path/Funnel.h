@@ -31,11 +31,8 @@ namespace FusionCrowd
 	class FunnelEdge
 	{
 	public:
-		FunnelEdge()
-		{
-		}
 #ifdef SIMPLE_FUNNEL
-	FunnelEdge(size_t id, const Vector2 & dir) :_id(id), _dir(dir) {}
+		FunnelEdge(size_t id, const Vector2 & dir) :_id(id), _dir(dir) {}
 #else
 		FunnelEdge(size_t id, size_t end, const DirectX::SimpleMath::Vector2& dir,
 		           const DirectX::SimpleMath::Vector2& origin) :
