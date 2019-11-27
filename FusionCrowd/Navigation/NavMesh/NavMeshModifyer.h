@@ -32,7 +32,7 @@ namespace FusionCrowd {
 
 		std::vector<NodeModificator*> _modifications;
 
-		int SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon);
+		float SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon);
 
 		std::vector<NavMeshNode*> _addednodes;
 		std::vector<unsigned int> _nodes_ids_to_delete;
@@ -47,7 +47,7 @@ namespace FusionCrowd {
 		std::vector<unsigned int> _local_polygon_vertex_ids;
 
 		int CutPolyFromCurrentNode();
-		int SplitNode(Vector2 v0, Vector2 v1);
+		int SplitNode();
 		int CutCurveFromCurrentNode();
 
 		int Initialize(NodeModificator * modificator);
@@ -63,7 +63,7 @@ namespace FusionCrowd {
 		bool IsClockwise(FCArray<NavMeshVetrex> & polygon);
 		bool IsTriangleClockwise(Vector2 v0, Vector2 v1, Vector2 v2);
 		unsigned int AddVertex(Vector2 v);
-		Vector2 FindPolyAndSegmentCrosspoint(Vector2 v0, Vector2 v1, NavMeshPoly* poly);
+		std::vector<Vector2> FindPolyAndSegmentCrosspoints(Vector2 v0, Vector2 v1, NavMeshPoly* poly);
 		bool IsSegmentsIntersects(Vector2 v00, Vector2 v01, Vector2 v10, Vector2 v11);
 		NavMeshNode* GetNodeById(unsigned int id);
 	};

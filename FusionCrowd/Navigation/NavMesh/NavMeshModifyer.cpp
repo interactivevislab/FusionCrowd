@@ -1,5 +1,6 @@
 #include "NavMeshModifyer.h"
 #include "NavMeshLocalizer.h"
+#include <algorithm>
 
 using namespace DirectX::SimpleMath;
 namespace FusionCrowd {
@@ -13,12 +14,12 @@ namespace FusionCrowd {
 
 	/*
 	TODO:
-	1. vertices not on navmesh
+	1. vertices not on navmesh +
 	2. edges crossing whole node
 	3. nodes with double modification
 	*/
-	int NavMeshModifyer::SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon) {
-		int res = 0;
+	float NavMeshModifyer::SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon) {
+		float res = 0;
 		_global_polygon = std::vector<Vector2>(polygon.size());
 		_modifications = std::vector<NodeModificator*>();
 		std::vector<unsigned int> nodes_ids = std::vector<unsigned int>(polygon.size());
@@ -65,25 +66,55 @@ namespace FusionCrowd {
 				modificator->polygon_vertex_ids[i] = i + _navmesh.vCount;
 			}
 			_modifications.push_back(modificator);
-			return 1;
+			return 111111;
 		}
+		//if poly not on one node
 		int i = start_pos;
-		res = 99;
 		do {
-			if (nodes_ids[i] == -1) {
-				i = (i + 1) % _global_polygon.size();
-				continue;
+			unsigned int prev_point_id = (i - 1 + _global_polygon.size()) % _global_polygon.size();
+			Vector2  prev_point = _global_polygon[prev_point_id];
+			Vector2  cur_point = _global_polygon[i];
+			float minx = std::min(prev_point.x, cur_point.x);
+			float maxx = std::max(prev_point.x, cur_point.x);
+			float miny = std::min(prev_point.y, cur_point.y);
+			float maxy = std::max(prev_point.y, cur_point.y);
+			//check for line i-1 - i crossing whole nodes
+			auto crossing_nodes_ids = _localizer->findNodesCrossingBB(BoundingBox(minx, miny, maxx, maxy));
+			for (int i = 0; i < _navmesh.nCount; i++) {
+				if (std::find(crossing_nodes_ids.begin(),
+					crossing_nodes_ids.end(),
+					_navmesh.nodes[i]._id) != crossing_nodes_ids.end()) {
+					auto cross_points = FindPolyAndSegmentCrosspoints(prev_point, cur_point, &_navmesh.nodes[i]._poly);
+					if (cross_points.size() == 2) {
+						//create split modificator
+						NodeModificator* modificator = new NodeModificator();
+						modificator->modification_type = SPLIT;
+						modificator->node = &_navmesh.nodes[i];
+						modificator->polygon_to_cut = std::vector<Vector2>();
+						modificator->polygon_to_cut.push_back(cross_points[0]);
+						modificator->polygon_to_cut.push_back(cross_points[1]);
+						modificator->polygon_vertex_ids = std::vector<unsigned int>();
+						modificator->polygon_vertex_ids.push_back(AddVertex(cross_points[0]));
+						modificator->polygon_vertex_ids.push_back(AddVertex(cross_points[1]));
+						_modifications.push_back(modificator);
+					}
+				}
 			}
+			//skip vertexes not on navmesh
+			if (nodes_ids[i] == -1) {
+					i = (i + 1) % _global_polygon.size();
+					continue;
+			}
+			//add curve modificator
 			NodeModificator* modificator = new NodeModificator();
 			modificator->modification_type = CUT_CURVE;
 			modificator->node = GetNodeById(nodes_ids[i]);
 			modificator->polygon_to_cut = std::vector<Vector2>();
 			modificator->polygon_vertex_ids = std::vector<unsigned int>();
-			unsigned int prev_point = (i - 1 + _global_polygon.size()) % _global_polygon.size();
-			Vector2 prev_cross_point = FindPolyAndSegmentCrosspoint(
-				_global_polygon[prev_point],
+			Vector2 prev_cross_point = FindPolyAndSegmentCrosspoints(
+				_global_polygon[prev_point_id],
 				_global_polygon[i],
-				&GetNodeById(nodes_ids[i])->_poly);
+				&GetNodeById(nodes_ids[i])->_poly)[0];
 			modificator->polygon_vertex_ids.push_back(AddVertex(prev_cross_point));
 			modificator->polygon_to_cut.push_back(prev_cross_point);
 			int previ = i;
@@ -94,10 +125,10 @@ namespace FusionCrowd {
 				i = (i + 1) % _global_polygon.size();
 			} while (nodes_ids[i] == nodes_ids[previ]);
 
-			Vector2 post_cross_point = FindPolyAndSegmentCrosspoint(
+			Vector2 post_cross_point = FindPolyAndSegmentCrosspoints(
 				_global_polygon[previ],
 				_global_polygon[i],
-				&GetNodeById(nodes_ids[previ])->_poly);
+				&GetNodeById(nodes_ids[previ])->_poly)[0];
 			modificator->polygon_vertex_ids.push_back(AddVertex(post_cross_point));
 			modificator->polygon_to_cut.push_back(post_cross_point);
 			_modifications.push_back(modificator);
@@ -113,30 +144,24 @@ namespace FusionCrowd {
 	}
 
 	float NavMeshModifyer::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
-		//split node
-		//int res = SplitNode(Vector2(polygon[0].X, polygon[0].Y), Vector2(polygon[1].X, polygon[1].Y));
-
-		//Cut curve
-		/*
-		FillAddedVertices();
-		int res = CutCurveFromCurrentNode();
-		*/
-
+		float res = -8888;
 		_addedvertices = std::vector<Vector2>();
 		_nodes_ids_to_delete = std::vector<unsigned int>();
 		_addednodes = std::vector<NavMeshNode*>();
 		SplitPolyByNodes(polygon);
-		int res = -1;
 		for (auto mod : _modifications) {
 			Initialize(mod);
 			if (mod->modification_type == CUT_CURVE) {
 				FillAddedVertices();
-				if (res==-1) res = CutCurveFromCurrentNode();
-				else CutCurveFromCurrentNode();
+				CutCurveFromCurrentNode();
 			}
 			if (mod->modification_type == CUT_POLY) {
 				FillAddedVertices();
 				CutPolyFromCurrentNode();
+			}
+			if (mod->modification_type == SPLIT) {
+				res = mod->polygon_to_cut[0].x;
+				SplitNode();
 			}
 			_nodes_ids_to_delete.push_back(mod->node->getID());
 		}
@@ -144,17 +169,11 @@ namespace FusionCrowd {
 		return res;
 	}
 
-	int NavMeshModifyer::SplitNode(Vector2 v0, Vector2 v1) {
-		unsigned int v0id = 0, v1id = 1;
-		if (v0.x > v1.x) {
-			v0id = _local_polygon_vertex_ids[1]; // AddVertex(_local_polygon[1]);
-			v1id = _local_polygon_vertex_ids[0]; // AddVertex(_local_polygon[0]);
-		}
-		else {
-			v0id = _local_polygon_vertex_ids[0]; //AddVertex(_local_polygon[0]);
-			v1id = _local_polygon_vertex_ids[1]; //AddVertex(_local_polygon[1]);
-		}
-
+	int NavMeshModifyer::SplitNode() {
+		auto v0 = _local_polygon[0];
+		auto v1 = _local_polygon[1];
+		unsigned int v0id = _local_polygon_vertex_ids[0];
+		unsigned int v1id = _local_polygon_vertex_ids[1];
 
 		NavMeshNode* node0 = new NavMeshNode(), *node1 = new NavMeshNode();
 		int n0size = 2, n1size = 2;
@@ -184,20 +203,19 @@ namespace FusionCrowd {
 				added1++;
 			}
 		}
-		bool addingque = false;
-		if (v0.x == v1.x) {
-			addingque = v0.y > v1.y;
-		}
+		bool addingque = IsSegmentsIntersects(
+			_navmesh.vertices[node0->_poly.vertIDs[0]],v0,
+			_navmesh.vertices[node0->_poly.vertIDs[1]],v1);
 		if (addingque) {
 			node1->_poly.vertIDs[added1] = v0id;
 			node1->_poly.vertIDs[added1 + 1] = v1id;
-			node0->_poly.vertIDs[added0 + 1] = v0id;
-			node0->_poly.vertIDs[added0] = v1id;
-		} else {
-			node1->_poly.vertIDs[added1 + 1] = v0id;
-			node1->_poly.vertIDs[added1] = v1id;
 			node0->_poly.vertIDs[added0] = v0id;
 			node0->_poly.vertIDs[added0 + 1] = v1id;
+		} else {
+			node1->_poly.vertIDs[added1] = v1id;
+			node1->_poly.vertIDs[added1 + 1] = v0id;
+			node0->_poly.vertIDs[added0] = v1id;
+			node0->_poly.vertIDs[added0 + 1] = v0id;
 		}
 		_addednodes.push_back(node0);
 		_addednodes.push_back(node1);
@@ -371,7 +389,6 @@ namespace FusionCrowd {
 				vert_count++;
 				tmpvertex.push_back(vertex);
 			}
-
 			if (_current_node_poly->vertIDs[i] == crosspoints_prev_vertex_ids[_local_polygon.size() - 1]) {
 				post_index = vert_count;
 			}
@@ -400,7 +417,7 @@ namespace FusionCrowd {
 				//if (j0vert.x != j1vert.x) k = (j0vert.y - j1vert.y) / (j0vert.x - j1vert.x);
 				//bool que = !(IsTriangleClockwise(vertex, _local_polygon[1], _local_polygon[0]) != added);
 				//if (k < 0) que = !que;
-
+				if (!added) que = !que;
 				if (que) {
 					updnode->_poly.vertIDs[addedids] = crosspoints_ids[0]; //j0j1 crosspoint
 					addedids++;
@@ -554,7 +571,6 @@ namespace FusionCrowd {
 		return sum > 0;
 	}
 
-
 	bool NavMeshModifyer::IsTriangleClockwise(Vector2 v0, Vector2 v1, Vector2 v2){
 		float sum = 0;
 		sum += (v1.x - v0.x)*(v0.y + v1.y);
@@ -570,8 +586,8 @@ namespace FusionCrowd {
 		return _navmesh.vCount + _global_polygon.size() + _addedvertices.size() - 1;
 	}
 
-
-	Vector2 NavMeshModifyer::FindPolyAndSegmentCrosspoint(Vector2 v0, Vector2 v1, NavMeshPoly* poly) {
+	std::vector<Vector2> NavMeshModifyer::FindPolyAndSegmentCrosspoints(Vector2 v0, Vector2 v1, NavMeshPoly* poly) {
+		std::vector<Vector2> res = std::vector<Vector2>();
 		//calculate line coef
 		float k0 = 0.0;
 		float c0 = 0.0;
@@ -638,12 +654,11 @@ namespace FusionCrowd {
 						((ycross >= v0.y && ycross <= v1.y) ||
 					(ycross <= v0.y && ycross >= v1.y))
 					) {
-					return Vector2(xcross, ycross);
+					res.push_back(Vector2(xcross, ycross));
 				}
-				else continue;
 			}
 		}
-		return Vector2(0, 0);
+		return res;
 	}
 
 	bool NavMeshModifyer::IsSegmentsIntersects(Vector2 v00, Vector2 v01, Vector2 v10, Vector2 v11) {

@@ -143,6 +143,10 @@ namespace FusionCrowd
 		return findNodeBlind(p, 0.f);
 	}
 
+	std::vector<size_t> NavMeshLocalizer::findNodesCrossingBB(BoundingBox bb) {
+		return _nodeBBTree->GetIntersectingBBIds(bb);
+	}
+
 	unsigned int NavMeshLocalizer::findNodeBlind(const Vector2& p, float tgtElev) const
 	{
 		float elevDiff = 1e6f;
