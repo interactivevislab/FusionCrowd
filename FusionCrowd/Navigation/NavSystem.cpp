@@ -276,6 +276,22 @@ namespace FusionCrowd
 			return _navMesh->GetNodeVertexInfo(output, node_id);
 		}
 
+		size_t GetEdgesCount() {
+			return _navMesh->GetEdgesCount();
+		}
+
+		bool GetEdges(FCArray<EdgeInfo> & output) {
+			return _navMesh->GetEdges(output);
+		}
+
+		size_t GetObstaclesCount() {
+			return _navMesh->GetObstaclesCount();
+		}
+
+		bool GetObstacles(FCArray<EdgeInfo> & output) {
+			return _navMesh->GetObstacles(output);
+		}
+
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 			return NavMeshModifyer(*_navMesh, _localizer).CutPolygonFromMesh(polygon);
 		}
@@ -368,6 +384,22 @@ namespace FusionCrowd
 
 	bool NavSystem::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
 		return pimpl->GetNodeVertexInfo(output, node_id);
+	}
+
+	size_t NavSystem::GetEdgesCount() {
+		return pimpl->GetEdgesCount();
+	}
+
+	bool NavSystem::GetEdges(FCArray<EdgeInfo> & output) {
+		return pimpl->GetEdges(output);
+	}
+
+	size_t NavSystem::GetObstaclesCount() {
+		return pimpl->GetObstaclesCount();
+	}
+
+	bool NavSystem::GetObstacles(FCArray<EdgeInfo> & output) {
+		return pimpl->GetObstacles(output);
 	}
 
 	float NavSystem::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {

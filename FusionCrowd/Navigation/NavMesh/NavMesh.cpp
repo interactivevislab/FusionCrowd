@@ -25,7 +25,7 @@ namespace FusionCrowd
 #endif
 	bool NavMesh::finalize()
 	{
-		// All of the edge indices in the nodes need to be replaced with pointers
+		// All of the obst indices in the nodes need to be replaced with pointers
 		// All of the obstacle indices in the nodes need to be replaced with pointers.
 		for (size_t n = 0; n < nCount; ++n)
 		{
@@ -58,7 +58,7 @@ namespace FusionCrowd
 
 			nID = reinterpret_cast<size_t>(edge._node1);
 			edge._node1 = &nodes[nID];
-			// compute edge distance
+			// compute obst distance
 			edge._distance = (edge._node0->getCenter() - edge._node1->getCenter()).Length();
 
 			// Confirm that point is on the left when looking from node0
@@ -384,6 +384,53 @@ namespace FusionCrowd
 		for (int i = 0; i < nodes[node_id]._poly.vertCount; i++) {
 			output[i] = nodes[node_id]._poly.vertIDs[i];
 			//if (nodes[node_id]._poly.vertIDs[i] < 0) return false;
+		}
+		return true;
+	}
+
+	size_t NavMesh::GetEdgesCount() {
+		return eCount;
+	}
+
+	bool NavMesh::GetEdges(FCArray<EdgeInfo> & output) {
+		if (output.size() < eCount)
+		{
+			return false;
+		}
+
+		for (int i = 0; i < eCount; i++)
+		{
+			output[i] = EdgeInfo();
+			output[i].x1 = edges[i].getP0().x;
+			output[i].y1 = edges[i].getP0().y;
+			output[i].x2 = edges[i].getP1().x;
+			output[i].y2 = edges[i].getP1().y;
+			output[i].nx0 = edges->getFirstNode()->getCenter().x;
+			output[i].ny0 = edges->getFirstNode()->getCenter().y;
+			output[i].nx1 = edges->getSecondNode()->getCenter().x;
+			output[i].ny1 = edges->getSecondNode()->getCenter().y;
+		}
+		return true;
+	}
+
+	size_t NavMesh::GetObstaclesCount() {
+		return obstCount;
+	}
+
+	bool NavMesh::GetObstacles(FCArray<EdgeInfo> & output) {
+		if (output.size() < obstCount)
+		{
+			return false;
+		}
+		for (int i = 0; i < obstCount; i++)
+		{
+			output[i] = EdgeInfo();
+			output[i].x1 = obstacles[i].getP0().x;
+			output[i].y1 = obstacles[i].getP0().y;
+			output[i].x2 = obstacles[i].getP1().x;
+			output[i].y2 = obstacles[i].getP1().y;
+			output[i].nx0 = obstacles[i].getNode()->_center.x;
+			output[i].ny0 = obstacles[i].getNode()->_center.y;
 		}
 		return true;
 	}
