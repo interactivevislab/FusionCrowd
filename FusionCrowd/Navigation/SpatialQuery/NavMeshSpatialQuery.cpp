@@ -48,7 +48,6 @@ namespace FusionCrowd
 	{
 		const float rangeSq = range * range;
 		auto obstacleIds = _obstacleBBTree->GetIntersectingBBIds(BoundingBox(pt.x - range, pt.y - range, pt.x + range, pt.y + range));
-
 		auto mesh = _localizer->getNavMesh();
 		std::set<size_t> result;
 

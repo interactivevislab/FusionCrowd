@@ -14,6 +14,7 @@
 #include <limits>
 #include <unordered_map>
 #include <map>
+#include <algorithm>
 
 using namespace DirectX::SimpleMath;
 
@@ -70,14 +71,34 @@ namespace FusionCrowd
 			return _agentsInfo;
 		}
 
-		const std::vector<AgentSpatialInfo> & GetNeighbours(size_t agentId) const
+		struct NearAgent
 		{
-			auto result = _agentsNeighbours.find(agentId);
+			AgentSpatialInfo agt;
+			float distSq;
+			NearAgent(AgentSpatialInfo agt, float dist) : agt(agt), distSq(dist) {}
+		};
 
-			if(result == _agentsNeighbours.end())
+		const std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const
+		{
+			const AgentSpatialInfo & agent = _agentsInfo.at(agentId);
+			auto cache = _agentsNeighbours.find(agentId);
+
+			if(cache == _agentsNeighbours.end())
 				return std::vector<AgentSpatialInfo>();
 
-			return result->second;
+			std::vector<NearAgent> neighbours;
+			for(const AgentSpatialInfo & other : cache->second)
+			{
+				neighbours.push_back({ other, (agent.pos - other.pos).LengthSquared()});
+			}
+
+			std::sort(neighbours.begin(), neighbours.end(), [](const NearAgent & a, const NearAgent & b) { return a.distSq < b.distSq; });
+
+			std::vector<AgentSpatialInfo> result;
+			for(const NearAgent & na : neighbours)
+				result.push_back(na.agt);
+
+			return result;
 		}
 
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId)
@@ -320,7 +341,7 @@ namespace FusionCrowd
 		return pimpl->GetAgentsSpatialInfos();
 	}
 
-	const std::vector<AgentSpatialInfo> & NavSystem::GetNeighbours(size_t agentId) const
+	const std::vector<AgentSpatialInfo> NavSystem::GetNeighbours(size_t agentId) const
 	{
 		return pimpl->GetNeighbours(agentId);
 	}

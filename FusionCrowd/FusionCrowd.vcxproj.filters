@@ -110,11 +110,15 @@
     <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="Navigation\NavMesh\QuadTree.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshModifyer.h" />
+    <ClInclude Include="Math\BoundingBox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="DirectX_SimpleMath_Vector2.natvis" />
   </ItemGroup>
 </Project>

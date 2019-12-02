@@ -147,7 +147,9 @@ namespace FusionCrowd
 	{
 		float elevDiff = 1e6f;
 		unsigned int maxNode = NavMeshLocation::NO_NODE;
-		for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
+
+		for(size_t nodeId = 0; nodeId < _navMesh->GetNodesCount(); nodeId++)
+		//for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
 		{
 			const NavMeshNode& node = _navMesh->GetNode(nodeId);
 			if (node.containsPoint(p))

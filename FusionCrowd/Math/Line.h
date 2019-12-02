@@ -12,7 +12,6 @@ namespace FusionCrowd
 		public:
 			Line();
 			Line(const DirectX::SimpleMath::Vector2 & p, const DirectX::SimpleMath::Vector2 & d);
-			~Line();
 			DirectX::SimpleMath::Vector2 NearestPt(const DirectX::SimpleMath::Vector2 & p) const;
 
 			DirectX::SimpleMath::Vector2 _point;

@@ -27,6 +27,7 @@
     <ClInclude Include="Export\Fsm\IFsm.h" />
     <ClInclude Include="Export\Fsm\IStrategyConfigurator.h" />
     <ClInclude Include="Export\ModelAgentParams.h" />
+    <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="Navigation\NavMesh\QuadTree.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshModifyer.h" />
@@ -141,6 +142,9 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
       <DeploymentContent>true</DeploymentContent>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="DirectX_SimpleMath_Vector2.natvis" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

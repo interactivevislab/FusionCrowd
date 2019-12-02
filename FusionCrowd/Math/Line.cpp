@@ -20,9 +20,5 @@ namespace FusionCrowd
 			float t = _direction.Dot(p - _point);
 			return _point + t * _direction;
 		}
-
-		Line::~Line()
-		{
-		}
 	}
 }
