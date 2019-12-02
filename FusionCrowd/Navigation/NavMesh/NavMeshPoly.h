@@ -29,7 +29,7 @@ namespace FusionCrowd
 
 		void SetVertices(const DirectX::SimpleMath::Vector2* vertices);
 
-		void setBB(const DirectX::SimpleMath::Vector2* vertices);
+		void setBB();
 		const BoundingBox & getBB() const;
 
 		float A;

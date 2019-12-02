@@ -37,7 +37,7 @@ namespace FusionCrowd {
 		std::vector<NavMeshNode*> _addednodes;
 		std::vector<NavMeshEdge*> _addededges;
 		std::vector<NavMeshObstacle*> _addedobstacles;
-		std::vector<unsigned int> _nodes_ids_to_delete;
+		std::vector<size_t> _nodes_ids_to_delete;
 		std::vector<Vector2> _addedvertices;
 		std::vector<Vector2> _global_polygon;
 
@@ -49,16 +49,17 @@ namespace FusionCrowd {
 		std::vector<Vector2> _local_polygon;
 		std::vector<unsigned int> _local_polygon_vertex_ids;
 
+		int Initialize(NodeModificator * modificator);
 		int CutPolyFromCurrentNode();
 		int SplitNode();
 		int CutCurveFromCurrentNode();
-
-		int Initialize(NodeModificator * modificator);
 
 		//vortex crosspoints
 		void FillAddedVertices();
 		Vector2 FindVortexCrossPoint(Vector2 v0, Vector2 v1, int& out_prev_cross_id);
 		void CopyVortexObstacles(NavMeshNode* updnode, int j, Vector2 j0vert,
+			Vector2 j1vert, Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict = false);
+		void CopyVortexEdges(NavMeshNode* updnode, int j, Vector2 j0vert,
 			Vector2 j1vert, Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict = false);
 		std::vector<unsigned int> crosspoints_ids;
 		std::vector<Vector2> crosspoints;
@@ -71,7 +72,10 @@ namespace FusionCrowd {
 		unsigned int AddVertex(Vector2 v);
 		std::vector<Vector2> FindPolyAndSegmentCrosspoints(Vector2 v0, Vector2 v1, NavMeshPoly* poly);
 		bool IsSegmentsIntersects(Vector2 v00, Vector2 v01, Vector2 v10, Vector2 v11);
-		NavMeshNode* GetNodeById(unsigned int id);
+		NavMeshNode* GetNodeById(size_t id);
+		bool ProcessEdge(NavMeshEdge* edge);
+
+		float tres = 0;
 	};
 }
 

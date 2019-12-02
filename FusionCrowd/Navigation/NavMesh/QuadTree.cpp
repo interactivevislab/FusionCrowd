@@ -167,4 +167,58 @@ namespace FusionCrowd
 
 		return std::vector<size_t>(result.begin(), result.end());
 	}
+
+	void QuadTree::UpdateTree(std::vector<Box>& add_boxes, std::vector<size_t>& del_boxes) {
+		for (auto it = _rootNode->meshNodeIds.begin(); it != _rootNode->meshNodeIds.end();) {
+			if (std::find(del_boxes.begin(), del_boxes.end(), *it) != del_boxes.end()) {
+				it = _rootNode->meshNodeIds.erase(it);
+			}
+			else {
+				it++;
+			}
+		}
+		for (auto b : add_boxes) {
+			_rootNode->meshNodeIds.push_back(b.objectId);
+		}
+		UpdateSubTree(*_rootNode, add_boxes, del_boxes);
+	}
+
+	void QuadTree::UpdateSubTree(Node& node, std::vector<Box>& add_boxes, std::vector<size_t>& del_boxes) {
+		for (auto it = node.meshNodeIds.begin(); it != node.meshNodeIds.end();) {
+			if (std::find(del_boxes.begin(), del_boxes.end(), *it) != del_boxes.end()) {
+				it = node.meshNodeIds.erase(it);
+			}
+			else {
+				it++;
+			}
+		}
+		if (!node.LeafNode) {
+			for (auto b : add_boxes) {
+				size_t bi = b.objectId;
+				if (node.topLeftBB.Overlaps(b.bb))
+				{
+					node.topLeft->meshNodeIds.push_back(bi);
+				}
+
+				if (node.topRightBB.Overlaps(b.bb))
+				{
+					node.topRight->meshNodeIds.push_back(bi);
+				}
+
+				if (node.bottomLeftBB.Overlaps(b.bb))
+				{
+					node.bottomLeft->meshNodeIds.push_back(bi);
+				}
+
+				if (node.bottomRightBB.Overlaps(b.bb))
+				{
+					node.bottomRight->meshNodeIds.push_back(bi);
+				}
+			}
+			UpdateSubTree(*node.topLeft, add_boxes, del_boxes);
+			UpdateSubTree(*node.topRight, add_boxes, del_boxes);
+			UpdateSubTree(*node.bottomLeft, add_boxes, del_boxes);
+			UpdateSubTree(*node.bottomRight, add_boxes, del_boxes);
+		}
+	}
 }

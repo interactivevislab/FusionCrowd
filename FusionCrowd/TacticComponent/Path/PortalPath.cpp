@@ -116,7 +116,7 @@ namespace FusionCrowd
 		// TODO: If off "approach" vector, recompute crossing
 		bool changed = false;
 		unsigned int currNodeID = getNode();
-		const NavMeshNode* currNode = &(navMesh->GetNode(currNodeID));
+		const NavMeshNode* currNode = &(navMesh->GetNodeByPos(currNodeID));
 		// test current location
 		const Vector2& p = agent.pos;
 
@@ -131,13 +131,13 @@ namespace FusionCrowd
 				// there is another way portal to test
 				const WayPortal* nextPortal = _route->getPortal(_currPortal + 1);
 				size_t nextID = nextPortal->_nodeID;
-				nextNode = &(navMesh->GetNode((unsigned int)nextID));
+				nextNode = &(navMesh->GetNodeByPos((unsigned int)nextID));
 				gotoNext = nextNode->containsPoint(p);
 			}
 			else if (_currPortal < PORTAL_COUNT)
 			{
 				// the next node is the goal polygon
-				nextNode = &(navMesh->GetNode((unsigned int)_route->getEndNode()));
+				nextNode = &(navMesh->GetNodeByPos((unsigned int)_route->getEndNode()));
 				gotoNext = nextNode->containsPoint(p);
 			}
 			if (gotoNext)
@@ -157,7 +157,7 @@ namespace FusionCrowd
 				{
 					const WayPortal* prevPortal = _route->getPortal(_currPortal - 1);
 					size_t prevID = prevPortal->_nodeID;
-					prevNode = &(navMesh->GetNode((unsigned int)prevID));
+					prevNode = &(navMesh->GetNodeByPos((unsigned int)prevID));
 					gotoPrev = prevNode->containsPoint(p);
 				}
 				if (gotoPrev)
@@ -207,7 +207,7 @@ namespace FusionCrowd
 							const WayPortal* nextPortal = _route->getPortal(testPortal);
 							size_t testID = nextPortal->_nodeID;
 							const NavMeshNode* testNode =
-								&(navMesh->GetNode((unsigned int)testID));
+								&(navMesh->GetNodeByPos((unsigned int)testID));
 							if (testNode->containsPoint(p))
 							{
 								_currPortal = testPortal;
@@ -222,7 +222,7 @@ namespace FusionCrowd
 						// I exited the loop without finding an intermediate node -- test the goal
 						//	node
 						const NavMeshNode* testNode =
-							&(navMesh->GetNode((unsigned int)_route->getEndNode()));
+							&(navMesh->GetNodeByPos((unsigned int)_route->getEndNode()));
 						if (testNode->containsPoint(p))
 						{
 							_currPortal = PORTAL_COUNT;

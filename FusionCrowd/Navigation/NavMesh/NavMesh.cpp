@@ -46,7 +46,8 @@ namespace FusionCrowd
 				node._obstacles[o] = &obstacles[oID];
 			}
 			node._id = static_cast<unsigned int>(n);
-			node._poly.setBB(vertices);
+			node._poly.vertices = vertices;
+			node._poly.setBB();
 		}
 
 		// All of the node indices in the edges need to be replaced with pointers
@@ -205,7 +206,7 @@ namespace FusionCrowd
 
 			for (; n < totalN; ++n)
 			{
-				NavMeshNode& node = mesh->GetNode(n);
+				NavMeshNode& node = mesh->GetNodeByPos(n);
 				if (!node.loadFromAscii(f))
 				{
 					return 0x0;
@@ -300,9 +301,17 @@ namespace FusionCrowd
 		return true;
 	}
 
-	NavMeshNode& NavMesh::GetNode(unsigned int i)
+	NavMeshNode& NavMesh::GetNodeByPos(unsigned int id)
 	{
-		return nodes[i];
+		return nodes[id];
+	}
+
+
+	NavMeshNode& NavMesh::GetNodeByID(unsigned int id) {
+		for (int i = 0; i < nCount; i++) {
+			if (nodes[i]._id == id) return nodes[i];
+		}
+		return nodes[0];
 	}
 
 	const NMNodeGroup* NavMesh::getNodeGroup(const std::string& grpName) const
@@ -405,10 +414,10 @@ namespace FusionCrowd
 			output[i].y1 = edges[i].getP0().y;
 			output[i].x2 = edges[i].getP1().x;
 			output[i].y2 = edges[i].getP1().y;
-			output[i].nx0 = edges->getFirstNode()->getCenter().x;
-			output[i].ny0 = edges->getFirstNode()->getCenter().y;
-			output[i].nx1 = edges->getSecondNode()->getCenter().x;
-			output[i].ny1 = edges->getSecondNode()->getCenter().y;
+			output[i].nx0 = edges[i].getFirstNode()->getCenter().x;
+			output[i].ny0 = edges[i].getFirstNode()->getCenter().y;
+			output[i].nx1 = edges[i].getSecondNode()->getCenter().x;
+			output[i].ny1 = edges[i].getSecondNode()->getCenter().y;
 		}
 		return true;
 	}

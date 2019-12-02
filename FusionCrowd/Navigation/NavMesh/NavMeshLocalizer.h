@@ -82,6 +82,7 @@ namespace FusionCrowd
 		unsigned int findNodeInGroup(const DirectX::SimpleMath::Vector2& p, const std::string& grpName, bool searchAll) const;
 		unsigned int findNodeInRange(const DirectX::SimpleMath::Vector2& p, unsigned int start, unsigned int stop) const;
 		unsigned int testNeighbors(const NavMeshNode& node, const DirectX::SimpleMath::Vector2& p) const;
+		void Update(std::vector<NavMeshNode*>& added_nodes, std::vector<size_t>& del_nodes);
 
 	private:
 		std::shared_ptr<PathPlanner> _planner;
