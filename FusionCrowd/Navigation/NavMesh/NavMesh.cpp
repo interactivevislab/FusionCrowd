@@ -414,10 +414,23 @@ namespace FusionCrowd
 			output[i].y1 = edges[i].getP0().y;
 			output[i].x2 = edges[i].getP1().x;
 			output[i].y2 = edges[i].getP1().y;
-			output[i].nx0 = edges[i].getFirstNode()->getCenter().x;
-			output[i].ny0 = edges[i].getFirstNode()->getCenter().y;
-			output[i].nx1 = edges[i].getSecondNode()->getCenter().x;
-			output[i].ny1 = edges[i].getSecondNode()->getCenter().y;
+			//TODO: remove checks
+			if (edges[i].getFirstNode() != nullptr) {
+				output[i].nx0 = edges[i].getFirstNode()->getCenter().x;
+				output[i].ny0 = edges[i].getFirstNode()->getCenter().y;
+			} else {
+				output[i].nx0 = edges[i].getSecondNode()->getCenter().x;
+				output[i].ny0 = edges[i].getSecondNode()->getCenter().y;
+			}
+			if (edges[i].getSecondNode() != nullptr) {
+				output[i].nx1 = edges[i].getSecondNode()->getCenter().x;
+				output[i].ny1 = edges[i].getSecondNode()->getCenter().y;
+			}
+			else {
+				output[i].nx1 = edges[i].getFirstNode()->getCenter().x;
+				output[i].ny1 = edges[i].getFirstNode()->getCenter().y;
+
+			}
 		}
 		return true;
 	}

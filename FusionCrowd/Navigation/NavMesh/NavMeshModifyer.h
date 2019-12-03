@@ -1,5 +1,6 @@
 #pragma once
 #include "NavMesh.h"
+#include "../SpatialQuery/NavMeshSpatialQuery.h"
 #include <vector>
 
 using namespace DirectX::SimpleMath;
@@ -21,7 +22,7 @@ namespace FusionCrowd {
 	class NavMeshModifyer
 	{
 	public:
-		NavMeshModifyer(NavMesh& navmesh, std::shared_ptr<NavMeshLocalizer> localizer);
+		NavMeshModifyer(NavMesh& navmesh, std::shared_ptr<NavMeshLocalizer> localizer, NavMeshSpatialQuery* spatial_query);
 		~NavMeshModifyer();
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
 
@@ -29,6 +30,7 @@ namespace FusionCrowd {
 		//global data and methods
 		NavMesh&  _navmesh;
 		std::shared_ptr<NavMeshLocalizer> _localizer;
+		NavMeshSpatialQuery* _spatial_query;
 
 		std::vector<NodeModificator*> _modifications;
 
@@ -40,6 +42,7 @@ namespace FusionCrowd {
 		std::vector<size_t> _nodes_ids_to_delete;
 		std::vector<Vector2> _addedvertices;
 		std::vector<Vector2> _global_polygon;
+		size_t next_node_id = 0;
 
 		int Finalize();
 
@@ -74,6 +77,7 @@ namespace FusionCrowd {
 		bool IsSegmentsIntersects(Vector2 v00, Vector2 v01, Vector2 v10, Vector2 v11);
 		NavMeshNode* GetNodeById(size_t id);
 		bool ProcessEdge(NavMeshEdge* edge);
+		size_t GetNextNodeID();
 
 		float tres = 0;
 	};

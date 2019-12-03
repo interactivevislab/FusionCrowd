@@ -293,7 +293,7 @@ namespace FusionCrowd
 		}
 
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
-			return NavMeshModifyer(*_navMesh, _localizer).CutPolygonFromMesh(polygon);
+			return NavMeshModifyer(*_navMesh, _localizer, _navMeshQuery.get()).CutPolygonFromMesh(polygon);
 		}
 
 	private:

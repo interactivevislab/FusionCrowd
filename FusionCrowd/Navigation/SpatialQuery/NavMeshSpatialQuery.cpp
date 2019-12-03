@@ -67,4 +67,8 @@ namespace FusionCrowd
 
 		return result;
 	}
+
+	void NavMeshSpatialQuery::Update() {
+		ProcessObstacles();
+	}
 }
