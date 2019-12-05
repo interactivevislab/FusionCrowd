@@ -16,7 +16,7 @@ namespace FusionCrowd {
 		std::vector<Vector2> polygon_to_cut;
 		std::vector<unsigned int> polygon_vertex_ids;
 		ModificationTypes modification_type;
-		bool side = true;
+		bool side;
 	};
 
 

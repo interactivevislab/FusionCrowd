@@ -13,10 +13,6 @@ namespace FusionCrowd {
 	{
 	}
 
-	/*
-	TODO:
-	nodes with double modification
-	*/
 	float NavMeshModifyer::SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon) {
 		float res = 0;
 		_global_polygon = std::vector<Vector2>(polygon.size());
@@ -193,38 +189,35 @@ namespace FusionCrowd {
 		auto v1 = _local_polygon[1];
 		unsigned int v0id = _local_polygon_vertex_ids[0];
 		unsigned int v1id = _local_polygon_vertex_ids[1];
-		std::vector<NavMeshEdge*> edges = std::vector<NavMeshEdge*>();
-		std::vector<NavMeshObstacle*> obsts = std::vector<NavMeshObstacle*>();
 
 #pragma region node_creation
-		NavMeshNode* node0 = new NavMeshNode();
-		int n0size = 2;
-		int previ0, previ1;
+		NavMeshNode* updnode = new NavMeshNode();
+		int vert_count = 2;
+		int previ;
 		Vector2 lastnode0, lastnode1, firstnode0, firstnode1;
 		for (int i = 0; i < _current_node_poly->vertCount; i++) {
 			auto vertex = _navmesh.vertices[_current_node_poly->vertIDs[i]];
 			auto next_vertex = _navmesh.vertices[_current_node_poly->vertIDs[(i + 1) % _current_node_poly->vertCount]];
-			bool node0added = false;
+			bool vert_added = false;
 			if (IsPointUnderLine(v0, v1, vertex) == _side) {
-				n0size++;
-				node0added = true;
+				vert_count++;
+				vert_added = true;
 			}
 			if (IsSegmentsIntersects(v0, v1, vertex, next_vertex)) {
-				if (node0added) {
-					previ1 = i;
+				if (vert_added) {
 					lastnode0 = vertex;
 					firstnode1 = next_vertex;
 				}
 				else {
-					previ0 = i;
+					previ = i;
 					lastnode1 = vertex;
 					firstnode0 = next_vertex;
 				}
 			}
 		}
-		node0->setID(GetNextNodeID());
-		node0->_poly.vertCount = n0size;
-		node0->_poly.vertIDs = new unsigned int[n0size];
+		updnode->setID(GetNextNodeID());
+		updnode->_poly.vertCount = vert_count;
+		updnode->_poly.vertIDs = new unsigned int[vert_count];
 
 #pragma endregion
 
@@ -233,27 +226,27 @@ namespace FusionCrowd {
 			auto vertex = _navmesh.vertices[_current_node_poly->vertIDs[i]];
 			bool addingque = false;
 			if (IsPointUnderLine(v0, v1, vertex) == _side) {
-				node0->_poly.vertIDs[added0] = _current_node_poly->vertIDs[i];
+				updnode->_poly.vertIDs[added0] = _current_node_poly->vertIDs[i];
 				addingque = true;
 				added0++;
 			}
-			if (i == previ0) {
+			if (i == previ) {
 				if (IsSegmentsIntersects(v0, firstnode0, v1, lastnode0)) {
-					node0->_poly.vertIDs[added0] = v0id;
+					updnode->_poly.vertIDs[added0] = v0id;
 					added0++;
-					node0->_poly.vertIDs[added0] = v1id;
+					updnode->_poly.vertIDs[added0] = v1id;
 					added0++;
 
 				}
 				else {
-					node0->_poly.vertIDs[added0] = v1id;
+					updnode->_poly.vertIDs[added0] = v1id;
 					added0++;
-					node0->_poly.vertIDs[added0] = v0id;
+					updnode->_poly.vertIDs[added0] = v0id;
 					added0++;
 				}
 			}
 		}
-				//copy obstacles
+		//copy obstacles
 #pragma region copy_obstacles
 		std::vector<NavMeshObstacle*> node0_obst = std::vector<NavMeshObstacle*>(),
 			node1_obst = std::vector<NavMeshObstacle*>();
@@ -269,7 +262,7 @@ namespace FusionCrowd {
 				nobst->_unitDir = obst->_unitDir;
 				nobst->_length = obst->_length;
 				if (ov0side) {
-					nobst->setNode(node0);
+					nobst->setNode(updnode);
 					node0_obst.push_back(nobst);
 				}
 			}
@@ -296,7 +289,7 @@ namespace FusionCrowd {
 					nobst->_unitDir = obst->_unitDir;
 					nobst->_length = (ov1 - divpoint).Length();
 				}
-				nobst->setNode(node0);
+				nobst->setNode(updnode);
 				node0_obst.push_back(nobst);
 			}
 		}
@@ -304,13 +297,13 @@ namespace FusionCrowd {
 		nobst0->_point = v0;
 		nobst0->_unitDir = (v1 - v0) / (v1 - v0).Length();
 		nobst0->_length = (v1 - v0).Length();
-		nobst0->setNode(node0);
+		nobst0->setNode(updnode);
 		node0_obst.push_back(nobst0);
 
-		node0->_obstacles = new NavMeshObstacle*[node0_obst.size()];
-		node0->_obstCount = node0_obst.size();
+		updnode->_obstacles = new NavMeshObstacle*[node0_obst.size()];
+		updnode->_obstCount = node0_obst.size();
 		for (int i = 0; i < node0_obst.size(); i++) {
-			node0->_obstacles[i] = node0_obst[i];
+			updnode->_obstacles[i] = node0_obst[i];
 			_addedobstacles.push_back(node0_obst[i]);
 		}
 #pragma endregion
@@ -329,7 +322,7 @@ namespace FusionCrowd {
 				nedge->setWidth(edge->getWidth());
 				_addededges.push_back(nedge);
 				if (ev0side) {
-					nedge->setNodes(node0, nullptr);
+					nedge->setNodes(updnode, nullptr);
 				}
 			}
 			else if (ev0side || ev1side) {
@@ -344,27 +337,24 @@ namespace FusionCrowd {
 					if (v0.y == k * v0.x + c) divpoint = v0;
 					else divpoint = v1;
 				}
+				NavMeshEdge* nedge = new NavMeshEdge();
 				if (ev0side) {
-					NavMeshEdge* nedge0 = new NavMeshEdge();
-					nedge0->setPoint(ev0);
-					nedge0->setDirection(edge->getDirection());
-					nedge0->setWidth((ev0 - divpoint).Length());
-					_addededges.push_back(nedge0);
-					nedge0->setNodes(node0, nullptr);
+					nedge->setPoint(ev0);
+					nedge->setDirection(edge->getDirection());
+					nedge->setWidth((ev0 - divpoint).Length());
 				}
 				else {
-					NavMeshEdge* nedge1 = new NavMeshEdge();
-					nedge1->setPoint(divpoint);
-					nedge1->setDirection(edge->getDirection());
-					nedge1->setWidth((ev1 - divpoint).Length());
-					_addededges.push_back(nedge1);
-					nedge1->setNodes(node0, nullptr);
+					nedge->setPoint(divpoint);
+					nedge->setDirection(edge->getDirection());
+					nedge->setWidth((ev1 - divpoint).Length());
 				}
+				nedge->setNodes(updnode, nullptr);
+				_addededges.push_back(nedge);
 			}
 		}
 #pragma endregion
 
-		_addednodes.push_back(node0);
+		_addednodes.push_back(updnode);
 		return 0;
 	}
 
@@ -499,12 +489,21 @@ namespace FusionCrowd {
 			std::vector<NavMeshObstacle*> obstacles = std::vector<NavMeshObstacle*>();
 			for (int ei = 0; ei < _navmesh.eCount; ei++) {
 				if (_navmesh.edges[ei].getFirstNode()->_id == node_id ||
-					_navmesh.edges[ei].getSecondNode()->_id == node_id)
+					_navmesh.edges[ei].getSecondNode()->_id == node_id) {
 					edges.push_back(&_navmesh.edges[ei]);
+					if (_navmesh.edges[ei].getFirstNode()->_id == node_id) {
+						_navmesh.edges[ei].setNodes(&node, _navmesh.edges[ei].getSecondNode());
+					}
+					else {
+						_navmesh.edges[ei].setNodes(_navmesh.edges[ei].getFirstNode(), &node);
+					}
+				}
 			}
 			for (int oi = 0; oi < _navmesh.obstCount; oi++) {
-				if (_navmesh.obstacles[oi].getNode()->_id == node_id)
+				if (_navmesh.obstacles[oi].getNode()->_id == node_id) {
 					obstacles.push_back(&_navmesh.obstacles[oi]);
+					_navmesh.obstacles[oi].setNode(&node);
+				}
 			}
 			node._obstCount = obstacles.size();
 			node._obstacles = new NavMeshObstacle*[node._obstCount];
@@ -522,6 +521,10 @@ namespace FusionCrowd {
 
 		for (auto m : _modifications) {
 			delete m;
+		}
+
+		for (int i = 0; i < _addednodes.size(); i++) {
+			delete _addednodes[i];
 		}
 
 		_spatial_query->Update();
