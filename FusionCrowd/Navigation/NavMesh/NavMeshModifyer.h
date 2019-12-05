@@ -16,6 +16,7 @@ namespace FusionCrowd {
 		std::vector<Vector2> polygon_to_cut;
 		std::vector<unsigned int> polygon_vertex_ids;
 		ModificationTypes modification_type;
+		bool side = true;
 	};
 
 
@@ -35,7 +36,8 @@ namespace FusionCrowd {
 		std::vector<NodeModificator*> _modifications;
 
 		float SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon);
-		void AddModificator(NodeModificator* mod);
+		void FinaliseNodes();
+		int Finalize();
 
 		std::vector<NavMeshNode*> _addednodes;
 		std::vector<NavMeshEdge*> _addededges;
@@ -45,13 +47,12 @@ namespace FusionCrowd {
 		std::vector<Vector2> _global_polygon;
 		size_t next_node_id = 0;
 
-		int Finalize();
-
 		//node change data and methods
 		NavMeshPoly* _current_node_poly;
 		NavMeshNode* _current_node;
 		std::vector<Vector2> _local_polygon;
 		std::vector<unsigned int> _local_polygon_vertex_ids;
+		bool _side;
 
 		int Initialize(NodeModificator * modificator);
 		int CutPolyFromCurrentNode();
