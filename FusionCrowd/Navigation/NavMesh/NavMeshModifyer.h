@@ -35,6 +35,7 @@ namespace FusionCrowd {
 		std::vector<NodeModificator*> _modifications;
 
 		float SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon);
+		void AddModificator(NodeModificator* mod);
 
 		std::vector<NavMeshNode*> _addednodes;
 		std::vector<NavMeshEdge*> _addededges;
@@ -78,6 +79,8 @@ namespace FusionCrowd {
 		NavMeshNode* GetNodeById(size_t id);
 		bool ProcessEdge(NavMeshEdge* edge);
 		size_t GetNextNodeID();
+		void FixPoly(NavMeshNode& node);
+		void FixConcavePoly();
 
 		float tres = 0;
 	};
