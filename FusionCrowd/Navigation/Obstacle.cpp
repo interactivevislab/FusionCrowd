@@ -6,9 +6,8 @@
 using namespace DirectX::SimpleMath;
 using namespace FusionCrowd;
 
-Obstacle::Obstacle() : _doubleSided(false), _isConvex(false), _nextObstacle(0x0),
-_point(), _prevObstacle(0x0), _unitDir(), _id(0),
-_class(0x1)
+Obstacle::Obstacle()
+	: _doubleSided(false), _isConvex(false), _nextObstacle(0x0), _point(), _prevObstacle(0x0), _unitDir(), _id(0), _class(0x1)
 {
 }
 
@@ -26,12 +25,7 @@ BoundingBox Obstacle::GetBB() const
 
 Vector2 Obstacle::getP1() const
 {
-	if (_nextObstacle != 0x0) {
-		return _nextObstacle->_point;
-	}
-	else {
-		return _point + _unitDir * _length;
-	}
+	return _point + _unitDir * _length;
 }
 
 Obstacle::NearTypeEnum Obstacle::distanceSqToPoint(const Vector2 & pt, Vector2 & nearPt,
@@ -59,8 +53,7 @@ Obstacle::NearTypeEnum Obstacle::distanceSqToPoint(const Vector2 & pt, Vector2 &
 	}
 }
 
-float Obstacle::circleIntersection(const Vector2 & dir, const Vector2 & start,
-	float radius) const {
+float Obstacle::circleIntersection(const Vector2 & dir, const Vector2 & start, float radius) const {
 	const float radSqd = radius * radius;
 	const float SPEED = dir.Length();
 	Vector2 forward(dir / SPEED);

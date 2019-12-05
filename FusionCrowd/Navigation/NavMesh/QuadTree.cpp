@@ -129,7 +129,7 @@ namespace FusionCrowd
 
 	std::vector<size_t> QuadTree::GetIntersectingBBIds(BoundingBox box)
 	{
-		std::set<size_t> result;
+		std::vector<size_t> result;
 		std::deque<Node*> processing;
 
 		processing.push_back(_rootNode.get());
@@ -140,7 +140,7 @@ namespace FusionCrowd
 
 			if(current->LeafNode)
 			{
-				result.insert(current->meshNodeIds.begin(), current->meshNodeIds.end());
+				result.insert(std::end(result), current->meshNodeIds.begin(), current->meshNodeIds.end());
 				continue;
 			}
 
@@ -165,6 +165,8 @@ namespace FusionCrowd
 			}
 		}
 
-		return std::vector<size_t>(result.begin(), result.end());
+		std::set<size_t> uniques(std::begin(result), std::end(result));
+
+		return std::vector<size_t>(uniques.begin(), uniques.end());
 	}
 }

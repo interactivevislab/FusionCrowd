@@ -23,10 +23,10 @@ namespace FusionCrowd
 	class NavSystem::NavSystemImpl
 	{
 	public:
-		NavSystemImpl(std::shared_ptr<NavMeshLocalizer> localizer)
+		NavSystemImpl(std::shared_ptr<NavMeshLocalizer> localizer) : _localizer(localizer)
 		{
-			_navMeshQuery = std::make_unique<NavMeshSpatialQuery>(localizer);
-			_navMesh = localizer->getNavMesh();
+			_navMeshQuery = std::make_unique<NavMeshSpatialQuery>(_localizer);
+			_navMesh = _localizer->getNavMesh();
 		}
 
 		~NavSystemImpl() { }
@@ -86,6 +86,9 @@ namespace FusionCrowd
 			if(cache == _agentsNeighbours.end())
 				return std::vector<AgentSpatialInfo>();
 
+			return cache->second;
+
+			/*
 			std::vector<NearAgent> neighbours;
 			for(const AgentSpatialInfo & other : cache->second)
 			{
@@ -99,13 +102,19 @@ namespace FusionCrowd
 				result.push_back(na.agt);
 
 			return result;
+			*/
 		}
 
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId)
 		{
+			std::vector<Obstacle> result;
 			AgentSpatialInfo & agent = _agentsInfo.at(agentId);
 
-			std::vector<Obstacle> result;
+
+			size_t nodeId = _localizer->getNodeId(agent.pos);
+			if(nodeId == NavMeshLocation::NO_NODE)
+				return result;
+
 			for(size_t obstId : _navMeshQuery->ObstacleQuery(agent.pos))
 			{
 				result.push_back(_navMesh->GetObstacle(obstId));
@@ -311,6 +320,7 @@ namespace FusionCrowd
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
+		std::shared_ptr<NavMeshLocalizer> _localizer;
 
 		NeighborsSeeker _neighborsSeeker;
 		std::map<size_t, AgentSpatialInfo> _agentsInfo;
