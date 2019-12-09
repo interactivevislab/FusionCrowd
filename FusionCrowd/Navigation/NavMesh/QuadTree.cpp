@@ -1,6 +1,5 @@
 #include "QuadTree.h"
 
-#include <set>
 #include <deque>
 #include <algorithm>
 
@@ -127,9 +126,9 @@ namespace FusionCrowd
 		return current->meshNodeIds;
 	}
 
-	std::vector<size_t> QuadTree::GetIntersectingBBIds(BoundingBox box)
+	std::unordered_set<size_t> QuadTree::GetIntersectingBBIds(BoundingBox box)
 	{
-		std::vector<size_t> result;
+		std::unordered_set<size_t> result;
 		std::deque<Node*> processing;
 
 		processing.push_back(_rootNode.get());
@@ -140,7 +139,7 @@ namespace FusionCrowd
 
 			if(current->LeafNode)
 			{
-				result.insert(std::end(result), current->meshNodeIds.begin(), current->meshNodeIds.end());
+				result.insert(current->meshNodeIds.begin(), current->meshNodeIds.end());
 				continue;
 			}
 
@@ -165,8 +164,6 @@ namespace FusionCrowd
 			}
 		}
 
-		std::set<size_t> uniques(std::begin(result), std::end(result));
-
-		return std::vector<size_t>(uniques.begin(), uniques.end());
+		return result;
 	}
 }

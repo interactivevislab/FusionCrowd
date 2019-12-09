@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <unordered_set>
 #include <memory>
 
 #include "Math/Util.h"
@@ -24,7 +25,7 @@ namespace FusionCrowd
 
 	public:
 		std::vector<size_t> GetContainingBBIds(DirectX::SimpleMath::Vector2 point);
-		std::vector<size_t> GetIntersectingBBIds(BoundingBox box);
+		std::unordered_set<size_t> GetIntersectingBBIds(BoundingBox box);
 	private:
 		struct Node
 		{
