@@ -31,6 +31,7 @@ namespace FusionCrowd {
 			}
 		}
 		FixConcavePoly();
+		if (_global_polygon.size() < 3) return 0;
 		for (int i = 0; i < polygon.size(); i++) {
 			nodes_ids[i] = _localizer->getNodeId(_global_polygon[i]);
 		}
@@ -161,6 +162,7 @@ namespace FusionCrowd {
 		_addededges = std::vector<NavMeshEdge*>();
 		_addedobstacles = std::vector<NavMeshObstacle*>();
 		SplitPolyByNodes(polygon);
+		if (_global_polygon.size() < 3) return -1;
 		for (auto mod : _modifications) {
 			Initialize(mod);
 			if (mod->modification_type == CUT_CURVE) {
@@ -752,20 +754,8 @@ namespace FusionCrowd {
 			c0 = v0.y - k0 * v0.x;
 		}
 		for (int i = 0; i < _current_node_poly->vertCount; i++) {
-			Vector2 pnode0 = Vector2();
-			Vector2 pnode1 = Vector2();
-			if (i < _current_node_poly->vertCount - 1) {
-				pnode0.x = _current_node_poly->vertices[_current_node_poly->vertIDs[i]].x;
-				pnode0.y = _current_node_poly->vertices[_current_node_poly->vertIDs[i]].y;
-				pnode1.x = _current_node_poly->vertices[_current_node_poly->vertIDs[i + 1]].x;
-				pnode1.y = _current_node_poly->vertices[_current_node_poly->vertIDs[i + 1]].y;
-			}
-			else {
-				pnode0.x = _current_node_poly->vertices[_current_node_poly->vertIDs[i]].x;
-				pnode0.y = _current_node_poly->vertices[_current_node_poly->vertIDs[i]].y;
-				pnode1.x = _current_node_poly->vertices[_current_node_poly->vertIDs[0]].x;
-				pnode1.y = _current_node_poly->vertices[_current_node_poly->vertIDs[0]].y;
-			}
+			Vector2 pnode0 = _current_node_poly->vertices[_current_node_poly->vertIDs[i]];
+			Vector2 pnode1 = _current_node_poly->vertices[_current_node_poly->vertIDs[(i + 1) % _current_node_poly->vertCount]];
 
 #pragma region crosspoint_calculation
 			//line cross point claculation
@@ -813,7 +803,7 @@ namespace FusionCrowd {
 				else continue;
 			}
 		}
-		return Vector2(0, 0);
+		return Vector2(999999, 999999);
 	}
 
 	/*Adds crosspoints for polygon cut*/
@@ -1286,98 +1276,39 @@ namespace FusionCrowd {
 
 	void NavMeshModifyer::FixPoly(NavMeshNode& node) {
 		Vector2 last_added;
-		int res_added = 0;
 		std::vector<size_t> ids_left = std::vector<size_t>(node._poly.vertCount);
 		std::vector<size_t> res = std::vector<size_t>(node._poly.vertCount);
-		Vector2 candidate = _navmesh.vertices[node._poly.vertIDs[0]];
-		int candidateidpos = 0;
+
+		Vector2 mean = Vector2(0, 0);
 		for (int i = 0; i < node._poly.vertCount; i++) {
 			ids_left[i] = node._poly.vertIDs[i];
-			if (_navmesh.vertices[node._poly.vertIDs[i]].y < candidate.y) {
-				candidate = _navmesh.vertices[node._poly.vertIDs[i]];
-				candidateidpos = i;
-			}
+			mean += node._poly.vertices[node._poly.vertIDs[i]];
 		}
-		last_added = _navmesh.vertices[ids_left[candidateidpos]];
-		res[res_added] = ids_left[candidateidpos];
-		res_added++;
-		ids_left.erase(ids_left.begin() + candidateidpos);
-		/*add
-			  |  *
-		   ---|---
-		      |		*/
-		while (true) {
-			candidateidpos = -1;
-			candidate = _navmesh.vertices[ids_left[0]];
-			for (int i = 0; i < ids_left.size(); i++) {
-				if (_navmesh.vertices[ids_left[i]].x >= last_added.x && _navmesh.vertices[ids_left[i]].y <= candidate.y) {
-					candidate = _navmesh.vertices[ids_left[i]];
+		mean /= node._poly.vertCount;
+
+		Vector2 prev_dir = node._poly.vertices[ids_left[0]] - mean;
+		prev_dir.Normalize();
+		size_t added = 0;
+		while (ids_left.size() > 0) {
+			float max_product = -FLT_MAX;
+			int candidateidpos = 0;
+			for (int i = 0; i< ids_left.size();i++) {
+				Vector2 mean_v_vec = node._poly.vertices[ids_left[i]] - mean;
+				mean_v_vec.Normalize();
+				float dotpr = prev_dir.Dot(mean_v_vec);
+				float dir = mean_v_vec.x * prev_dir.y - mean_v_vec.y * prev_dir.x;
+				if (dotpr > max_product && dir >0) {
+					max_product = dotpr;
 					candidateidpos = i;
 				}
 			}
-			if (candidateidpos == -1) break;
-			last_added = _navmesh.vertices[ids_left[candidateidpos]];
-			res[res_added] = ids_left[candidateidpos];
-			res_added++;
+			res[added] = ids_left[candidateidpos];
+			prev_dir = node._poly.vertices[ids_left[candidateidpos]] - mean;
+			prev_dir.Normalize();
+			added++;
 			ids_left.erase(ids_left.begin() + candidateidpos);
 		}
-		/*add
-			  |
-		   ---|---
-			  |	*	*/
-		while (true) {
-			candidateidpos = -1;
-			candidate = _navmesh.vertices[ids_left[0]];
-			for (int i = 0; i < ids_left.size(); i++) {
-				if (_navmesh.vertices[ids_left[i]].y >= last_added.y && _navmesh.vertices[ids_left[i]].x >= candidate.x) {
-					candidate = _navmesh.vertices[ids_left[i]];
-					candidateidpos = i;
-				}
-			}
-			if (candidateidpos == -1) break;
-			last_added = _navmesh.vertices[ids_left[candidateidpos]];
-			res[res_added] = ids_left[candidateidpos];
-			res_added++;
-			ids_left.erase(ids_left.begin() + candidateidpos);
-		}
-		/*add
-			  |
-		   ---|---
-			* |		*/
-		while (true) {
-			candidateidpos = -1;
-			candidate = _navmesh.vertices[ids_left[0]];
-			for (int i = 0; i < ids_left.size(); i++) {
-				if (_navmesh.vertices[ids_left[i]].x <= last_added.x && _navmesh.vertices[ids_left[i]].y >= candidate.y) {
-					candidate = _navmesh.vertices[ids_left[i]];
-					candidateidpos = i;
-				}
-			}
-			if (candidateidpos == -1) break;
-			last_added = _navmesh.vertices[ids_left[candidateidpos]];
-			res[res_added] = ids_left[candidateidpos];
-			res_added++;
-			ids_left.erase(ids_left.begin() + candidateidpos);
-		}
-		/*add
-			* |
-		   ---|---
-			  |		*/
-		while (true) {
-			candidateidpos = -1;
-			candidate = _navmesh.vertices[ids_left[0]];
-			for (int i = 0; i < ids_left.size(); i++) {
-				if (_navmesh.vertices[ids_left[i]].y <= last_added.y && _navmesh.vertices[ids_left[i]].x <= candidate.x) {
-					candidate = _navmesh.vertices[ids_left[i]];
-					candidateidpos = i;
-				}
-			}
-			if (candidateidpos == -1) break;
-			last_added = _navmesh.vertices[ids_left[candidateidpos]];
-			res[res_added] = ids_left[candidateidpos];
-			res_added++;
-			ids_left.erase(ids_left.begin() + candidateidpos);
-		}
+
 		//fill res
 		for (int i = 0; i < res.size(); i++) {
 			node._poly.vertIDs[i] = res[i];
@@ -1385,27 +1316,50 @@ namespace FusionCrowd {
 	}
 
 	void NavMeshModifyer::FixConcavePoly() {
-		int pos = 0, neg = 0;
-		std::vector<float> results = std::vector<float>(_global_polygon.size());
-		for (int i = 0; i < _global_polygon.size(); i++) {
-			Vector2 v0 = _global_polygon[(i + _global_polygon.size() - 1) % _global_polygon.size()];
-			Vector2 v1 = _global_polygon[i];
-			Vector2 v2 = _global_polygon[(i + 1) % _global_polygon.size()];
-			float res = (v1.x-v0.x)*(v2.y-v1.y) - (v1.y-v0.y)*(v2.x-v1.x);
-			results[i] = res;
-			if (res > 0) pos++;
-			else neg++;
-		}
-		bool cut_neg = neg < pos;
-		for (int i = 0; i < results.size();) {
-			if ((cut_neg && results[i] < 0) || (!cut_neg && results[i] > 0)) {
-				results.erase(results.begin() + i);
+		for (int i = 0; i < _global_polygon.size();) {
+			if (Vector2::Distance(_global_polygon[(i + 1) % _global_polygon.size()], _global_polygon[i]) < 1.0f) {
 				_global_polygon.erase(_global_polygon.begin() + i);
 			}
 			else {
 				i++;
 			}
 		}
+		int pos = 0, neg = 0;
+		for (int test = 0; test < 5; test++) {
+			//do {
+			std::vector<float> results = std::vector<float>(_global_polygon.size());
+			pos = 0; neg = 0;
+			for (int i = 0; i < _global_polygon.size(); i++) {
+				Vector2 v0 = _global_polygon[(i + _global_polygon.size() - 1) % _global_polygon.size()];
+				Vector2 v1 = _global_polygon[i];
+				Vector2 v2 = _global_polygon[(i + 1) % _global_polygon.size()];
+				float res = (v1.x - v0.x)*(v2.y - v1.y) - (v1.y - v0.y)*(v2.x - v1.x);
+				results[i] = res;
+				if (res > 0) pos++;
+				else neg++;
+			}
+			//if (pos == 0 || neg == 0) continue;
+			bool cut_neg = neg < pos;
+			for (int i = 0; i < results.size();) {
+				if ((cut_neg && results[i] < 0) || (!cut_neg && results[i] > 0)) {
+					results.erase(results.begin() + i);
+					_global_polygon.erase(_global_polygon.begin() + i);
+				}
+				else {
+					i++;
+				}
+			}
+			//} while (pos > 0 && neg > 0);
+		}
+		for (int i = 0; i < _global_polygon.size();) {
+			if (Vector2::Distance(_global_polygon[(i + 1) % _global_polygon.size()], _global_polygon[i]) < 1.0f) {
+				_global_polygon.erase(_global_polygon.begin() + i);
+			}
+			else {
+				i++;
+			}
+		}
+
 	}
 
 	void NavMeshModifyer::FinaliseNodes() {
