@@ -238,8 +238,6 @@ namespace FusionCrowd
 					return;
 				}
 
-				return;
-
 				Vector2 leftLegDirection, rightLegDirection;
 
 				bool prevIsCurrent = false;

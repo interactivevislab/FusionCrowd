@@ -91,5 +91,10 @@
     <None Include="packages.config" />
     <None Include="Resources\square.nav" />
     <None Include="Resources\TradeshowAgents.txt" />
+    <None Include="Resources\tradeshow.nav" />
+    <None Include="Resources\t-shaped-fancy.nav" />
+    <None Include="Resources\pinhole.nav" />
+    <None Include="Resources\graph.nav" />
+    <None Include="Resources\crossing.nav" />
   </ItemGroup>
 </Project>

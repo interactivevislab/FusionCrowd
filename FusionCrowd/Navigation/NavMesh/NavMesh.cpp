@@ -97,9 +97,9 @@ namespace FusionCrowd
 				}
 				curr = nID;
 			}
+
 			// set open/closed
-			if (curr == NavMeshObstacle::NO_NEIGHBOR_OBST ||
-				curr != START)
+			if (curr == NavMeshObstacle::NO_NEIGHBOR_OBST || curr != START)
 			{
 				// set open
 				Obstacle* obst = &obstacles[START];
@@ -221,7 +221,61 @@ namespace FusionCrowd
 			return NULL;
 		}
 
+		mesh->CheckObstaclesDirection();
+
 		return mesh;
+	}
+
+	void NavMesh::CheckObstaclesDirection()
+	{
+		std::vector<bool> processed(obstacles.size(), false);
+		for (size_t o = 0; o < obstacles.size(); ++o)
+		{
+			if (processed[o]) continue;
+
+			NavMeshObstacle & obst = obstacles[o];
+			if(obst._nextObstacle == nullptr || obst._prevObstacle == nullptr) continue;
+
+			// This is probably a cycle.
+			size_t reverted = 0;
+			size_t length = 0;
+
+			obst = (NavMeshObstacle &) *obst._prevObstacle;
+			size_t finish = obst.getId();
+			do
+			{
+				obst = (NavMeshObstacle &) *obst._nextObstacle;
+
+				if(MathUtil::leftOf(obst._prevObstacle->getP0(), obst.getP0(), obst.getP1()) >= 0)
+					reverted++;
+
+
+				length++;
+			}
+			while(obst.getId() != finish && obst._nextObstacle != nullptr);
+
+			if(obst.getId() == finish && reverted == 0 && length > 0)
+			{
+				// This is a cycle and it is a convex needs to be reversed
+				ReverseCycle(obst.getId());
+			}
+		}
+	}
+
+	void NavMesh::ReverseCycle(size_t obstId)
+	{
+		// We assume that cycle exists
+
+		NavMeshObstacle & start = obstacles[obstId];
+		NavMeshObstacle & cur = start;
+		do
+		{
+			auto tmp = cur._nextObstacle;
+			cur._nextObstacle = cur._prevObstacle;
+			cur._prevObstacle = tmp;
+			cur = (NavMeshObstacle &) *cur._prevObstacle;
+
+		} while(cur.getId() != start.getId());
 	}
 
 #pragma region  Vertex

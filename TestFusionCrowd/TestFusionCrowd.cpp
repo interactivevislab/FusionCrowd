@@ -76,7 +76,7 @@ void Run(std::shared_ptr<ITestCase> testCase, std::vector<long long> & outMeasur
 
 void WriteToFile(std::shared_ptr<ITestCase> testCase, std::vector<long long> measurements, time_point startTime, std::string folder)
 {
-	std::string d = date::format("%Y%m%d_%H%M%S", startTime);
+	std::string d = date::format("%H%M%S", startTime);
 	std::string prefix = folder + "\\" + d + "_" + testCase->GetName();
 
 	if(testCase->WriteTime)
@@ -105,12 +105,12 @@ int main()
 	std::vector<std::shared_ptr<ITestCase>> cases =
 	{
 
-		//std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::ORCA_ID, 50, 2000, true)),
-		std::shared_ptr<ITestCase>((ITestCase*) new TradeshowTestCase(1025, 5000, false)),
+		// std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::ORCA_ID, 50, 2000, true)),
+		std::shared_ptr<ITestCase>((ITestCase*) new TradeshowTestCase(1025, 4000, false)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new ZanlungoCase()),
 		// std::shared_ptr<ITestCase>((ITestCase*) new CrossingTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new PinholeTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000)),
-		// std::shared_ptr<ITestCase>((ITestCase*) new TshapedFancyTestCase(FusionCrowd::ComponentIds::ZANLUNGO_ID, 200, 1000)),
+		// std::shared_ptr<ITestCase>((ITestCase*) new TshapedFancyTestCase(FusionCrowd::ComponentIds::ORCA_ID, 200, 1000, true)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new StenkaNaStenkuTestCase(10000, 5000, false)),
 	};
 

@@ -19,7 +19,7 @@ namespace FusionCrowd
 		float maxSpeed  = 2.f;
 		float maxAccel  = 5.f;
 		float prefSpeed = 1.04f;
-		float maxAngVel = 3.14f;
+		float maxAngVel = 6.28f;
 
 		bool inertiaEnabled = true;
 

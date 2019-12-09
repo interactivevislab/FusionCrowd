@@ -77,6 +77,9 @@ namespace FusionCrowd
 		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id);
 
 	protected:
+		void CheckObstaclesDirection();
+		void ReverseCycle(size_t obstId);
+
 		std::string fileName;
 		size_t vCount;
 		DirectX::SimpleMath::Vector2* vertices;

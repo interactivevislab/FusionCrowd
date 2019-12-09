@@ -39,7 +39,7 @@ namespace TestFusionCrowd
 	{
 		std::unique_ptr<ISimulatorBuilder, decltype(&BuilderDeleter)> builder(BuildSimulator(), BuilderDeleter);
 		builder->WithNavMesh("Resources/tradeshow.nav")
-			->WithOp(ComponentIds::ORCA_ID)
+			->WithOp(_op)
 			->WithStrategy(ComponentIds::FSM_ID);
 
 		_sim = std::shared_ptr<ISimulatorFacade>(builder->Build(), SimulatorFacadeDeleter);
@@ -98,7 +98,7 @@ namespace TestFusionCrowd
 		std::ifstream agentPositions("Resources/TradeshowAgents.txt");
 		while(agentPositions >> x >> y)
 		{
-			size_t id = _sim->AddAgent(x, y, ComponentIds::ORCA_ID, ComponentIds::FSM_ID);
+			size_t id = _sim->AddAgent(x, y, _op, ComponentIds::FSM_ID);
 			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, flowMachineParams);
 		}
 	}

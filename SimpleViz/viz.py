@@ -165,14 +165,22 @@ def read_mesh(filename):
 
 
 def draw_mesh(canvas, mesh: NavMesh, scale, xmin, ymin, show_text=True):
+    def v_adj(v):
+        x, y = mesh.vertices[v]
+        return (x - xmin) * scale, (y - ymin) * scale
+
     def draw_line(v0, v1, color="#ccc"):
-        x0, y0 = mesh.vertices[v0]
-        x1, y1 = mesh.vertices[v1]
-        canvas.create_line(
-            (x0 - xmin) * scale, (y0 - ymin) * scale,
-            (x1 - xmin) * scale, (y1 - ymin) * scale,
-            fill=color
-        )
+        canvas.create_line(*v_adj(v0), *v_adj(v1), fill=color)
+
+    def draw_obst_line(v0, v1):
+        draw_line(v0, v1, "red")
+        x0, y0 = v_adj(v0)
+        x1, y1 = v_adj(v1)
+        dx, dy = x1 - x0, y1 - y0
+        x09 = x0 + dx * 0.9
+        y09 = y0 + dy * 0.9
+        r = 3
+        canvas.create_oval(x09 - r/2, y09 - r/2, x09 + r/2, y09 + r/2, outline="red")
 
     if show_text:
         for id, (vx, vy) in mesh.vertices.items():
@@ -199,7 +207,7 @@ def draw_mesh(canvas, mesh: NavMesh, scale, xmin, ymin, show_text=True):
             )
 
     for v0, v1 in mesh.obstacles:
-        draw_line(v0, v1, color="red")
+        draw_obst_line(v0, v1)
 
 
 PLAYING = 1
