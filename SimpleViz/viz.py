@@ -210,6 +210,22 @@ def draw_mesh(canvas, mesh: NavMesh, scale, xmin, ymin, show_text=True):
         draw_obst_line(v0, v1)
 
 
+def draw_quadtree(canvas, x, y, w, h, level):
+    if level == 0:
+        return
+
+    mx = x + w / 2.0
+    my = y + h / 2.0
+
+    canvas.create_line(mx,  y,    mx, y + h, fill="green", width=level)
+    canvas.create_line( x, my, x + w,    my, fill="green", width=level)
+
+    draw_quadtree(canvas,  x,  y, mx - x, my - y, level - 1)
+    draw_quadtree(canvas, mx,  y, mx - x, my - y, level - 1)
+    draw_quadtree(canvas,  x, my, mx - x, my - y, level - 1)
+    draw_quadtree(canvas, mx, my, mx - x, my - y, level - 1)
+
+
 PLAYING = 1
 PAUSED = 0
 PLAYER_STATE = PAUSED
@@ -223,11 +239,13 @@ if __name__ == "__main__":
     parser.add_argument("--agent_size", default=1)
     parser.add_argument("--hide_trajectory", action='store_true')
     parser.add_argument("--hide_mesh_text", action='store_true')
+    parser.add_argument("--show_quad_tree", action='store_true')
 
     args = parser.parse_args()
     scale = float(args.scale)
     agent_size = float(args.agent_size)
     hide_trajectory = args.hide_trajectory
+    show_quad_tree = args.show_quad_tree
 
     tr = read_trajectories(args.source_file)
     mesh = read_mesh(args.navmesh_file)
@@ -246,6 +264,9 @@ if __name__ == "__main__":
 
     if not hide_trajectory:
         draw_trajectories(canvas, tr, xmin=global_xmin, ymin=global_ymin, scale=scale)
+
+    if show_quad_tree:
+        draw_quadtree(canvas, 0, 0, W, H, 5)
 
     ovals = redraw_positions(canvas, tr=tr, scale=scale, size=agent_size, xmin=global_xmin, ymin=global_ymin, frame=0)
 

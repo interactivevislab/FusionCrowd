@@ -175,3 +175,21 @@ bool Obstacle::pointOnObstacle(const Vector2 &pt) const {
 	return true;
 }
 
+float Obstacle::distSqPoint(const DirectX::SimpleMath::Vector2& pt) const
+{
+	const float r = (pt - _point).Dot(_unitDir) / _length;
+
+	if (r < 0.0f)
+	{
+		return (pt - _point).LengthSquared();
+	}
+	else if (r > 1.0f)
+	{
+		return (pt - getP1()).LengthSquared();
+	}
+	else
+	{
+		return (pt - (_point + r * _length * _unitDir)).LengthSquared();
+	}
+}
+

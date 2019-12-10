@@ -51,12 +51,13 @@ namespace FusionCrowd
 		auto mesh = _localizer->getNavMesh();
 		std::set<size_t> result;
 
+		//for(size_t obstacleId = 0; obstacleId < mesh->getObstacleCount(); obstacleId++)
 		for(size_t obstacleId : obstacleIds)
 		{
 			const NavMeshObstacle & obst = mesh->GetObstacle(obstacleId);
 			if (obst.pointOutside(pt))
 			{
-				float distance = distSqPointLineSegment(obst.getP0(), obst.getP1(), pt);
+				float distance = obst.distSqPoint(pt);
 				if(distance < rangeSq)
 				{
 					result.insert(obst.getId());

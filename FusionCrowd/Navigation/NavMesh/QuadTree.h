@@ -25,16 +25,13 @@ namespace FusionCrowd
 
 	public:
 		std::vector<size_t> GetContainingBBIds(DirectX::SimpleMath::Vector2 point);
-		std::unordered_set<size_t> GetIntersectingBBIds(BoundingBox box);
+		std::vector<size_t> GetIntersectingBBIds(BoundingBox box);
 	private:
 		struct Node
 		{
 			bool LeafNode = false;
 
-			BoundingBox topLeftBB;
-			BoundingBox topRightBB;
-			BoundingBox bottomLeftBB;
-			BoundingBox bottomRightBB;
+			float xmid, ymid;
 
 			std::unique_ptr<Node> topLeft;
 			std::unique_ptr<Node> topRight;
@@ -46,6 +43,7 @@ namespace FusionCrowd
 
 		void BuildSubTree(Node& node, BoundingBox box, std::vector<Box> & boxes, size_t level);
 
+		BoundingBox _bb;
 		const size_t _maxLevel;
 		std::unique_ptr<Node> _rootNode;
 	};

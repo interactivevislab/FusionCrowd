@@ -1,6 +1,6 @@
 #include "QuadTree.h"
 
-#include <deque>
+#include <queue>
 #include <algorithm>
 
 namespace FusionCrowd
@@ -14,6 +14,7 @@ namespace FusionCrowd
 			BB = BB.Union(box.bb);
 		}
 
+		_bb = BB;
 		_rootNode = std::make_unique<Node>();
 
 		BuildSubTree(*_rootNode.get(), BB, boxes, 0);
@@ -21,24 +22,24 @@ namespace FusionCrowd
 
 	void QuadTree::BuildSubTree(Node& node, BoundingBox box, std::vector<Box> & boxes, size_t level)
 	{
-		float xmid = (box.xmin + box.xmax) / 2;
-		float ymid = (box.ymin + box.ymax) / 2;
+		node.xmid = (box.xmin + box.xmax) / 2;
+		node.ymid = (box.ymin + box.ymax) / 2;
 		node.LeafNode = (level == _maxLevel || boxes.size() <= 1);
-
-		for(auto & bi : boxes)
-		{
-			node.meshNodeIds.push_back(bi.objectId);
-		}
 
 		if(node.LeafNode)
 		{
+			for(auto & bi : boxes)
+			{
+				node.meshNodeIds.push_back(bi.objectId);
+			}
+
 			return;
 		}
 
-		BoundingBox tl { box.xmin, box.ymin,      xmid,     ymid };
-		BoundingBox tr {     xmid, box.ymin,  box.xmax,     ymid };
-		BoundingBox bl { box.xmin,     ymid,      xmid, box.ymax };
-		BoundingBox br {     xmid,     ymid,  box.xmax, box.ymax };
+		BoundingBox tl { box.xmin, box.ymin, node.xmid, node.ymid };
+		BoundingBox tr {node.xmid, box.ymin,  box.xmax, node.ymid };
+		BoundingBox bl { box.xmin,node.ymid, node.xmid,  box.ymax };
+		BoundingBox br {node.xmid,node.ymid,  box.xmax,  box.ymax };
 
 		std::vector<Box> topLefts;
 		std::vector<Box> topRights;
@@ -47,37 +48,36 @@ namespace FusionCrowd
 
 		for(auto & bi : boxes)
 		{
-			if(tl.Overlaps(bi.bb))
+			if(bi.bb.xmax <= node.xmid && bi.bb.ymax <= node.ymid)
 			{
 				topLefts.push_back(bi);
+				continue;
 			}
 
-			if(tr.Overlaps(bi.bb))
+			if(bi.bb.xmin >= node.xmid && bi.bb.ymax <= node.ymid)
 			{
 				topRights.push_back(bi);
+				continue;
 			}
 
-			if(bl.Overlaps(bi.bb))
+			if(bi.bb.xmax <= node.xmid && bi.bb.ymin >= node.ymid)
 			{
 				bottomLefts.push_back(bi);
+				continue;
 			}
 
-			if(br.Overlaps(bi.bb))
+			if(bi.bb.xmin >= node.xmid && bi.bb.ymin >= node.ymid)
 			{
 				bottomRights.push_back(bi);
+				continue;
 			}
+
+			node.meshNodeIds.push_back(bi.objectId);
 		}
 
-		node.topLeftBB = tl;
 		node.topLeft = std::make_unique<Node>();
-
-		node.topRightBB = tr;
 		node.topRight = std::make_unique<Node>();
-
-		node.bottomLeftBB = bl;
 		node.bottomLeft = std::make_unique<Node>();
-
-		node.bottomRightBB = br;
 		node.bottomRight = std::make_unique<Node>();
 
 		BuildSubTree(*node.topLeft.get(), tl, topLefts, level + 1);
@@ -89,78 +89,85 @@ namespace FusionCrowd
 
 	std::vector<size_t> QuadTree::GetContainingBBIds(DirectX::SimpleMath::Vector2 point)
 	{
+		std::vector<size_t> result;
 		Node * current = _rootNode.get();
 		float x = point.x;
 		float y = point.y;
 
-		while(!current->LeafNode)
+		while(true)
 		{
-			if(current->topLeftBB.Contains(x, y))
+			result.insert(std::end(result), std::begin(current->meshNodeIds), std::end(current->meshNodeIds));
+
+			if(current->LeafNode)
+				break;
+
+			if(x <= current->xmid && y <= current->ymid)
 			{
 				current = current->topLeft.get();
 				continue;
 			}
 
-			if(current->topRightBB.Contains(x, y))
+			if(x >= current->xmid && y <= current->ymid)
 			{
 				current = current->topRight.get();
 				continue;
 			}
 
-			if(current->bottomLeftBB.Contains(x, y))
+			if(x <= current->xmid && y >= current->ymid)
 			{
 				current = current->bottomLeft.get();
 				continue;
 			}
 
-			if(current->bottomRightBB.Contains(x, y))
+			if(x >= current->xmid && y >= current->ymid)
 			{
 				current = current->bottomRight.get();
 				continue;
 			}
 
 			//outside of the boundaries
-			return std::vector<size_t>{};
-		}
+			break;
+		};
 
-		return current->meshNodeIds;
+		return result;
 	}
 
-	std::unordered_set<size_t> QuadTree::GetIntersectingBBIds(BoundingBox box)
+	std::vector<size_t> QuadTree::GetIntersectingBBIds(BoundingBox box)
 	{
-		std::unordered_set<size_t> result;
-		std::deque<Node*> processing;
+		std::vector<size_t> result;
+		std::queue<Node *> dq;
 
-		processing.push_back(_rootNode.get());
+		dq.push(_rootNode.get());
 
-		while(processing.size() > 0)
+		while(dq.size() > 0)
 		{
-			Node * current = processing.front(); processing.pop_front();
+			Node * current = dq.front(); dq.pop();
+
+			result.insert(std::end(result), std::begin(current->meshNodeIds), std::end(current->meshNodeIds));
 
 			if(current->LeafNode)
 			{
-				result.insert(current->meshNodeIds.begin(), current->meshNodeIds.end());
 				continue;
 			}
 
-			if(box.Overlaps(current->topLeftBB))
+			if(box.xmin <= current->xmid && box.ymin <= current->ymid)
 			{
-				processing.push_back(current->topLeft.get());
+				dq.push(current->topLeft.get());
 			}
 
-			if(box.Overlaps(current->topRightBB))
+			if(box.xmax >= current->xmid && box.ymin <= current->ymid)
 			{
-				processing.push_back(current->topRight.get());
+				dq.push(current->topRight.get());
 			}
 
-			if(box.Overlaps(current->bottomLeftBB))
+			if(box.xmin <= current->xmid && box.ymax >= current->ymid)
 			{
-				processing.push_back(current->bottomLeft.get());
+				dq.push(current->bottomLeft.get());
 			}
 
-			if(box.Overlaps(current->bottomRightBB))
+			if(box.xmax >= current->xmid && box.ymax >= current->ymid)
 			{
-				processing.push_back(current->bottomRight.get());
+				dq.push(current->bottomRight.get());
 			}
 		}
 

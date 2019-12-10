@@ -23,6 +23,11 @@ namespace FusionCrowd
 			return x >= xmin && x <= xmax && y >= ymin && y <= ymax;
 		}
 
+		inline bool Contains(const BoundingBox & bb) const
+		{
+			return xmin <= bb.xmin && bb.xmax <= xmax && ymin <= bb.ymin && bb.ymax <= ymax;
+		}
+
 		inline bool Overlaps(const BoundingBox & bb) const
 		{
 			return bb.xmin <= xmax && bb.xmax >= xmin && bb.ymin <= ymax && bb.ymax >= ymin;

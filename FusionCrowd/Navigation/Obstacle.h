@@ -69,6 +69,8 @@ namespace FusionCrowd
 
 		inline void setClosedState(bool closed) { _doubleSided = !closed; }
 
+		float distSqPoint(const DirectX::SimpleMath::Vector2& pt) const;
+
 		bool _doubleSided;
 		bool _isConvex;
 		Obstacle* _nextObstacle;
