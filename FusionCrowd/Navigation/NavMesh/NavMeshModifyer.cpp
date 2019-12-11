@@ -17,7 +17,6 @@ namespace FusionCrowd {
 		float res = 0;
 		_global_polygon = std::vector<Vector2>(polygon.size());
 		_modifications = std::vector<NodeModificator*>();
-		std::vector<unsigned int> nodes_ids = std::vector<unsigned int>(polygon.size());
 		if (!IsClockwise(polygon)) {
 			for (int i = 0; i < polygon.size(); i++) {
 				Vector2 v = Vector2(polygon[i].X, polygon[i].Y);
@@ -31,13 +30,14 @@ namespace FusionCrowd {
 			}
 		}
 		FixConcavePoly();
+		std::vector<unsigned int> nodes_ids = std::vector<unsigned int>(_global_polygon.size());
 		if (_global_polygon.size() < 3) return 0;
-		for (int i = 0; i < polygon.size(); i++) {
+		for (int i = 0; i < _global_polygon.size(); i++) {
 			nodes_ids[i] = _localizer->getNodeId(_global_polygon[i]);
 		}
 
 #pragma region start_pos_proccess
-		int start_pos = polygon.size() - 1;
+		int start_pos = _global_polygon.size() - 1;
 		bool one_node = true;
 		if (nodes_ids[0] == nodes_ids[start_pos]) {
 			while (nodes_ids[0] == nodes_ids[start_pos - 1]) {
@@ -163,6 +163,7 @@ namespace FusionCrowd {
 		_addedobstacles = std::vector<NavMeshObstacle*>();
 		SplitPolyByNodes(polygon);
 		if (_global_polygon.size() < 3) return -1;
+		tres = _modifications.size();
 		for (auto mod : _modifications) {
 			Initialize(mod);
 			if (mod->modification_type == CUT_CURVE) {
@@ -182,7 +183,6 @@ namespace FusionCrowd {
 			}
 		}
 		Finalize();
-		//tres += _localizer->findNodeBlind(Vector2(5,4));
 		return tres;
 	}
 
@@ -195,8 +195,6 @@ namespace FusionCrowd {
 #pragma region node_creation
 		NavMeshNode* updnode = new NavMeshNode();
 		int vert_count = 2;
-		int previ;
-		Vector2 lastnode0, lastnode1, firstnode0, firstnode1;
 		for (int i = 0; i < _current_node_poly->vertCount; i++) {
 			auto vertex = _navmesh.vertices[_current_node_poly->vertIDs[i]];
 			auto next_vertex = _navmesh.vertices[_current_node_poly->vertIDs[(i + 1) % _current_node_poly->vertCount]];
@@ -204,17 +202,6 @@ namespace FusionCrowd {
 			if (IsPointUnderLine(v0, v1, vertex) == _side) {
 				vert_count++;
 				vert_added = true;
-			}
-			if (IsSegmentsIntersects(v0, v1, vertex, next_vertex)) {
-				if (vert_added) {
-					lastnode0 = vertex;
-					firstnode1 = next_vertex;
-				}
-				else {
-					previ = i;
-					lastnode1 = vertex;
-					firstnode0 = next_vertex;
-				}
 			}
 		}
 		updnode->setID(GetNextNodeID());
@@ -232,22 +219,12 @@ namespace FusionCrowd {
 				addingque = true;
 				added0++;
 			}
-			if (i == previ) {
-				if (IsSegmentsIntersects(v0, firstnode0, v1, lastnode0)) {
-					updnode->_poly.vertIDs[added0] = v0id;
-					added0++;
-					updnode->_poly.vertIDs[added0] = v1id;
-					added0++;
-
-				}
-				else {
-					updnode->_poly.vertIDs[added0] = v1id;
-					added0++;
-					updnode->_poly.vertIDs[added0] = v0id;
-					added0++;
-				}
-			}
 		}
+		updnode->_poly.vertIDs[added0] = v1id;
+		added0++;
+		updnode->_poly.vertIDs[added0] = v0id;
+		added0++;
+
 		//copy obstacles
 #pragma region copy_obstacles
 		std::vector<NavMeshObstacle*> node0_obst = std::vector<NavMeshObstacle*>(),
@@ -586,6 +563,7 @@ namespace FusionCrowd {
 					addedids++;
 				}
 			}
+
 #pragma region add_edges
 			NavMeshEdge* edge = new NavMeshEdge();
 			Vector2 crosspoint = crosspoints[j];
@@ -646,14 +624,15 @@ namespace FusionCrowd {
 					addedids++;
 					updnode->_poly.vertIDs[addedids] = _local_polygon_vertex_ids[(j + 1) % _local_polygon_vertex_ids.size()]; //polygon node j1
 					addedids++;
+					updnode->_poly.vertIDs[addedids] = _local_polygon_vertex_ids[(j + 2) % _local_polygon_vertex_ids.size()]; //polygon node j2
+					addedids++;
 					if (j < _local_polygon.size() - 3) {
-						updnode->_poly.vertIDs[addedids] = _local_polygon_vertex_ids[(j + 2) % _local_polygon_vertex_ids.size()]; //polygon node j2
+						updnode->_poly.vertIDs[addedids] = crosspoints_ids[(j+1)%crosspoints_ids.size()]; //j1j2 crosspoint
 						addedids++;
 					}
-					updnode->_poly.vertIDs[addedids] = crosspoints_ids[(j+1)%crosspoints_ids.size()]; //j1j2 crosspoint
-					addedids++;
 				}
 			}
+
 #pragma region create_edge
 			NavMeshEdge* edge = new NavMeshEdge();
 			Vector2 crosspoint = crosspoints[j];
@@ -734,6 +713,7 @@ namespace FusionCrowd {
 		CopyVortexObstacles(updnode, -1, j0vert, j1vert, j2vert, node_side0, false, true);
 		CopyVortexEdges(updnode, -1, j0vert, j1vert, j2vert, node_side0, false, true);
 		first_edge->setNodes(updnode, first_edge->getSecondNode());
+
 		_addednodes.push_back(updnode);
 #pragma endregion
 
@@ -1316,8 +1296,9 @@ namespace FusionCrowd {
 	}
 
 	void NavMeshModifyer::FixConcavePoly() {
+		//remove close points
 		for (int i = 0; i < _global_polygon.size();) {
-			if (Vector2::Distance(_global_polygon[(i + 1) % _global_polygon.size()], _global_polygon[i]) < 1.0f) {
+			if (Vector2::Distance(_global_polygon[(i + 1) % _global_polygon.size()], _global_polygon[i]) < 0.5f) {
 				_global_polygon.erase(_global_polygon.begin() + i);
 			}
 			else {
@@ -1325,7 +1306,10 @@ namespace FusionCrowd {
 			}
 		}
 		int pos = 0, neg = 0;
-		for (int test = 0; test < 5; test++) {
+
+		//remove concave vertexes
+		//TODO
+		for (int q = 0; q < 10; q++) {
 			//do {
 			std::vector<float> results = std::vector<float>(_global_polygon.size());
 			pos = 0; neg = 0;
@@ -1338,7 +1322,6 @@ namespace FusionCrowd {
 				if (res > 0) pos++;
 				else neg++;
 			}
-			//if (pos == 0 || neg == 0) continue;
 			bool cut_neg = neg < pos;
 			for (int i = 0; i < results.size();) {
 				if ((cut_neg && results[i] < 0) || (!cut_neg && results[i] > 0)) {
@@ -1349,17 +1332,23 @@ namespace FusionCrowd {
 					i++;
 				}
 			}
-			//} while (pos > 0 && neg > 0);
 		}
+		//} while (pos>0 && neg>0);
+
+		//remove smooth lines
 		for (int i = 0; i < _global_polygon.size();) {
-			if (Vector2::Distance(_global_polygon[(i + 1) % _global_polygon.size()], _global_polygon[i]) < 1.0f) {
-				_global_polygon.erase(_global_polygon.begin() + i);
+			Vector2 v0 = _global_polygon[(i +1) % _global_polygon.size()] - _global_polygon[i];
+			Vector2 v1 = _global_polygon[(i + 2) % _global_polygon.size()] - _global_polygon[(i + 1) % _global_polygon.size()];
+			v0.Normalize();
+			v1.Normalize();
+			if (v0.Dot(v1) > 0.996f) {
+				_global_polygon.erase(_global_polygon.begin() + ((i + 1) % _global_polygon.size()));
 			}
 			else {
 				i++;
 			}
-		}
 
+		}
 	}
 
 	void NavMeshModifyer::FinaliseNodes() {
