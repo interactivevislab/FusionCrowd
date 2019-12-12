@@ -8,8 +8,6 @@
     <ClCompile Include="Math\Line.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />
     <ClCompile Include="StrategyComponent\Goal\Goal.cpp" />
-    <ClCompile Include="StrategyComponent\Goal\GoalSet.cpp" />
-    <ClCompile Include="StrategyComponent\Goal\PointGoal.cpp" />
     <ClCompile Include="TacticComponent\Path\Funnel.cpp" />
     <ClCompile Include="TacticComponent\Path\MinHeap.cpp" />
     <ClCompile Include="TacticComponent\Path\PathPlanner.cpp" />
@@ -58,8 +56,6 @@
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="OperationComponent\IOperationComponent.h" />
     <ClInclude Include="StrategyComponent\Goal\Goal.h" />
-    <ClInclude Include="StrategyComponent\Goal\GoalSet.h" />
-    <ClInclude Include="StrategyComponent\Goal\PointGoal.h" />
     <ClInclude Include="TacticComponent\Path\Funnel.h" />
     <ClInclude Include="TacticComponent\Path\MinHeap.h" />
     <ClInclude Include="TacticComponent\Path\PathPlanner.h" />

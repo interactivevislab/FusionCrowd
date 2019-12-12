@@ -51,18 +51,7 @@ namespace FusionCrowd
 		float GetElapsedTime();
 
 		size_t GetAgentCount() const;
-		std::shared_ptr<Goal> GetAgentGoal(size_t agentId);
-
-		// 3. Should we create agent builder for that?
-	    size_t AddAgent(
-			float maxAngleVel,
-			float radius,
-			float prefSpeed,
-			float maxSpeed,
-			float maxAccel,
-			DirectX::SimpleMath::Vector2 pos,
-			std::shared_ptr<Goal> g
-		);
+		const Goal & GetAgentGoal(size_t agentId) const;
 
 		size_t AddAgent(DirectX::SimpleMath::Vector2 pos);
 		size_t AddAgent(

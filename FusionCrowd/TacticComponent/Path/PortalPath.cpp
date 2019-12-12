@@ -11,8 +11,7 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	PortalPath::PortalPath(const Vector2& startPos, const std::shared_ptr<Goal> goal,
-	                       const PortalRoute* route, float agentRadius) :
+	PortalPath::PortalPath(const Vector2& startPos, const Goal & goal, const PortalRoute* route, float agentRadius) :
 		_route(route), _goal(goal), _currPortal(0)
 	{
 		computeCrossing(startPos, agentRadius);
@@ -30,7 +29,7 @@ namespace FusionCrowd
 		{
 			// assume that the path is clear
 			// TODO: See GoalVC
-			_goal->setDirections(agent.pos, agent.radius, agent.prefVelocity);
+			_goal.setDirections(agent.pos, agent.radius, agent.prefVelocity);
 
 			// speed
 			Vector2 goalPoint = agent.prefVelocity.getTarget();
@@ -97,7 +96,7 @@ namespace FusionCrowd
 				{
 					// calculate w.r.t. goal
 					Vector2 gp;
-					_goal->getTargetPoint(gp, agent.radius);
+					_goal.getTargetPoint(gp, agent.radius);
 					(gp - agent.pos).Normalize(goalDir);
 				}
 			}

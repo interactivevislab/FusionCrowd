@@ -3,62 +3,41 @@
 #include "Math/Geometry2D.h"
 #include "Export/Config.h"
 #include "Math/Util.h"
+#include "TacticComponent/Path/PrefVelocity.h"
+
+#include <memory>
 
 namespace FusionCrowd
 {
-	// Forward declaration
-	class GoalSet;
-
-	namespace Agents
-	{
-		class PrefVelocity;
-	}
-
 	class FUSION_CROWD_API Goal
 	{
-	public:
-		Goal() : _weight(1.f), _capacity(MAX_CAPACITY), _id(-1),
-			_goalSet(0x0), _population(0), _geometry(0x0) {}
-		~Goal();
+	protected:
+		Goal(size_t id, std::shared_ptr<Math::Geometry2D> geometry);
 
-		void destroy() { delete this; }
-
-		static const size_t MAX_CAPACITY = -1;
-		friend class GoalSet;
+		friend class GoalFactory;
 
 	public:
-		virtual std::string getStringId() const = 0;
-
 		float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const;
 
 		void setDirections(const DirectX::SimpleMath::Vector2 & q, float r, Agents::PrefVelocity & directions) const;
 
 		DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const;
-
 		DirectX::SimpleMath::Vector2 getCentroid() const;
 
-		bool hasCapacity() const;
-		void assign(size_t agentId);
-		void free();
-		void setGeometry(Math::Geometry2D * geometry);
-		inline void setGoalSet(GoalSet * goalSet) { _goalSet = goalSet; }
-		inline GoalSet * getGoalSet() { return _goalSet; }
-		inline const GoalSet * getGoalSet() const { return _goalSet; }
-		inline void setWeight(float weight) { _weight = weight; }
-		inline float getWeight() const { return _weight; }
-		inline void setCapacity(size_t capacity) { _capacity = capacity; }
-		inline size_t getCapacity() const { return _capacity; }
-		inline void setID(size_t id) { _id = id; }
-		inline size_t getID() const { return _id; }
-		inline const Math::Geometry2D * getGeometry() const { return _geometry; }
+		size_t getID() const;
+		const Math::Geometry2D * getGeometry() const;
 
-		friend class GoalSet;
 	protected:
-		float	_weight;
-		size_t	_capacity;
-		size_t	_id;
-		GoalSet * _goalSet;
-		mutable size_t	_population;
-		Math::Geometry2D * _geometry;
+		size_t _id;
+		std::shared_ptr<Math::Geometry2D> _geometry;
+	};
+
+	class GoalFactory
+	{
+	public:
+		Goal CreatePointGoal(const DirectX::SimpleMath::Vector2 & p);
+		Goal CreateGeometryGoal(std::shared_ptr<Math::Geometry2D> geometry);
+	private:
+		size_t goalId = 0;
 	};
 }

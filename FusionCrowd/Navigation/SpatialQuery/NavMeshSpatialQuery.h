@@ -16,8 +16,8 @@ namespace FusionCrowd
 	public:
 		NavMeshSpatialQuery(std::shared_ptr<NavMeshLocalizer> nml);
 
-		std::set<size_t> ObstacleQuery(DirectX::SimpleMath::Vector2 pt) const;
-		std::set<size_t> ObstacleQuery(DirectX::SimpleMath::Vector2 pt, float rangeSq) const;
+		std::vector<size_t> ObstacleQuery(DirectX::SimpleMath::Vector2 pt) const;
+		std::vector<size_t> ObstacleQuery(DirectX::SimpleMath::Vector2 pt, float rangeSq) const;
 		bool QueryVisibility(
 			const DirectX::SimpleMath::Vector2& q1,
 			const DirectX::SimpleMath::Vector2& q2, float radius

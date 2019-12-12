@@ -18,7 +18,7 @@ namespace FusionCrowd
 	class FUSION_CROWD_API PortalPath
 	{
 	public:
-		PortalPath(const DirectX::SimpleMath::Vector2 & startPos, const std::shared_ptr<Goal> goal, const PortalRoute* route, float agentRadius);
+		PortalPath(const DirectX::SimpleMath::Vector2 & startPos, const Goal & goal, const PortalRoute* route, float agentRadius);
 		~PortalPath();
 		void setPreferredDirection(AgentSpatialInfo & agent, float headingCos);
 		unsigned int updateLocation(const AgentSpatialInfo & agent, const std::shared_ptr<NavMesh> navMesh,
@@ -26,8 +26,8 @@ namespace FusionCrowd
 		unsigned int getNode() const;
 		inline size_t getWayPointCount() const { return _route->getPortalCount(); }
 		DirectX::SimpleMath::Vector2 getWayPoint(size_t i) const;
-		inline const std::shared_ptr<Goal> getGoal() const { return _goal; }
-		inline DirectX::SimpleMath::Vector2 getGoalCentroid() const { return _goal->getCentroid(); }
+		inline const Goal & getGoal() const { return _goal; }
+		inline DirectX::SimpleMath::Vector2 getGoalCentroid() const { return _goal.getCentroid(); }
 		inline unsigned int getEndNode() const { return _route->getEndNode(); }
 		unsigned int getNode(size_t i) const;
 		inline size_t getCurrentPortal() const { return _currPortal; }
@@ -37,8 +37,9 @@ namespace FusionCrowd
 		                  const DirectX::SimpleMath::Vector2& dir);
 	protected:
 		const PortalRoute* _route;
-		const std::shared_ptr<Goal> _goal;
+		const Goal _goal;
 		size_t _currPortal;
+
 		void computeCrossing(const DirectX::SimpleMath::Vector2& startPos, float agentRadius);
 		std::vector<DirectX::SimpleMath::Vector2> _waypoints;
 		std::vector<DirectX::SimpleMath::Vector2> _headings;

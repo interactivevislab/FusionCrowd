@@ -15,6 +15,7 @@ namespace FusionCrowd
 	public:
 		struct Box
 		{
+			Box(): bb(BoundingBox(0,0,0,0)), objectId(0) { }
 			Box(BoundingBox bb, size_t objectId) : bb(bb), objectId(objectId) { };
 
 			BoundingBox bb;
@@ -29,19 +30,24 @@ namespace FusionCrowd
 	private:
 		struct Node
 		{
+			Node(size_t start) : start(start), len(0) {}
+
 			bool LeafNode = false;
 
 			float xmid, ymid;
+
+			size_t start;
+			size_t len;
 
 			std::unique_ptr<Node> topLeft;
 			std::unique_ptr<Node> topRight;
 			std::unique_ptr<Node> bottomLeft;
 			std::unique_ptr<Node> bottomRight;
-
-			std::vector<size_t> meshNodeIds;
 		};
 
-		void BuildSubTree(Node& node, BoundingBox box, std::vector<Box> & boxes, size_t level);
+		std::vector<Box> _stored_boxes;
+
+		size_t BuildSubTree(Node& node, BoundingBox box, std::vector<Box> & boxes, size_t level);
 
 		BoundingBox _bb;
 		const size_t _maxLevel;

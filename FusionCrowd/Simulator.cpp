@@ -5,7 +5,7 @@
 #include "Navigation/NavSystem.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include "TacticComponent/NavMeshComponent.h"
-#include "StrategyComponent/Goal/PointGoal.h"
+#include "StrategyComponent/Goal/Goal.h"
 #include "Navigation/OnlineRecording/OnlineRecording.h"
 
 using namespace DirectX::SimpleMath;
@@ -64,37 +64,8 @@ namespace FusionCrowd
 			_isRecording = isRecording;
 		}
 
-		std::shared_ptr<Goal> GetAgentGoal(size_t agentId) {
+		const Goal & GetAgentGoal(size_t agentId) const {
 			return _agents.find(agentId)->second.currentGoal;
-		}
-
-	    size_t AddAgent(
-			float maxAngleVel,
-			float radius,
-			float prefSpeed,
-			float maxSpeed,
-			float maxAccel,
-			DirectX::SimpleMath::Vector2 pos,
-			std::shared_ptr<Goal> goal
-		)
-		{
-			size_t id = GetNextId();
-
-			AgentSpatialInfo info;
-			info.id = id;
-			info.pos = pos;
-			info.radius = radius;
-			info.maxAngVel = maxAngleVel;
-			info.prefSpeed = prefSpeed;
-			info.maxSpeed = maxSpeed;
-			info.maxAccel = maxAccel;
-
-			_navSystem->AddAgent(info);
-			Agent a(id);
-			a.currentGoal = goal;
-			_agents.insert({info.id, a});
-
-			return id;
 		}
 
 		size_t AddAgent(DirectX::SimpleMath::Vector2 pos)
@@ -104,8 +75,7 @@ namespace FusionCrowd
 			info.pos = pos;
 			_navSystem->AddAgent(info);
 
-			Agent a(info.id);
-			a.currentGoal = std::make_shared<PointGoal>(pos);
+			Agent a(info.id, _goalFactory.CreatePointGoal(pos));
 			_agents.insert({info.id, a});
 
 			return info.id;
@@ -123,11 +93,10 @@ namespace FusionCrowd
 			info.pos = DirectX::SimpleMath::Vector2(x, y);
 			_navSystem->AddAgent(info);
 
-			Agent a(agentId);
-			a.currentGoal = std::make_shared<PointGoal>(DirectX::SimpleMath::Vector2(x, y));
+			Agent a(agentId, _goalFactory.CreatePointGoal(DirectX::SimpleMath::Vector2(x, y)));
+			_agents.insert({ agentId, a});
 
-			_agents.insert({ agentId, a });
-			Agent & agent = _agents.find(agentId)->second;
+			auto & agent = _agents.find(agentId)->second;
 
 			//SetOperationComponent(info.id, opId);
 			for (auto& c : _operComponents) {
@@ -156,12 +125,19 @@ namespace FusionCrowd
 				agent.stratComponent = c;
 			}
 
+
 			return agentId;
+		}
+
+		void SetAgentGoal(Agent & agent, DirectX::SimpleMath::Vector2 goalPos)
+		{
+			auto goal = _goalFactory.CreatePointGoal(goalPos);
+			agent.currentGoal = goal;
 		}
 
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
 		{
-			_agents.find(agentId)->second.currentGoal = std::make_shared<PointGoal>(goalPos);
+			SetAgentGoal(_agents.find(agentId)->second, goalPos);
 		}
 
 		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
@@ -270,7 +246,7 @@ namespace FusionCrowd
 			{
 				Agent & agent = p.second;
 				AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agent.id);
-				std::shared_ptr<Goal> g = agent.currentGoal;
+				auto & g = agent.currentGoal;
 
 				ComponentId op = -1, tactic = -1, strat = -1;
 				if(!agent.opComponent.expired())
@@ -295,7 +271,7 @@ namespace FusionCrowd
 					info.orient.x, info.orient.y,
 					info.radius,
 					op, tactic, strat,
-					g->getCentroid().x, g->getCentroid().y
+					g.getCentroid().x, g.getCentroid().y
 				};
 				i++;
 			}
@@ -389,6 +365,8 @@ namespace FusionCrowd
 		std::map<ComponentId, std::shared_ptr<IStrategyComponent>> _strategyComponents;
 		std::vector<std::shared_ptr<ITacticComponent>> _tacticComponents;
 		std::vector<std::shared_ptr<IOperationComponent>> _operComponents;
+
+		GoalFactory _goalFactory;
 	};
 
 #pragma endregion
@@ -420,13 +398,8 @@ namespace FusionCrowd
 		pimpl->SetIsRecording(isRecording);
 	}
 
-	std::shared_ptr<Goal> Simulator::GetAgentGoal(size_t agentId) {
+	const Goal & Simulator::GetAgentGoal(size_t agentId) const {
 		return pimpl->GetAgentGoal(agentId);
-	}
-
-	size_t Simulator::AddAgent(float maxAngleVel, float radius, float prefSpeed, float maxSpeed, float maxAccel, Vector2 pos, std::shared_ptr<Goal> goal)
-	{
-		return pimpl->AddAgent(maxAngleVel, radius, prefSpeed, maxSpeed, maxAccel, pos, goal);
 	}
 
 	bool Simulator::SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
@@ -478,7 +451,7 @@ namespace FusionCrowd
 		return *this;
 	}
 
-	Agent& Simulator::GetAgent(size_t id)
+	Agent & Simulator::GetAgent(size_t id)
 	{
 		return pimpl->GetAgent(id);
 	}

@@ -8,6 +8,7 @@
 #include "StrategyComponent/Goal/Goal.h"
 #include "TacticComponent/Path/PrefVelocity.h"
 #include "Math/consts.h"
+#include <iostream>
 
 using namespace DirectX::SimpleMath;
 
@@ -20,11 +21,11 @@ namespace FusionCrowd
 
 	void NavMeshComponent::AddAgent(size_t id)
 	{
-		auto agentGoal = _simulator->GetAgentGoal(id);
+		auto & agentGoal = _simulator->GetAgentGoal(id);
 		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(id);
 
 		unsigned int from = _localizer->getNodeId(agentInfo.pos);
-		unsigned int to = _localizer->getNodeId(agentGoal->getCentroid());
+		unsigned int to = _localizer->getNodeId(agentGoal.getCentroid());
 
 		assert(from != NavMeshLocation::NO_NODE && "Agent is not on the nav mesh");
 		assert(to != NavMeshLocation::NO_NODE && "Agent goal is not on the nav mesh");
@@ -50,7 +51,7 @@ namespace FusionCrowd
 
 	void NavMeshComponent::Update(float timeStep)
 	{
-		for (auto agtStruct : _agents)
+		for (auto & agtStruct : _agents)
 		{
 			size_t id = agtStruct.id;
 			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
@@ -62,11 +63,11 @@ namespace FusionCrowd
 
 	void NavMeshComponent::setPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
 	{
-		auto agentGoal = _simulator->GetAgentGoal(agentInfo.id);
+		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
-		if (path == nullptr || path->getGoal() != agentGoal)
+		if (path == nullptr || path->getGoal().getID() != agentGoal.getID())
 		{
-			Vector2 goalPoint = agentGoal->getCentroid();
+			Vector2 goalPoint = agentGoal.getCentroid();
 			unsigned int goalNode = _localizer->getNodeId(goalPoint);
 			if (goalNode == NavMeshLocation::NO_NODE)
 			{
@@ -77,9 +78,9 @@ namespace FusionCrowd
 
 			PortalRoute* route = _localizer->getPlanner()->getRoute(agtNode, goalNode, agentInfo.radius * 2.f);
 
-			path = std::make_shared<PortalPath>(agentInfo.pos, agentGoal, route, agentInfo.radius);
+			auto newPath = std::make_shared<PortalPath>(agentInfo.pos, agentGoal, route, agentInfo.radius);
 			// assign it to the localizer
-			agentStruct.location.setPath(path);
+			agentStruct.location.setPath(newPath);
 		}
 		agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
 		path->setPreferredDirection(agentInfo, _headingDevCos);

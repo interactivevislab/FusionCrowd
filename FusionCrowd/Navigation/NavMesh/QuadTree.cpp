@@ -15,26 +15,48 @@ namespace FusionCrowd
 		}
 
 		_bb = BB;
-		_rootNode = std::make_unique<Node>();
+		_rootNode = std::make_unique<Node>(0);
+		_stored_boxes.resize(boxes.size());
 
 		BuildSubTree(*_rootNode.get(), BB, boxes, 0);
 	}
 
-	void QuadTree::BuildSubTree(Node& node, BoundingBox box, std::vector<Box> & boxes, size_t level)
+	size_t QuadTree::BuildSubTree(Node& node, BoundingBox box, std::vector<Box> & boxes, size_t level)
 	{
-		node.xmid = (box.xmin + box.xmax) / 2;
-		node.ymid = (box.ymin + box.ymax) / 2;
 		node.LeafNode = (level == _maxLevel || boxes.size() <= 1);
 
 		if(node.LeafNode)
 		{
-			for(auto & bi : boxes)
+			node.xmid = (box.xmin + box.xmax) / 2.0;
+			node.ymid = (box.ymin + box.ymax) / 2.0;
+			node.len = boxes.size();
+
+			for(size_t t = 0; t < boxes.size(); t++)
 			{
-				node.meshNodeIds.push_back(bi.objectId);
+				_stored_boxes[node.start + t] = boxes[t];
 			}
 
-			return;
+			return node.start + node.len;
 		}
+
+		auto boxCount = boxes.size();
+		std::vector<float> xs(boxCount * 2);
+		std::vector<float> ys(boxCount * 2);
+
+		for(auto & bi : boxes)
+		{
+			xs.push_back(bi.bb.xmin);
+			xs.push_back(bi.bb.xmax);
+			ys.push_back(bi.bb.ymin);
+			ys.push_back(bi.bb.ymax);
+		}
+
+		std::sort(std::begin(xs), std::end(xs));
+		std::sort(std::begin(ys), std::end(ys));
+
+		node.xmid = (xs[boxCount] + xs[boxCount + 1]) / 2;
+		node.ymid = (ys[boxCount] + ys[boxCount + 1]) / 2;
+
 
 		BoundingBox tl { box.xmin, box.ymin, node.xmid, node.ymid };
 		BoundingBox tr {node.xmid, box.ymin,  box.xmax, node.ymid };
@@ -72,18 +94,23 @@ namespace FusionCrowd
 				continue;
 			}
 
-			node.meshNodeIds.push_back(bi.objectId);
+			_stored_boxes[node.start + node.len] = bi;
+			node.len++;
 		}
 
-		node.topLeft = std::make_unique<Node>();
-		node.topRight = std::make_unique<Node>();
-		node.bottomLeft = std::make_unique<Node>();
-		node.bottomRight = std::make_unique<Node>();
+		size_t newStart = node.start + node.len;
 
-		BuildSubTree(*node.topLeft.get(), tl, topLefts, level + 1);
-		BuildSubTree(*node.topRight.get(), tr, topRights, level + 1);
-		BuildSubTree(*node.bottomLeft.get(), bl, bottomLefts, level + 1);
-		BuildSubTree(*node.bottomRight.get(), br, bottomRights, level + 1);
+		node.topLeft = std::make_unique<Node>(newStart);
+		newStart = BuildSubTree(*node.topLeft.get(), tl, topLefts, level + 1);
+
+		node.topRight = std::make_unique<Node>(newStart);
+		newStart = BuildSubTree(*node.topRight.get(), tr, topRights, level + 1);
+
+		node.bottomLeft = std::make_unique<Node>(newStart);
+		newStart = BuildSubTree(*node.bottomLeft.get(), bl, bottomLefts, level + 1);
+
+		node.bottomRight = std::make_unique<Node>(newStart);
+		return BuildSubTree(*node.bottomRight.get(), br, bottomRights, level + 1);
 	}
 
 
@@ -96,7 +123,11 @@ namespace FusionCrowd
 
 		while(true)
 		{
-			result.insert(std::end(result), std::begin(current->meshNodeIds), std::end(current->meshNodeIds));
+			for(size_t idx = current->start; idx < current->start + current->len; idx++)
+			{
+				if(_stored_boxes[idx].bb.Contains(point.x, point.y))
+					result.push_back(_stored_boxes[idx].objectId);
+			}
 
 			if(current->LeafNode)
 				break;
@@ -143,7 +174,11 @@ namespace FusionCrowd
 		{
 			Node * current = dq.front(); dq.pop();
 
-			result.insert(std::end(result), std::begin(current->meshNodeIds), std::end(current->meshNodeIds));
+			for(size_t idx = current->start; idx < current->start + current->len; idx++)
+			{
+				if(_stored_boxes[idx].bb.Overlaps(box))
+					result.push_back(_stored_boxes[idx].objectId);
+			}
 
 			if(current->LeafNode)
 			{

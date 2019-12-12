@@ -38,29 +38,31 @@ namespace FusionCrowd
 	}
 
 
-	std::set<size_t> NavMeshSpatialQuery::ObstacleQuery(Vector2 pt) const
+	std::vector<size_t> NavMeshSpatialQuery::ObstacleQuery(Vector2 pt) const
 	{
 		float range = 3.2f;
 		return ObstacleQuery(pt, range);
 	}
 
-	std::set<size_t> NavMeshSpatialQuery::ObstacleQuery(Vector2 pt, float range) const
+	std::vector<size_t> NavMeshSpatialQuery::ObstacleQuery(Vector2 pt, float range) const
 	{
 		const float rangeSq = range * range;
-		auto obstacleIds = _obstacleBBTree->GetIntersectingBBIds(BoundingBox(pt.x - range, pt.y - range, pt.x + range, pt.y + range));
+		auto bb = BoundingBox(pt.x - range, pt.y - range, pt.x + range, pt.y + range);
+		auto obstacleIds = _obstacleBBTree->GetIntersectingBBIds(bb);
 		auto mesh = _localizer->getNavMesh();
-		std::set<size_t> result;
+		std::vector<size_t> result;
 
 		//for(size_t obstacleId = 0; obstacleId < mesh->getObstacleCount(); obstacleId++)
 		for(size_t obstacleId : obstacleIds)
 		{
 			const NavMeshObstacle & obst = mesh->GetObstacle(obstacleId);
+
 			if (obst.pointOutside(pt))
 			{
 				float distance = obst.distSqPoint(pt);
 				if(distance < rangeSq)
 				{
-					result.insert(obst.getId());
+					result.push_back(obst.getId());
 				}
 			}
 		}
