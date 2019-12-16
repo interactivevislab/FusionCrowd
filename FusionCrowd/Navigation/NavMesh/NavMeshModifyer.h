@@ -78,7 +78,7 @@ namespace FusionCrowd {
 		bool IsSegmentsIntersects(Vector2 v00, Vector2 v01, Vector2 v10, Vector2 v11);
 		NavMeshNode* GetNodeById(size_t id);
 		bool ProcessEdge(NavMeshEdge* edge);
-		size_t GetNextNodeID();
+		unsigned int GetNextNodeID();
 		void FixPoly(NavMeshNode& node);
 		void FixConcavePoly();
 

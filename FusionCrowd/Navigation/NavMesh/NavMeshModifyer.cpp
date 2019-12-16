@@ -132,7 +132,7 @@ namespace FusionCrowd {
 			//TODO fix
 			if (tmp.size() == 0) {
 				delete modificator;
-				tres = 1;
+				tres = -1;
 				continue;
 			}
 			Vector2 prev_cross_point = tmp[0];
@@ -153,7 +153,7 @@ namespace FusionCrowd {
 			//TODO fix
 			if (cross_points.size() == 0) {
 				delete modificator;
-				tres = 2;
+				tres = -2;
 				continue;
 			}
 			Vector2 post_cross_point = cross_points[0];
@@ -183,7 +183,9 @@ namespace FusionCrowd {
 		_addednodes = std::vector<NavMeshNode*>();
 		_addededges = std::vector<NavMeshEdge*>();
 		_addedobstacles = std::vector<NavMeshObstacle*>();
+
 		SplitPolyByNodes(polygon);
+		//TODO uncomment
 		if (_global_polygon.size() < 3) return -1;
 		for (auto mod : _modifications) {
 			Initialize(mod);
@@ -203,10 +205,13 @@ namespace FusionCrowd {
 				_nodes_ids_to_delete.push_back(mod->node->getID());
 			}
 		}
-		if (_modifications.size() == 0) return tres > 0 ? tres : -2;
+
+		if (_modifications.size() == 0) return tres != 0 ? tres : -2;
 		//TODO remove
-		//if (tres > 0) return tres;
+		if (tres < 0) return tres;
+		tres = 0;
 		Finalize();
+
 		return tres;
 	}
 
@@ -364,6 +369,7 @@ namespace FusionCrowd {
 	/*Adds all created nodes and vertexes*/
 	int NavMeshModifyer::Finalize() {
 
+
 #pragma region vertices
 		//add created vertices
 		Vector2* updvertices = new Vector2[_navmesh.vCount + _global_polygon.size() + _addedvertices.size()];
@@ -412,8 +418,22 @@ namespace FusionCrowd {
 
 #pragma endregion
 
+		std::vector<unsigned int> first_nodes_ids = std::vector<unsigned int>(vtmp_edges.size());
+		std::vector<unsigned int> second_nodes_ids = std::vector<unsigned int>(vtmp_edges.size());
+		for (int i = 0; i < vtmp_edges.size(); i++) {
+			first_nodes_ids[i] = vtmp_edges[i].getFirstNode()->_id;
+			second_nodes_ids[i] = vtmp_edges[i].getSecondNode()->_id;
+		}
+
 		FinaliseNodes();
 		_localizer->Update(_addednodes, _nodes_ids_to_delete);
+
+		for (int i = 0; i < vtmp_edges.size(); i++) {
+			NavMeshNode* n0 = _navmesh.GetNodeByID(first_nodes_ids[i]);
+			NavMeshNode* n1 = _navmesh.GetNodeByID(second_nodes_ids[i]);
+			if (n0 == nullptr || n1 == nullptr) tres = 878787;
+			vtmp_edges[i].setNodes(n0, n1);
+		}
 
 #pragma region edge_obstacles_process
 
@@ -471,11 +491,13 @@ namespace FusionCrowd {
 		_navmesh.obstacles = tmp_obstacles;
 #pragma endregion
 
+
 #pragma region add_new_edges
 		//add and delete edges
 		for (int i = 0; i < _addededges.size(); i++) {
 			vtmp_edges.push_back(*_addededges[i]);
 		}
+
 		delete[] _navmesh.edges;
 		_navmesh.edges = new NavMeshEdge[vtmp_edges.size()];
 		for (int i = 0; i < vtmp_edges.size(); i++) {
@@ -525,6 +547,7 @@ namespace FusionCrowd {
 
 #pragma endregion
 
+
 		for (auto m : _modifications) {
 			delete m;
 		}
@@ -534,6 +557,7 @@ namespace FusionCrowd {
 		}
 
 		_spatial_query->Update();
+
 		return 0;
 	}
 
@@ -787,7 +811,7 @@ namespace FusionCrowd {
 		}
 		//TODO remove
 		success = false;
-		tres = 999;
+		tres = -999;
 		return Vector2(999999, 999999);
 	}
 
@@ -1249,14 +1273,15 @@ namespace FusionCrowd {
 		return true;
 	}
 
-	size_t NavMeshModifyer::GetNextNodeID() {
+	unsigned int NavMeshModifyer::GetNextNodeID() {
 		if (next_node_id == 0) {
 			for (int i = 0; i < _navmesh.nCount; i++) {
 				if (_navmesh.nodes[i]._id > next_node_id) next_node_id = _navmesh.nodes[i]._id;
 			}
 			next_node_id++;
 		}
-		size_t res = next_node_id;
+		unsigned int res = next_node_id;
+
 		next_node_id++;
 		return res;
 	}
