@@ -8,7 +8,7 @@ namespace TestFusionCrowd
 class TradeshowTestCase : public ITestCase
 {
 public:
-	TradeshowTestCase(size_t agentsNum, size_t simSteps, bool writeTraj) : ITestCase(agentsNum, simSteps, false, writeTraj, writeTraj)
+	TradeshowTestCase(size_t agentsNum, size_t simSteps, bool writeTraj) : ITestCase(agentsNum, simSteps, writeTraj)
 	{
 	};
 
