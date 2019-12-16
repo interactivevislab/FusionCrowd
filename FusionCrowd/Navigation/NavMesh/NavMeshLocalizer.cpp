@@ -153,10 +153,10 @@ namespace FusionCrowd
 		unsigned int maxNode = NavMeshLocation::NO_NODE;
 		for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
 		{
-			const NavMeshNode& node = _navMesh->GetNodeByID(nodeId);
-			if (node.containsPoint(p))
+			const NavMeshNode* node = _navMesh->GetNodeByID(nodeId);
+			if (node->containsPoint(p))
 			{
-				float hDiff = fabs(node.getElevation(p) - tgtElev);
+				float hDiff = fabs(node->getElevation(p) - tgtElev);
 				if (hDiff < elevDiff)
 				{
 					maxNode = nodeId;

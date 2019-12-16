@@ -60,15 +60,14 @@ namespace FusionCrowd {
 		int CutCurveFromCurrentNode();
 
 		//vortex crosspoints
-		void FillAddedVertices();
-		Vector2 FindVortexCrossPoint(Vector2 v0, Vector2 v1, int& out_prev_cross_id);
+		void FillAddedVertices(bool isCurve);
+		Vector2 FindVortexCrossPoint(Vector2 v0, Vector2 v1, bool& success);
 		void CopyVortexObstacles(NavMeshNode* updnode, int j, Vector2 j0vert,
 			Vector2 j1vert, Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict = false);
 		void CopyVortexEdges(NavMeshNode* updnode, int j, Vector2 j0vert,
 			Vector2 j1vert, Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict = false);
 		std::vector<unsigned int> crosspoints_ids;
 		std::vector<Vector2> crosspoints;
-		std::vector<unsigned int> crosspoints_prev_vertex_ids;
 
 		//utility
 		bool IsPointUnderLine(Vector2 v0, Vector2 v1, Vector2 point, bool reverse = false, bool strict = false);
@@ -82,6 +81,9 @@ namespace FusionCrowd {
 		size_t GetNextNodeID();
 		void FixPoly(NavMeshNode& node);
 		void FixConcavePoly();
+
+		//TODO replace
+		NavMeshNode* FindNodeByPoint(Vector2 point);
 
 		float tres = 0;
 	};
