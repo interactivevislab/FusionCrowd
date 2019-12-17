@@ -22,6 +22,7 @@ namespace FusionCrowd
 
 		bool LoadFromAscii(std::istream& f, DirectX::SimpleMath::Vector2* vertices);
 		inline const NavMeshNode* getNode() const { return _node; }
+		void setNode(NavMeshNode* node)  { _node = node; }
 
 		~NavMeshObstacle();
 

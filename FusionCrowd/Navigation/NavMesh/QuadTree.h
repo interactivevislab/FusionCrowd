@@ -27,6 +27,7 @@ namespace FusionCrowd
 	public:
 		std::vector<size_t> GetContainingBBIds(DirectX::SimpleMath::Vector2 point);
 		std::vector<size_t> GetIntersectingBBIds(BoundingBox box);
+		void UpdateTree(std::vector<Box>& add_boxes, std::vector<size_t>& del_boxes);
 	private:
 		struct Node
 		{
@@ -34,23 +35,26 @@ namespace FusionCrowd
 
 			bool LeafNode = false;
 
-			float xmid, ymid;
+			float xmid = 0.0, ymid = 0.0;
 
-			size_t start;
-			size_t len;
+			size_t start = 0;
+			size_t len   = 0;
 
-			std::unique_ptr<Node> topLeft;
-			std::unique_ptr<Node> topRight;
-			std::unique_ptr<Node> bottomLeft;
-			std::unique_ptr<Node> bottomRight;
+			size_t topLeft     = -1;
+			size_t topRight    = -1;
+			size_t bottomLeft  = -1;
+			size_t bottomRight = -1;
 		};
 
 		std::vector<Box> _stored_boxes;
+		std::vector<Node> _stored_nodes;
 
-		size_t BuildSubTree(Node& node, BoundingBox box, std::vector<Box> & boxes, size_t level);
+		size_t SmallestContainingNode(BoundingBox & box);
+		size_t BuildSubTree(size_t node, BoundingBox box, std::vector<Box> & boxes, size_t level);
+		void UpdateSubTree(size_t node, std::vector<Box>& add_boxes, std::vector<size_t>& del_boxes);
 
 		BoundingBox _bb;
 		const size_t _maxLevel;
-		std::unique_ptr<Node> _rootNode;
+		const size_t _rootNode = 0;
 	};
 }

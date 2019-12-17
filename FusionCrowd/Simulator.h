@@ -76,6 +76,10 @@ namespace FusionCrowd
 		size_t GetNodeVertexCount(size_t node_id);
 		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id);
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
+		size_t GetEdgesCount();
+		bool GetEdges(FCArray<EdgeInfo> & output);
+		size_t GetObstaclesCount();
+		bool GetObstacles(FCArray<EdgeInfo> & output);
 
 	private:
 		class SimulatorImpl;

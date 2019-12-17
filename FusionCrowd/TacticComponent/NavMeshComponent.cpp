@@ -109,7 +109,7 @@ namespace FusionCrowd
 			}
 			else
 			{
-				const NavMeshNode& node = _navMesh->GetNode((unsigned int)loc._nodeID);
+				const NavMeshNode& node = _navMesh->GetNodeByPos((unsigned int)loc._nodeID);
 				if (!node.containsPoint(p))
 				{
 					// not in current node

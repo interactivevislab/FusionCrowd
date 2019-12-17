@@ -25,7 +25,7 @@ namespace FusionCrowd
 #endif
 	bool NavMesh::finalize()
 	{
-		// All of the edge indices in the nodes need to be replaced with pointers
+		// All of the obst indices in the nodes need to be replaced with pointers
 		// All of the obstacle indices in the nodes need to be replaced with pointers.
 		for (size_t n = 0; n < nCount; ++n)
 		{
@@ -46,7 +46,8 @@ namespace FusionCrowd
 				node._obstacles[o] = &obstacles[oID];
 			}
 			node._id = static_cast<unsigned int>(n);
-			node._poly.setBB(vertices);
+			node._poly.vertices = vertices;
+			node._poly.setBB();
 		}
 
 		// All of the node indices in the edges need to be replaced with pointers
@@ -58,7 +59,7 @@ namespace FusionCrowd
 
 			nID = reinterpret_cast<size_t>(edge._node1);
 			edge._node1 = &nodes[nID];
-			// compute edge distance
+			// compute obst distance
 			edge._distance = (edge._node0->getCenter() - edge._node1->getCenter()).Length();
 
 			// Confirm that point is on the left when looking from node0
@@ -205,7 +206,7 @@ namespace FusionCrowd
 
 			for (; n < totalN; ++n)
 			{
-				NavMeshNode& node = mesh->GetNode(n);
+				NavMeshNode& node = mesh->GetNodeByPos(n);
 				if (!node.loadFromAscii(f))
 				{
 					return 0x0;
@@ -354,9 +355,17 @@ namespace FusionCrowd
 		return true;
 	}
 
-	NavMeshNode& NavMesh::GetNode(unsigned int i)
+	NavMeshNode& NavMesh::GetNodeByPos(unsigned int id)
 	{
-		return nodes[i];
+		return nodes[id];
+	}
+
+
+	NavMeshNode& NavMesh::GetNodeByID(unsigned int id) {
+		for (int i = 0; i < nCount; i++) {
+			if (nodes[i]._id == id) return nodes[i];
+		}
+		return nodes[0];
 	}
 
 	const NMNodeGroup* NavMesh::getNodeGroup(const std::string& grpName) const
@@ -422,7 +431,6 @@ namespace FusionCrowd
 			vertex.Y = vertices[i].y;
 			output[i] = vertex;
 		}
-
 		return true;
 	}
 
@@ -435,9 +443,70 @@ namespace FusionCrowd
 	}
 
 	bool NavMesh::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
+		NavMeshNode* node = nullptr;
 		for (int i = 0; i < nodes[node_id]._poly.vertCount; i++) {
 			output[i] = nodes[node_id]._poly.vertIDs[i];
 			//if (nodes[node_id]._poly.vertIDs[i] < 0) return false;
+		}
+		return true;
+	}
+
+	size_t NavMesh::GetEdgesCount() {
+		return eCount;
+	}
+
+	bool NavMesh::GetEdges(FCArray<EdgeInfo> & output) {
+		if (output.size() < eCount)
+		{
+			return false;
+		}
+
+		for (int i = 0; i < eCount; i++)
+		{
+			output[i] = EdgeInfo();
+			output[i].x1 = edges[i].getP0().x;
+			output[i].y1 = edges[i].getP0().y;
+			output[i].x2 = edges[i].getP1().x;
+			output[i].y2 = edges[i].getP1().y;
+			//TODO: remove checks
+			if (edges[i].getFirstNode() != nullptr) {
+				output[i].nx0 = edges[i].getFirstNode()->getCenter().x;
+				output[i].ny0 = edges[i].getFirstNode()->getCenter().y;
+			} else {
+				output[i].nx0 = edges[i].getSecondNode()->getCenter().x;
+				output[i].ny0 = edges[i].getSecondNode()->getCenter().y;
+			}
+			if (edges[i].getSecondNode() != nullptr) {
+				output[i].nx1 = edges[i].getSecondNode()->getCenter().x;
+				output[i].ny1 = edges[i].getSecondNode()->getCenter().y;
+			}
+			else {
+				output[i].nx1 = edges[i].getFirstNode()->getCenter().x;
+				output[i].ny1 = edges[i].getFirstNode()->getCenter().y;
+
+			}
+		}
+		return true;
+	}
+
+	size_t NavMesh::GetObstaclesCount() {
+		return obstCount;
+	}
+
+	bool NavMesh::GetObstacles(FCArray<EdgeInfo> & output) {
+		if (output.size() < obstCount)
+		{
+			return false;
+		}
+		for (int i = 0; i < obstCount; i++)
+		{
+			output[i] = EdgeInfo();
+			output[i].x1 = obstacles[i].getP0().x;
+			output[i].y1 = obstacles[i].getP0().y;
+			output[i].x2 = obstacles[i].getP1().x;
+			output[i].y2 = obstacles[i].getP1().y;
+			output[i].nx0 = obstacles[i].getNode()->_center.x;
+			output[i].ny0 = obstacles[i].getNode()->_center.y;
 		}
 		return true;
 	}

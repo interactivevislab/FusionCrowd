@@ -77,10 +77,12 @@ namespace FusionCrowd
 		const std::shared_ptr<NavMesh> getNavMesh() const { return _navMesh; }
 
 		OccupantSet* _nodeOccupants;
+		std::vector<size_t> findNodesCrossingBB(BoundingBox bb);
 		unsigned int findNodeBlind(const DirectX::SimpleMath::Vector2& p, float tgtElev = 1e5f) const;
 		unsigned int findNodeInGroup(const DirectX::SimpleMath::Vector2& p, const std::string& grpName, bool searchAll) const;
 		unsigned int findNodeInRange(const DirectX::SimpleMath::Vector2& p, unsigned int start, unsigned int stop) const;
 		unsigned int testNeighbors(const NavMeshNode& node, const DirectX::SimpleMath::Vector2& p) const;
+		void Update(std::vector<NavMeshNode*>& added_nodes, std::vector<size_t>& del_nodes);
 
 	private:
 		std::shared_ptr<PathPlanner> _planner;

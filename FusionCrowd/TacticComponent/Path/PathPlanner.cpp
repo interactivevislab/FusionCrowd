@@ -90,7 +90,7 @@ namespace FusionCrowd
 		AStarMinHeap heap(_HEAP, _DATA, _STATE, _PATH, N);
 #endif
 
-		const Vector2 goalPos(_navMesh->GetNode(endID).getCenter());
+		const Vector2 goalPos(_navMesh->GetNodeByPos(endID).getCenter());
 
 		heap.g(startID, 0);
 		heap.h(startID, computeH(startID, goalPos));
@@ -107,7 +107,7 @@ namespace FusionCrowd
 				found = true;
 				break;
 			}
-			NavMeshNode& node = _navMesh->GetNode(x);
+			NavMeshNode& node = _navMesh->GetNodeByPos(x);
 			for (size_t e = 0; e < node._edgeCount; ++e)
 			{
 				NavMeshEdge* edge = node._edges[e];
@@ -169,7 +169,7 @@ namespace FusionCrowd
 		// Now construct the path
 		std::list<unsigned int>::const_iterator itr = path.begin();
 		unsigned int prev = *itr;
-		NavMeshNode* prevNode = &_navMesh->GetNode(prev);
+		NavMeshNode* prevNode = &_navMesh->GetNodeByPos(prev);
 		++itr;
 
 		PortalRoute* route = new PortalRoute(startID, endID);
@@ -179,7 +179,7 @@ namespace FusionCrowd
 			unsigned int id = *itr;
 			NavMeshEdge* edge = prevNode->getConnection(id);
 			route->appendWayPortal(edge, prevNode->getID());
-			prevNode = &_navMesh->GetNode(id);
+			prevNode = &_navMesh->GetNodeByPos(id);
 		}
 #ifdef _WIN32
 #pragma warning( default : 4267 )
@@ -222,7 +222,7 @@ namespace FusionCrowd
 	{
 		assert(node >= 0 && node < _navMesh->getNodeCount() &&
 			"Trying to compute h for invalid node id");
-		return (_navMesh->GetNode(node)._center - goal).Length();
+		return (_navMesh->GetNodeByPos(node)._center - goal).Length();
 	}
 
 	PortalRoute* PathPlanner::cacheRoute(unsigned int startID, unsigned int endID,

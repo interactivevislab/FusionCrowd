@@ -25,6 +25,7 @@ namespace FusionCrowd
 		vertIDs = new unsigned int[vertCount];
 		memcpy(&vertIDs[0], &p.vertIDs[0], vertCount * sizeof(unsigned int));
 		vertices = p.vertices;
+		_box = {p._box.xmin, p._box.ymin, p._box.xmax, p._box.ymax};
 		A = p.A;
 		B = p.B;
 		C = p.C;
@@ -35,12 +36,10 @@ namespace FusionCrowd
 	{
 		const float X = point.x;
 		const float Y = point.y;
-
 		if(!_box.Contains(X, Y))
 		{
 			return false;
 		}
-
 		int count = 0; // number of intersections
 		for (size_t e = 0; e < vertCount; ++e)
 		{
@@ -191,7 +190,7 @@ namespace FusionCrowd
 		C = newC;
 	}
 
-	void NavMeshPoly::setBB(const Vector2* vertices)
+	void NavMeshPoly::setBB()
 	{
 		float xmin = 1e6f;
 		float ymin = 1e6f;
@@ -215,7 +214,7 @@ namespace FusionCrowd
 		return _box;
 	}
 
-	void NavMeshPoly::SetVertices(const DirectX::SimpleMath::Vector2* vertices)
+	void NavMeshPoly::SetVertices(const Vector2* vertices)
 	{
 		this->vertices = vertices;
 	}

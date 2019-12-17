@@ -119,6 +119,21 @@ namespace FusionCrowd
 			return _sim->GetNodeVertexInfo(output, node_id);
 		}
 
+		size_t GetEdgesCount() {
+			return _sim->GetEdgesCount();
+		}
+
+		bool GetEdges(FCArray<EdgeInfo> & output) {
+			return _sim->GetEdges(output);
+		}
+
+		size_t GetObstaclesCount() {
+			return _sim->GetObstaclesCount();
+		}
+
+		bool GetObstacles(FCArray<EdgeInfo> & output) {
+			return _sim->GetObstacles(output);
+		}
 
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 			return _sim->CutPolygonFromMesh(polygon);

@@ -1,7 +1,10 @@
 #include "QuadTree.h"
 
 #include <queue>
+#include <set>
 #include <algorithm>
+#include <map>
+#include <iostream>
 
 namespace FusionCrowd
 {
@@ -15,48 +18,34 @@ namespace FusionCrowd
 		}
 
 		_bb = BB;
-		_rootNode = std::make_unique<Node>(0);
-		_stored_boxes.resize(boxes.size());
+		_stored_nodes.push_back(Node(0));
 
-		BuildSubTree(*_rootNode.get(), BB, boxes, 0);
+		BuildSubTree(_rootNode, BB, boxes, 0);
 	}
 
-	size_t QuadTree::BuildSubTree(Node& node, BoundingBox box, std::vector<Box> & boxes, size_t level)
+	size_t QuadTree::BuildSubTree(size_t nodeIdx, BoundingBox box, std::vector<Box> & boxes, size_t level)
 	{
+		Node & node = _stored_nodes[nodeIdx];
+
+		for(size_t z = 0; z < level; z++)
+			std::cout << "  ";
+
+		std::cout << nodeIdx << " " << node.start << "]-->";
+
 		node.LeafNode = (level == _maxLevel || boxes.size() <= 1);
+		node.len = 0;
+		node.xmid = (box.xmin + box.xmax) / 2.0;
+		node.ymid = (box.ymin + box.ymax) / 2.0;
 
 		if(node.LeafNode)
 		{
-			node.xmid = (box.xmin + box.xmax) / 2.0;
-			node.ymid = (box.ymin + box.ymax) / 2.0;
 			node.len = boxes.size();
+			_stored_boxes.insert(_stored_boxes.end(), boxes.begin(), boxes.end());
 
-			for(size_t t = 0; t < boxes.size(); t++)
-			{
-				_stored_boxes[node.start + t] = boxes[t];
-			}
+			std::cout << node.start + node.len << std::endl;
 
 			return node.start + node.len;
 		}
-
-		auto boxCount = boxes.size();
-		std::vector<float> xs(boxCount * 2);
-		std::vector<float> ys(boxCount * 2);
-
-		for(auto & bi : boxes)
-		{
-			xs.push_back(bi.bb.xmin);
-			xs.push_back(bi.bb.xmax);
-			ys.push_back(bi.bb.ymin);
-			ys.push_back(bi.bb.ymax);
-		}
-
-		std::sort(std::begin(xs), std::end(xs));
-		std::sort(std::begin(ys), std::end(ys));
-
-		node.xmid = (xs[boxCount] + xs[boxCount + 1]) / 2;
-		node.ymid = (ys[boxCount] + ys[boxCount + 1]) / 2;
-
 
 		BoundingBox tl { box.xmin, box.ymin, node.xmid, node.ymid };
 		BoundingBox tr {node.xmid, box.ymin,  box.xmax, node.ymid };
@@ -94,65 +83,79 @@ namespace FusionCrowd
 				continue;
 			}
 
-			_stored_boxes[node.start + node.len] = bi;
+			_stored_boxes.push_back(bi);
 			node.len++;
 		}
 
-		size_t newStart = node.start + node.len;
+		std::cout << node.start + node.len << std::endl;
 
-		node.topLeft = std::make_unique<Node>(newStart);
-		newStart = BuildSubTree(*node.topLeft.get(), tl, topLefts, level + 1);
+		auto topLeft     = _stored_nodes.size();
+		auto topRight    = topLeft + 1;
+		auto bottomLeft  = topLeft + 2;
+		auto bottomRight = topLeft + 3;
 
-		node.topRight = std::make_unique<Node>(newStart);
-		newStart = BuildSubTree(*node.topRight.get(), tr, topRights, level + 1);
 
-		node.bottomLeft = std::make_unique<Node>(newStart);
-		newStart = BuildSubTree(*node.bottomLeft.get(), bl, bottomLefts, level + 1);
+		node.topLeft     = topLeft;
+		node.topRight    = topRight;
+		node.bottomLeft  = bottomLeft;
+		node.bottomRight = bottomRight;
 
-		node.bottomRight = std::make_unique<Node>(newStart);
-		return BuildSubTree(*node.bottomRight.get(), br, bottomRights, level + 1);
+		size_t startNxt = node.start + node.len;
+
+		//	We now start index only for the first one, for others it will be assigned later
+		_stored_nodes.push_back(Node(startNxt));
+		_stored_nodes.push_back(Node(0));
+		_stored_nodes.push_back(Node(0));
+		_stored_nodes.push_back(Node(0));
+
+		_stored_nodes[   topRight] = Node(BuildSubTree(topLeft, tl, topLefts, level + 1));
+		_stored_nodes[ bottomLeft] = Node(BuildSubTree(topRight, tr, topRights, level + 1));
+		_stored_nodes[bottomRight] = Node(BuildSubTree(bottomLeft, bl, bottomLefts, level + 1));
+
+		return BuildSubTree(bottomRight, br, bottomRights, level + 1);
 	}
 
 
 	std::vector<size_t> QuadTree::GetContainingBBIds(DirectX::SimpleMath::Vector2 point)
 	{
 		std::vector<size_t> result;
-		Node * current = _rootNode.get();
 		float x = point.x;
 		float y = point.y;
+		size_t currentId = _rootNode;
 
 		while(true)
 		{
-			for(size_t idx = current->start; idx < current->start + current->len; idx++)
+			const Node & current = _stored_nodes[currentId];
+			for(size_t idx = current.start; idx < current.start + current.len; idx++)
 			{
 				if(_stored_boxes[idx].bb.Contains(point.x, point.y))
 					result.push_back(_stored_boxes[idx].objectId);
 			}
 
-			if(current->LeafNode)
+			if(current.LeafNode)
 				break;
 
-			if(x <= current->xmid && y <= current->ymid)
+			if(x <= current.xmid && y <= current.ymid)
 			{
-				current = current->topLeft.get();
+				currentId = current.topLeft;
 				continue;
 			}
 
-			if(x >= current->xmid && y <= current->ymid)
+			if(x >= current.xmid && y <= current.ymid)
 			{
-				current = current->topRight.get();
+				currentId = current.topRight;
 				continue;
 			}
 
-			if(x <= current->xmid && y >= current->ymid)
+			if(x <= current.xmid && y >= current.ymid)
 			{
-				current = current->bottomLeft.get();
+				currentId = current.bottomLeft;
 				continue;
 			}
 
-			if(x >= current->xmid && y >= current->ymid)
+			if(x >= current.xmid && y >= current.ymid)
 			{
-				current = current->bottomRight.get();
+				currentId = current.bottomRight;
 				continue;
 			}
 
@@ -166,46 +169,206 @@ namespace FusionCrowd
 	std::vector<size_t> QuadTree::GetIntersectingBBIds(BoundingBox box)
 	{
 		std::vector<size_t> result;
-		std::queue<Node *> dq;
+		std::queue<size_t> dq;
 
-		dq.push(_rootNode.get());
+		dq.push(_rootNode);
 
 		while(dq.size() > 0)
 		{
-			Node * current = dq.front(); dq.pop();
+			Node & const current = _stored_nodes[dq.front()]; dq.pop();
 
-			for(size_t idx = current->start; idx < current->start + current->len; idx++)
+			for(size_t idx = current.start; idx < current.start + current.len; idx++)
 			{
 				if(_stored_boxes[idx].bb.Overlaps(box))
 					result.push_back(_stored_boxes[idx].objectId);
 			}
 
-			if(current->LeafNode)
+			if(current.LeafNode)
 			{
 				continue;
 			}
 
-			if(box.xmin <= current->xmid && box.ymin <= current->ymid)
+			if(box.xmin <= current.xmid && box.ymin <= current.ymid)
 			{
-				dq.push(current->topLeft.get());
+				dq.push(current.topLeft);
 			}
 
-			if(box.xmax >= current->xmid && box.ymin <= current->ymid)
+			if(box.xmax >= current.xmid && box.ymin <= current.ymid)
 			{
-				dq.push(current->topRight.get());
+				dq.push(current.topRight);
 			}
 
-			if(box.xmin <= current->xmid && box.ymax >= current->ymid)
+			if(box.xmin <= current.xmid && box.ymax >= current.ymid)
 			{
-				dq.push(current->bottomLeft.get());
+				dq.push(current.bottomLeft);
 			}
 
-			if(box.xmax >= current->xmid && box.ymax >= current->ymid)
+			if(box.xmax >= current.xmid && box.ymax >= current.ymid)
 			{
-				dq.push(current->bottomRight.get());
+				dq.push(current.bottomRight);
 			}
 		}
 
 		return result;
+	}
+
+	size_t QuadTree::SmallestContainingNode(BoundingBox & box)
+	{
+		size_t currentId = _rootNode;
+
+		while (true) {
+			Node & current = _stored_nodes[currentId];
+
+			if(current.LeafNode)
+				break;
+
+			if(box.xmax <= current.xmid && box.ymax <= current.ymid)
+			{
+				currentId = current.topLeft;
+				continue;
+			}
+
+			if(box.xmin >= current.xmid && box.ymax <= current.ymid)
+			{
+				currentId = current.topRight;
+				continue;
+			}
+
+			if(box.xmax <= current.xmid && box.ymin >= current.ymid)
+			{
+				currentId = current.bottomLeft;
+				continue;
+			}
+
+			if(box.xmin >= current.xmid && box.ymin >= current.ymid)
+			{
+				currentId = current.bottomRight;
+				continue;
+			}
+
+			break;
+		}
+
+		return currentId;
+	}
+
+	void QuadTree::UpdateTree(std::vector<Box>& add_boxes, std::vector<size_t>& del_boxes)
+	{
+		std::map<size_t, std::vector<Box>> additions;
+		std::map<size_t, std::set<size_t>> removals;
+
+		for(auto & box : add_boxes)
+		{
+			size_t currentId = SmallestContainingNode(box.bb);
+
+			if(additions.find(currentId) == additions.end())
+			{
+				additions.insert({ currentId, std::vector<Box>() });
+			}
+
+			additions[currentId].push_back(box);
+		}
+
+		for(auto boxId : del_boxes)
+		{
+			size_t idFound = 0;
+			bool nodeFound = false;
+			for(size_t nodeId = 0; nodeId < _stored_nodes.size(); nodeId++)
+			{
+				Node & node = _stored_nodes[nodeId];
+				for(size_t idx = node.start; idx < node.start + node.len; idx++)
+				{
+					if(_stored_boxes[idx].objectId == boxId)
+					{
+						nodeFound = true;
+						idFound = nodeId;
+						break;
+					}
+				}
+
+				if(nodeFound) {
+					break;
+				}
+			}
+
+			if(!nodeFound)
+				continue;
+
+			if(removals.find(idFound) == removals.end())
+			{
+				removals.insert({ idFound, std::set<size_t>() });
+			}
+
+			removals[idFound].insert(boxId);
+		}
+
+		// For each node we will remove boxes that need to be removed and extend vector with boxes to be added
+		int runningMove = 0;
+		for(size_t nodeId = 0; nodeId < _stored_nodes.size(); nodeId++)
+		{
+			auto & node = _stored_nodes[nodeId];
+			node.start += runningMove;
+
+			size_t freedSpace = 0;
+			int runningDelta = 0;
+			if(removals.find(nodeId) != removals.end())
+			{
+				auto & rems = removals[nodeId];
+
+				size_t pos = node.start;
+				while(rems.size() < node.len && pos < node.start + node.len)
+				{
+					size_t id = _stored_boxes[pos].objectId;
+
+					if(rems.find(id) != rems.end())
+					{
+						// Just copy probably valid box from the end and overwriting the one we are deleting
+						// We will check this new box on the next step
+						_stored_boxes[pos] = _stored_boxes[node.start + node.len - freedSpace - 1];
+					} else
+					{
+						// Proceed if we are keeping this box
+						pos++;
+					}
+				}
+
+				runningDelta -= rems.size();
+				freedSpace = rems.size();
+			}
+
+			if(additions.find(nodeId) != additions.end())
+			{
+				auto & adds = additions[nodeId];
+
+				// if there are slots left after previous step, fill them all
+				if(freedSpace > 0)
+				{
+					auto upTo = (freedSpace > adds.size())? adds.end() : adds.begin() + freedSpace;
+					std::copy(adds.begin(), upTo, _stored_boxes.begin() + node.start + node.len - freedSpace);
+				}
+
+				// check if need to insert remaining
+				if(freedSpace < adds.size())
+				{
+					auto insertAt = _stored_boxes.begin() + node.start + node.len;
+
+					// First #freedSpace elements are already copied
+					_stored_boxes.insert(insertAt, adds.begin() + freedSpace, adds.end());
+				}
+
+				runningDelta += adds.size();
+			}
+
+			// if we freed more space than filled in this node, let's cut out part of the vector
+			if(runningDelta < 0)
+			{
+				auto deleteStart = _stored_boxes.begin() + node.start + node.len + runningDelta;
+
+				_stored_boxes.erase(deleteStart, deleteStart + abs(runningDelta));
+			}
+
+			node.len += runningDelta;
+			runningMove += runningDelta;
+		}
 	}
 }

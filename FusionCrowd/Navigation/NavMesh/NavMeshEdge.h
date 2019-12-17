@@ -29,6 +29,7 @@ namespace FusionCrowd
 
 		inline DirectX::SimpleMath::Vector2 getDirection() const { return _dir; }
 		NavMeshNode* getFirstNode() const { return _node0; }
+		NavMeshNode* getSecondNode() const { return _node1; }
 		NavMeshNode* getOtherByID(unsigned int id) const;
 		NavMeshNode* getOtherByPtr(const NavMeshNode* node);
 		const NavMeshNode* getOtherByPtr(const NavMeshNode* node) const;

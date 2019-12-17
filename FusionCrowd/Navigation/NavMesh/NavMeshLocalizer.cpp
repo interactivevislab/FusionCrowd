@@ -127,7 +127,7 @@ namespace FusionCrowd
 		std::vector<QuadTree::Box> nodeBoxes;
 		for(size_t nodeId = 0; nodeId < NODE_COUNT; nodeId++)
 		{
-			nodeBoxes.push_back({_navMesh->GetNode(nodeId).GetBB(), nodeId });
+			nodeBoxes.push_back({_navMesh->GetNodeByPos(nodeId).GetBB(), nodeId });
 		}
 
 		_nodeBBTree = std::make_unique<QuadTree>(nodeBoxes);
@@ -143,6 +143,10 @@ namespace FusionCrowd
 		return findNodeBlind(p, 0.f);
 	}
 
+	std::vector<size_t> NavMeshLocalizer::findNodesCrossingBB(BoundingBox bb) {
+		return _nodeBBTree->GetIntersectingBBIds(bb);
+	}
+
 	unsigned int NavMeshLocalizer::findNodeBlind(const Vector2& p, float tgtElev) const
 	{
 		float elevDiff = 1e6f;
@@ -150,7 +154,7 @@ namespace FusionCrowd
 
 		for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
 		{
-			const NavMeshNode& node = _navMesh->GetNode(nodeId);
+			const NavMeshNode& node = _navMesh->GetNodeByID(nodeId);
 			if (node.containsPoint(p))
 			{
 				float hDiff = fabs(node.getElevation(p) - tgtElev);
@@ -191,7 +195,7 @@ namespace FusionCrowd
 	{
 		for (unsigned int n = start; n < stop; ++n)
 		{
-			const NavMeshNode& node = _navMesh->GetNode(n);
+			const NavMeshNode& node = _navMesh->GetNodeByPos(n);
 			if (node.containsPoint(p))
 			{
 				return n;
@@ -212,5 +216,13 @@ namespace FusionCrowd
 			}
 		}
 		return NavMeshLocation::NO_NODE;
+	}
+
+	void NavMeshLocalizer::Update(std::vector<NavMeshNode*>& added_nodes, std::vector<size_t>& del_nodes) {
+		std::vector<QuadTree::Box> added_boxes = std::vector<QuadTree::Box>();
+		for (int i = 0; i < added_nodes.size(); i++) {
+			added_boxes.push_back({ added_nodes[i]->GetBB(), added_nodes[i]->_id });
+		}
+		_nodeBBTree->UpdateTree(added_boxes, del_nodes);
 	}
 }

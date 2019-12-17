@@ -310,6 +310,22 @@ namespace FusionCrowd
 			return _navSystem->GetNodeVertexInfo(output, node_id);
 		}
 
+		size_t GetEdgesCount() {
+			return _navSystem->GetEdgesCount();
+		}
+
+		bool GetEdges(FCArray<EdgeInfo> & output) {
+			return _navSystem->GetEdges(output);
+		}
+
+		size_t GetObstaclesCount() {
+			return _navSystem->GetObstaclesCount();
+		}
+
+		bool GetObstacles(FCArray<EdgeInfo> & output) {
+			return _navSystem->GetObstacles(output);
+		}
+
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 			return _navSystem->CutPolygonFromMesh(polygon);
 		}
@@ -503,6 +519,22 @@ namespace FusionCrowd
 
 	bool Simulator::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
 		return pimpl->GetNodeVertexInfo(output, node_id);
+	}
+
+	size_t Simulator::GetEdgesCount() {
+		return pimpl->GetEdgesCount();
+	}
+
+	bool Simulator::GetEdges(FCArray<EdgeInfo> & output) {
+		return pimpl->GetEdges(output);
+	}
+
+	size_t Simulator::GetObstaclesCount() {
+		return pimpl->GetObstaclesCount();
+	}
+
+	bool Simulator::GetObstacles(FCArray<EdgeInfo> & output) {
+		return pimpl->GetObstacles(output);
 	}
 
 	float Simulator::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
