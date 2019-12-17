@@ -27,11 +27,6 @@ namespace FusionCrowd
 	{
 		Node & node = _stored_nodes[nodeIdx];
 
-		for(size_t z = 0; z < level; z++)
-			std::cout << "  ";
-
-		std::cout << nodeIdx << " " << node.start << "]-->";
-
 		node.LeafNode = (level == _maxLevel || boxes.size() <= 1);
 		node.len = 0;
 		node.xmid = (box.xmin + box.xmax) / 2.0;
@@ -41,8 +36,6 @@ namespace FusionCrowd
 		{
 			node.len = boxes.size();
 			_stored_boxes.insert(_stored_boxes.end(), boxes.begin(), boxes.end());
-
-			std::cout << node.start + node.len << std::endl;
 
 			return node.start + node.len;
 		}
@@ -86,8 +79,6 @@ namespace FusionCrowd
 			_stored_boxes.push_back(bi);
 			node.len++;
 		}
-
-		std::cout << node.start + node.len << std::endl;
 
 		auto topLeft     = _stored_nodes.size();
 		auto topRight    = topLeft + 1;
