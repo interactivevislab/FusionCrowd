@@ -51,7 +51,6 @@ namespace FusionCrowd
 
 		size_t SmallestContainingNode(BoundingBox & box);
 		size_t BuildSubTree(size_t node, BoundingBox box, std::vector<Box> & boxes, size_t level);
-		void UpdateSubTree(size_t node, std::vector<Box>& add_boxes, std::vector<size_t>& del_boxes);
 
 		BoundingBox _bb;
 		const size_t _maxLevel;
