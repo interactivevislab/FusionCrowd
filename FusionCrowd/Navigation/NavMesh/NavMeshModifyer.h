@@ -36,7 +36,7 @@ namespace FusionCrowd {
 		std::vector<NodeModificator*> _modifications;
 
 		float SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon);
-		void FinaliseNodes();
+		void FinalizeNodes();
 		int Finalize();
 
 		std::vector<NavMeshNode*> _addednodes;

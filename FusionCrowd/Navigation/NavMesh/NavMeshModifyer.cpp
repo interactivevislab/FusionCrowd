@@ -40,7 +40,6 @@ namespace FusionCrowd {
 			else {
 				nodes_ids[i] = NavMeshLocation::NO_NODE;
 			}
-			//nodes_ids[i] = _localizer->getNodeId(_global_polygon[i]);
 		}
 
 #pragma region start_pos_proccess
@@ -186,7 +185,6 @@ namespace FusionCrowd {
 		_addedobstacles = std::vector<NavMeshObstacle*>();
 
 		SplitPolyByNodes(polygon);
-		//TODO uncomment
 		if (_global_polygon.size() < 3) return -1;
 		for (auto mod : _modifications) {
 			Initialize(mod);
@@ -467,13 +465,16 @@ namespace FusionCrowd {
 			obtacle_nodes_ids[i] = _navmesh.obstacles[i].getNode()->_id;
 		}
 
-		FinaliseNodes();
+		FinalizeNodes();
+		//TODO remove
+		if (_localizer->getNodeId(Vector2(3.6, 0.0)) == NavMeshLocation::NO_NODE) tres = +5;
 		_localizer->Update(_addednodes, _nodes_ids_to_delete);
+		//TODO remove
+		if (_localizer->getNodeId(Vector2(3.6, 0.0)) == NavMeshLocation::NO_NODE) tres = -3;
 
 		for (int i = 0; i < vtmp_edges.size(); i++) {
 			NavMeshNode* n0 = _navmesh.GetNodeByID(first_nodes_ids[i]);
 			NavMeshNode* n1 = _navmesh.GetNodeByID(second_nodes_ids[i]);
-			if (n0 == nullptr || n1 == nullptr) tres = 878787;
 			vtmp_edges[i].setNodes(n0, n1);
 		}
 
@@ -1106,14 +1107,19 @@ namespace FusionCrowd {
 #pragma region one_x_on_obst
 					Vector2 divpoint;
 					if (p0.x == p1.x) {
-						if (v0.x == p0.x) divpoint = v0;
-						else divpoint = v1;
+						if (v1.x == p0.x) divpoint = v1;
+						else if (v0.x == p0.x) {
+							divpoint = v0;
+						}
+						else divpoint = _local_polygon[_local_polygon.size() - 1];
 					}
 					else {
 						float k = (p0.y - p1.y) / (p0.x - p1.x);
 						float c = p0.y - k * p0.x;
 						if (v0.y == k * v0.x + c) divpoint = v0;
-						else divpoint = v1;
+						else if (v1.y == k * v1.x + c) {
+							divpoint = v1;
+						} else divpoint = _local_polygon[_local_polygon.size() - 1];
 					}
 					NavMeshObstacle *nobst = new NavMeshObstacle();
 					nobst->setNode(updnode);
@@ -1277,11 +1283,14 @@ namespace FusionCrowd {
 		Vector2 mid_edge = edge->getP0(edge->getWidth() / 2.0);
 		Vector2 check_point;
 		size_t exist_id = 0;
+		NavMeshNode* node;
 		if (edge->getFirstNode() == nullptr) {
+			node = edge->getSecondNode();
 			check_point = mid_edge - edge->getSecondNode()->getCenter();
 			exist_id = edge->getSecondNode()->_id;
 		}
 		else {
+			node = edge->getFirstNode();
 			check_point = mid_edge - edge->getFirstNode()->getCenter();
 			exist_id = edge->getFirstNode()->_id;
 		}
@@ -1310,6 +1319,7 @@ namespace FusionCrowd {
 	}
 
 	unsigned int NavMeshModifyer::GetNextNodeID() {
+		return _navmesh.nCount + _addednodes.size();
 		if (next_node_id == 0) {
 			for (int i = 0; i < _navmesh.nCount; i++) {
 				if (_navmesh.nodes[i]._id > next_node_id) next_node_id = _navmesh.nodes[i]._id;
@@ -1423,7 +1433,7 @@ namespace FusionCrowd {
 		}
 	}
 
-	void NavMeshModifyer::FinaliseNodes() {
+	void NavMeshModifyer::FinalizeNodes() {
 		for (auto n : _addednodes) {
 			FixPoly(*n);
 			Vector2 center = Vector2(0, 0);
@@ -1435,17 +1445,15 @@ namespace FusionCrowd {
 			n->setCenter(center);
 			n->_poly.setBB();
 		}
-		NavMeshNode* tmpNodes = new NavMeshNode[_navmesh.nCount + _addednodes.size() - _nodes_ids_to_delete.size()];
-		int deleted = 0;
+		NavMeshNode* tmpNodes = new NavMeshNode[_navmesh.nCount + _addednodes.size()];
 		for (size_t i = 0; i < _navmesh.nCount; i++)
 		{
+			tmpNodes[i] = _navmesh.nodes[i];
 			if (std::find(
 				_nodes_ids_to_delete.begin(),
 				_nodes_ids_to_delete.end(),
-				_navmesh.nodes[i]._id) == _nodes_ids_to_delete.end()) {
-				tmpNodes[i - deleted] = _navmesh.nodes[i];
-			}
-			else {
+				_navmesh.nodes[i]._id) != _nodes_ids_to_delete.end()) {
+				tmpNodes[i].deleted = true;
 				for (int j = 0; j < _navmesh.nodes[i]._edgeCount; j++) {
 					NavMeshEdge* e = _navmesh.nodes[i]._edges[j];
 					if (e->getFirstNode() != nullptr
@@ -1457,15 +1465,13 @@ namespace FusionCrowd {
 						e->setNodes(e->getFirstNode(), nullptr);
 					}
 				}
-
-				deleted++;
 			}
 		}
 		delete[] _navmesh.nodes;
 		for (int i = 0; i < _addednodes.size(); i++) {
-			tmpNodes[_navmesh.nCount + i - _nodes_ids_to_delete.size()] = *_addednodes[i];
+			tmpNodes[_navmesh.nCount + i] = *_addednodes[i];
 		}
-		_navmesh.nCount += (_addednodes.size() - _nodes_ids_to_delete.size());
+		_navmesh.nCount += _addednodes.size();
 		_navmesh.nodes = tmpNodes;
 	}
 

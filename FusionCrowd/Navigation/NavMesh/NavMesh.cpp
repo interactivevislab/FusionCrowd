@@ -436,16 +436,41 @@ namespace FusionCrowd
 
 
 	size_t NavMesh::GetNodesCount() {
-		return nCount;
+		int res = 0;
+		for (int i = 0; i < nCount; i++) {
+			if (!nodes[i].deleted) res++;
+		}
+		return res;
 	}
 	size_t NavMesh::GetNodeVertexCount(size_t node_id) {
-		return nodes[node_id]._poly.vertCount;
+		size_t not_deleted_id = 0;
+		size_t true_nid = 0;
+		for (int i = 0; i < nCount; i++) {
+			if (!nodes[i].deleted) {
+				if (not_deleted_id == node_id) {
+					true_nid = i;
+					break;
+				}
+				not_deleted_id++;
+			}
+		}
+		return nodes[true_nid]._poly.vertCount;
 	}
 
 	bool NavMesh::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
-		NavMeshNode* node = nullptr;
-		for (int i = 0; i < nodes[node_id]._poly.vertCount; i++) {
-			output[i] = nodes[node_id]._poly.vertIDs[i];
+		size_t not_deleted_id = 0;
+		size_t true_nid = 0;
+		for (int i = 0; i < nCount; i++) {
+			if (!nodes[i].deleted) {
+				if (not_deleted_id == node_id) {
+					true_nid = i;
+					break;
+				}
+				not_deleted_id++;
+			}
+		}
+		for (int i = 0; i < nodes[true_nid]._poly.vertCount; i++) {
+			output[i] = nodes[true_nid]._poly.vertIDs[i];
 			//if (nodes[node_id]._poly.vertIDs[i] < 0) return false;
 		}
 		return true;

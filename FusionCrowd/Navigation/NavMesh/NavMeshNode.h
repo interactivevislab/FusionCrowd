@@ -75,6 +75,7 @@ namespace FusionCrowd
 		size_t _edgeCount;
 		NavMeshObstacle** _obstacles;
 		size_t _obstCount;
+		bool deleted = false;
 		DirectX::SimpleMath::Vector2 _center;
 		NavMeshPoly _poly;
 		unsigned int _id;
