@@ -4,7 +4,6 @@
 #include <set>
 #include <algorithm>
 #include <map>
-#include <iostream>
 
 namespace FusionCrowd
 {
