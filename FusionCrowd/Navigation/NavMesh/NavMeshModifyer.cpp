@@ -60,17 +60,18 @@ namespace FusionCrowd {
 #pragma endregion
 
 		if (one_node) {
-			if (nodes_ids[0] == NavMeshLocation::NO_NODE) return -1;
-			NodeModificator* modificator = new NodeModificator();
-			modificator->modification_type = CUT_POLY;
-			modificator->node = GetNodeById(nodes_ids[0]);
-			modificator->polygon_to_cut = _global_polygon;
-			modificator->polygon_vertex_ids = std::vector<unsigned int>(_global_polygon.size());
-			for (int i = 0; i < _global_polygon.size(); i++) {
-				modificator->polygon_vertex_ids[i] = i + _navmesh.vCount;
+			if (nodes_ids[0] != NavMeshLocation::NO_NODE) {
+				NodeModificator* modificator = new NodeModificator();
+				modificator->modification_type = CUT_POLY;
+				modificator->node = GetNodeById(nodes_ids[0]);
+				modificator->polygon_to_cut = _global_polygon;
+				modificator->polygon_vertex_ids = std::vector<unsigned int>(_global_polygon.size());
+				for (int i = 0; i < _global_polygon.size(); i++) {
+					modificator->polygon_vertex_ids[i] = i + _navmesh.vCount;
+				}
+				_modifications.push_back(modificator);
+				return 1;
 			}
-			_modifications.push_back(modificator);
-			return 1;
 		}
 		//if poly not on one node
 		int i = start_pos;
@@ -400,19 +401,37 @@ namespace FusionCrowd {
 
 		std::vector<NavMeshEdge> vtmp_edges = std::vector<NavMeshEdge>();
 		for (int i = 0; i < _navmesh.eCount; i++) {
-			unsigned int first_node_id = _navmesh.edges[i].getFirstNode()->_id;
-			unsigned int second_node_id = _navmesh.edges[i].getSecondNode()->_id;
+			NavMeshEdge& edge = _navmesh.edges[i];
+			unsigned int first_node_id = edge.getFirstNode()->_id;
+			unsigned int second_node_id = edge.getSecondNode()->_id;
+			NavMeshNode* first_node = nullptr;
+			NavMeshNode* second_node = nullptr;
 			if (std::find(
 				_nodes_ids_to_delete.begin(),
 				_nodes_ids_to_delete.end(),
 				first_node_id)
-				== _nodes_ids_to_delete.end() &&
-				std::find(
-					_nodes_ids_to_delete.begin(),
-					_nodes_ids_to_delete.end(),
-					second_node_id)
 				== _nodes_ids_to_delete.end()) {
-				vtmp_edges.push_back(_navmesh.edges[i]);
+				first_node = edge.getFirstNode();
+			}
+			if (std::find(
+				_nodes_ids_to_delete.begin(),
+				_nodes_ids_to_delete.end(),
+				second_node_id)
+				== _nodes_ids_to_delete.end()) {
+				second_node = edge.getSecondNode();
+			}
+			if (first_node != nullptr && second_node != nullptr) {
+				vtmp_edges.push_back(edge);
+			}
+			else {
+				if (first_node != nullptr || second_node != nullptr) {
+					NavMeshEdge* nedge = new NavMeshEdge();
+					nedge->setNodes(first_node, second_node);
+					nedge->setPoint(edge.getP0());
+					nedge->setDirection(edge.getDirection());
+					nedge->setWidth(edge.getWidth());
+					_addededges.push_back(nedge);
+				}
 			}
 		}
 
@@ -425,6 +444,30 @@ namespace FusionCrowd {
 			second_nodes_ids[i] = vtmp_edges[i].getSecondNode()->_id;
 		}
 
+
+#pragma region obstacles_copy
+		//add and delete obstacles
+		std::vector<NavMeshObstacle> tmp_obstacles = std::vector<NavMeshObstacle>();
+		size_t oid = 0;
+		for (auto o : _navmesh.obstacles) {
+			if (std::find(
+				_nodes_ids_to_delete.begin(),
+				_nodes_ids_to_delete.end(),
+				o.getNode()->_id) == _nodes_ids_to_delete.end()) {
+				o._id = oid;
+				oid++;
+				tmp_obstacles.push_back(o);
+			}
+
+		}
+
+#pragma endregion
+
+		std::vector<unsigned int> obtacle_nodes_ids = std::vector<unsigned int>(_navmesh.obstacles.size());
+		for (int i = 0; i < _navmesh.obstacles.size(); i++) {
+			obtacle_nodes_ids[i] = _navmesh.obstacles[i].getNode()->_id;
+		}
+
 		FinaliseNodes();
 		_localizer->Update(_addednodes, _nodes_ids_to_delete);
 
@@ -435,15 +478,23 @@ namespace FusionCrowd {
 			vtmp_edges[i].setNodes(n0, n1);
 		}
 
+
+		for (int i = 0; i < _navmesh.obstacles.size(); i++) {
+			NavMeshNode* n = _navmesh.GetNodeByID(obtacle_nodes_ids[i]);
+			_navmesh.obstacles[i].setNode(n);
+		}
+
 #pragma region edge_obstacles_process
 
 		//fill not seted nodes pointers or replace with obstacles
 		for (int i = _addededges.size() - 1; i >= 0; i--) {
 			if (!ProcessEdge(_addededges[i])) {
 				delete _addededges[i];
-				_addededges.erase(_addededges.begin() + i);
+				_addededges[i] = nullptr;
 			}
 		}
+		_addededges.erase(std::remove(_addededges.begin(), _addededges.end(), nullptr), _addededges.end());
+
 
 		//delete duplicated edges
 		for (int i = _addededges.size() - 1; i >= 0; i--) {
@@ -463,21 +514,9 @@ namespace FusionCrowd {
 
 #pragma endregion
 
-#pragma region obstacles_copy
-		//add and delete obstacles
-		std::vector<NavMeshObstacle> tmp_obstacles = std::vector<NavMeshObstacle>();
-		size_t oid = 0;
-		for (auto o : _navmesh.obstacles) {
-			if (std::find(
-				_nodes_ids_to_delete.begin(),
-				_nodes_ids_to_delete.end(),
-				o.getNode()->_id) == _nodes_ids_to_delete.end()) {
-				o._id = oid;
-				oid++;
-				tmp_obstacles.push_back(o);
-			}
 
-		}
+#pragma region add_new_obsts
+
 		for (int i = 0; i < _addedobstacles.size(); i++) {
 			_addedobstacles[i]->_id = oid;
 			oid++;
@@ -489,8 +528,8 @@ namespace FusionCrowd {
 		}
 		_navmesh.obstCount = tmp_obstacles.size();
 		_navmesh.obstacles = tmp_obstacles;
-#pragma endregion
 
+#pragma endregion
 
 #pragma region add_new_edges
 		//add and delete edges
@@ -1151,11 +1190,8 @@ namespace FusionCrowd {
 				p0side = IsPointUnderLine(j0vert, j1vert, p0, node_side0, true);
 				p1side = IsPointUnderLine(j0vert, j1vert, p1, node_side0, true);
 			}
-			//NavMeshNode* l = edge->getFirstNode();
-			//NavMeshNode*  r = edge->getSecondNode();
 			if (p0side && p1side) {
 				NavMeshEdge* nedge = new NavMeshEdge();
-				//nedge->setNodes(l == _current_node ? updnode : l, r == _current_node ? updnode : r);
 				nedge->setNodes(updnode, nullptr);
 				nedge->setPoint(edge->getP0());
 				nedge->setDirection(edge->getDirection());
@@ -1181,7 +1217,6 @@ namespace FusionCrowd {
 						else divpoint = v1;
 					}
 					NavMeshEdge *nedge = new NavMeshEdge();
-					//nedge->setNodes(l == _current_node ? updnode : l, r == _current_node ? updnode : r);
 					nedge->setNodes(updnode, nullptr);
 					nedge->setPoint(divpoint);
 					tmp_edges.push_back(nedge);
@@ -1215,7 +1250,6 @@ namespace FusionCrowd {
 					}
 					if (create_edge) {
 						NavMeshEdge *nedge = new NavMeshEdge();
-						//nedge->setNodes(l == _current_node ? updnode : l, r == _current_node ? updnode : r);
 						nedge->setNodes(updnode, nullptr);
 						nedge->setPoint(v0);
 						nedge->setDirection((v1 - v0) / (v1 - v0).Length());
@@ -1410,6 +1444,18 @@ namespace FusionCrowd {
 				tmpNodes[i - deleted] = _navmesh.nodes[i];
 			}
 			else {
+				for (int j = 0; j < _navmesh.nodes[i]._edgeCount; j++) {
+					NavMeshEdge* e = _navmesh.nodes[i]._edges[j];
+					if (e->getFirstNode() != nullptr
+						&& e->getFirstNode()->getID() == _navmesh.nodes[i].getID()) {
+						e->setNodes(nullptr, e->getSecondNode());
+					}
+					if (e->getSecondNode()!=nullptr
+						&& e->getSecondNode()->getID() == _navmesh.nodes[i].getID()) {
+						e->setNodes(e->getFirstNode(), nullptr);
+					}
+				}
+
 				deleted++;
 			}
 		}
