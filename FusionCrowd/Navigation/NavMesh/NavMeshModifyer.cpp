@@ -212,7 +212,6 @@ namespace FusionCrowd {
 		if (tres < 0) return tres;
 		tres = 0;
 		Finalize();
-
 		return tres;
 	}
 
@@ -1277,17 +1276,20 @@ namespace FusionCrowd {
 		float d = 0.25;
 		Vector2 mid_edge = edge->getP0(edge->getWidth() / 2.0);
 		Vector2 check_point;
+		size_t exist_id = 0;
 		if (edge->getFirstNode() == nullptr) {
 			check_point = mid_edge - edge->getSecondNode()->getCenter();
+			exist_id = edge->getSecondNode()->_id;
 		}
 		else {
 			check_point = mid_edge - edge->getFirstNode()->getCenter();
+			exist_id = edge->getFirstNode()->_id;
 		}
 		check_point.Normalize();
 		check_point *= d;
 		check_point += mid_edge;
 		size_t node_id = _localizer->getNodeId(check_point);
-
+		if (node_id == exist_id) return false; //TODO it shouldn't happend
 		if (node_id == NavMeshLocation::NO_NODE) {
 
 			NavMeshObstacle* obst = new NavMeshObstacle();
