@@ -88,6 +88,7 @@ namespace FusionCrowd {
 			//check for line i-1 - i crossing whole nodes
 			auto crossing_nodes_ids = _localizer->findNodesCrossingBB(BoundingBox(minx, miny, maxx, maxy));
 			for (int j = 0; j < _navmesh.nCount; j++) {
+				if (_navmesh.nodes[j].deleted) continue;
 				if (std::find(crossing_nodes_ids.begin(),
 					crossing_nodes_ids.end(),
 					_navmesh.nodes[j]._id) != crossing_nodes_ids.end()) {
@@ -467,10 +468,13 @@ namespace FusionCrowd {
 
 		FinalizeNodes();
 		//TODO remove
-		if (_localizer->getNodeId(Vector2(3.6, 0.0)) == NavMeshLocation::NO_NODE) tres = +5;
+		size_t tn = _localizer->getNodeId(Vector2(3.6, 0.0));
+		if ( tn == NavMeshLocation::NO_NODE) tres = +5;
+		if (std::find(_nodes_ids_to_delete.begin(), _nodes_ids_to_delete.end(), tn) == _nodes_ids_to_delete.end()) tres += 80000;
 		_localizer->Update(_addednodes, _nodes_ids_to_delete);
 		//TODO remove
-		if (_localizer->getNodeId(Vector2(3.6, 0.0)) == NavMeshLocation::NO_NODE) tres = -3;
+		if (_localizer->getNodeId(Vector2(3.6, 1.0)) == NavMeshLocation::NO_NODE) tres += 3;
+		if (_localizer->getNodeId(Vector2(3.6, -1.0)) == NavMeshLocation::NO_NODE) tres += 4;
 
 		for (int i = 0; i < vtmp_edges.size(); i++) {
 			NavMeshNode* n0 = _navmesh.GetNodeByID(first_nodes_ids[i]);
@@ -549,6 +553,7 @@ namespace FusionCrowd {
 		//fill obst and edges nodes arrays
 		for (int i = 0; i < _navmesh.nCount; i++) {
 			NavMeshNode& node = _navmesh.nodes[i];
+			if (node.deleted) continue;
 			size_t node_id = node._id;
 			delete[] node._edges;
 			delete[] node._obstacles;
@@ -1320,16 +1325,6 @@ namespace FusionCrowd {
 
 	unsigned int NavMeshModifyer::GetNextNodeID() {
 		return _navmesh.nCount + _addednodes.size();
-		if (next_node_id == 0) {
-			for (int i = 0; i < _navmesh.nCount; i++) {
-				if (_navmesh.nodes[i]._id > next_node_id) next_node_id = _navmesh.nodes[i]._id;
-			}
-			next_node_id++;
-		}
-		unsigned int res = next_node_id;
-
-		next_node_id++;
-		return res;
 	}
 
 	void NavMeshModifyer::FixPoly(NavMeshNode& node) {
@@ -1479,6 +1474,7 @@ namespace FusionCrowd {
 		const float X = point.x;
 		const float Y = point.y;
 		for (int i = 0; i < _navmesh.nCount; i++) {
+			if (_navmesh.nodes[i].deleted) continue;
 			NavMeshPoly& poly = _navmesh.nodes[i]._poly;
 			poly.setBB();
 			bool tf = true;
