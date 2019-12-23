@@ -76,28 +76,6 @@ namespace FusionCrowd
 			// remove the agent from the set for oldLoc and place it in newLoc
 #pragma omp critical( NAV_MESH_LOCALIZER_MOVE_AGENT )
 			{
-				if (oldLoc != NavMeshLocation::NO_NODE)
-				{
-					OccupantSetItr fromItr = _nodeOccupants[oldLoc].find(agentId);
-					if (fromItr != _nodeOccupants[oldLoc].end())
-					{
-						_nodeOccupants[oldLoc].erase(fromItr);
-					}
-					else if (oldLoc != NavMeshLocation::NO_NODE)
-					{
-						const size_t NCOUNT = _navMesh->getNodeCount();
-						for (size_t i = 0; i < NCOUNT; ++i)
-						{
-							fromItr = _nodeOccupants[i].find(agentId);
-							if (fromItr != _nodeOccupants[i].end())
-							{
-								_nodeOccupants[i].erase(fromItr);
-								break;
-							}
-						}
-					}
-				}
-				_nodeOccupants[newLoc].insert(agentId);
 			}
 		}
 	}
@@ -116,7 +94,6 @@ namespace FusionCrowd
 		}
 
 		const size_t NODE_COUNT = _navMesh->getNodeCount();
-		_nodeOccupants = new OccupantSet[NODE_COUNT + 1];
 
 		if (usePlanner)
 		{
@@ -135,7 +112,6 @@ namespace FusionCrowd
 
 	NavMeshLocalizer::~NavMeshLocalizer()
 	{
-		delete[] _nodeOccupants;
 	}
 
 	unsigned int NavMeshLocalizer::getNodeId(const Vector2& p) const
@@ -152,9 +128,12 @@ namespace FusionCrowd
 		float elevDiff = 1e6f;
 		unsigned int maxNode = NavMeshLocation::NO_NODE;
 
-		for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
+		//TODO
+		//for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
+		for (int nodeId =0; nodeId <_navMesh->getNodeCount(); nodeId++)
 		{
 			const NavMeshNode* node = _navMesh->GetNodeByID(nodeId);
+			if (node->deleted) continue;
 			if (node->containsPoint(p))
 			{
 				float hDiff = fabs(node->getElevation(p) - tgtElev);
@@ -223,6 +202,8 @@ namespace FusionCrowd
 		for (int i = 0; i < added_nodes.size(); i++) {
 			added_boxes.push_back({ added_nodes[i]->GetBB(), added_nodes[i]->_id });
 		}
-		_nodeBBTree->UpdateTree(added_boxes, del_nodes);
+
+		//TODO
+		//_nodeBBTree->UpdateTree(added_boxes, del_nodes);
 	}
 }

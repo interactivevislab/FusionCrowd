@@ -327,7 +327,11 @@ namespace FusionCrowd
 		}
 
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
-			return _navSystem->CutPolygonFromMesh(polygon);
+			float res = _navSystem->CutPolygonFromMesh(polygon);
+			for (auto pair : _agents) {
+				SetAgentGoal(pair.first, pair.second.currentGoal.getCentroid());
+			}
+			return res;
 		}
 
 

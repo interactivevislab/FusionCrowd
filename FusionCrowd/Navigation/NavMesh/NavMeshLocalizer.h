@@ -69,14 +69,8 @@ namespace FusionCrowd
 		std::shared_ptr<PathPlanner> getPlanner() { return _planner; }
 		void setPlanner(std::shared_ptr<PathPlanner> planner) { _planner = planner; }
 
-		const OccupantSet* getNodeOccupants(unsigned int nodeID) const
-		{
-			return &_nodeOccupants[nodeID];
-		}
-
 		const std::shared_ptr<NavMesh> getNavMesh() const { return _navMesh; }
 
-		OccupantSet* _nodeOccupants;
 		std::vector<size_t> findNodesCrossingBB(BoundingBox bb);
 		unsigned int findNodeBlind(const DirectX::SimpleMath::Vector2& p, float tgtElev = 1e5f) const;
 		unsigned int findNodeInGroup(const DirectX::SimpleMath::Vector2& p, const std::string& grpName, bool searchAll) const;

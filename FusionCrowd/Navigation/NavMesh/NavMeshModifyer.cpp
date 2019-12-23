@@ -474,6 +474,7 @@ namespace FusionCrowd {
 		FinalizeNodes();
 		_localizer->Update(_addednodes, _nodes_ids_to_delete);
 
+
 		for (int i = 0; i < vtmp_edges.size(); i++) {
 			NavMeshNode* n0 = _navmesh.GetNodeByID(first_nodes_ids[i]);
 			NavMeshNode* n1 = _navmesh.GetNodeByID(second_nodes_ids[i]);
@@ -1121,6 +1122,7 @@ namespace FusionCrowd {
 						float c = p0.y - k * p0.x;
 						if (v0.y == k * v0.x + c) divpoint = v0;
 						else if (v1.y == k * v1.x + c) {
+							divpoint = v1;
 							divpoint = v1;
 						}
 						else divpoint = _local_polygon[_local_polygon.size() - 1];
