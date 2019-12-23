@@ -40,10 +40,12 @@ namespace FusionCrowd
 			size_t start = 0;
 			size_t len   = 0;
 
-			size_t topLeft     = -1;
-			size_t topRight    = -1;
-			size_t bottomLeft  = -1;
-			size_t bottomRight = -1;
+			size_t firstChild = -1;
+
+			inline size_t topLeft() const     { return firstChild + 0; };
+			inline size_t topRight() const    { return firstChild + 1; };
+			inline size_t bottomLeft() const  { return firstChild + 2; };
+			inline size_t bottomRight() const { return firstChild + 3; };
 		};
 
 		std::vector<Box> _stored_boxes;

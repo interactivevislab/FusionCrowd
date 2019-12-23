@@ -28,8 +28,8 @@ namespace FusionCrowd
 
 		node.LeafNode = (level == _maxLevel || boxes.size() <= 1);
 		node.len = 0;
-		node.xmid = (box.xmin + box.xmax) / 2.0;
-		node.ymid = (box.ymin + box.ymax) / 2.0;
+		node.xmid = (box.xmin + box.xmax) / 2.0f;
+		node.ymid = (box.ymin + box.ymax) / 2.0f;
 
 		if(node.LeafNode)
 		{
@@ -84,11 +84,7 @@ namespace FusionCrowd
 		auto bottomLeft  = topLeft + 2;
 		auto bottomRight = topLeft + 3;
 
-
-		node.topLeft     = topLeft;
-		node.topRight    = topRight;
-		node.bottomLeft  = bottomLeft;
-		node.bottomRight = bottomRight;
+		node.firstChild = topLeft;
 
 		size_t startNxt = node.start + node.len;
 
@@ -125,32 +121,13 @@ namespace FusionCrowd
 			if(current.LeafNode)
 				break;
 
-			if(x <= current.xmid && y <= current.ymid)
+			if(x <= current.xmid)
 			{
-				currentId = current.topLeft;
-				continue;
-			}
-
-			if(x >= current.xmid && y <= current.ymid)
+				currentId = y <= current.ymid ? current.topLeft() : current.bottomLeft();
+			} else
 			{
-				currentId = current.topRight;
-				continue;
+				currentId = y <= current.ymid ? current.topRight() : current.bottomRight();
 			}
-
-			if(x <= current.xmid && y >= current.ymid)
-			{
-				currentId = current.bottomLeft;
-				continue;
-			}
-
-			if(x >= current.xmid && y >= current.ymid)
-			{
-				currentId = current.bottomRight;
-				continue;
-			}
-
-			//outside of the boundaries
-			break;
 		};
 
 		return result;
@@ -165,9 +142,10 @@ namespace FusionCrowd
 
 		while(dq.size() > 0)
 		{
-			Node & const current = _stored_nodes[dq.front()]; dq.pop();
+			Node & current = _stored_nodes[dq.front()]; dq.pop();
 
-			for(size_t idx = current.start; idx < current.start + current.len; idx++)
+			auto upto = current.start + current.len;
+			for(size_t idx = current.start; idx < upto; idx++)
 			{
 				if(_stored_boxes[idx].bb.Overlaps(box))
 					result.push_back(_stored_boxes[idx].objectId);
@@ -180,22 +158,22 @@ namespace FusionCrowd
 
 			if(box.xmin <= current.xmid && box.ymin <= current.ymid)
 			{
-				dq.push(current.topLeft);
+				dq.push(current.topLeft());
 			}
 
 			if(box.xmax >= current.xmid && box.ymin <= current.ymid)
 			{
-				dq.push(current.topRight);
+				dq.push(current.topRight());
 			}
 
 			if(box.xmin <= current.xmid && box.ymax >= current.ymid)
 			{
-				dq.push(current.bottomLeft);
+				dq.push(current.bottomLeft());
 			}
 
 			if(box.xmax >= current.xmid && box.ymax >= current.ymid)
 			{
-				dq.push(current.bottomRight);
+				dq.push(current.bottomRight());
 			}
 		}
 
@@ -214,25 +192,25 @@ namespace FusionCrowd
 
 			if(box.xmax <= current.xmid && box.ymax <= current.ymid)
 			{
-				currentId = current.topLeft;
+				currentId = current.topLeft();
 				continue;
 			}
 
 			if(box.xmin >= current.xmid && box.ymax <= current.ymid)
 			{
-				currentId = current.topRight;
+				currentId = current.topRight();
 				continue;
 			}
 
 			if(box.xmax <= current.xmid && box.ymin >= current.ymid)
 			{
-				currentId = current.bottomLeft;
+				currentId = current.bottomLeft();
 				continue;
 			}
 
 			if(box.xmin >= current.xmid && box.ymin >= current.ymid)
 			{
-				currentId = current.bottomRight;
+				currentId = current.bottomRight();
 				continue;
 			}
 

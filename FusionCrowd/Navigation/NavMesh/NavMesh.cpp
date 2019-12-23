@@ -362,10 +362,10 @@ namespace FusionCrowd
 
 
 	NavMeshNode* NavMesh::GetNodeByID(unsigned int id) {
-		for (int i = 0; i < nCount; i++) {
-			if (nodes[i]._id == id) return &nodes[i];
-		}
-		return nullptr;
+		if(id >= nCount)
+			return nullptr;
+
+		return &nodes[id];
 	}
 
 	const NMNodeGroup* NavMesh::getNodeGroup(const std::string& grpName) const
