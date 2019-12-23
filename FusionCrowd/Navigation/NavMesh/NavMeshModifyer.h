@@ -82,6 +82,7 @@ namespace FusionCrowd {
 		void FixPoly(NavMeshNode& node);
 		void FixConcavePoly();
 		void FixGlobalPoly();
+		void ConcaveHull(std::vector<Vector2>& poly);
 
 		//TODO replace
 		NavMeshNode* FindNodeByPoint(Vector2 point);

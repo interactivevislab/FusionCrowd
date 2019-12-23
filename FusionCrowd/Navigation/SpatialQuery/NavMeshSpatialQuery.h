@@ -19,6 +19,7 @@ namespace FusionCrowd
 
 		std::vector<size_t> ObstacleQuery(DirectX::SimpleMath::Vector2 pt) const;
 		std::vector<size_t> ObstacleQuery(DirectX::SimpleMath::Vector2 pt, float rangeSq) const;
+		DirectX::SimpleMath::Vector2 GetClosiestObstacle(BoundingBox bb);
 		bool QueryVisibility(
 			const DirectX::SimpleMath::Vector2& q1,
 			const DirectX::SimpleMath::Vector2& q2, float radius

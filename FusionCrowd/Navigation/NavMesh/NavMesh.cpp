@@ -530,8 +530,9 @@ namespace FusionCrowd
 			output[i].y1 = obstacles[i].getP0().y;
 			output[i].x2 = obstacles[i].getP1().x;
 			output[i].y2 = obstacles[i].getP1().y;
-			output[i].nx0 = obstacles[i].getNode()->_center.x;
-			output[i].ny0 = obstacles[i].getNode()->_center.y;
+			auto node = obstacles[i].getNode();
+			output[i].nx0 = node->_center.x;
+			output[i].ny0 = node->_center.y;
 		}
 		return true;
 	}

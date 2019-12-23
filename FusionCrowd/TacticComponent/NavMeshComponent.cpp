@@ -14,8 +14,9 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	NavMeshComponent::NavMeshComponent(std::shared_ptr<Simulator> simulator, std::shared_ptr<NavMeshLocalizer> localizer) :
-		_simulator(simulator), _localizer(localizer), _navMesh(localizer->getNavMesh()), _headingDevCos(cos(MathUtil::PI))
+	NavMeshComponent::NavMeshComponent(std::shared_ptr<Simulator> simulator,
+		std::shared_ptr<NavMeshLocalizer> localizer, std::shared_ptr<NavMeshSpatialQuery> spatial_query) :
+		_simulator(simulator), _localizer(localizer), _navMesh(localizer->getNavMesh()), _headingDevCos(cos(MathUtil::PI)), _spatial_query(spatial_query)
 	{
 	}
 
@@ -23,6 +24,7 @@ namespace FusionCrowd
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(id);
 		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(id);
+		agentInfo.pos = GetClosiestAvailablePoint(agentInfo.pos);
 
 		unsigned int from = _localizer->getNodeId(agentInfo.pos);
 		unsigned int to = _localizer->getNodeId(agentGoal.getCentroid());
@@ -59,6 +61,13 @@ namespace FusionCrowd
 			updateLocation(info, agtStruct, false);
 			setPrefVelocity(info, agtStruct);
 		}
+	}
+
+	DirectX::SimpleMath::Vector2 NavMeshComponent::GetClosiestAvailablePoint(DirectX::SimpleMath::Vector2 p) {
+		if (_localizer->findNodeBlind(p) == NavMeshLocation::NO_NODE) {
+			return _spatial_query->GetClosiestObstacle(BoundingBox(p.x,p.y, p.x, p.y));
+		}
+		return p;
 	}
 
 	void NavMeshComponent::setPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)

@@ -440,13 +440,6 @@ namespace FusionCrowd {
 
 #pragma endregion
 
-		std::vector<unsigned int> first_nodes_ids = std::vector<unsigned int>(vtmp_edges.size());
-		std::vector<unsigned int> second_nodes_ids = std::vector<unsigned int>(vtmp_edges.size());
-		for (int i = 0; i < vtmp_edges.size(); i++) {
-			first_nodes_ids[i] = vtmp_edges[i].getFirstNode()->_id;
-			second_nodes_ids[i] = vtmp_edges[i].getSecondNode()->_id;
-		}
-
 
 #pragma region obstacles_copy
 		//add and delete obstacles
@@ -466,26 +459,61 @@ namespace FusionCrowd {
 
 #pragma endregion
 
-		std::vector<unsigned int> obtacle_nodes_ids = std::vector<unsigned int>(_navmesh.obstacles.size());
-		for (int i = 0; i < _navmesh.obstacles.size(); i++) {
-			obtacle_nodes_ids[i] = _navmesh.obstacles[i].getNode()->_id;
+#pragma region save_eo_dependencies
+		std::vector<unsigned int> first_nodes_ids = std::vector<unsigned int>(vtmp_edges.size());
+		std::vector<unsigned int> second_nodes_ids = std::vector<unsigned int>(vtmp_edges.size());
+		for (int i = 0; i < vtmp_edges.size(); i++) {
+			first_nodes_ids[i] = vtmp_edges[i].getFirstNode()->_id;
+			second_nodes_ids[i] = vtmp_edges[i].getSecondNode()->_id;
 		}
+
+		std::vector<long int> fnid_added = std::vector<long int>(_addededges.size());
+		std::vector<long int> snid_added = std::vector<long int>(_addededges.size());
+		for (int i = 0; i < _addededges.size(); i++) {
+			fnid_added[i] = _addededges[i]->getFirstNode() != nullptr ? _addededges[i]->getFirstNode()->_id : -1;
+			snid_added[i] = _addededges[i]->getSecondNode() != nullptr ? _addededges[i]->getSecondNode()->_id : -1;
+		}
+
+		std::vector<unsigned int> obtacle_nodes_ids = std::vector<unsigned int>(tmp_obstacles.size());
+		for (int i = 0; i < tmp_obstacles.size(); i++) {
+			obtacle_nodes_ids[i] = tmp_obstacles[i].getNode()->_id;
+		}
+
+		std::vector<long int> oadded_nodes_ids = std::vector<long int>(_addedobstacles.size());
+		for (int i = 0; i < _addedobstacles.size(); i++) {
+			oadded_nodes_ids[i] = _addedobstacles[i]->getNode()->_id;
+		}
+
+#pragma endregion
 
 		FinalizeNodes();
 		_localizer->Update(_addednodes, _nodes_ids_to_delete);
 
 
+#pragma region load_eo_dependencies
 		for (int i = 0; i < vtmp_edges.size(); i++) {
 			NavMeshNode* n0 = _navmesh.GetNodeByID(first_nodes_ids[i]);
 			NavMeshNode* n1 = _navmesh.GetNodeByID(second_nodes_ids[i]);
 			vtmp_edges[i].setNodes(n0, n1);
 		}
 
-
-		for (int i = 0; i < _navmesh.obstacles.size(); i++) {
-			NavMeshNode* n = _navmesh.GetNodeByID(obtacle_nodes_ids[i]);
-			_navmesh.obstacles[i].setNode(n);
+		for (int i = 0; i < _addededges.size(); i++) {
+			NavMeshNode* n0 = fnid_added[i] != -1 ? _navmesh.GetNodeByID(fnid_added[i]) : nullptr;
+			NavMeshNode* n1 = snid_added[i] != -1 ? _navmesh.GetNodeByID(snid_added[i]) : nullptr;
+			_addededges[i]->setNodes(n0, n1);
 		}
+
+		for (int i = 0; i < tmp_obstacles.size(); i++) {
+			NavMeshNode* n = _navmesh.GetNodeByID(obtacle_nodes_ids[i]);
+			tmp_obstacles[i].setNode(n);
+		}
+
+		for (int i = 0; i < _addedobstacles.size(); i++) {
+			NavMeshNode* n = _navmesh.GetNodeByID(oadded_nodes_ids[i]);
+			_addedobstacles[i]->setNode(n);
+		}
+
+#pragma endregion
 
 #pragma region edge_obstacles_process
 
@@ -1370,6 +1398,7 @@ namespace FusionCrowd {
 	}
 
 	void NavMeshModifyer::FixConcavePoly() {
+		ConcaveHull(_global_polygon);
 		//remove close points
 		std::vector<float> distances = std::vector<float>(_global_polygon.size());
 		for (int i = 0; i < _global_polygon.size(); i++) {
@@ -1380,36 +1409,6 @@ namespace FusionCrowd {
 				_global_polygon.erase(_global_polygon.begin() + i);
 			}
 		}
-		int pos = 0, neg = 0;
-		do {
-			do {
-				std::vector<float> results = std::vector<float>(_global_polygon.size());
-				pos = 0; neg = 0;
-				for (int i = 0; i < _global_polygon.size(); i++) {
-					Vector2 v0 = _global_polygon[(i + _global_polygon.size() - 1) % _global_polygon.size()];
-					Vector2 v1 = _global_polygon[i];
-					Vector2 v2 = _global_polygon[(i + 1) % _global_polygon.size()];
-					float res = (v1.x - v0.x)*(v2.y - v1.y) - (v1.y - v0.y)*(v2.x - v1.x);
-					results[i] = res;
-					if (res > 0) pos++;
-					else neg++;
-				}
-				bool cut_neg = neg < pos;
-				for (int i = results.size() - 1; i >= 0; i--) {
-					if ((cut_neg && results[i] < 0) || (!cut_neg && results[i] > 0)) {
-						_global_polygon.erase(_global_polygon.begin() + i);
-					}
-					else {
-						if (results[i] == 0) {
-							_global_polygon.erase(_global_polygon.begin() + i);
-						}
-					}
-				}
-			} while (pos > 0 && neg > 0);
-			FixGlobalPoly();
-		} while (pos > 0 && neg > 0);
-
-		//remove smooth lines
 		std::vector<bool> delete_mark = std::vector<bool>(_global_polygon.size());
 		for (int i = 0; i < _global_polygon.size(); i++) {
 			Vector2 v0 = _global_polygon[(i + 1) % _global_polygon.size()] - _global_polygon[i];
@@ -1554,5 +1553,43 @@ namespace FusionCrowd {
 		for (int i = 0; i < res.size(); i++) {
 			_global_polygon[i] = res[i];
 		}
+	}
+
+	bool cmp(Vector2 a, Vector2 b) {
+		return a.x < b.x || a.x == b.x && a.y < b.y;
+	}
+
+	bool cw(Vector2 a, Vector2 b, Vector2 c) {
+		return a.x*(b.y - c.y) + b.x*(c.y - a.y) + c.x*(a.y - b.y) < 0;
+	}
+
+	bool ccw(Vector2 a, Vector2 b, Vector2 c) {
+		return a.x*(b.y - c.y) + b.x*(c.y - a.y) + c.x*(a.y - b.y) > 0;
+	}
+
+	void NavMeshModifyer::ConcaveHull(std::vector<Vector2>& poly) {
+		if (poly.size() == 1)  return;
+		std::sort(poly.begin(), poly.end(), &cmp);
+		Vector2 p1 = poly[0], p2 = poly.back();
+		std::vector<Vector2> up, down;
+		up.push_back(p1);
+		down.push_back(p1);
+		for (size_t i = 1; i < poly.size(); ++i) {
+			if (i == poly.size() - 1 || cw(p1, poly[i], p2)) {
+				while (up.size() >= 2 && !cw(up[up.size() - 2], up[up.size() - 1], poly[i]))
+					up.pop_back();
+				up.push_back(poly[i]);
+			}
+			if (i == poly.size() - 1 || ccw(p1, poly[i], p2)) {
+				while (down.size() >= 2 && !ccw(down[down.size() - 2], down[down.size() - 1], poly[i]))
+					down.pop_back();
+				down.push_back(poly[i]);
+			}
+		}
+		poly.clear();
+		for (size_t i = 0; i < up.size(); ++i)
+			poly.push_back(up[i]);
+		for (size_t i = down.size() - 2; i > 0; --i)
+			poly.push_back(down[i]);
 	}
 }
