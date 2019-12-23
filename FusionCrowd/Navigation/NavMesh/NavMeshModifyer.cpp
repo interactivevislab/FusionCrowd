@@ -40,7 +40,6 @@ namespace FusionCrowd {
 			else {
 				nodes_ids[i] = NavMeshLocation::NO_NODE;
 			}
-			//nodes_ids[i] = _localizer->getNodeId(_global_polygon[i]);
 		}
 
 #pragma region start_pos_proccess
@@ -89,6 +88,7 @@ namespace FusionCrowd {
 			//check for line i-1 - i crossing whole nodes
 			auto crossing_nodes_ids = _localizer->findNodesCrossingBB(BoundingBox(minx, miny, maxx, maxy));
 			for (int j = 0; j < _navmesh.nCount; j++) {
+				if (_navmesh.nodes[j].deleted) continue;
 				if (std::find(crossing_nodes_ids.begin(),
 					crossing_nodes_ids.end(),
 					_navmesh.nodes[j]._id) != crossing_nodes_ids.end()) {
@@ -134,6 +134,11 @@ namespace FusionCrowd {
 			if (tmp.size() == 0) {
 				delete modificator;
 				tres = -1;
+				int previ = i;
+				do {
+					previ = i;
+					i = (i + 1) % _global_polygon.size();
+				} while (nodes_ids[i] == nodes_ids[previ]);
 				continue;
 			}
 			Vector2 prev_cross_point = tmp[0];
@@ -186,7 +191,6 @@ namespace FusionCrowd {
 		_addedobstacles = std::vector<NavMeshObstacle*>();
 
 		SplitPolyByNodes(polygon);
-		//TODO uncomment
 		if (_global_polygon.size() < 3) return -1;
 		for (auto mod : _modifications) {
 			Initialize(mod);
@@ -210,9 +214,8 @@ namespace FusionCrowd {
 		if (_modifications.size() == 0) return tres != 0 ? tres : -2;
 		//TODO remove
 		if (tres < 0) return tres;
-		tres = 0;
+		tres = _modifications.size();
 		Finalize();
-
 		return tres;
 	}
 
@@ -468,13 +471,12 @@ namespace FusionCrowd {
 			obtacle_nodes_ids[i] = _navmesh.obstacles[i].getNode()->_id;
 		}
 
-		FinaliseNodes();
+		FinalizeNodes();
 		_localizer->Update(_addednodes, _nodes_ids_to_delete);
 
 		for (int i = 0; i < vtmp_edges.size(); i++) {
 			NavMeshNode* n0 = _navmesh.GetNodeByID(first_nodes_ids[i]);
 			NavMeshNode* n1 = _navmesh.GetNodeByID(second_nodes_ids[i]);
-			if (n0 == nullptr || n1 == nullptr) tres = 878787;
 			vtmp_edges[i].setNodes(n0, n1);
 		}
 
@@ -549,6 +551,7 @@ namespace FusionCrowd {
 		//fill obst and edges nodes arrays
 		for (int i = 0; i < _navmesh.nCount; i++) {
 			NavMeshNode& node = _navmesh.nodes[i];
+			if (node.deleted) continue;
 			size_t node_id = node._id;
 			delete[] node._edges;
 			delete[] node._obstacles;
@@ -1107,14 +1110,20 @@ namespace FusionCrowd {
 #pragma region one_x_on_obst
 					Vector2 divpoint;
 					if (p0.x == p1.x) {
-						if (v0.x == p0.x) divpoint = v0;
-						else divpoint = v1;
+						if (v1.x == p0.x) divpoint = v1;
+						else if (v0.x == p0.x) {
+							divpoint = v0;
+						}
+						else divpoint = _local_polygon[_local_polygon.size() - 1];
 					}
 					else {
 						float k = (p0.y - p1.y) / (p0.x - p1.x);
 						float c = p0.y - k * p0.x;
 						if (v0.y == k * v0.x + c) divpoint = v0;
-						else divpoint = v1;
+						else if (v1.y == k * v1.x + c) {
+							divpoint = v1;
+						}
+						else divpoint = _local_polygon[_local_polygon.size() - 1];
 					}
 					NavMeshObstacle *nobst = new NavMeshObstacle();
 					nobst->setNode(updnode);
@@ -1277,17 +1286,23 @@ namespace FusionCrowd {
 		float d = 0.25;
 		Vector2 mid_edge = edge->getP0(edge->getWidth() / 2.0);
 		Vector2 check_point;
+		size_t exist_id = 0;
+		NavMeshNode* node;
 		if (edge->getFirstNode() == nullptr) {
+			node = edge->getSecondNode();
 			check_point = mid_edge - edge->getSecondNode()->getCenter();
+			exist_id = edge->getSecondNode()->_id;
 		}
 		else {
+			node = edge->getFirstNode();
 			check_point = mid_edge - edge->getFirstNode()->getCenter();
+			exist_id = edge->getFirstNode()->_id;
 		}
 		check_point.Normalize();
 		check_point *= d;
 		check_point += mid_edge;
 		size_t node_id = _localizer->getNodeId(check_point);
-
+		if (node_id == exist_id) return false; //TODO it shouldn't happend
 		if (node_id == NavMeshLocation::NO_NODE) {
 
 			NavMeshObstacle* obst = new NavMeshObstacle();
@@ -1308,16 +1323,7 @@ namespace FusionCrowd {
 	}
 
 	unsigned int NavMeshModifyer::GetNextNodeID() {
-		if (next_node_id == 0) {
-			for (int i = 0; i < _navmesh.nCount; i++) {
-				if (_navmesh.nodes[i]._id > next_node_id) next_node_id = _navmesh.nodes[i]._id;
-			}
-			next_node_id++;
-		}
-		unsigned int res = next_node_id;
-
-		next_node_id++;
-		return res;
+		return _navmesh.nCount + _addednodes.size();
 	}
 
 	void NavMeshModifyer::FixPoly(NavMeshNode& node) {
@@ -1373,30 +1379,33 @@ namespace FusionCrowd {
 			}
 		}
 		int pos = 0, neg = 0;
-
-		//remove concave vertexes
-		//TODO
-		for (int q = 0; q < 10; q++) {
-			//do {
-			std::vector<float> results = std::vector<float>(_global_polygon.size());
-			pos = 0; neg = 0;
-			for (int i = 0; i < _global_polygon.size(); i++) {
-				Vector2 v0 = _global_polygon[(i + _global_polygon.size() - 1) % _global_polygon.size()];
-				Vector2 v1 = _global_polygon[i];
-				Vector2 v2 = _global_polygon[(i + 1) % _global_polygon.size()];
-				float res = (v1.x - v0.x)*(v2.y - v1.y) - (v1.y - v0.y)*(v2.x - v1.x);
-				results[i] = res;
-				if (res > 0) pos++;
-				else neg++;
-			}
-			bool cut_neg = neg < pos;
-			for (int i = results.size() - 1; i >= 0; i--) {
-				if ((cut_neg && results[i] < 0) || (!cut_neg && results[i] > 0)) {
-					_global_polygon.erase(_global_polygon.begin() + i);
+		do {
+			do {
+				std::vector<float> results = std::vector<float>(_global_polygon.size());
+				pos = 0; neg = 0;
+				for (int i = 0; i < _global_polygon.size(); i++) {
+					Vector2 v0 = _global_polygon[(i + _global_polygon.size() - 1) % _global_polygon.size()];
+					Vector2 v1 = _global_polygon[i];
+					Vector2 v2 = _global_polygon[(i + 1) % _global_polygon.size()];
+					float res = (v1.x - v0.x)*(v2.y - v1.y) - (v1.y - v0.y)*(v2.x - v1.x);
+					results[i] = res;
+					if (res > 0) pos++;
+					else neg++;
 				}
-			}
-		}
-		//} while (pos>0 && neg>0);
+				bool cut_neg = neg < pos;
+				for (int i = results.size() - 1; i >= 0; i--) {
+					if ((cut_neg && results[i] < 0) || (!cut_neg && results[i] > 0)) {
+						_global_polygon.erase(_global_polygon.begin() + i);
+					}
+					else {
+						if (results[i] == 0) {
+							_global_polygon.erase(_global_polygon.begin() + i);
+						}
+					}
+				}
+			} while (pos > 0 && neg > 0);
+			FixGlobalPoly();
+		} while (pos > 0 && neg > 0);
 
 		//remove smooth lines
 		std::vector<bool> delete_mark = std::vector<bool>(_global_polygon.size());
@@ -1421,7 +1430,7 @@ namespace FusionCrowd {
 		}
 	}
 
-	void NavMeshModifyer::FinaliseNodes() {
+	void NavMeshModifyer::FinalizeNodes() {
 		for (auto n : _addednodes) {
 			FixPoly(*n);
 			Vector2 center = Vector2(0, 0);
@@ -1433,37 +1442,33 @@ namespace FusionCrowd {
 			n->setCenter(center);
 			n->_poly.setBB();
 		}
-		NavMeshNode* tmpNodes = new NavMeshNode[_navmesh.nCount + _addednodes.size() - _nodes_ids_to_delete.size()];
-		int deleted = 0;
+		NavMeshNode* tmpNodes = new NavMeshNode[_navmesh.nCount + _addednodes.size()];
 		for (size_t i = 0; i < _navmesh.nCount; i++)
 		{
+			tmpNodes[i] = _navmesh.nodes[i];
 			if (std::find(
 				_nodes_ids_to_delete.begin(),
 				_nodes_ids_to_delete.end(),
-				_navmesh.nodes[i]._id) == _nodes_ids_to_delete.end()) {
-				tmpNodes[i - deleted] = _navmesh.nodes[i];
-			}
-			else {
+				_navmesh.nodes[i]._id) != _nodes_ids_to_delete.end()) {
+				tmpNodes[i].deleted = true;
 				for (int j = 0; j < _navmesh.nodes[i]._edgeCount; j++) {
 					NavMeshEdge* e = _navmesh.nodes[i]._edges[j];
 					if (e->getFirstNode() != nullptr
 						&& e->getFirstNode()->getID() == _navmesh.nodes[i].getID()) {
 						e->setNodes(nullptr, e->getSecondNode());
 					}
-					if (e->getSecondNode()!=nullptr
+					if (e->getSecondNode() != nullptr
 						&& e->getSecondNode()->getID() == _navmesh.nodes[i].getID()) {
 						e->setNodes(e->getFirstNode(), nullptr);
 					}
 				}
-
-				deleted++;
 			}
 		}
 		delete[] _navmesh.nodes;
 		for (int i = 0; i < _addednodes.size(); i++) {
-			tmpNodes[_navmesh.nCount + i - _nodes_ids_to_delete.size()] = *_addednodes[i];
+			tmpNodes[_navmesh.nCount + i] = *_addednodes[i];
 		}
-		_navmesh.nCount += (_addednodes.size() - _nodes_ids_to_delete.size());
+		_navmesh.nCount += _addednodes.size();
 		_navmesh.nodes = tmpNodes;
 	}
 
@@ -1471,6 +1476,7 @@ namespace FusionCrowd {
 		const float X = point.x;
 		const float Y = point.y;
 		for (int i = 0; i < _navmesh.nCount; i++) {
+			if (_navmesh.nodes[i].deleted) continue;
 			NavMeshPoly& poly = _navmesh.nodes[i]._poly;
 			poly.setBB();
 			bool tf = true;
@@ -1505,5 +1511,46 @@ namespace FusionCrowd {
 			if ((count % 2) == 1) return &_navmesh.nodes[i];
 		}
 		return nullptr;
+	}
+
+	void NavMeshModifyer::FixGlobalPoly() {
+		Vector2 last_added;
+		std::vector<Vector2> vert_left = std::vector<Vector2>(_global_polygon.size());
+		std::vector<Vector2> res = std::vector<Vector2>(_global_polygon.size());
+
+		Vector2 mean = Vector2(0, 0);
+		for (int i = 0; i < _global_polygon.size(); i++) {
+			vert_left[i] = _global_polygon[i];
+			mean += _global_polygon[i];
+		}
+		mean /= _global_polygon.size();
+
+		Vector2 prev_dir = _global_polygon[0] - mean;
+		prev_dir.Normalize();
+		size_t added = 0;
+		while (vert_left.size() > 0) {
+			float max_product = -FLT_MAX;
+			int candidateidpos = 0;
+			for (int i = 0; i < vert_left.size(); i++) {
+				Vector2 mean_v_vec = _global_polygon[i] - mean;
+				mean_v_vec.Normalize();
+				float dotpr = prev_dir.Dot(mean_v_vec);
+				float dir = mean_v_vec.x * prev_dir.y - mean_v_vec.y * prev_dir.x;
+				if (dotpr > max_product && dir > 0) {
+					max_product = dotpr;
+					candidateidpos = i;
+				}
+			}
+			res[added] = vert_left[candidateidpos];
+			prev_dir = vert_left[candidateidpos] - mean;
+			prev_dir.Normalize();
+			added++;
+			vert_left.erase(vert_left.begin() + candidateidpos);
+		}
+
+		//fill res
+		for (int i = 0; i < res.size(); i++) {
+			_global_polygon[i] = res[i];
+		}
 	}
 }

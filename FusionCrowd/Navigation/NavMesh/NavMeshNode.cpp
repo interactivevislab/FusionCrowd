@@ -53,6 +53,7 @@ namespace FusionCrowd
 		_center = n._center;
 		_poly = n._poly;
 		_id = n._id;
+		deleted = n.deleted;
 		return *this;
 	}
 

@@ -293,6 +293,7 @@ namespace FusionCrowd
 						// Just copy probably valid box from the end and overwriting the one we are deleting
 						// We will check this new box on the next step
 						_stored_boxes[pos] = _stored_boxes[node.start + node.len - freedSpace - 1];
+						freedSpace++;
 					} else
 					{
 						// Proceed if we are keeping this box
@@ -301,7 +302,6 @@ namespace FusionCrowd
 				}
 
 				runningDelta -= rems.size();
-				freedSpace = rems.size();
 			}
 
 			if(additions.find(nodeId) != additions.end())

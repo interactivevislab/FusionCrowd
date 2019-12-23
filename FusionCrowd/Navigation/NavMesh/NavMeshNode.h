@@ -78,5 +78,6 @@ namespace FusionCrowd
 		DirectX::SimpleMath::Vector2 _center;
 		NavMeshPoly _poly;
 		unsigned int _id;
+		bool deleted = false;
 	};
 }
