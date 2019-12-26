@@ -139,6 +139,10 @@ namespace FusionCrowd
 			return _sim->CutPolygonFromMesh(polygon);
 		}
 
+		bool ExportMeshToFile(char* file_name) {
+			return _sim->ExportMeshToFile(file_name);
+		}
+
 	private:
 		std::shared_ptr<Simulator> _sim;
 	};

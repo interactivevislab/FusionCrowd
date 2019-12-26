@@ -28,6 +28,7 @@ namespace FusionCrowd {
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
 
 	private:
+		const float min_width = 1e-2f;
 		//global data and methods
 		NavMesh&  _navmesh;
 		std::shared_ptr<NavMeshLocalizer> _localizer;

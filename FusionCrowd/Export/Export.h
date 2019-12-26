@@ -39,6 +39,7 @@ namespace FusionCrowd
 			float x1, x2, y1, y2;
 			//nodes centers
 			float nx0, nx1, ny0, ny1;
+			int error_code;
 		};
 
 		enum FUSION_CROWD_API OperationStatus
@@ -85,6 +86,7 @@ namespace FusionCrowd
 			virtual bool GetEdges(FCArray<EdgeInfo> & output) = 0;
 			virtual size_t GetObstaclesCount() = 0;
 			virtual bool GetObstacles(FCArray<EdgeInfo> & output) = 0;
+			virtual bool ExportMeshToFile(char* file_name) = 0;
 
 			//nav mesh modification
 			virtual float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) = 0;

@@ -336,6 +336,10 @@ namespace FusionCrowd
 			return res;
 		}
 
+		bool ExportMeshToFile(char* file_name) {
+			std::string fp(file_name);
+			return _navSystem->ExportNavMeshToFile(fp);
+		}
 
 	private:
 		size_t _nextAgentId = 0;
@@ -545,6 +549,10 @@ namespace FusionCrowd
 
 	float Simulator::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 		return pimpl->CutPolygonFromMesh(polygon);
+	}
+
+	bool Simulator::ExportMeshToFile(char* file_path) {
+		return pimpl->ExportMeshToFile(file_path);
 	}
 
 	void Simulator::SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params)

@@ -5,7 +5,7 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	const float MIN_EDGE_WIDTH = 0.00001f;
+	const float MIN_EDGE_WIDTH = 0.9e-7f;
 
 	NavMeshEdge::NavMeshEdge() : _point(0.f, 0.f), _dir(0.f, 0.f), _width(0.f), _distance(0.f),
 	                             _node0(0x0), _node1(0x0)

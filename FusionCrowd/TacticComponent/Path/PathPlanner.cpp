@@ -136,23 +136,27 @@ namespace FusionCrowd
 			}
 		}
 
+		std::list<unsigned int> path;
 		// reconstruct the path
 		if (!found)
 		{
 			std::stringstream ss;
 			ss << "Trying to find a path from " << startID << " to " << endID;
 			ss << ".  A* finished without a route!";
-		}
 
-		// Create the list of nodes through which I must pass
-		std::list<unsigned int> path;
-		unsigned int curr = endID;
-		while (curr != startID)
-		{
-			path.push_front(curr);
-			curr = heap.getReachedFrom(curr);
+			path.push_front(startID);
+
 		}
-		path.push_front(startID);
+		else {
+			// Create the list of nodes through which I must pass
+			unsigned int curr = endID;
+			while (curr != startID)
+			{
+				path.push_front(curr);
+				curr = heap.getReachedFrom(curr);
+			}
+			path.push_front(startID);
+		}
 
 #ifdef _WIN32
 		// Visual studio 2005 compiler is giving an erroneous warning

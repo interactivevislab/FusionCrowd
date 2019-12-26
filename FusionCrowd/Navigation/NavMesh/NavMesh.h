@@ -80,6 +80,7 @@ namespace FusionCrowd
 		bool GetEdges(FCArray<EdgeInfo> & output);
 		size_t GetObstaclesCount();
 		bool GetObstacles(FCArray<EdgeInfo> & output);
+		bool ExportToFile(std::string file_name);
 
 	protected:
 		void CheckObstaclesDirection();

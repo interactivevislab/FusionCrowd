@@ -53,6 +53,7 @@ namespace FusionCrowd
 		bool GetEdges(FCArray<EdgeInfo> & output);
 		size_t GetObstaclesCount();
 		bool GetObstacles(FCArray<EdgeInfo> & output);
+		bool ExportNavMeshToFile(std::string file_name);
 
 	private:
 		class NavSystemImpl;

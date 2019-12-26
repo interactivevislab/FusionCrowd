@@ -190,24 +190,92 @@ namespace FusionCrowd {
 		_addededges = std::vector<NavMeshEdge*>();
 		_addedobstacles = std::vector<NavMeshObstacle*>();
 
+		//todo remove
+		for (int i = 0; i < _navmesh.obstCount; i++) {
+			if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+		}
 		SplitPolyByNodes(polygon);
+
+		//todo remove
+		for (int i = 0; i < _navmesh.obstCount; i++) {
+			if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+		}
 		if (_global_polygon.size() < 3) return -1;
 		for (auto mod : _modifications) {
 			Initialize(mod);
+
+			//todo remove
+			for (int i = 0; i < _navmesh.obstCount; i++) {
+				if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+			}
 			if (mod->modification_type == CUT_CURVE) {
 				FillAddedVertices(true);
+				//todo remove
+				for (int i = 0; i < _navmesh.obstCount; i++) {
+					if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+				}
+
+				//todo remove
+				for (int i = 0; i < _addededges.size(); i++) {
+					if (std::isnan(_addededges[i]->getP1().x)) throw 1;
+				}
 				CutCurveFromCurrentNode();
+
+				//todo remove
+				for (int i = 0; i < _addededges.size(); i++) {
+					if (std::isnan(_addededges[i]->getP1().x)) throw 1;
+				}
+			}
+
+			//todo remove
+			for (int i = 0; i < _navmesh.obstCount; i++) {
+				if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
 			}
 			if (mod->modification_type == CUT_POLY) {
 				FillAddedVertices(false);
+
+				//todo remove
+				for (int i = 0; i < _addededges.size(); i++) {
+					if (std::isnan(_addededges[i]->getP1().x)) throw 1;
+				}
 				CutPolyFromCurrentNode();
+
+				//todo remove
+				for (int i = 0; i < _addededges.size(); i++) {
+					if (std::isnan(_addededges[i]->getP1().x)) throw 1;
+				}
+			}
+
+			//todo remove
+			for (int i = 0; i < _navmesh.obstCount; i++) {
+				if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
 			}
 			if (mod->modification_type == SPLIT) {
+
+				//todo remove
+				for (int i = 0; i < _addededges.size(); i++) {
+					if (std::isnan(_addededges[i]->getP1().x)) throw 1;
+				}
 				SplitNode();
+
+				//todo remove
+				for (int i = 0; i < _addededges.size(); i++) {
+					if (std::isnan(_addededges[i]->getP1().x)) throw 1;
+				}
+			}
+
+			//todo remove
+			for (int i = 0; i < _navmesh.obstCount; i++) {
+				if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
 			}
 			if (std::find(_nodes_ids_to_delete.begin(), _nodes_ids_to_delete.end(), mod->node->getID())
 				== _nodes_ids_to_delete.end()) {
 				_nodes_ids_to_delete.push_back(mod->node->getID());
+			}
+
+			//todo remove
+			for (int i = 0; i < _navmesh.obstCount; i++) {
+				if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
 			}
 		}
 
@@ -215,7 +283,23 @@ namespace FusionCrowd {
 		//TODO remove
 		if (tres < 0) return tres;
 		tres = _modifications.size();
+
+		//todo remove
+		for (int i = 0; i < _addededges.size(); i++) {
+			if (std::isnan(_addededges[i]->getP1().x)) throw 1;
+		}
+
 		Finalize();
+
+		//todo remove
+		for (int i = 0; i < _navmesh.obstCount; i++) {
+			if (std::isnan(_navmesh.obstacles[i].getP1().x)) throw 1;
+		}
+		//todo remove
+		for (int i = 0; i < _navmesh.eCount; i++) {
+			if (std::isnan(_navmesh.edges[i].getP1().x)) throw 1;
+		}
+
 		return tres;
 	}
 
@@ -302,7 +386,12 @@ namespace FusionCrowd {
 					nobst->_length = (ov1 - divpoint).Length();
 				}
 				nobst->setNode(updnode);
-				node0_obst.push_back(nobst);
+				if (nobst->_length > min_width) {
+					node0_obst.push_back(nobst);
+				}
+				else {
+					delete nobst;
+				}
 			}
 		}
 		NavMeshObstacle* nobst0 = new NavMeshObstacle();
@@ -310,7 +399,12 @@ namespace FusionCrowd {
 		nobst0->_unitDir = (v1 - v0) / (v1 - v0).Length();
 		nobst0->_length = (v1 - v0).Length();
 		nobst0->setNode(updnode);
-		node0_obst.push_back(nobst0);
+		if (nobst0->_length > min_width) {
+			node0_obst.push_back(nobst0);
+		}
+		else {
+			delete nobst0;
+		}
 
 		updnode->_obstacles = new NavMeshObstacle*[node0_obst.size()];
 		updnode->_obstCount = node0_obst.size();
@@ -361,7 +455,12 @@ namespace FusionCrowd {
 					nedge->setWidth((ev1 - divpoint).Length());
 				}
 				nedge->setNodes(updnode, nullptr);
-				_addededges.push_back(nedge);
+				if (nedge->getWidth() > min_width) {
+					_addededges.push_back(nedge);
+				}
+				else {
+					delete nedge;
+				}
 			}
 		}
 #pragma endregion
@@ -373,6 +472,29 @@ namespace FusionCrowd {
 	/*Adds all created nodes and vertexes*/
 	int NavMeshModifyer::Finalize() {
 
+		//todo check
+		for (int i = _addededges.size() - 1; i >= 0; i--) {
+			if (_addededges[i]->getWidth() <= min_width) {
+				delete _addededges[i];
+				_addededges.erase(_addededges.begin() + i);
+			}
+		}
+		for (int i = _addedobstacles.size() - 1; i >= 0; i--) {
+			if (_addedobstacles[i]->_length <= min_width) {
+				delete _addedobstacles[i];
+				_addedobstacles.erase(_addedobstacles.begin() + i);
+			}
+		}
+
+		//todo remove
+		for (int i = _addededges.size() - 1; i >= 0; i--) {
+			if (_addededges[i]->getWidth() <= min_width) throw 1;
+			if ((_addededges[i]->getP0() - _addededges[i]->getP1()).Length() <= min_width) throw 1;
+		}
+		for (int i = _navmesh.eCount - 1; i >= 0; i--) {
+			if (_navmesh.edges[i].getWidth() <= min_width) throw 1;
+			if ((_navmesh.edges[i].getP0() - _navmesh.edges[i].getP1()).Length() <= min_width) throw 1;
+		}
 
 #pragma region vertices
 		//add created vertices
@@ -440,6 +562,15 @@ namespace FusionCrowd {
 
 #pragma endregion
 
+		//todo remove
+		for (int i = _addededges.size() - 1; i >= 0; i--) {
+			if (_addededges[i]->getWidth() <= min_width) throw 1;
+			if ((_addededges[i]->getP0() - _addededges[i]->getP1()).Length() <= min_width) throw 1;
+		}
+		for (int i = vtmp_edges.size() - 1; i >= 0; i--) {
+			if (vtmp_edges[i].getWidth() <= min_width) throw 1;
+			if ((vtmp_edges[i].getP0() - vtmp_edges[i].getP1()).Length() <= min_width) throw 1;
+		}
 
 #pragma region obstacles_copy
 		//add and delete obstacles
@@ -459,6 +590,7 @@ namespace FusionCrowd {
 
 #pragma endregion
 
+
 #pragma region save_eo_dependencies
 		std::vector<unsigned int> first_nodes_ids = std::vector<unsigned int>(vtmp_edges.size());
 		std::vector<unsigned int> second_nodes_ids = std::vector<unsigned int>(vtmp_edges.size());
@@ -477,6 +609,14 @@ namespace FusionCrowd {
 		std::vector<unsigned int> obtacle_nodes_ids = std::vector<unsigned int>(tmp_obstacles.size());
 		for (int i = 0; i < tmp_obstacles.size(); i++) {
 			obtacle_nodes_ids[i] = tmp_obstacles[i].getNode()->_id;
+			if (obtacle_nodes_ids[i] > _navmesh.nCount + _addednodes.size() - 1) throw obtacle_nodes_ids[i];
+		}
+
+		//todo it shouldn't happend
+		for (int i = _addedobstacles.size() - 1; i >= 0; i--) {
+			if (_addedobstacles[i]->getNode()->_id > _navmesh.nCount + _addednodes.size() - 1) {
+				_addedobstacles.erase(_addedobstacles.begin() + i);
+			}
 		}
 
 		std::vector<long int> oadded_nodes_ids = std::vector<long int>(_addedobstacles.size());
@@ -489,6 +629,15 @@ namespace FusionCrowd {
 		FinalizeNodes();
 		_localizer->Update(_addednodes, _nodes_ids_to_delete);
 
+		//todo remove
+		for (int i = _addededges.size() - 1; i >= 0; i--) {
+			if (_addededges[i]->getWidth() <= min_width) throw 1;
+			if ((_addededges[i]->getP0() - _addededges[i]->getP1()).Length() <= min_width) throw 1;
+		}
+		for (int i = vtmp_edges.size() - 1; i >= 0; i--) {
+			if (vtmp_edges[i].getWidth() <= min_width) throw 1;
+			if ((vtmp_edges[i].getP0() - vtmp_edges[i].getP1()).Length() <= min_width) throw 1;
+		}
 
 #pragma region load_eo_dependencies
 		for (int i = 0; i < vtmp_edges.size(); i++) {
@@ -545,7 +694,15 @@ namespace FusionCrowd {
 
 #pragma endregion
 
-
+		//todo remove
+		for (int i = _addededges.size() - 1; i >= 0; i--) {
+			if (_addededges[i]->getWidth() <= min_width) throw 1;
+			if ((_addededges[i]->getP0() - _addededges[i]->getP1()).Length() <= min_width) throw 1;
+		}
+		for (int i = vtmp_edges.size() - 1; i >= 0; i--) {
+			if (vtmp_edges[i].getWidth() <= min_width) throw 1;
+			if ((vtmp_edges[i].getP0() - vtmp_edges[i].getP1()).Length() <= min_width) throw 1;
+		}
 #pragma region add_new_obsts
 
 		for (int i = 0; i < _addedobstacles.size(); i++) {
@@ -576,6 +733,15 @@ namespace FusionCrowd {
 		_navmesh.eCount = vtmp_edges.size();
 #pragma endregion
 
+		//todo remove
+		for (int i = _addededges.size() - 1; i >= 0; i--) {
+			if (_addededges[i]->getWidth() <= min_width) throw 1;
+			if ((_addededges[i]->getP0() - _addededges[i]->getP1()).Length() <= min_width) throw 1;
+		}
+		for (int i = vtmp_edges.size() - 1; i >= 0; i--) {
+			if (vtmp_edges[i].getWidth() <= min_width) throw 1;
+			if ((vtmp_edges[i].getP0() - vtmp_edges[i].getP1()).Length() <= min_width) throw 1;
+		}
 #pragma region fill_edges_obst_arrays
 		//fill obst and edges nodes arrays
 		for (int i = 0; i < _navmesh.nCount; i++) {
@@ -619,6 +785,16 @@ namespace FusionCrowd {
 #pragma endregion
 
 
+		//todo remove
+		for (int i = _addededges.size() - 1; i >= 0; i--) {
+			if (_addededges[i]->getWidth() <= min_width) throw 1;
+			if ((_addededges[i]->getP0() - _addededges[i]->getP1()).Length() <= min_width) throw 1;
+		}
+		for (int i = _navmesh.eCount - 1; i >= 0; i--) {
+			if (_navmesh.edges[i].getWidth() <= min_width) throw 1;
+			if ((_navmesh.edges[i].getP0() - _navmesh.edges[i].getP1()).Length() <= min_width) throw 1;
+		}
+
 		for (auto m : _modifications) {
 			delete m;
 		}
@@ -629,6 +805,24 @@ namespace FusionCrowd {
 
 		_spatial_query->Update();
 
+		for (int i = 0; i < _navmesh.eCount; i++) {
+			tres += _navmesh.edges[i].getFirstNode()->_id;
+			tres += _navmesh.edges[i].getSecondNode()->_id;
+		}
+		for (int i = 0; i < _navmesh.obstCount; i++) {
+			tres += _navmesh.obstacles[i].getNode()->_id;
+		}
+
+
+		//todo remove
+		for (int i = _addededges.size() - 1; i >= 0; i--) {
+			if (_addededges[i]->getWidth() <= min_width) throw 1;
+			if ((_addededges[i]->getP0() - _addededges[i]->getP1()).Length() <= min_width) throw 1;
+		}
+		for (int i = _navmesh.eCount - 1; i >= 0; i--) {
+			if (_navmesh.edges[i].getWidth() <= min_width) throw 1;
+			if ((_navmesh.edges[i].getP0() - _navmesh.edges[i].getP1()).Length() <= min_width) throw 1;
+		}
 		return 0;
 	}
 
@@ -691,9 +885,14 @@ namespace FusionCrowd {
 			edge->setWidth((crosspoint - j1vert).Length());
 			edge->setDirection((crosspoint - j1vert) / (crosspoint - j1vert).Length());
 			edge->setNodes(prev_node, updnode);
-			_addededges.push_back(edge);
-			if (prev_node == nullptr) first_edge = edge;
-			prev_node = updnode;
+			if (edge->getWidth() > min_width) {
+				_addededges.push_back(edge);
+				if (prev_node == nullptr) first_edge = edge;
+				prev_node = updnode;
+			}
+			else {
+				delete edge;
+			}
 			CopyVortexObstacles(updnode, j, j0vert, j1vert, j2vert, node_side0, node_side1);
 			CopyVortexEdges(updnode, j, j0vert, j1vert, j2vert, node_side0, node_side1);
 
@@ -750,19 +949,43 @@ namespace FusionCrowd {
 				addedids++;
 			}
 
+			//todo remove
+			for (int i = 0; i < _addededges.size(); i++) {
+				if (std::isnan(_addededges[i]->getP1().x)) throw 1;
+			}
 #pragma region create_edge
-			NavMeshEdge* edge = new NavMeshEdge();
 			Vector2 crosspoint = crosspoints[j];
-			edge->setPoint(j1vert);
-			edge->setWidth((crosspoint - j1vert).Length());
-			edge->setDirection((crosspoint - j1vert) / (crosspoint - j1vert).Length());
-			edge->setNodes(prev_node, updnode);
-
-			_addededges.push_back(edge);
-			if (prev_node == nullptr) first_edge = edge;
-			prev_node = updnode;
+			if ((crosspoint - j1vert).Length() > min_width) {
+				NavMeshEdge* edge = new NavMeshEdge();
+				edge->setPoint(j1vert);
+				edge->setWidth((crosspoint - j1vert).Length());
+				edge->setDirection((crosspoint - j1vert) / (crosspoint - j1vert).Length());
+				edge->setNodes(prev_node, updnode);
+				if (edge->getWidth() > min_width) {
+					_addededges.push_back(edge);
+					if (prev_node == nullptr) first_edge = edge;
+					prev_node = updnode;
+				}
+				else {
+					delete edge;
+				}
+			}
 #pragma endregion
+
+			//todo remove
+			for (int i = 0; i < _addededges.size(); i++) {
+				if (std::isnan(_addededges[i]->getP1().x)) throw 1;
+			}
+			//todo remove
+			for (int i = 0; i < _navmesh.obstCount; i++) {
+				if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+			}
 			CopyVortexObstacles(updnode, j, j0vert, j1vert, j2vert, node_side0, node_side1);
+
+			//todo remove
+			for (int i = 0; i < _navmesh.obstCount; i++) {
+				if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+			}
 			CopyVortexEdges(updnode, j, j0vert, j1vert, j2vert, node_side0, node_side1);
 			_addednodes.push_back(updnode);
 		}
@@ -808,11 +1031,16 @@ namespace FusionCrowd {
 
 		CopyVortexObstacles(updnode, -1, j0vert, j1vert, j2vert, node_side0, false, true);
 		CopyVortexEdges(updnode, -1, j0vert, j1vert, j2vert, node_side0, false, true);
-		first_edge->setNodes(updnode, first_edge->getSecondNode());
-
-		_addednodes.push_back(updnode);
+		if (first_edge != nullptr) {
+			first_edge->setNodes(updnode, first_edge->getSecondNode());
+			_addednodes.push_back(updnode);
+		}
 #pragma endregion
 
+		//todo remove
+		for (int i = 0; i < _navmesh.obstCount; i++) {
+			if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+		}
 		return 0;
 	}
 
@@ -1106,8 +1334,17 @@ namespace FusionCrowd {
 		obst->_point = p0;
 		obst->_unitDir = (p1 - p0) / (p1 - p0).Length();
 		obst->_length = (p1 - p0).Length();
-		tmp_obst.push_back(obst);
+		if (obst->_length > min_width) {
+			tmp_obst.push_back(obst);
+		}
+		else {
+			delete obst;
+		}
 
+		//todo remove
+		for (int i = 0; i < _navmesh.obstCount; i++) {
+			if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+		}
 		for (int i = 0; i < _current_node->_obstCount; i++) {
 			NavMeshObstacle *obst = _current_node->_obstacles[i];
 			Vector2 p0 = obst->getP0();
@@ -1120,16 +1357,40 @@ namespace FusionCrowd {
 				p0side = IsPointUnderLine(j0vert, j1vert, p0, node_side0, true);
 				p1side = IsPointUnderLine(j0vert, j1vert, p1, node_side0, true);
 			}
+
+			//todo remove
+			for (int i = 0; i < _navmesh.obstCount; i++) {
+				if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+			}
 			if (p0side && p1side) {
-				obst->setNode(updnode);
+
+				//todo remove
+				for (int i = 0; i < _navmesh.obstCount; i++) {
+					if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+				}
 				NavMeshObstacle *nobst = new NavMeshObstacle();
 				nobst->setNode(updnode);
 				nobst->_point = p0;
 				nobst->_unitDir = (p1 - p0) / (p1 - p0).Length();
 				nobst->_length = (p1 - p0).Length();
-				tmp_obst.push_back(nobst);
+				if (nobst->_length > min_width) {
+					tmp_obst.push_back(nobst);
+				}
+				else {
+					delete nobst;
+				}
+
+				//todo remove
+				for (int i = 0; i < _navmesh.obstCount; i++) {
+					if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+				}
 			}
 			else {
+
+				//todo remove
+				for (int i = 0; i < _navmesh.obstCount; i++) {
+					if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+				}
 				Vector2 v0 = crosspoints[j];
 				Vector2 v1 = crosspoints[(j + 1) % crosspoints.size()];
 				if (onestrict) {
@@ -1158,7 +1419,6 @@ namespace FusionCrowd {
 					NavMeshObstacle *nobst = new NavMeshObstacle();
 					nobst->setNode(updnode);
 					nobst->_point = divpoint;
-					tmp_obst.push_back(nobst);
 					if (p0side) {
 						nobst->_unitDir = (p0 - divpoint) / (p0 - divpoint).Length();
 						nobst->_length = (p0 - divpoint).Length();
@@ -1166,6 +1426,13 @@ namespace FusionCrowd {
 					else {
 						nobst->_unitDir = (p1 - divpoint) / (p1 - divpoint).Length();
 						nobst->_length = (p1 - divpoint).Length();
+					}
+
+					if (nobst->_length > min_width) {
+						tmp_obst.push_back(nobst);
+					}
+					else {
+						delete nobst;
 					}
 #pragma endregion
 				}
@@ -1195,19 +1462,39 @@ namespace FusionCrowd {
 						nobst->_point = v0;
 						nobst->_unitDir = (v1 - v0) / (v1 - v0).Length();
 						nobst->_length = (v1 - v0).Length();
-						tmp_obst.push_back(nobst);
+
+						if (nobst->_length > min_width) {
+							tmp_obst.push_back(nobst);
+						}
+						else {
+							delete nobst;
+						}
 					}
 #pragma endregion
 
 				}
+
+				//todo remove
+				for (int i = 0; i < _navmesh.obstCount; i++) {
+					if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+				}
 			}
 		}
 
+		//todo remove
+		for (int i = 0; i < _navmesh.obstCount; i++) {
+			if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
+		}
 		updnode->_obstacles = new NavMeshObstacle*[tmp_obst.size()];
 		updnode->_obstCount = tmp_obst.size();
 		for (int i = 0; i < tmp_obst.size(); i++) {
 			updnode->_obstacles[i] = tmp_obst[i];
 			_addedobstacles.push_back(tmp_obst[i]);
+		}
+
+		//todo remove
+		for (int i = 0; i < _navmesh.obstCount; i++) {
+			if (_navmesh.obstacles[i].getNode()->_id > _navmesh.nCount - 1) throw 1;
 		}
 	}
 
@@ -1258,7 +1545,6 @@ namespace FusionCrowd {
 					NavMeshEdge *nedge = new NavMeshEdge();
 					nedge->setNodes(updnode, nullptr);
 					nedge->setPoint(divpoint);
-					tmp_edges.push_back(nedge);
 					if (p0side) {
 						nedge->setDirection((p0 - divpoint) / (p0 - divpoint).Length());
 						nedge->setWidth((p0 - divpoint).Length());
@@ -1266,6 +1552,12 @@ namespace FusionCrowd {
 					else {
 						nedge->setDirection((p1 - divpoint) / (p1 - divpoint).Length());
 						nedge->setWidth((p1 - divpoint).Length());
+					}
+					if (nedge->getWidth() > min_width) {
+						tmp_edges.push_back(nedge);
+					}
+					else {
+						delete nedge;
 					}
 				}
 				else {
@@ -1293,7 +1585,12 @@ namespace FusionCrowd {
 						nedge->setPoint(v0);
 						nedge->setDirection((v1 - v0) / (v1 - v0).Length());
 						nedge->setWidth((v1 - v0).Length());
-						tmp_edges.push_back(nedge);
+						if (nedge->getWidth() > min_width) {
+							tmp_edges.push_back(nedge);
+						}
+						else {
+							delete nedge;
+						}
 					}
 				}
 			}
@@ -1311,6 +1608,11 @@ namespace FusionCrowd {
 	bool NavMeshModifyer::ProcessEdge(NavMeshEdge* edge) {
 		if (edge->getFirstNode() != nullptr && edge->getSecondNode() != nullptr) {
 			return true;
+		}
+
+		//todo it shouldnt happend
+		if (edge->getFirstNode() == nullptr && edge->getSecondNode() == nullptr) {
+			return false;
 		}
 
 		float d = 0.25;
@@ -1332,7 +1634,9 @@ namespace FusionCrowd {
 		check_point *= d;
 		check_point += mid_edge;
 		size_t node_id = _localizer->getNodeId(check_point);
-		if (node_id == exist_id) return false; //TODO it shouldn't happend
+		if (node_id == exist_id) {
+			return false; //TODO it shouldn't happend
+		}
 		if (node_id == NavMeshLocation::NO_NODE) {
 
 			NavMeshObstacle* obst = new NavMeshObstacle();
@@ -1340,7 +1644,15 @@ namespace FusionCrowd {
 			obst->_point = edge->getP0();
 			obst->_unitDir = edge->getDirection();
 			obst->_length = edge->getWidth();
-			_addedobstacles.push_back(obst);
+
+			if (obst->_length > min_width) {
+				_addedobstacles.push_back(obst);
+			}
+			else {
+				delete obst;
+			}
+			//todo remove
+			if (std::isnan(obst->getP1().x)) throw 1;
 			return false;
 		}
 		if (edge->getFirstNode() == nullptr) {
