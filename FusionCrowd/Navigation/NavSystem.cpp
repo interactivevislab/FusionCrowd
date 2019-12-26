@@ -253,7 +253,7 @@ namespace FusionCrowd
 				i++;
 			}
 
-			auto allNeighbors = _neighborsSeeker.FindNeighbors(agentsPositions, numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, true);
+			auto allNeighbors = _neighborsSeeker.FindNeighbors(agentsPositions, numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, false);
 			//NeighborsSeeker::PointNeighbors *allNeighbors = new NeighborsSeeker::PointNeighbors[numAgents];
 			//for (int i = 0; i < numAgents; i++) {
 			//	allNeighbors[i] = { i, 0 };

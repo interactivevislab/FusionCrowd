@@ -59,5 +59,9 @@ namespace FusionCrowd
 		const size_t _rootNode = 0;
 
 		std::queue<size_t> _query_queue;
+
+		float _query_avg_weight = 0.5f;
+		size_t _containing_query_result_moving_avg = 0;
+		size_t _intersecting_query_result_moving_avg = 0;
 	};
 }

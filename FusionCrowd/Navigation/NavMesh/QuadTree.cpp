@@ -104,6 +104,8 @@ namespace FusionCrowd
 	std::vector<size_t> QuadTree::GetContainingBBIds(DirectX::SimpleMath::Vector2 point)
 	{
 		std::vector<size_t> result;
+		result.reserve(_containing_query_result_moving_avg);
+
 		float x = point.x;
 		float y = point.y;
 		size_t currentId = _rootNode;
@@ -129,12 +131,15 @@ namespace FusionCrowd
 			}
 		};
 
+		_containing_query_result_moving_avg = _query_avg_weight * _containing_query_result_moving_avg + (1 - _query_avg_weight) * result.size();
+
 		return result;
 	}
 
 	std::vector<size_t> QuadTree::GetIntersectingBBIds(BoundingBox box)
 	{
 		std::vector<size_t> result;
+		result.reserve(_intersecting_query_result_moving_avg);
 
 		_query_queue.push(_rootNode);
 
@@ -175,6 +180,8 @@ namespace FusionCrowd
 				_query_queue.push(current.bottomRight());
 			}
 		}
+
+		_intersecting_query_result_moving_avg = _query_avg_weight * _intersecting_query_result_moving_avg + (1 - _query_avg_weight) * result.size();
 
 		return result;
 	}
