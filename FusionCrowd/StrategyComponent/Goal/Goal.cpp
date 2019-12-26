@@ -40,6 +40,13 @@ namespace FusionCrowd
 		return Goal(goalId++, std::move(geometry));
 	}
 
+	Goal GoalFactory::CreateDiscGoal(const DirectX::SimpleMath::Vector2& p, float R)
+	{
+		auto geometry = std::make_unique<FusionCrowd::Math::PointShape>(p);
+
+		return Goal(goalId++, std::move(geometry));
+	}
+
 	Goal GoalFactory::CreateGeometryGoal(std::shared_ptr<Math::Geometry2D> geometry)
 	{
 		return Goal(goalId++, geometry);

@@ -133,7 +133,7 @@ namespace FusionCrowd
 		void SetAgentGoal(Agent & agent, DirectX::SimpleMath::Vector2 goalPos)
 		{
 			auto point = _tacticComponents[0]->GetClosiestAvailablePoint(goalPos);
-			auto goal = _goalFactory.CreatePointGoal(point);
+			auto goal = _goalFactory.CreateDiscGoal(point, 1.5f);
 			agent.currentGoal = goal;
 		}
 

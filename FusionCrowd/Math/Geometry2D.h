@@ -45,6 +45,23 @@ namespace FusionCrowd
 		protected:
 			DirectX::SimpleMath::Vector2 _position;
 		};
+
+		class FUSION_CROWD_API DiskShape: public Geometry2D
+		{
+		public:
+			DiskShape(DirectX::SimpleMath::Vector2 center, float size);
+
+			bool containsPoint(const DirectX::SimpleMath::Vector2& pt) const override;
+			bool containsPoint(const DirectX::SimpleMath::Vector2& pt, const DirectX::SimpleMath::Vector2& pos) const override;
+			float squaredDistance(const DirectX::SimpleMath::Vector2& pt) const override;
+			void setDirections(const DirectX::SimpleMath::Vector2& q, float r, Agents::PrefVelocity& directions) const override;
+			DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2& q, float r) const override;
+			DirectX::SimpleMath::Vector2 getCentroid() const override;
+
+		private:
+			DirectX::SimpleMath::Vector2 _center;
+			float _R;
+		};
 	}
 }
 
