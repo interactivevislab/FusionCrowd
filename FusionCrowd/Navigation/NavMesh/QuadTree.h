@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <unordered_set>
 #include <memory>
+#include <queue>
 
 #include "Math/Util.h"
 #include "Math/BoundingBox.h"
@@ -33,14 +33,14 @@ namespace FusionCrowd
 		{
 			Node(size_t start) : start(start), len(0) {}
 
-			bool LeafNode = false;
-
 			float xmid = 0.0, ymid = 0.0;
 
 			size_t start = 0;
 			size_t len   = 0;
 
 			size_t firstChild = -1;
+
+			inline bool LeafNode() const { return firstChild == -1; };
 
 			inline size_t topLeft() const     { return firstChild + 0; };
 			inline size_t topRight() const    { return firstChild + 1; };
@@ -57,5 +57,7 @@ namespace FusionCrowd
 		BoundingBox _bb;
 		const size_t _maxLevel;
 		const size_t _rootNode = 0;
+
+		std::queue<size_t> _query_queue;
 	};
 }

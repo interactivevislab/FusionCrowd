@@ -129,8 +129,7 @@ namespace FusionCrowd
 		unsigned int maxNode = NavMeshLocation::NO_NODE;
 
 		//TODO
-		//for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
-		for (int nodeId =0; nodeId <_navMesh->getNodeCount(); nodeId++)
+		for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
 		{
 			const NavMeshNode* node = _navMesh->GetNodeByID(nodeId);
 			if (node->deleted) continue;

@@ -1,6 +1,5 @@
 #include "QuadTree.h"
 
-#include <queue>
 #include <set>
 #include <algorithm>
 #include <map>
@@ -26,12 +25,12 @@ namespace FusionCrowd
 	{
 		Node & node = _stored_nodes[nodeIdx];
 
-		node.LeafNode = (level == _maxLevel || boxes.size() <= 1);
+		bool leafNode = (level == _maxLevel || boxes.size() <= 1);
 		node.len = 0;
 		node.xmid = (box.xmin + box.xmax) / 2.0f;
 		node.ymid = (box.ymin + box.ymax) / 2.0f;
 
-		if(node.LeafNode)
+		if(leafNode)
 		{
 			node.len = boxes.size();
 			_stored_boxes.insert(_stored_boxes.end(), boxes.begin(), boxes.end());
@@ -118,7 +117,7 @@ namespace FusionCrowd
 					result.push_back(_stored_boxes[idx].objectId);
 			}
 
-			if(current.LeafNode)
+			if(current.LeafNode())
 				break;
 
 			if(x <= current.xmid)
@@ -136,13 +135,13 @@ namespace FusionCrowd
 	std::vector<size_t> QuadTree::GetIntersectingBBIds(BoundingBox box)
 	{
 		std::vector<size_t> result;
-		std::queue<size_t> dq;
 
-		dq.push(_rootNode);
+		_query_queue.push(_rootNode);
 
-		while(dq.size() > 0)
+		while(_query_queue.size() > 0)
 		{
-			Node & current = _stored_nodes[dq.front()]; dq.pop();
+			Node & current = _stored_nodes[_query_queue.front()];
+			_query_queue.pop();
 
 			auto upto = current.start + current.len;
 			for(size_t idx = current.start; idx < upto; idx++)
@@ -151,29 +150,29 @@ namespace FusionCrowd
 					result.push_back(_stored_boxes[idx].objectId);
 			}
 
-			if(current.LeafNode)
+			if(current.LeafNode())
 			{
 				continue;
 			}
 
 			if(box.xmin <= current.xmid && box.ymin <= current.ymid)
 			{
-				dq.push(current.topLeft());
+				_query_queue.push(current.topLeft());
 			}
 
 			if(box.xmax >= current.xmid && box.ymin <= current.ymid)
 			{
-				dq.push(current.topRight());
+				_query_queue.push(current.topRight());
 			}
 
 			if(box.xmin <= current.xmid && box.ymax >= current.ymid)
 			{
-				dq.push(current.bottomLeft());
+				_query_queue.push(current.bottomLeft());
 			}
 
 			if(box.xmax >= current.xmid && box.ymax >= current.ymid)
 			{
-				dq.push(current.bottomRight());
+				_query_queue.push(current.bottomRight());
 			}
 		}
 
@@ -187,7 +186,7 @@ namespace FusionCrowd
 		while (true) {
 			Node & current = _stored_nodes[currentId];
 
-			if(current.LeafNode)
+			if(current.LeafNode())
 				break;
 
 			if(box.xmax <= current.xmid && box.ymax <= current.ymid)
