@@ -90,10 +90,11 @@ namespace FusionCrowd
 			AgentSpatialInfo info;
 			auto agentId = GetNextId();
 			info.id = agentId;
-			info.pos = DirectX::SimpleMath::Vector2(x, y);
+			DirectX::SimpleMath::Vector2 goal_pos = _tacticComponents[0]->GetClosiestAvailablePoint(DirectX::SimpleMath::Vector2(x, y));
+			info.pos = goal_pos;
 			_navSystem->AddAgent(info);
 
-			Agent a(agentId, _goalFactory.CreatePointGoal(DirectX::SimpleMath::Vector2(x, y)));
+			Agent a(agentId, _goalFactory.CreatePointGoal(goal_pos));
 			_agents.insert({ agentId, a});
 
 			auto & agent = _agents.find(agentId)->second;
@@ -131,7 +132,8 @@ namespace FusionCrowd
 
 		void SetAgentGoal(Agent & agent, DirectX::SimpleMath::Vector2 goalPos)
 		{
-			auto goal = _goalFactory.CreatePointGoal(goalPos);
+			auto point = _tacticComponents[0]->GetClosiestAvailablePoint(goalPos);
+			auto goal = _goalFactory.CreatePointGoal(point);
 			agent.currentGoal = goal;
 		}
 
@@ -334,6 +336,10 @@ namespace FusionCrowd
 			return res;
 		}
 
+		bool ExportMeshToFile(char* file_name) {
+			std::string fp(file_name);
+			return _navSystem->ExportNavMeshToFile(fp);
+		}
 
 	private:
 		size_t _nextAgentId = 0;
@@ -543,6 +549,10 @@ namespace FusionCrowd
 
 	float Simulator::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 		return pimpl->CutPolygonFromMesh(polygon);
+	}
+
+	bool Simulator::ExportMeshToFile(char* file_path) {
+		return pimpl->ExportMeshToFile(file_path);
 	}
 
 	void Simulator::SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params)

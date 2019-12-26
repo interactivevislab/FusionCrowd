@@ -2,7 +2,7 @@
 
 namespace FusionCrowd
 {
-	const float MIN_EDGE_WIDTH = 0.00001f;
+	const float MIN_EDGE_WIDTH = 0.9e-7f;
 
 #pragma push_macro("max")
 #undef max

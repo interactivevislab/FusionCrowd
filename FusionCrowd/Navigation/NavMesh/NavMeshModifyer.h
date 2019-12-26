@@ -28,6 +28,7 @@ namespace FusionCrowd {
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
 
 	private:
+		const float min_width = 1e-2f;
 		//global data and methods
 		NavMesh&  _navmesh;
 		std::shared_ptr<NavMeshLocalizer> _localizer;
@@ -82,6 +83,7 @@ namespace FusionCrowd {
 		void FixPoly(NavMeshNode& node);
 		void FixConcavePoly();
 		void FixGlobalPoly();
+		void ConcaveHull(std::vector<Vector2>& poly);
 
 		//TODO replace
 		NavMeshNode* FindNodeByPoint(Vector2 point);

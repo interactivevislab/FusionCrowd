@@ -139,6 +139,10 @@ namespace FusionCrowd
 			return _sim->CutPolygonFromMesh(polygon);
 		}
 
+		bool ExportMeshToFile(char* file_name) {
+			return _sim->ExportMeshToFile(file_name);
+		}
+
 	private:
 		std::shared_ptr<Simulator> _sim;
 	};
@@ -159,7 +163,8 @@ namespace FusionCrowd
 
 			sim->UseNavSystem(navSystem);
 
-			auto tactic = std::make_shared<FusionCrowd::NavMeshComponent>(sim, localizer);
+			auto spatial_query = std::make_shared<NavMeshSpatialQuery>(localizer);
+			auto tactic = std::make_shared<FusionCrowd::NavMeshComponent>(sim, localizer, spatial_query);
 			sim->AddTactic(tactic);
 
 			return this;

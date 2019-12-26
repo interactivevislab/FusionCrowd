@@ -2,6 +2,8 @@
 #include "NavMesh.h"
 #include "NavMeshEdge.h"
 #include "NavMeshObstacle.h";
+#include <iostream>
+#include <fstream>
 
 //const std::string NavMesh::LABEL = "navmesh";
 
@@ -488,28 +490,18 @@ namespace FusionCrowd
 
 		for (int i = 0; i < eCount; i++)
 		{
+			output[i].error_code = 0;
 			output[i] = EdgeInfo();
 			output[i].x1 = edges[i].getP0().x;
 			output[i].y1 = edges[i].getP0().y;
 			output[i].x2 = edges[i].getP1().x;
 			output[i].y2 = edges[i].getP1().y;
-			//TODO: remove checks
-			if (edges[i].getFirstNode() != nullptr) {
-				output[i].nx0 = edges[i].getFirstNode()->getCenter().x;
-				output[i].ny0 = edges[i].getFirstNode()->getCenter().y;
-			} else {
-				output[i].nx0 = edges[i].getSecondNode()->getCenter().x;
-				output[i].ny0 = edges[i].getSecondNode()->getCenter().y;
-			}
-			if (edges[i].getSecondNode() != nullptr) {
-				output[i].nx1 = edges[i].getSecondNode()->getCenter().x;
-				output[i].ny1 = edges[i].getSecondNode()->getCenter().y;
-			}
-			else {
-				output[i].nx1 = edges[i].getFirstNode()->getCenter().x;
-				output[i].ny1 = edges[i].getFirstNode()->getCenter().y;
-
-			}
+			output[i].nx0 = edges[i].getFirstNode()->getCenter().x;
+			output[i].ny0 = edges[i].getFirstNode()->getCenter().y;
+			output[i].nx1 = edges[i].getSecondNode()->getCenter().x;
+			output[i].ny1 = edges[i].getSecondNode()->getCenter().y;
+			if (edges[i].getFirstNode()->deleted) output[i].error_code += 1;
+			if (edges[i].getSecondNode()->deleted) output[i].error_code += 1;
 		}
 		return true;
 	}
@@ -525,14 +517,119 @@ namespace FusionCrowd
 		}
 		for (int i = 0; i < obstCount; i++)
 		{
+			output[i].error_code = 0;
 			output[i] = EdgeInfo();
 			output[i].x1 = obstacles[i].getP0().x;
 			output[i].y1 = obstacles[i].getP0().y;
 			output[i].x2 = obstacles[i].getP1().x;
 			output[i].y2 = obstacles[i].getP1().y;
-			output[i].nx0 = obstacles[i].getNode()->_center.x;
-			output[i].ny0 = obstacles[i].getNode()->_center.y;
+			auto node = obstacles[i].getNode();
+			if (node->deleted) output[i].error_code = 1;
+			output[i].nx0 = node->_center.x;
+			output[i].ny0 = node->_center.y;
 		}
+		return true;
+	}
+
+
+	bool NavMesh::ExportToFile(std::string file_name) {
+		std::ofstream file;
+		file.open(file_name);
+		std::vector<Vector2> tmpv;
+		//vertices
+		file << vCount + eCount*2 +obstCount*2 << '\n';
+		for (int i = 0; i < vCount; i++) {
+			file << vertices[i].x << ' ' << vertices[i].y << '\n';
+			tmpv.push_back(vertices[i]);
+		}
+		for (int i = 0; i < eCount; i++) {
+			auto& edge = edges[i];
+			file << edge.getP0().x << ' ' << edge.getP0().y << '\n';
+			file << edge.getP1().x << ' ' << edge.getP1().y << '\n';
+			tmpv.push_back(Vector2(edge.getP0().x, edge.getP0().y));
+			tmpv.push_back(Vector2(edge.getP1().x, edge.getP1().y));
+			if ((edge.getP0() - edge.getP1()).Length() < 0.01) throw 1;
+		}
+		for (int i = 0; i < obstCount; i++) {
+			auto& obst = obstacles[i];
+			file << obst.getP0().x << ' ' << obst.getP0().y << '\n';
+			file << obst.getP1().x << ' ' << obst.getP1().y << '\n';
+			tmpv.push_back(Vector2(obst.getP0().x, obst.getP0().y));
+			tmpv.push_back(Vector2(obst.getP1().x, obst.getP1().y));
+		}
+
+		//create true node id map
+		std::map<size_t, size_t> node_id_map = std::map<size_t, size_t>();
+		size_t true_node_count = 0;
+		for (int i = 0; i < nCount; i++) {
+			if (!nodes[i].deleted) {
+				node_id_map.insert({i, true_node_count});
+				true_node_count++;
+			}
+		}
+
+		//edges
+		std::map<NavMeshEdge*, size_t> edge_id_map = std::map<NavMeshEdge*, size_t>();
+		file << eCount << '\n';
+		for (int i = 0; i < eCount; i++) {
+			auto& edge = edges[i];
+			edge_id_map.insert({ &edges[i], i });
+			size_t n0 = node_id_map.at(edge.getFirstNode()->_id);
+			size_t n1 = node_id_map.at(edge.getSecondNode()->_id);
+			size_t v0 = vCount + i * 2;
+			size_t v1 = v0 + 1;
+			if (tmpv[v0] == tmpv[v1]) throw 1;
+			file << v0 << ' ' << v1 << ' ' << n0 << ' ' << n1 << '\n';
+		}
+
+		//obstacles
+		std::map<NavMeshObstacle*, size_t> obst_id_map = std::map<NavMeshObstacle*, size_t>();
+		file << obstCount << '\n';
+		for (int i = 0; i < obstCount; i++) {
+			auto& obst = obstacles[i];
+			obst_id_map.insert({ &obstacles[i], i });
+			size_t n0 = node_id_map.at(obst.getNode()->_id);
+			size_t v0 = vCount + eCount * 2 + i * 2;
+			size_t v1 = v0 + 1;
+			if (tmpv[v0] == tmpv[v1]) throw 1;
+			file << v0 << ' ' << v1 << ' ' << n0 << ' ' << -1 << '\n';
+		}
+
+		//nodes
+		file << "nodes\n";
+		file << true_node_count << '\n';
+
+
+		for (int i = 0; i < nCount; i++) {
+			auto& node = nodes[i];
+			if (node.deleted) continue;
+			//center
+			file << node._center.x << ' ' << node._center.y << '\n';
+			//vertices
+			file << node._poly.vertCount;
+			for (int j = 0; j < node._poly.vertCount; j++) {
+				file << ' ' << node._poly.vertIDs[j] ;
+			}
+			file << '\n';
+			//offset
+			file << 0.0f << ' ' << 0.0f << ' ' << 0.0f << '\n';
+
+			//edges
+			file << node._edgeCount;
+			for (int j = 0; j < node._edgeCount; j++) {
+				file << ' ' << edge_id_map.at(node._edges[j]);
+			}
+			file << " \n";
+
+			//obstacles
+			file << node._obstCount;
+			for (int j = 0; j < node._obstCount; j++) {
+				file << ' ' << obst_id_map.at(node._obstacles[j]);
+			}
+			file << " \n";
+		}
+
+		file.close();
 		return true;
 	}
 }

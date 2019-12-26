@@ -7,6 +7,7 @@
 
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
+#include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
 #include "Simulator.h"
 
 namespace FusionCrowd
@@ -17,7 +18,8 @@ namespace FusionCrowd
 	class NavMeshComponent : public ITacticComponent
 	{
 	public:
-		NavMeshComponent(std::shared_ptr<Simulator> simulator, std::shared_ptr<NavMeshLocalizer> localizer);
+		NavMeshComponent(std::shared_ptr<Simulator> simulator,
+			std::shared_ptr<NavMeshLocalizer> localizer, std::shared_ptr<NavMeshSpatialQuery> spatial_query);
 
 		void AddAgent(size_t id) override;
 		bool DeleteAgent(size_t id) override;
@@ -26,6 +28,7 @@ namespace FusionCrowd
 		std::shared_ptr<NavMeshLocalizer> GetLocalizer() const;
 
 		void Update(float timeStep) override;
+		DirectX::SimpleMath::Vector2 GetClosiestAvailablePoint(DirectX::SimpleMath::Vector2 p) override;
 		unsigned int getNodeId(size_t agentId) const;
 		unsigned int getNodeId(size_t agentId, const std::string& grpName, bool searchAll = false);
 
@@ -49,6 +52,7 @@ namespace FusionCrowd
 		float _headingDevCos;
 		std::shared_ptr<NavMesh> _navMesh;
 		std::shared_ptr<NavMeshLocalizer> _localizer;
+		std::shared_ptr<NavMeshSpatialQuery> _spatial_query;
 		std::vector<AgentStruct> _agents;
 	};
 }

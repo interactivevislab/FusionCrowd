@@ -2,6 +2,7 @@
 
 #include "Export/Config.h"
 #include "Export/ComponentId.h"
+#include "Math/Util.h"
 
 namespace FusionCrowd
 {
@@ -14,6 +15,7 @@ namespace FusionCrowd
 		virtual bool DeleteAgent(size_t id) = 0;
 
 		virtual void Update(float timeStep) = 0;
+		virtual DirectX::SimpleMath::Vector2 GetClosiestAvailablePoint(DirectX::SimpleMath::Vector2 p) = 0;
 		virtual ~ITacticComponent() { };
 	};
 }

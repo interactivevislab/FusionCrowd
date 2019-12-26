@@ -37,6 +37,33 @@ namespace FusionCrowd
 		_obstacleBBTree = std::make_unique<QuadTree>(boxes);
 	}
 
+	Vector2 NavMeshSpatialQuery::GetClosiestObstacle(BoundingBox bb) {
+		float bb_size = 1000.0f;
+		bb.xmax += bb_size;
+		bb.ymax += bb_size;
+		bb.ymin -= bb_size;
+		bb.xmin -= bb_size;
+		auto mesh = _localizer->getNavMesh();
+
+		Vector2 center = Vector2((bb.xmax + bb.xmin) / 2, (bb.ymax + bb.ymin) / 2);
+		auto obstacleIds = _obstacleBBTree->GetIntersectingBBIds(bb);
+		float max_dist = INFINITY;
+		NavMeshObstacle* res_obst = nullptr;
+		//for (size_t obstacleId : obstacleIds)
+		for (size_t obstacleId = 0; obstacleId< _localizer->getNavMesh()->getObstacleCount(); obstacleId++)
+		{
+			NavMeshObstacle & obst = mesh->GetObstacle(obstacleId);
+			float dist = obst.distSqPoint(center);
+			if (dist < max_dist) {
+				dist = max_dist;
+				res_obst = &obst;
+			}
+		}
+		Vector2 res = res_obst->midPt() - center;
+		res.Normalize();
+		res = res * 0.3f + res_obst->midPt();
+		return res;
+	}
 
 	std::vector<size_t> NavMeshSpatialQuery::ObstacleQuery(Vector2 pt) const
 	{

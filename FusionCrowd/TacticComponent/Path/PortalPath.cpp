@@ -24,6 +24,11 @@ namespace FusionCrowd
 	void PortalPath::setPreferredDirection(AgentSpatialInfo & agent, float headingCos)
 	{
 		const size_t PORTAL_COUNT = _route->getPortalCount();
+		//todo remove
+		/*if (PORTAL_COUNT == 0) {
+			agent.prefVelocity.setSpeed(0);
+			agent.prefVelocity.setTarget(agent.pos);
+		}*/
 		Vector2 dir;
 		if (_currPortal >= PORTAL_COUNT)
 		{
@@ -291,7 +296,9 @@ namespace FusionCrowd
 	void PortalPath::replan(const Vector2& startPos, unsigned int startNode,
 	                        unsigned int endNode, float agentRadius, const std::shared_ptr<PathPlanner> planner)
 	{
-		PortalRoute* route = planner->getRoute(startNode, _route->getEndNode(), agentRadius * 2.f);
+		//TODO remove _route->getEndNode() check
+		auto end_node = _route->getEndNode() != NavMeshLocation::NO_NODE ? _route->getEndNode() : startNode;
+		PortalRoute* route = planner->getRoute(startNode, end_node, agentRadius * 2.f);
 		_waypoints.clear();
 		_headings.clear();
 		_currPortal = 0;

@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <map>
 #include <algorithm>
+#include <math.h>
 
 using namespace DirectX::SimpleMath;
 
@@ -139,6 +140,10 @@ namespace FusionCrowd
 		void UpdatePos(AgentSpatialInfo & agent, float timeStep)
 		{
 			float delV = (agent.vel - agent.velNew).Length();
+			if (isnan(delV)) {
+				agent.velNew = agent.vel;
+				delV = 0;
+			}
 
 			if (agent.inertiaEnabled && delV > agent.maxAccel * timeStep) {
 				float w = agent.maxAccel * timeStep / delV;
@@ -334,6 +339,10 @@ namespace FusionCrowd
 			return nmm.CutPolygonFromMesh(polygon);
 		}
 
+		bool ExportNavMeshToFile(std::string file_name) {
+			return _navMesh->ExportToFile(file_name);
+		}
+
 	private:
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
@@ -442,6 +451,10 @@ namespace FusionCrowd
 
 	float NavSystem::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 		return pimpl->CutPolygonFromMesh(polygon);
+	}
+
+	bool NavSystem::ExportNavMeshToFile(std::string file_name) {
+		return pimpl->ExportNavMeshToFile(file_name);
 	}
 
 }

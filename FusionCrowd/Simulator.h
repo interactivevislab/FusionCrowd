@@ -80,6 +80,7 @@ namespace FusionCrowd
 		bool GetEdges(FCArray<EdgeInfo> & output);
 		size_t GetObstaclesCount();
 		bool GetObstacles(FCArray<EdgeInfo> & output);
+		bool ExportMeshToFile(char* file_path);
 
 	private:
 		class SimulatorImpl;
