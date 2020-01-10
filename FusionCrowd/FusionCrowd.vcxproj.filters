@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="navgraph.spec" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl" />
