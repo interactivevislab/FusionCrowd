@@ -84,6 +84,9 @@ namespace FusionCrowd
 
 	std::unordered_set<NavGraphNode> NavGraph::GetOutNeighbours(size_t fromNodeId) const
 	{
+		if(_outEdges.find(fromNodeId) == _outEdges.end())
+			return std::unordered_set<NavGraphNode>();
+
 		std::unordered_set<NavGraphNode> result;
 
 		for(auto e : _outEdges.at(fromNodeId))
@@ -96,6 +99,9 @@ namespace FusionCrowd
 
 	std::unordered_set<NavGraphNode> NavGraph::GetInNeighbours(size_t toNodeId) const
 	{
+		if(_inEdges.find(toNodeId) == _inEdges.end())
+			return std::unordered_set<NavGraphNode>();
+
 		std::unordered_set<NavGraphNode> result;
 
 		for(auto e : _inEdges.at(toNodeId))

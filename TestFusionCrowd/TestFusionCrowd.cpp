@@ -104,7 +104,7 @@ void WriteToFile(std::shared_ptr<ITestCase> testCase, std::vector<long long> mea
 
 int main()
 {
-	std::ifstream navGraphFile("Resources\\twocycles.navgraph");
+	std::ifstream navGraphFile("Resources\\unidirectionalgrid.navgraph");
 	auto navGraph = FusionCrowd::NavGraph::LoadFromStream(navGraphFile);
 
 	std::cout << "Navgraph test";
