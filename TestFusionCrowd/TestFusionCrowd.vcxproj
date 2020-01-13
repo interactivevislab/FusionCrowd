@@ -219,6 +219,7 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
     <None Include="Resources\TradeshowAgents.txt" />
+    <None Include="Resources\twocycles.navgraph" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FusionCrowd\FusionCrowd.vcxproj">

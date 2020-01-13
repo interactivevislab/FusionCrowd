@@ -103,5 +103,6 @@
     <None Include="Resources\graph.nav" />
     <None Include="Resources\crossing.nav" />
     <None Include="Resources\circle.navgraph" />
+    <None Include="Resources\twocycles.navgraph" />
   </ItemGroup>
 </Project>
