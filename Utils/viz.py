@@ -1,7 +1,8 @@
 import csv
 import random
 import argparse
-from tkinter import *
+from player import Player
+
 from itertools import zip_longest, tee
 from collections import defaultdict, namedtuple
 
@@ -53,44 +54,28 @@ def read_trajectories(filename):
     return Trajectories(result, steps, xmin=minx, ymin=miny, xmax=maxx, ymax=maxy)
 
 
-def draw_trajectories(canvas, tr, xmin, ymin, scale=1.0):
-    def flat(pos):
-        for x, y in pos:
-            yield x
-            yield y
-
+def draw_trajectories(canvas: Player, tr):
     for id, positions in tr.pos.items():
-        scaled = flat((scale * (x - xmin), scale * (y - ymin)) for x, y in positions.values())
-        canvas.create_line(*scaled, fill=all_colors[id % len(all_colors)])
+        color = all_colors[id % len(all_colors)]
+        for p1, p2 in pairwise(positions):
+            canvas.line(p1, p2, color)
 
 
-def redraw_positions(canvas, tr, frame, scale, xmin, ymin, size=1.0, ovals=None):
-    def coords(x, y):
-        return ((x - xmin - size) * scale,
-                (y - ymin - size) * scale,
-                (x - xmin + size) * scale,
-                (y - ymin + size) * scale)
-
+def redraw_positions(canvas: Player, tr, frame, size=1.0, ovals=None):
     if ovals is None:
         ovals = dict()
 
     for agent_id, positions in tr.pos.items():
         if frame not in positions:
             if agent_id in ovals:
-                canvas.itemconfigure(ovals[agent_id], state='hidden')
+                canvas.hide_item(ovals[agent_id])
             continue
 
-        x, y = positions[frame]
         if agent_id in ovals:
-            canvas.itemconfigure(ovals[agent_id], state='normal')
-            canvas.coords(ovals[agent_id], *coords(x, y))
-            #canvas.coords(
-            #    ovals[agent_id],
-            #    (x - xmin) * scale,
-            #    (y - ymin) * scale
-            #)
+            canvas.show_item(ovals[agent_id])
+            canvas.move_circle(ovals[agent_id], positions[frame])
         else:
-            ovals[agent_id] = canvas.create_oval(*coords(x, y), fill=all_colors[agent_id % len(all_colors)], outline="white")
+            ovals[agent_id] = canvas.circle(positions[frame], size, all_colors[agent_id % len(all_colors)])
             #ovals[agent_id] = canvas.create_text(
             #    (x - xmin) * scale,
             #    (y - ymin) * scale,
@@ -164,56 +149,25 @@ def read_mesh(filename):
     return NavMesh(vertices=vertices, edges=edges, nodes=nodes, obstacles=obstacles, xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
 
 
-def draw_mesh(canvas, mesh: NavMesh, scale, xmin, ymin, show_text=True):
-    def v_adj(v):
-        x, y = mesh.vertices[v]
-        return (x - xmin) * scale, (y - ymin) * scale
-
-    def draw_line(v0, v1, color="#ccc"):
-        canvas.create_line(*v_adj(v0), *v_adj(v1), fill=color)
-
-    def draw_obst_line(v0, v1):
-        draw_line(v0, v1, "red")
-        x0, y0 = v_adj(v0)
-        x1, y1 = v_adj(v1)
-        dx, dy = x1 - x0, y1 - y0
-        x09 = x0 + dx * 0.9
-        y09 = y0 + dy * 0.9
-        r = 3
-        canvas.create_oval(x09 - r/2, y09 - r/2, x09 + r/2, y09 + r/2, outline="red")
-
+def draw_mesh(canvas: Player, mesh: NavMesh, show_text=True):
     if show_text:
-        for id, (vx, vy) in mesh.vertices.items():
-            canvas.create_text(
-                (vx - xmin) * scale,
-                (vy - ymin) * scale,
-                anchor=NW,
-                text="{:0}, {:0}".format(vx, vy),
-                fill="#ccc"
-            )
+        for id, p in mesh.vertices.items():
+            canvas.text(p, "{:0}, {:0}".format(p[0], p[1]), "#ccc")
 
     for id, node in mesh.nodes.items():
         for v0, v1 in pairwise(node.vertices):
-            draw_line(v0, v1)
+            canvas.line(mesh.vertices[v0], mesh.vertices[v1], color="#ccc")
 
-        draw_line(node.vertices[-1], node.vertices[0])
+        p_last = mesh.vertices[node.vertices[-1]]
+        p0     = mesh.vertices[node.vertices[0]]
+        canvas.line(p_last, p0, color="#ccc")
 
         if show_text:
-            canvas.create_text(
-                (node.center[0] - xmin) * scale,
-                (node.center[1] - ymin) * scale,
-                text=str(id),
-                fill="#ccc"
-            )
+            canvas.text(node.center, str(id), color="#ccc")
 
     for v0, v1 in mesh.obstacles:
-        draw_obst_line(v0, v1)
+        canvas.vector(mesh.vertices[v0], mesh.vertices[v1], "red")
 
-
-PLAYING = 1
-PAUSED = 0
-PLAYER_STATE = PAUSED
-PLAY_SPEED = 100
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -232,48 +186,13 @@ if __name__ == "__main__":
     tr = read_trajectories(args.source_file)
     mesh = read_mesh(args.navmesh_file)
 
-    global_xmin, global_ymin = min(tr.xmin, mesh.xmin), min(tr.ymin, mesh.ymin)
-
-    W, H = max(tr.xmax, mesh.xmax), max(tr.ymax, mesh.ymax)
-    W, H = (W - global_xmin) * scale, (H - global_ymin) * scale,
-
-    window = Tk()
-    window.title("{}, {}x{}. Controls: left, right, space".format(args.source_file, W / scale, H / scale))
-    canvas = Canvas(window, width=W, height=H, bg="black")
-    canvas.pack()
-
-    draw_mesh(canvas, mesh, scale=scale, xmin=global_xmin, ymin=global_ymin, show_text=not args.hide_mesh_text)
+    canvas = Player(scale, len(tr[0]))
+    draw_mesh(canvas, mesh, show_text=not args.hide_mesh_text)
 
     if not hide_trajectory:
-        draw_trajectories(canvas, tr, xmin=global_xmin, ymin=global_ymin, scale=scale)
+        draw_trajectories(canvas, tr)
 
-    ovals = redraw_positions(canvas, tr=tr, scale=scale, size=agent_size, xmin=global_xmin, ymin=global_ymin, frame=0)
+    ovals = redraw_positions(canvas, tr=tr, size=agent_size, frame=0)
+    canvas.set_redraw(lambda new_frame: redraw_positions(canvas, tr=tr, frame=int(new_frame), size=agent_size, ovals=ovals))
 
-    redraw = lambda new_frame: redraw_positions(canvas, tr=tr, scale=scale, frame=int(new_frame), size=agent_size, xmin=global_xmin, ymin=global_ymin, ovals=ovals)
-    timeline = Scale(window, length=W, from_=0, to=tr.steps, orient=HORIZONTAL, command=redraw)
-    timeline.pack()
-
-    def tick(omit=None):
-        if PLAYER_STATE == PLAYING:
-            timeline.set(timeline.get() + 1)
-
-        timeline.after(PLAY_SPEED, tick)
-
-    def toggle_player(omit=None):
-        global PLAYER_STATE
-        PLAYER_STATE = PAUSED if PLAYER_STATE == PLAYING else PLAYING
-
-    def modify_speed(change):
-        global PLAY_SPEED
-        PLAY_SPEED = min(max(PLAY_SPEED, 20) + change, 1000)
-
-    window.bind("<Right>", lambda key: timeline.set(timeline.get() + 1))
-    window.bind("<Left>", lambda key: timeline.set(timeline.get() - 1))
-
-    window.bind("<Up>", lambda key: modify_speed(25))
-    window.bind("<Down>", lambda key: modify_speed(-25))
-
-    window.bind("<space>", toggle_player)
-
-    tick()
-    window.mainloop()
+    canvas.main_loop()
