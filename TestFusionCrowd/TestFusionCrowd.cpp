@@ -49,7 +49,6 @@ void Run(std::shared_ptr<ITestCase> testCase, std::vector<long long> & outMeasur
 		sim->DoStep();
 
 		high_resolution_clock::time_point t2 = high_resolution_clock::now();
-
 		long long duration = duration_cast<microseconds>(t2 - t1).count();
 		measurements.push_back(duration);
 
@@ -104,7 +103,7 @@ void WriteToFile(std::shared_ptr<ITestCase> testCase, std::vector<long long> mea
 
 int main()
 {
-	std::ifstream navGraphFile("Resources\\unidirectionalgrid.navgraph");
+	std::ifstream navGraphFile("Resources\\graph\\twocycles.navgraph");
 	auto navGraph = FusionCrowd::NavGraph::LoadFromStream(navGraphFile);
 
 	std::cout << "Navgraph test";

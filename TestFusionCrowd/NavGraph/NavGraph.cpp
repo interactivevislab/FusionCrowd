@@ -19,13 +19,14 @@ namespace FusionCrowd
 		}
 		for(size_t n = 0; n < nodeCount; n++)
 		{
+			size_t id;
 			float x, y;
-			if(! (istream >> x >> y))
+			if(! (istream >> id >> x >> y))
 			{
 				throw "Invalid format";
 			}
 
-			nodes.push_back({n, Vector2(x, y)});
+			nodes.push_back({id, Vector2(x, y)});
 		}
 
 		size_t edgeCount;
@@ -36,18 +37,16 @@ namespace FusionCrowd
 
 		for(size_t e = 0; e < edgeCount; e++)
 		{
+			size_t id;
 			size_t nFrom, nTo;
 			float width, weight;
-			bool bidirectional;
 
-			if(! (istream >> nFrom >> nTo >> width >> weight >> bidirectional))
+			if(! (istream >> id >> nFrom >> nTo >> width >> weight))
 			{
 				throw "Invalid format";
 			}
 
-			edges.push_back({ e, nFrom, nTo, weight, width});
-			if(bidirectional)
-				edges.push_back({ edgeCount + e, nTo, nFrom, weight, width});
+			edges.push_back({ id, nFrom, nTo, weight, width});
 		}
 
 		return NavGraph(nodes, edges);

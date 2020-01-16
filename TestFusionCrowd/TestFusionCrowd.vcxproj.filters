@@ -54,6 +54,9 @@
     <ClInclude Include="NavGraph\NavGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="NavGraph\NavGraphPathPlanner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -89,6 +92,9 @@
     <ClCompile Include="NavGraph\NavGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="NavGraph\NavGraphPathPlanner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\simple.nav">
@@ -104,5 +110,8 @@
     <None Include="Resources\crossing.nav" />
     <None Include="Resources\circle.navgraph" />
     <None Include="Resources\twocycles.navgraph" />
+    <None Include="Resources\graph\randomgrid.navgraph" />
+    <None Include="Resources\graph\twocycles.navgraph" />
+    <None Include="Resources\graph\circle.navgraph" />
   </ItemGroup>
 </Project>

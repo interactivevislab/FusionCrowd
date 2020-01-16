@@ -158,10 +158,11 @@
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)\Resources" "$(TargetDir)\Resources\"</Command>
+      <Command>xcopy /Y /E "$(ProjectDir)\Resources" "$(TargetDir)\Resources\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="NavGraph\NavGraphPathPlanner.h" />
     <ClInclude Include="NavGraph\NavGraph.h" />
     <ClInclude Include="TestCases\StenkaNaStenkuTestCase.h" />
     <ClInclude Include="TestCases\FsmTestCase.h" />
@@ -177,6 +178,7 @@
     <ClInclude Include="TestCases\TradeshowTestCase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="NavGraph\NavGraph.cpp" />
     <ClCompile Include="TestCases\StenkaNaStenkuTestCase.cpp" />
     <ClCompile Include="TestCases\FsmTestCase.cpp" />
@@ -202,6 +204,18 @@
     </None>
     <None Include="Resources\graph.nav">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
+    <None Include="Resources\graph\circle.navgraph">
+      <DeploymentContent>true</DeploymentContent>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Resources\graph\randomgrid.navgraph">
+      <DeploymentContent>true</DeploymentContent>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Resources\graph\twocycles.navgraph">
+      <DeploymentContent>true</DeploymentContent>
+      <FileType>Document</FileType>
     </None>
     <None Include="Resources\pinhole.nav">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
