@@ -54,6 +54,7 @@ namespace FusionCrowd
 		void FreeMemory();
 		void SetInitialData(bool useGpu);
 		void FindNeighborsCpu();
+		void FindNeighborsCpuSquare();
 		void FindNeighborsGpu();
 
 		void Init(Point* points, int numberOfPoints, float worldWidth, float worldHeight, float searchRadius);
@@ -77,7 +78,8 @@ namespace FusionCrowd
 			int neighborsID[NUMBER_OF_NEIGHBORS];
 		};
 
-		PointNeighbors* FindNeighbors(Point* points, int numberOfPoints, float worldWidth, float worldHeight, float searchRadius, bool useGpu = true);
+		PointNeighbors* FindNeighbors(Point* points, int numberOfPoints, float worldWidth, float worldHeight, 
+			float searchRadius, bool useGpu = true, bool simplified = true);
 	};
 
 
