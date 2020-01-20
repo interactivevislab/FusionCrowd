@@ -170,7 +170,7 @@ namespace FusionCrowd
 		_bufferDescriptions[2] = { sizeof(int), numberOfPoints, sortedPointsId };
 
 		CpuConstants constants = { cellSize , cellsInRow , cellsInColumn , searchRadius };
-		
+
 		_calculator.SetInputBuffers(3, _bufferDescriptions);
 		_calculator.SetConstantBuffer(sizeof(CpuConstants), 1, &constants);
 		_calculator.SetOutputBuffer(sizeof(PointNeighbors), numberOfPoints);
@@ -180,10 +180,14 @@ namespace FusionCrowd
 	}
 
 
-	NeighborsSeeker::PointNeighbors* NeighborsSeeker::FindNeighbors(Point* points, int numberOfPoints, 
-		float worldWidth, float worldHeight, float searchRadius, bool useGpu)
+	NeighborsSeeker::PointNeighbors* NeighborsSeeker::FindNeighbors(Point* points, int numberOfPoints,
+		float worldWidth, float worldHeight, float searchRadius, bool useGpu, bool simplified)
 	{
 		Init(points, numberOfPoints, worldWidth, worldHeight, searchRadius);
+		if (simplified) {
+			FindNeighborsCpuSquare();
+			return pointNeighbors;
+		}
 		SetInitialData(useGpu);
 
 		FillCellDictioanary();
@@ -275,6 +279,33 @@ namespace FusionCrowd
 		return FusionCrowd::InRange(x, y, otherPoint.x, otherPoint.y, range);
 	}
 
+	void NeighborsSeeker::FindNeighborsCpuSquare() {
+
+		if (pointNeighbors == nullptr) {
+			pointNeighbors = new PointNeighbors[numberOfPoints];
+			for (int i = 0; i < numberOfPoints; i++) {
+				pointNeighbors[i].pointID = i;
+			}
+		}
+		for (int i = 0; i < numberOfPoints; i++) {
+			pointNeighbors[i].neighborsCount = 0;
+		}
+		for (int i = 0; i < numberOfPoints; i++) {
+			Point point = points[i]; // i = id
+			for (int j = 0; j < numberOfPoints; j++) {
+				if (i == j) continue;
+				Point otherPoint = points[j];
+				if (point.InRange(otherPoint, searchRadius)) {
+					PointNeighbors* neighbors = &pointNeighbors[i];
+					neighbors->neighborsID[neighbors->neighborsCount] = j;
+					neighbors->neighborsCount++;
+					if (neighbors->neighborsCount == NUMBER_OF_NEIGHBORS) {
+						break;
+					}
+				}
+			}
+		}
+	}
 #pragma endregion
 
 }
