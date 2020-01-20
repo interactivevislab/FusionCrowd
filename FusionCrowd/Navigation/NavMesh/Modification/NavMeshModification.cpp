@@ -221,6 +221,7 @@ namespace FusionCrowd {
 		}
 
 		_spatial_query->Update();
+		_navmesh.IncVersion();
 		return 0;
 	}
 
