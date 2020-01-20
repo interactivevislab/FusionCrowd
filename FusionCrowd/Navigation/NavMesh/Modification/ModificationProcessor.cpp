@@ -17,7 +17,7 @@ namespace FusionCrowd {
 	}
 
 	float ModificationProcessor::SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon) {
-		unsigned int global_poly_size = _modification._global_polygon.size();
+		unsigned int global_poly_size = polygon.size();
 		float res = 0;
 		_modification._global_polygon = std::vector<Vector2>(polygon.size());
 		_node_modificators = std::vector<NodeModificator*>();
@@ -34,6 +34,7 @@ namespace FusionCrowd {
 			}
 		}
 		ModificationHelper::SimplifyPoly(_modification._global_polygon);
+		global_poly_size = _modification._global_polygon.size();
 		std::vector<unsigned int> nodes_ids = std::vector<unsigned int>(global_poly_size);
 		if (global_poly_size < 3) return 0;
 		for (int i = 0; i < global_poly_size; i++) {
@@ -214,8 +215,7 @@ namespace FusionCrowd {
 
 		}
 
-		if (_node_modificators.size() == 0) return tres != 0 ? tres : -2;
-		//TODO remove
+		if (_node_modificators.size() == 0) return tres != 0 ? tres : -8;
 		if (tres < 0) return tres;
 		tres = _node_modificators.size();
 
@@ -591,8 +591,7 @@ namespace FusionCrowd {
 	}
 
 	/*Returns cross point with current_poly in dirrection v0->v1*/
-	Vector2 ModificationProcessor::FindVortexCrossPoint(Vector2 v0, Vector2 v1, bool& success) {
-		success = true;
+	Vector2 ModificationProcessor::FindVortexCrossPoint(Vector2 v0, Vector2 v1) {
 		//calculate line coef
 		float k0 = 0.0;
 		float c0 = 0.0;
@@ -654,10 +653,7 @@ namespace FusionCrowd {
 				else continue;
 			}
 		}
-		//TODO remove
-		success = false;
-		tres = -999;
-		return Vector2(999999, 999999);
+		throw 1;
 	}
 
 	/*Adds crosspoints for polygon cut*/
@@ -666,8 +662,7 @@ namespace FusionCrowd {
 		crosspoints_ids = std::vector<unsigned int>(max);
 		crosspoints = std::vector<Vector2>(max);
 		for (int i = 0; i < max; i++) {
-			bool f;
-			Vector2 crosspoint = FindVortexCrossPoint(_local_polygon[i], _local_polygon[(i + 1) % _local_polygon.size()], f);
+			Vector2 crosspoint = FindVortexCrossPoint(_local_polygon[i], _local_polygon[(i + 1) % _local_polygon.size()]);
 			crosspoints_ids[i] = _modification.AddVertex(crosspoint);
 			crosspoints[i] = crosspoint;
 		}

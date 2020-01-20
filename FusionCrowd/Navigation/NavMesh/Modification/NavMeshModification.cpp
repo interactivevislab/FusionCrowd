@@ -46,7 +46,6 @@ namespace FusionCrowd {
 	/*Adds all created nodes and vertexes*/
 	int NavMeshModification::Finalize() {
 
-		//todo check
 		for (int i = _addededges.size() - 1; i >= 0; i--) {
 			if (_addededges[i]->getWidth() <= min_width) {
 				delete _addededges[i];
@@ -141,10 +140,10 @@ namespace FusionCrowd {
 			if (obtacle_nodes_ids[i] > _navmesh.nCount + _addednodes.size() - 1) throw obtacle_nodes_ids[i];
 		}
 
-		//todo it shouldn't happend
 		for (int i = _addedobstacles.size() - 1; i >= 0; i--) {
 			if (_addedobstacles[i]->getNode()->_id > _navmesh.nCount + _addednodes.size() - 1) {
 				_addedobstacles.erase(_addedobstacles.begin() + i);
+				throw 1;
 			}
 		}
 
@@ -231,11 +230,9 @@ namespace FusionCrowd {
 			return true;
 		}
 
-		//todo it shouldnt happend
 		if (edge->getFirstNode() == nullptr && edge->getSecondNode() == nullptr) {
-			return false;
+			throw 1;
 		}
-
 		float d = 0.25;
 		Vector2 mid_edge = edge->getP0(edge->getWidth() / 2.0);
 		Vector2 check_point;
@@ -255,8 +252,11 @@ namespace FusionCrowd {
 		check_point *= d;
 		check_point += mid_edge;
 		size_t node_id = _localizer->getNodeId(check_point);
+
 		if (node_id == exist_id) {
-			return false; //TODO it shouldn't happend
+			//todo it shouldn't happend
+			return false;
+			throw 1;
 		}
 		if (node_id == NavMeshLocation::NO_NODE) {
 
@@ -272,8 +272,6 @@ namespace FusionCrowd {
 			else {
 				delete obst;
 			}
-			//todo remove
-			if (std::isnan(obst->getP1().x)) throw 1;
 			return false;
 		}
 		if (edge->getFirstNode() == nullptr) {

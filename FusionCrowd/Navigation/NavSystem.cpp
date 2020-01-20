@@ -334,9 +334,9 @@ namespace FusionCrowd
 		}
 
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
-			auto q = _navMeshQuery.get();
-			auto nmm = ModificationProcessor(*_navMesh, _localizer, q);
-			return nmm.CutPolygonFromMesh(polygon);
+			auto query = _navMeshQuery.get();
+			auto processor = ModificationProcessor(*_navMesh, _localizer, query);
+			return processor.CutPolygonFromMesh(polygon);
 		}
 
 		bool ExportNavMeshToFile(std::string file_name) {

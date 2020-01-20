@@ -201,8 +201,6 @@ namespace FusionCrowd
 		for (int i = 0; i < added_nodes.size(); i++) {
 			added_boxes.push_back({ added_nodes[i]->GetBB(), added_nodes[i]->_id });
 		}
-
-		//TODO
-		//_nodeBBTree->UpdateTree(added_boxes, del_nodes);
+		_nodeBBTree->UpdateTree(added_boxes, del_nodes);
 	}
 }
