@@ -7,7 +7,7 @@
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/Obstacle.h"
 #include "Navigation/NavMesh/NavMesh.h"
-#include "Navigation/NavMesh/NavMeshModifyer.h"
+#include "Navigation/NavMesh/Modification/ModificationProcessor.h"
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
 #include "Navigation/FastFixedRadiusNearestNeighbors/NeighborsSeeker.h"
 
@@ -335,7 +335,7 @@ namespace FusionCrowd
 
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 			auto q = _navMeshQuery.get();
-			auto nmm = NavMeshModifyer(*_navMesh, _localizer, q);
+			auto nmm = ModificationProcessor(*_navMesh, _localizer, q);
 			return nmm.CutPolygonFromMesh(polygon);
 		}
 
