@@ -69,19 +69,7 @@ namespace FusionCrowd
 		// Must: output.len >= GetAgentCount();
 		bool GetAgentsInfo(FCArray<AgentInfo> & output);
 
-		//nav mesh draw export
-		size_t GetVertexCount();
-		bool GetVertices(FCArray<NavMeshVetrex> & output);
-		size_t GetNodesCount();
-		size_t GetNodeVertexCount(size_t node_id);
-		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id);
-		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
-		size_t GetEdgesCount();
-		bool GetEdges(FCArray<EdgeInfo> & output);
-		size_t GetObstaclesCount();
-		bool GetObstacles(FCArray<EdgeInfo> & output);
-		bool ExportMeshToFile(char* file_path);
-
+		NavSystem* GetNavSystem() const;
 	private:
 		class SimulatorImpl;
 

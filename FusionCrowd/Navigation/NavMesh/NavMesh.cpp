@@ -407,12 +407,20 @@ namespace FusionCrowd
 		}
 	}
 
-
 	NavMesh::~NavMesh()
 	{
 		clear();
 	}
 
+	size_t NavMesh::GetVersion() const
+	{
+		return _version;
+	}
+
+	void NavMesh::IncVersion()
+	{
+		_version++;
+	}
 
 	size_t NavMesh::GetVertexCount() {
 		return vCount;
@@ -510,7 +518,8 @@ namespace FusionCrowd
 		return obstCount;
 	}
 
-	bool NavMesh::GetObstacles(FCArray<EdgeInfo> & output) {
+	bool NavMesh::GetObstacles(FCArray<EdgeInfo> & output)
+	{
 		if (output.size() < obstCount)
 		{
 			return false;
@@ -531,10 +540,10 @@ namespace FusionCrowd
 		return true;
 	}
 
-
-	bool NavMesh::ExportToFile(std::string file_name) {
+	bool NavMesh::ExportNavMeshToFile(char* file_name)
+	{
 		std::ofstream file;
-		file.open(file_name);
+		file.open(std::string(file_name));
 		std::vector<Vector2> tmpv;
 		//vertices
 		file << vCount + eCount*2 +obstCount*2 << '\n';

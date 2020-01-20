@@ -2,14 +2,14 @@
 
 namespace FusionCrowd
 {
-	PortalRoute::PortalRoute(unsigned int start, unsigned int end) : _startNode(start),
-	                                                                 _endNode(end), _maxWidth(1e6f),
-	                                                                 _bestSmallest(1e6f), _length(0.f)
+	PortalRoute::PortalRoute(unsigned int start, unsigned int end, size_t navMeshVersion) :
+		_startNode(start), _endNode(end), _maxWidth(1e6f), _bestSmallest(1e6f), _length(0.f), _nmVersion(navMeshVersion)
 	{
 	}
 
-	PortalRoute::~PortalRoute()
+	bool PortalRoute::IsValid(size_t navMeshVersion) const
 	{
+		return navMeshVersion == _nmVersion;
 	}
 
 	void PortalRoute::appendWayPortal(const NavMeshEdge* edge, unsigned int node)

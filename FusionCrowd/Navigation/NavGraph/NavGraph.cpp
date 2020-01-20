@@ -1,6 +1,3 @@
-#include "pch.h"
-
-
 #include "NavGraph.h"
 
 using namespace DirectX::SimpleMath;

@@ -176,7 +176,7 @@ namespace FusionCrowd
 		NavMeshNode* prevNode = &_navMesh->GetNodeByPos(prev);
 		++itr;
 
-		PortalRoute* route = new PortalRoute(startID, endID);
+		PortalRoute* route = new PortalRoute(startID, endID, _navMesh->GetVersion());
 		route->_bestSmallest = minWidth;
 		for (; itr != path.end(); ++itr)
 		{

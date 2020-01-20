@@ -2,6 +2,7 @@ import csv
 import random
 import argparse
 from player import Player
+from navgraph.navgraph import NavGraph
 
 from itertools import zip_longest, tee
 from collections import defaultdict, namedtuple
@@ -172,11 +173,12 @@ def draw_mesh(canvas: Player, mesh: NavMesh, show_text=True):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("source_file")
-    parser.add_argument("navmesh_file")
+    parser.add_argument("--navmesh", default=None)
+    parser.add_argument("--navgraph", default=None)
     parser.add_argument("--scale", default=1)
-    parser.add_argument("--agent_size", default=1)
-    parser.add_argument("--hide_trajectory", action='store_true')
-    parser.add_argument("--hide_mesh_text", action='store_true')
+    parser.add_argument("--agent-size", default=1)
+    parser.add_argument("--hide-trajectory", action='store_true')
+    parser.add_argument("--show-mesh-text", action='store_true')
 
     args = parser.parse_args()
     scale = float(args.scale)
@@ -184,10 +186,16 @@ if __name__ == "__main__":
     hide_trajectory = args.hide_trajectory
 
     tr = read_trajectories(args.source_file)
-    mesh = read_mesh(args.navmesh_file)
 
     canvas = Player(scale, len(tr[0]))
-    draw_mesh(canvas, mesh, show_text=not args.hide_mesh_text)
+
+    if args.navmesh is not None:
+        mesh = read_mesh(args.navmesh)
+        draw_mesh(canvas, mesh, show_text=args.show_mesh_text)
+
+    if args.navgraph is not None:
+        graph = NavGraph(args.navgraph)
+        graph.draw(canvas)
 
     if not hide_trajectory:
         draw_trajectories(canvas, tr)

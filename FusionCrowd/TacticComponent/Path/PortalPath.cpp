@@ -21,6 +21,11 @@ namespace FusionCrowd
 	{
 	}
 
+	bool PortalPath::IsValid(size_t navMeshVersion) const
+	{
+		return _route->IsValid(navMeshVersion);
+	}
+
 	void PortalPath::setPreferredDirection(AgentSpatialInfo & agent, float headingCos)
 	{
 		const size_t PORTAL_COUNT = _route->getPortalCount();

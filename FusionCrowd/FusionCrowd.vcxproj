@@ -26,9 +26,13 @@
     <ClInclude Include="Export\Export.h" />
     <ClInclude Include="Export\Fsm\IFsm.h" />
     <ClInclude Include="Export\Fsm\IStrategyConfigurator.h" />
+    <ClInclude Include="Export\INavMeshPublic.h" />
     <ClInclude Include="Export\ModelAgentParams.h" />
+    <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
+    <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
+    <ClInclude Include="Navigation\NavGraph\NavGraphPathPlanner.h" />
     <ClInclude Include="Navigation\NavMesh\QuadTree.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\ModificationProcessor.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\ModificationHelper.h" />
@@ -86,6 +90,8 @@
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export\Export.cpp" />
+    <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
+    <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationProcessor.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationHelper.cpp" />

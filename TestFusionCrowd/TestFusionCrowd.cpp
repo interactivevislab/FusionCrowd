@@ -20,8 +20,6 @@
 #include "Export/Export.h"
 #include "Util/RecordingSerializer.h"
 
-#include "NavGraph/NavGraph.h"
-
 #include "ThirdParty/date.h"
 
 using namespace TestFusionCrowd;
@@ -103,33 +101,11 @@ void WriteToFile(std::shared_ptr<ITestCase> testCase, std::vector<long long> mea
 
 int main()
 {
-	std::ifstream navGraphFile("Resources\\graph\\twocycles.navgraph");
-	auto navGraph = FusionCrowd::NavGraph::LoadFromStream(navGraphFile);
-
-	std::cout << "Navgraph test";
-	for(auto & node : navGraph.GetAllNodes())
-	{
-		std::cout << "Node id=" << node.id << " pos=(" << node.position.x << ", " << node.position.y << ")" << std::endl;
-		std::cout << "Out neighbours:" << std::endl;
-		for(auto & neighbour : navGraph.GetOutNeighbours(node.id))
-		{
-			std::cout << "  id=" << neighbour.id << std::endl;
-		}
-
-		std::cout << "In neighbours:" << std::endl;
-		for(auto & neighbour : navGraph.GetInNeighbours(node.id))
-		{
-			std::cout << "  id=" << neighbour.id << std::endl;
-		}
-	}
-
-	return 0;
-
 	std::vector<std::shared_ptr<ITestCase>> cases =
 	{
 
 		// std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::ORCA_ID, 50, 2000, true)),
-		std::shared_ptr<ITestCase>((ITestCase*) new TradeshowTestCase(1025, 4000, false)),
+		std::shared_ptr<ITestCase>((ITestCase*) new TradeshowTestCase(1025, 1000, true)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new ZanlungoCase()),
 		// std::shared_ptr<ITestCase>((ITestCase*) new CrossingTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new PinholeTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000)),

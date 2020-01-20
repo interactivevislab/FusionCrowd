@@ -62,20 +62,17 @@ class NavGraph:
 
                 self.edges[edge.id] = edge
 
-    def draw(self, canvas, scale=1, shift=(0, 0)):
-        r = 5
-        shift_x, shift_y = shift
+    def draw(self, canvas):
+        r = .5
         for node in self.nodes.values():
-            x = shift_x + node.x * scale
-            y = shift_y + node.y * scale
-
-            canvas.circle(x, y, r, outline="blue")
-            canvas.create_text(
-                x, y,
-                anchor=NW,
+            canvas.circle((node.x, node.y), r, outline="blue")
+            canvas.text(
+                (node.x, node.y),
                 text=str(node.id),
-                fill="#ccc"
+                color="#ccc"
             )
 
         for edge in self.edges.values():
-            canvas.line(self.nodes[edge.frm], self.nodes[edge.to], "blue")
+            p1 = self.nodes[edge.frm].x, self.nodes[edge.frm].y
+            p2 = self.nodes[edge.to].x, self.nodes[edge.to].y
+            canvas.vector(p1, p2, "blue")

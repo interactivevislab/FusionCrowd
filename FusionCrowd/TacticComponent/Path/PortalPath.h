@@ -35,6 +35,9 @@ namespace FusionCrowd
 		inline const WayPortal* getPortal(size_t i) const { return _route->getPortal(i); }
 		void setWaypoints(size_t start, size_t end, const DirectX::SimpleMath::Vector2& p0,
 		                  const DirectX::SimpleMath::Vector2& dir);
+
+		bool IsValid(size_t navMeshVersion) const;
+
 	protected:
 		const PortalRoute* _route;
 		const Goal _goal;
