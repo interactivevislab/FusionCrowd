@@ -1,8 +1,8 @@
-#include "pch.h"
-
 #include <map>
 #include <set>
 #include <queue>
+
+#include "Navigation/NavGraph/NavGraph.h"
 
 #include "NavGraphPathPlanner.h"
 

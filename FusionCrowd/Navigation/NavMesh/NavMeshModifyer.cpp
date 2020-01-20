@@ -300,6 +300,7 @@ namespace FusionCrowd {
 			if (std::isnan(_navmesh.edges[i].getP1().x)) throw 1;
 		}
 
+		_navmesh.IncVersion();
 		return tres;
 	}
 

@@ -296,51 +296,15 @@ namespace FusionCrowd
 			_neighborsSeeker.gridCellCoeff = coeff;
 		}
 
-		//nav mesh draw export
-		size_t GetVertexCount() {
-			return _navMesh->GetVertexCount();
-		}
-
-		bool GetVertices(FCArray<NavMeshVetrex> & output) {
-			return _navMesh->GetVertices(output);
-		}
-
-		size_t GetNodesCount() {
-			return _navMesh->GetNodesCount();
-		}
-
-		size_t GetNodeVertexCount(size_t node_id) {
-			return _navMesh->GetNodeVertexCount(node_id);
-		}
-
-		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
-			return _navMesh->GetNodeVertexInfo(output, node_id);
-		}
-
-		size_t GetEdgesCount() {
-			return _navMesh->GetEdgesCount();
-		}
-
-		bool GetEdges(FCArray<EdgeInfo> & output) {
-			return _navMesh->GetEdges(output);
-		}
-
-		size_t GetObstaclesCount() {
-			return _navMesh->GetObstaclesCount();
-		}
-
-		bool GetObstacles(FCArray<EdgeInfo> & output) {
-			return _navMesh->GetObstacles(output);
-		}
-
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 			auto q = _navMeshQuery.get();
 			auto nmm = NavMeshModifyer(*_navMesh, _localizer, q);
 			return nmm.CutPolygonFromMesh(polygon);
 		}
 
-		bool ExportNavMeshToFile(std::string file_name) {
-			return _navMesh->ExportToFile(file_name);
+		INavMeshPublic* GetPublicNavMesh() const
+		{
+			return _navMesh.get();
 		}
 
 	private:
@@ -411,50 +375,13 @@ namespace FusionCrowd
 	}
 
 
-	//nav mesh draw export
-	size_t NavSystem::GetVertexCount() {
-		return pimpl->GetVertexCount();
+	INavMeshPublic* NavSystem::GetPublicNavMesh() const
+	{
+		return pimpl->GetPublicNavMesh();
 	}
 
-	bool NavSystem::GetVertices(FCArray<NavMeshVetrex> & output) {
-		return pimpl->GetVertices(output);
-	}
-
-
-	size_t NavSystem::GetNodesCount() {
-		return pimpl->GetNodesCount();
-	}
-
-	size_t NavSystem::GetNodeVertexCount(size_t node_id) {
-		return pimpl->GetNodeVertexCount(node_id);
-	}
-
-	bool NavSystem::GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
-		return pimpl->GetNodeVertexInfo(output, node_id);
-	}
-
-	size_t NavSystem::GetEdgesCount() {
-		return pimpl->GetEdgesCount();
-	}
-
-	bool NavSystem::GetEdges(FCArray<EdgeInfo> & output) {
-		return pimpl->GetEdges(output);
-	}
-
-	size_t NavSystem::GetObstaclesCount() {
-		return pimpl->GetObstaclesCount();
-	}
-
-	bool NavSystem::GetObstacles(FCArray<EdgeInfo> & output) {
-		return pimpl->GetObstacles(output);
-	}
-
-	float NavSystem::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
+	float NavSystem::CutPolygonFromMesh(FCArray<NavMeshVetrex>& polygon)
+	{
 		return pimpl->CutPolygonFromMesh(polygon);
 	}
-
-	bool NavSystem::ExportNavMeshToFile(std::string file_name) {
-		return pimpl->ExportNavMeshToFile(file_name);
-	}
-
 }

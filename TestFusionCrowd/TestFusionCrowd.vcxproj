@@ -162,8 +162,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="NavGraph\NavGraphPathPlanner.h" />
-    <ClInclude Include="NavGraph\NavGraph.h" />
     <ClInclude Include="TestCases\StenkaNaStenkuTestCase.h" />
     <ClInclude Include="TestCases\FsmTestCase.h" />
     <ClInclude Include="TestCases\ITestCase.h" />
@@ -178,8 +176,6 @@
     <ClInclude Include="TestCases\TradeshowTestCase.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="NavGraph\NavGraphPathPlanner.cpp" />
-    <ClCompile Include="NavGraph\NavGraph.cpp" />
     <ClCompile Include="TestCases\StenkaNaStenkuTestCase.cpp" />
     <ClCompile Include="TestCases\FsmTestCase.cpp" />
     <ClCompile Include="TestCases\PinholeTestCase.cpp" />

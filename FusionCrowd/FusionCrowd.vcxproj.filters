@@ -44,6 +44,8 @@
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
     <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshModifyer.cpp" />
+    <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
+    <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -107,6 +109,10 @@
     <ClInclude Include="Navigation\NavMesh\QuadTree.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshModifyer.h" />
     <ClInclude Include="Math\BoundingBox.h" />
+    <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
+    <ClInclude Include="Navigation\NavGraph\NavGraphPathPlanner.h" />
+    <ClInclude Include="Export\INavSystemPublic.h" />
+    <ClInclude Include="Export\INavMeshPublic.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

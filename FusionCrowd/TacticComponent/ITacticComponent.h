@@ -15,7 +15,7 @@ namespace FusionCrowd
 		virtual bool DeleteAgent(size_t id) = 0;
 
 		virtual void Update(float timeStep) = 0;
-		virtual DirectX::SimpleMath::Vector2 GetClosiestAvailablePoint(DirectX::SimpleMath::Vector2 p) = 0;
+		virtual DirectX::SimpleMath::Vector2 GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) = 0;
 		virtual ~ITacticComponent() { };
 	};
 }

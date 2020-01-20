@@ -3,6 +3,8 @@
 #include "Export/FCArray.h"
 #include "Export/IRecording.h"
 #include "Export/IStrategyComponent.h"
+#include "Export/INavMeshPublic.h"
+#include "Export/INavSystemPublic.h"
 #include "Export/ComponentId.h"
 #include "Export/ModelAgentParams.h"
 
@@ -26,20 +28,6 @@ namespace FusionCrowd
 			ComponentId stratCompId;
 
 			float goalX, goalY;
-		};
-
-		struct FUSION_CROWD_API NavMeshVetrex
-		{
-			float X, Y;
-		};
-
-		struct FUSION_CROWD_API EdgeInfo
-		{
-			//p0, p1
-			float x1, x2, y1, y2;
-			//nodes centers
-			float nx0, nx1, ny0, ny1;
-			int error_code;
 		};
 
 		enum FUSION_CROWD_API OperationStatus
@@ -76,20 +64,8 @@ namespace FusionCrowd
 			virtual IStrategyComponent* GetStrategy(ComponentId strategyId) const = 0;
 			virtual void SetIsRecording(bool isRecording) = 0;
 
-			//nav mesh draw export
-			virtual size_t GetVertexCount() = 0;
-			virtual bool GetVertices(FCArray<NavMeshVetrex> & output) = 0;
-			virtual size_t GetNodesCount() = 0;
-			virtual size_t GetNodeVertexCount(size_t node_id) = 0;
-			virtual bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id) = 0;
-			virtual size_t GetEdgesCount() = 0;
-			virtual bool GetEdges(FCArray<EdgeInfo> & output) = 0;
-			virtual size_t GetObstaclesCount() = 0;
-			virtual bool GetObstacles(FCArray<EdgeInfo> & output) = 0;
-			virtual bool ExportMeshToFile(char* file_name) = 0;
-
-			//nav mesh modification
-			virtual float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) = 0;
+			virtual INavMeshPublic* GetNavMesh() const = 0;
+			virtual INavSystemPublic* GetNavSystem() const = 0;
 		};
 
 		/*

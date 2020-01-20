@@ -87,7 +87,6 @@ namespace FusionCrowd
 			return _sim->GetAgentCount();
 		}
 
-
 		void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params)
 		{
 			_sim->SetAgentStrategyParam(agentId, strategyId, params);
@@ -98,49 +97,14 @@ namespace FusionCrowd
 			return _sim->GetStrategy(strategyId);
 		}
 
-		//nav mesh draw export
-		size_t GetVertexCount() {
-			return _sim->GetVertexCount();
+		INavMeshPublic* GetNavMesh() const
+		{
+			return _sim->GetNavSystem()->GetPublicNavMesh();
 		}
 
-		bool GetVertices(FCArray<NavMeshVetrex> & output) {
-			return _sim->GetVertices(output);
-		}
-
-		size_t GetNodesCount() {
-			return _sim->GetNodesCount();
-		}
-
-		size_t GetNodeVertexCount(size_t node_id) {
-			return _sim->GetNodeVertexCount(node_id);
-		}
-
-		bool GetNodeVertexInfo(FCArray<int> & output, size_t node_id) {
-			return _sim->GetNodeVertexInfo(output, node_id);
-		}
-
-		size_t GetEdgesCount() {
-			return _sim->GetEdgesCount();
-		}
-
-		bool GetEdges(FCArray<EdgeInfo> & output) {
-			return _sim->GetEdges(output);
-		}
-
-		size_t GetObstaclesCount() {
-			return _sim->GetObstaclesCount();
-		}
-
-		bool GetObstacles(FCArray<EdgeInfo> & output) {
-			return _sim->GetObstacles(output);
-		}
-
-		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
-			return _sim->CutPolygonFromMesh(polygon);
-		}
-
-		bool ExportMeshToFile(char* file_name) {
-			return _sim->ExportMeshToFile(file_name);
+		INavSystemPublic* GetNavSystem() const
+		{
+			return _sim->GetNavSystem();
 		}
 
 	private:

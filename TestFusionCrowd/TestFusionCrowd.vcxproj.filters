@@ -54,9 +54,6 @@
     <ClInclude Include="NavGraph\NavGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NavGraph\NavGraphPathPlanner.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -90,9 +87,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NavGraph\NavGraph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NavGraph\NavGraphPathPlanner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

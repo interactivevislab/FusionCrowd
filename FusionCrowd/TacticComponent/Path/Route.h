@@ -14,8 +14,8 @@ namespace FusionCrowd
 	class FUSION_CROWD_API PortalRoute
 	{
 	public:
-		PortalRoute(unsigned int start, unsigned int end);
-		~PortalRoute();
+		PortalRoute(unsigned int start, unsigned int end, size_t navMeshVersion);
+
 		inline unsigned int getStartNode() const { return _startNode; }
 		inline unsigned int getEndNode() const { return _endNode; }
 		inline size_t getPortalCount() const { return _portals.size(); }
@@ -24,6 +24,9 @@ namespace FusionCrowd
 		const WayPortal* getPortal(size_t i) const { return &_portals[i]; }
 		void appendWayPortal(const NavMeshEdge* edge, unsigned int node);
 		bool isEquivalent(const PortalRoute* route);
+
+		bool IsValid(size_t navMeshVersion) const;
+
 		friend class PathPlanner;
 
 	protected:
@@ -33,5 +36,6 @@ namespace FusionCrowd
 		float _bestSmallest;
 		float _length;
 		std::vector<WayPortal> _portals;
+		size_t _nmVersion;
 	};
 }

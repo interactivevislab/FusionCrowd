@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "NavGraph/NavGraph.h"
+#include "Navigation/NavGraph/NavGraph.h"
 
 namespace FusionCrowd
 {

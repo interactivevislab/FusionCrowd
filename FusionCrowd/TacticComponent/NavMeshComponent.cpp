@@ -20,33 +20,33 @@ namespace FusionCrowd
 	{
 	}
 
+	NavMeshLocation NavMeshComponent::Replan(Vector2 fromPoint, const Goal & target, float agentRadius)
+	{
+		Vector2 correctedFrom = GetClosestAvailablePoint(fromPoint);
+		Vector2 correctedTarget = GetClosestAvailablePoint(target.getCentroid());
+
+		unsigned int from = _localizer->getNodeId(correctedFrom);
+		unsigned int to = _localizer->getNodeId(correctedTarget);
+
+		auto planner = _localizer->getPlanner();
+		auto* route = planner->getRoute(from, to, agentRadius);
+		std::shared_ptr<PortalPath> path = std::make_shared<PortalPath>(fromPoint, target, route, agentRadius);
+
+		NavMeshLocation location(from);
+		location.setPath(path);
+
+		return location;
+	}
+
 	void NavMeshComponent::AddAgent(size_t id)
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(id);
 		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(id);
-		agentInfo.pos = GetClosiestAvailablePoint(agentInfo.pos);
-
-		unsigned int from = _localizer->getNodeId(agentInfo.pos);
-		unsigned int to = _localizer->getNodeId(agentGoal.getCentroid());
-
-		assert(from != NavMeshLocation::NO_NODE && "Agent is not on the nav mesh");
-		//assert(to != NavMeshLocation::NO_NODE && "Agent goal is not on the nav mesh");
-		if (from == NavMeshLocation::NO_NODE) {
-			throw 1;
-		}
-		if (to==NavMeshLocation::NO_NODE){
-			to = _localizer->getNodeId(GetClosiestAvailablePoint(agentGoal.getCentroid()));
-		}
-		std::shared_ptr<PathPlanner> planner = _localizer->getPlanner();
-		PortalRoute * route = planner->getRoute(from, to, agentInfo.radius);
-		auto path = std::make_shared<PortalPath>(agentInfo.pos, agentGoal, route, agentInfo.radius);
-
-		NavMeshLocation location(_localizer->getNodeId(agentInfo.pos));
-		location.setPath(path);
+		agentInfo.pos = GetClosestAvailablePoint(agentInfo.pos);
 
 		AgentStruct agtStruct;
 		agtStruct.id = id;
-		agtStruct.location = location;
+		agtStruct.location = Replan(agentInfo.pos, agentGoal, agentInfo.radius);
 
 		_agents.push_back(agtStruct);
 	}
@@ -63,12 +63,18 @@ namespace FusionCrowd
 			size_t id = agtStruct.id;
 			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
 
-			updateLocation(info, agtStruct, false);
-			setPrefVelocity(info, agtStruct);
+			if(IsReplanNeeded(info, agtStruct))
+			{
+				auto & curGoal = agtStruct.location.getPath()->getGoal();
+				agtStruct.location = Replan(info.pos, curGoal, info.radius);
+			}
+
+			UpdateLocation(info, agtStruct, false);
+			SetPrefVelocity(info, agtStruct);
 		}
 	}
 
-	DirectX::SimpleMath::Vector2 NavMeshComponent::GetClosiestAvailablePoint(DirectX::SimpleMath::Vector2 p) {
+	DirectX::SimpleMath::Vector2 NavMeshComponent::GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) {
 		if (_localizer->findNodeBlind(p) != NavMeshLocation::NO_NODE) return p;
 		float min_dist = INFINITY;
 		DirectX::SimpleMath::Vector2 res;
@@ -84,7 +90,17 @@ namespace FusionCrowd
 		return res;
 	}
 
-	void NavMeshComponent::setPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
+	bool NavMeshComponent::IsReplanNeeded(AgentSpatialInfo& agentInfo, AgentStruct& agentStruct)
+	{
+		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
+		auto path = agentStruct.location.getPath();
+		return
+			path == nullptr ||
+			path->getGoal().getID() != agentGoal.getID() ||
+			!path->IsValid(_navMesh->GetVersion());
+	}
+
+	void NavMeshComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
@@ -94,7 +110,7 @@ namespace FusionCrowd
 			unsigned int goalNode = _localizer->getNodeId(goalPoint);
 			unsigned int agentNode = _localizer->getNodeId(agentInfo.pos);
 			if (goalNode == NavMeshLocation::NO_NODE) {
-				goalPoint = GetClosiestAvailablePoint(agentGoal.getCentroid());
+				goalPoint = GetClosestAvailablePoint(agentGoal.getCentroid());
 				_simulator->SetAgentGoal(agentInfo.id, goalPoint);
 				goalNode = _localizer->getNodeId(goalPoint);
 			}
@@ -116,7 +132,7 @@ namespace FusionCrowd
 		path->setPreferredDirection(agentInfo, _headingDevCos);
 	}
 
-	unsigned int NavMeshComponent::updateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const
+	unsigned int NavMeshComponent::UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const
 	{
 		// NOTE: This will create a default location instance if the agent didn't already
 		//	have one
@@ -187,35 +203,8 @@ namespace FusionCrowd
 		return _localizer;
 	}
 
-	/*
-	void NavMeshComponent::setNode(size_t agentID, unsigned int nodeID)
+	std::shared_ptr<NavMesh> NavMeshComponent::GetNavMesh() const
 	{
-		_locations[agentID].setNode(nodeID);
-	}
-
-	PortalPath * NavMeshComponent::getPath(size_t id)
-	{
-		PortalPath * path = 0x0;
-		auto loc = _agents[id].location;
-		if (loc.isPath()) {
-			path = loc._path;
-		}
-		return path;
-	}
-
-	void NavMeshComponent::setPath(size_t agentID, PortalPath * path)
-	{
-		_locations[agentID].setPath(path);
-	}
-
-	void NavMeshComponent::clearPath(size_t agentID)
-	{
-		if (_locations.count(agentID) > 0) {
-			_locations[agentID].clearPath();
-		}
-	}*/
-
-	NavMeshComponent::~NavMeshComponent()
-	{
+		return _localizer->getNavMesh();
 	}
 }
