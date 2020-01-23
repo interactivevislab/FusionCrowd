@@ -1,6 +1,5 @@
 #include "QuadTree.h"
 
-#include <set>
 #include <algorithm>
 #include <map>
 
@@ -226,6 +225,18 @@ namespace FusionCrowd
 		return currentId;
 	}
 
+	void QuadTree::MakeDepthWalk(std::vector<size_t>& depth_walk, size_t parent_pos, std::set<size_t>& visited) {
+		if (visited.count(parent_pos)) return;
+		depth_walk.push_back(parent_pos);
+		visited.insert(parent_pos);
+		auto & node = _stored_nodes[parent_pos];
+		if (node.LeafNode() || node.firstChild ==(size_t)-1 ) return;
+		MakeDepthWalk(depth_walk, node.firstChild, visited);
+		MakeDepthWalk(depth_walk, node.firstChild + 1, visited);
+		MakeDepthWalk(depth_walk, node.firstChild + 2, visited);
+		MakeDepthWalk(depth_walk, node.firstChild + 3, visited);
+	}
+
 	void QuadTree::UpdateTree(std::vector<Box>& add_boxes, std::vector<size_t>& del_boxes)
 	{
 		std::map<size_t, std::vector<Box>> additions;
@@ -276,9 +287,14 @@ namespace FusionCrowd
 			removals[idFound].insert(boxId);
 		}
 
+		std::vector<size_t> depth_walk;
+		std::set<size_t> visited;
+		MakeDepthWalk(depth_walk, 0, visited);
+
 		// For each node we will remove boxes that need to be removed and extend vector with boxes to be added
 		int runningMove = 0;
-		for(size_t nodeId = 0; nodeId < _stored_nodes.size(); nodeId++)
+		//for(size_t nodeId = 0; nodeId < _stored_nodes.size(); nodeId++)
+		for (size_t nodeId : depth_walk)
 		{
 			auto & node = _stored_nodes[nodeId];
 			node.start += runningMove;
@@ -290,7 +306,7 @@ namespace FusionCrowd
 				auto & rems = removals[nodeId];
 
 				size_t pos = node.start;
-				while(rems.size() < node.len && pos < node.start + node.len)
+				while (pos < node.start + node.len - freedSpace)
 				{
 					size_t id = _stored_boxes[pos].objectId;
 
@@ -299,6 +315,7 @@ namespace FusionCrowd
 						// Just copy probably valid box from the end and overwriting the one we are deleting
 						// We will check this new box on the next step
 						_stored_boxes[pos] = _stored_boxes[node.start + node.len - freedSpace - 1];
+						_stored_boxes[node.start + node.len - freedSpace - 1] = {{0,0,0,0}, (size_t)-1 };
 						freedSpace++;
 					} else
 					{

@@ -143,6 +143,8 @@ namespace FusionCrowd {
 		for (int i = _addedobstacles.size() - 1; i >= 0; i--) {
 			if (_addedobstacles[i]->getNode()->_id > _navmesh.nCount + _addednodes.size() - 1) {
 				_addedobstacles.erase(_addedobstacles.begin() + i);
+				//TODO that happens then vertex on node edge
+				continue;
 				throw 1;
 			}
 		}
@@ -232,6 +234,8 @@ namespace FusionCrowd {
 		}
 
 		if (edge->getFirstNode() == nullptr && edge->getSecondNode() == nullptr) {
+			//TODO that happens then vertex on node edge
+			return false;
 			throw 1;
 		}
 		float d = 0.25;

@@ -47,79 +47,25 @@ namespace FusionCrowd
 		return sum > 0;
 	}
 
-	std::vector<Vector2> ModificationHelper::FindPolyAndSegmentCrosspoints(Vector2 v0, Vector2 v1, NavMeshPoly* poly) {
+	std::vector<Vector2> ModificationHelper::FindPolyAndSegmentCrosspoints(Vector2 q, Vector2 v1, NavMeshPoly* poly) {
+		//https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
 		std::vector<Vector2> res = std::vector<Vector2>();
-		//calculate line coef
-		float k0 = 0.0;
-		float c0 = 0.0;
-		bool vertical = false;
-		if (v0.x == v1.x) {
-			vertical = true;
-		}
-		else {
-			k0 = (v0.y - v1.y) / (v0.x - v1.x);
-			c0 = v0.y - k0 * v0.x;
-		}
+		//u = (q-p)Xr/(rXs)
+		//vXw = v.x*w.y-v.y*w.x
+		auto s = v1 - q;
 		for (int i = 0; i < poly->vertCount; i++) {
-			Vector2 pnode0 = Vector2();
-			Vector2 pnode1 = Vector2();
-			if (i < poly->vertCount - 1) {
-				pnode0.x = poly->vertices[poly->vertIDs[i]].x;
-				pnode0.y = poly->vertices[poly->vertIDs[i]].y;
-				pnode1.x = poly->vertices[poly->vertIDs[i + 1]].x;
-				pnode1.y = poly->vertices[poly->vertIDs[i + 1]].y;
-			}
-			else {
-				pnode0.x = poly->vertices[poly->vertIDs[i]].x;
-				pnode0.y = poly->vertices[poly->vertIDs[i]].y;
-				pnode1.x = poly->vertices[poly->vertIDs[0]].x;
-				pnode1.y = poly->vertices[poly->vertIDs[0]].y;
-			}
+			auto p = poly->vertices[poly->vertIDs[i]];
+			auto r = poly->vertices[poly->vertIDs[(i + 1) % poly->vertCount]] - p;
 
-#pragma region crosspoint_calculation
-			//line cross point claculation
-			float xcross = 0.0;
-			float ycross = 0.0;
-			if (vertical) {
-				if (pnode0.x == pnode1.x) continue;
-				float k1 = (pnode0.y - pnode1.y) / (pnode0.x - pnode1.x);
-				float c1 = pnode0.y - k1 * pnode0.x;
-				xcross = v0.x;
-				ycross = k1 * xcross + c1;
-			}
-			else {
-				if (pnode0.x == pnode1.x) {
-					xcross = pnode0.x;
-					ycross = k0 * xcross + c0;
-				}
-				else {
-					float k1 = (pnode0.y - pnode1.y) / (pnode0.x - pnode1.x);
-					if (k1 == k0) continue;
-					float c1 = pnode0.y - k1 * pnode0.x;
-
-					xcross = (c1 - c0) / (k0 - k1);
-					ycross = k1 * xcross + c1;
-				}
-			}
-
-#pragma endregion
-
-			//is cross point on poly segment?
-			if (
-				((xcross >= pnode0.x && xcross <= pnode1.x) ||
-				(xcross <= pnode0.x && xcross >= pnode1.x)) &&
-					((ycross >= pnode0.y && ycross <= pnode1.y) ||
-				(ycross <= pnode0.y && ycross >= pnode1.y))
-				) {
-				//is cross point on v0v1 segment?
-				if (
-					((xcross >= v0.x && xcross <= v1.x) ||
-					(xcross <= v0.x && xcross >= v1.x)) &&
-						((ycross >= v0.y && ycross <= v1.y) ||
-					(ycross <= v0.y && ycross >= v1.y))
-					) {
-					res.push_back(Vector2(xcross, ycross));
-				}
+			auto rXs = r.x*s.y - r.y*s.x;
+			if (fabs(rXs)<1e-7f) continue;
+			auto delta = q - p;
+			auto deltaXr = delta.x*r.y - delta.y*r.x;
+			float u = deltaXr / rXs;
+			float deltaXs = delta.x*s.y - delta.y*s.x;
+			float t = deltaXs / rXs;
+			if (u > 0.0f && u < 1.0f && t < 1.0f && t > 0.0f) {
+				res.push_back(q + u * s);
 			}
 		}
 		return res;

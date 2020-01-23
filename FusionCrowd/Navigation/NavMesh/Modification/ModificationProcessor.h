@@ -19,6 +19,7 @@ namespace FusionCrowd {
 		std::vector<unsigned int> polygon_vertex_ids;
 		ModificationTypes modification_type;
 		bool side;
+		bool correct = true;
 	};
 
 	class ModificationProcessor
@@ -49,6 +50,7 @@ namespace FusionCrowd {
 
 		//vortex crosspoints
 		void FillAddedVertices(bool isCurve);
+		bool ValidateModificator(NodeModificator * modificator);
 		Vector2 FindVortexCrossPoint(Vector2 v0, Vector2 v1);
 		void CopyVortexObstacles(NavMeshNode* updnode, int j, Vector2 j0vert,
 			Vector2 j1vert, Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict = false);

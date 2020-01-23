@@ -181,31 +181,28 @@ namespace FusionCrowd {
 
 
 	float ModificationProcessor::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
-
+		if (polygon.size() < 3) return 0;
 		SplitPolyByNodes(polygon);
 
 		if (_modification._global_polygon.size() < 3) return -1;
 		for (auto mod : _node_modificators) {
-			Initialize(mod);
 
 			if (mod->modification_type == CUT_CURVE) {
+				if (!ValidateModificator(mod)) continue;
+				Initialize(mod);
 				FillAddedVertices(true);
-
 				CutCurveFromCurrentNode();
-
 			}
 
 			if (mod->modification_type == CUT_POLY) {
+				Initialize(mod);
 				FillAddedVertices(false);
-
 				CutPolyFromCurrentNode();
-
 			}
 
 			if (mod->modification_type == SPLIT) {
-
+				Initialize(mod);
 				SplitNode();
-
 			}
 
 			if (std::find(_modification._nodes_ids_to_delete.begin(), _modification._nodes_ids_to_delete.end(), mod->node->getID())
@@ -215,9 +212,11 @@ namespace FusionCrowd {
 
 		}
 
-		if (_node_modificators.size() == 0) return tres != 0 ? tres : -8;
-		if (tres < 0) return tres;
-		tres = _node_modificators.size();
+		int mod_num = 0;
+		for (auto m : _node_modificators) {
+			if (m->correct) mod_num++;
+		}
+		if (mod_num == 0) return tres-10000;
 
 		_modification.Finalize();
 
@@ -389,7 +388,6 @@ namespace FusionCrowd {
 		_modification._addednodes.push_back(updnode);
 		return 0;
 	}
-
 
 
 	/*Creates arrays*/
@@ -591,66 +589,22 @@ namespace FusionCrowd {
 	}
 
 	/*Returns cross point with current_poly in dirrection v0->v1*/
-	Vector2 ModificationProcessor::FindVortexCrossPoint(Vector2 v0, Vector2 v1) {
-		//calculate line coef
-		float k0 = 0.0;
-		float c0 = 0.0;
-		bool vertical = false;
-		if (v0.x == v1.x) {
-			vertical = true;
-		}
-		else {
-			k0 = (v0.y - v1.y) / (v0.x - v1.x);
-			c0 = v0.y - k0 * v0.x;
-		}
+	Vector2 ModificationProcessor::FindVortexCrossPoint(Vector2 q, Vector2 v1) {
+		auto s = v1 - q;
 		for (int i = 0; i < _current_node_poly->vertCount; i++) {
-			Vector2 pnode0 = _current_node_poly->vertices[_current_node_poly->vertIDs[i]];
-			Vector2 pnode1 = _current_node_poly->vertices[_current_node_poly->vertIDs[(i + 1) % _current_node_poly->vertCount]];
+			auto p = _current_node_poly->vertices[_current_node_poly->vertIDs[i]];
+			auto r = _current_node_poly->vertices[_current_node_poly->vertIDs[(i + 1) % _current_node_poly->vertCount]] - p;
 
-#pragma region crosspoint_calculation
-			//line cross point claculation
-			float xcross = 0.0;
-			float ycross = 0.0;
-			if (vertical) {
-				if (pnode0.x == pnode1.x) continue;
-				float k1 = (pnode0.y - pnode1.y) / (pnode0.x - pnode1.x);
-				float c1 = pnode0.y - k1 * pnode0.x;
-				xcross = v0.x;
-				ycross = k1 * xcross + c1;
-			}
-			else {
-				if (pnode0.x == pnode1.x) {
-					xcross = pnode0.x;
-					ycross = k0 * xcross + c0;
-				}
-				else {
-					float k1 = (pnode0.y - pnode1.y) / (pnode0.x - pnode1.x);
-					if (k1 == k0) continue;
-					float c1 = pnode0.y - k1 * pnode0.x;
-
-					xcross = (c1 - c0) / (k0 - k1);
-					ycross = k1 * xcross + c1;
-				}
-			}
-#pragma endregion
-
-			//is cross point on segment?
-			if (
-				((xcross >= pnode0.x && xcross <= pnode1.x) ||
-				(xcross <= pnode0.x && xcross >= pnode1.x)) &&
-					((ycross >= pnode0.y && ycross <= pnode1.y) ||
-				(ycross <= pnode0.y && ycross >= pnode1.y))
-				) {
-				//is cross point in v0->v1 direction?
-				if (
-					(v1.x > v0.x && xcross >= v1.x) ||
-					(v1.x < v0.x && xcross <= v1.x) ||
-					(v1.x == v0.x && v1.y > v0.y && ycross >= v1.y) ||
-					(v1.x == v0.x && v1.y < v0.y && ycross <= v1.y)
-					) {
-					return Vector2(xcross, ycross);
-				}
-				else continue;
+			auto rXs = r.x*s.y - r.y*s.x;
+			if (fabs(rXs) < 1e-7f) continue;
+			auto delta = q - p;
+			auto deltaXr = delta.x*r.y - delta.y*r.x;
+			float u = deltaXr / rXs;
+			float deltaXs = delta.x*s.y - delta.y*s.x;
+			float t = deltaXs / rXs;
+			//TODO replace 0.99
+			if (u > 0.99f  && t <= 1.0f && t >= 0.0f) {
+				return q + u * s;
 			}
 		}
 		throw 1;
@@ -911,5 +865,43 @@ namespace FusionCrowd {
 			updnode->_edges[i] = tmp_edges[i];
 			_modification._addededges.push_back(tmp_edges[i]);
 		}
+	}
+
+	bool ModificationProcessor::ValidateModificator(NodeModificator * modificator) {
+		if (modificator->modification_type != CUT_CURVE) return true;
+		auto& poly = modificator->polygon_to_cut;
+		bool f = true;
+		while (f) {
+			f = false;
+			for (int i = poly.size() - 1; i >= 0; i--) {
+				if ((poly[i] - poly[(i + poly.size() - 1) % poly.size()]).Length() < 1e-3f) {
+					poly.erase(poly.begin() + i);
+					modificator->polygon_vertex_ids.erase(modificator->polygon_vertex_ids.begin() + i);
+					f = true;
+					break;
+				}
+			}
+		}
+		auto& node_poly = modificator->node->_poly;
+		//remove vertexes on edge
+		//todo
+		for (int i = 1; i < poly.size()-1; i++) {
+			auto v0 = poly[i];
+			for (int j = 0; j < node_poly.vertCount; j++) {
+				auto v1 = node_poly.vertices[node_poly.vertIDs[j]];
+				auto v2 = node_poly.vertices[node_poly.vertIDs[(j + 1) % node_poly.vertCount]];
+				if (fabs(v2.x - v1.x)<1e-6f) {
+					//if v1-v2 - vertical
+					if (fabs(v0.x - v2.x) < 1e-6f) return false;
+				}
+				else {
+					float k0 = (v2.y - v1.y) / (v2.x - v1.x);
+					float c0 = v2.y - k0 * v2.x;
+					if (fabs(k0*v0.x + c0 - v0.y) < 1e-6) return false;
+				}
+			}
+
+		}
+		return poly.size() > 2;
 	}
 }
