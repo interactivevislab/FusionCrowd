@@ -47,7 +47,7 @@ namespace FusionCrowd
 		return sum > 0;
 	}
 
-	std::vector<Vector2> ModificationHelper::FindPolyAndSegmentCrosspoints(Vector2 q, Vector2 v1, NavMeshPoly* poly) {
+	std::vector<Vector2> ModificationHelper::FindPolyAndSegmentCrosspoints(Vector2 q, Vector2 v1, NavMeshPoly* poly, bool ray_mode) {
 		//https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
 		std::vector<Vector2> res = std::vector<Vector2>();
 		//u = (q-p)Xr/(rXs)
@@ -64,70 +64,14 @@ namespace FusionCrowd
 			float u = deltaXr / rXs;
 			float deltaXs = delta.x*s.y - delta.y*s.x;
 			float t = deltaXs / rXs;
-			if (u > 0.0f && u < 1.0f && t < 1.0f && t > 0.0f) {
+			if (!ray_mode && u > 0.0f && u < 1.0f && t < 1.0f && t > 0.0f) {
+					res.push_back(q + u * s);
+			}
+			if (ray_mode && u > 0.99f  && t <= 1.0f && t >= 0.0f) {
 				res.push_back(q + u * s);
 			}
 		}
 		return res;
-	}
-
-	bool ModificationHelper::IsSegmentsIntersects(Vector2 v00, Vector2 v01, Vector2 v10, Vector2 v11) {
-		//calculate line coef
-		float k0 = 0.0;
-		float c0 = 0.0;
-		bool vertical = false;
-		if (v00.x == v01.x) {
-			vertical = true;
-		}
-		else {
-			k0 = (v00.y - v01.y) / (v00.x - v01.x);
-			c0 = v00.y - k0 * v00.x;
-		}
-		Vector2 pnode0 = v10;
-		Vector2 pnode1 = v11;
-		//line cross point claculation
-		float xcross = 0.0;
-		float ycross = 0.0;
-		if (vertical) {
-			if (pnode0.x == pnode1.x) return false;
-			float k1 = (pnode0.y - pnode1.y) / (pnode0.x - pnode1.x);
-			float c1 = pnode0.y - k1 * pnode0.x;
-			xcross = v00.x;
-			ycross = k1 * xcross + c1;
-		}
-		else {
-			if (pnode0.x == pnode1.x) {
-				xcross = pnode0.x;
-				ycross = k0 * xcross + c0;
-			}
-			else {
-				float k1 = (pnode0.y - pnode1.y) / (pnode0.x - pnode1.x);
-				if (k1 == k0) return false;
-				float c1 = pnode0.y - k1 * pnode0.x;
-
-				xcross = (c1 - c0) / (k0 - k1);
-				ycross = k1 * xcross + c1;
-			}
-		}
-
-		//is cross point on poly segment?
-		if (
-			((xcross >= pnode0.x && xcross <= pnode1.x) ||
-			(xcross <= pnode0.x && xcross >= pnode1.x)) &&
-				((ycross >= pnode0.y && ycross <= pnode1.y) ||
-			(ycross <= pnode0.y && ycross >= pnode1.y))
-			) {
-			//is cross point on v0v1 segment?
-			if (
-				((xcross >= v00.x && xcross <= v01.x) ||
-				(xcross <= v00.x && xcross >= v01.x)) &&
-					((ycross >= v00.y && ycross <= v01.y) ||
-				(ycross <= v00.y && ycross >= v01.y))
-				) {
-				return true;
-			}
-			else return false;
-		}
 	}
 
 	/*Sort poly vertices to make correct poly (with no segment intersections*/
@@ -246,5 +190,43 @@ namespace FusionCrowd
 				poly.erase(poly.begin() + i);
 			}
 		}
+	}
+
+	bool ModificationHelper::ValidateModificator(NodeModificator * modificator) {
+		if (modificator->modification_type != CUT_CURVE) return true;
+		auto& poly = modificator->polygon_to_cut;
+		bool f = true;
+		while (f) {
+			f = false;
+			for (int i = poly.size() - 1; i >= 0; i--) {
+				if ((poly[i] - poly[(i + poly.size() - 1) % poly.size()]).Length() < 1e-3f) {
+					poly.erase(poly.begin() + i);
+					modificator->polygon_vertex_ids.erase(modificator->polygon_vertex_ids.begin() + i);
+					f = true;
+					break;
+				}
+			}
+		}
+		auto& node_poly = modificator->node->_poly;
+		//remove vertexes on edge
+		//todo
+		for (int i = 1; i < poly.size() - 1; i++) {
+			auto v0 = poly[i];
+			for (int j = 0; j < node_poly.vertCount; j++) {
+				auto v1 = node_poly.vertices[node_poly.vertIDs[j]];
+				auto v2 = node_poly.vertices[node_poly.vertIDs[(j + 1) % node_poly.vertCount]];
+				if (fabs(v2.x - v1.x) < 1e-6f) {
+					//if v1-v2 - vertical
+					if (fabs(v0.x - v2.x) < 1e-6f) return false;
+				}
+				else {
+					float k0 = (v2.y - v1.y) / (v2.x - v1.x);
+					float c0 = v2.y - k0 * v2.x;
+					if (fabs(k0*v0.x + c0 - v0.y) < 1e-6) return false;
+				}
+			}
+
+		}
+		return poly.size() > 2;
 	}
 }

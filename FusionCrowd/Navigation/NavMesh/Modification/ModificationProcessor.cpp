@@ -1,5 +1,6 @@
 #include "ModificationProcessor.h"
 #include "../NavMeshLocalizer.h"
+#include "ModificationHelper.h"
 
 using namespace DirectX::SimpleMath;
 namespace FusionCrowd {
@@ -188,7 +189,7 @@ namespace FusionCrowd {
 		for (auto mod : _node_modificators) {
 
 			if (mod->modification_type == CUT_CURVE) {
-				if (!ValidateModificator(mod)) continue;
+				if (!ModificationHelper::ValidateModificator(mod)) continue;
 				Initialize(mod);
 				FillAddedVertices(true);
 				CutCurveFromCurrentNode();
@@ -577,6 +578,7 @@ namespace FusionCrowd {
 		updnode->_poly.vertIDs[addedids] = _local_polygon_vertex_ids[0]; //polygon node j0
 		addedids++;
 
+		//HERE!
 		CopyVortexObstacles(updnode, -1, j0vert, j1vert, j2vert, node_side0, false, true);
 		CopyVortexEdges(updnode, -1, j0vert, j1vert, j2vert, node_side0, false, true);
 		if (first_edge != nullptr) {
@@ -588,35 +590,16 @@ namespace FusionCrowd {
 		return 0;
 	}
 
-	/*Returns cross point with current_poly in dirrection v0->v1*/
-	Vector2 ModificationProcessor::FindVortexCrossPoint(Vector2 q, Vector2 v1) {
-		auto s = v1 - q;
-		for (int i = 0; i < _current_node_poly->vertCount; i++) {
-			auto p = _current_node_poly->vertices[_current_node_poly->vertIDs[i]];
-			auto r = _current_node_poly->vertices[_current_node_poly->vertIDs[(i + 1) % _current_node_poly->vertCount]] - p;
-
-			auto rXs = r.x*s.y - r.y*s.x;
-			if (fabs(rXs) < 1e-7f) continue;
-			auto delta = q - p;
-			auto deltaXr = delta.x*r.y - delta.y*r.x;
-			float u = deltaXr / rXs;
-			float deltaXs = delta.x*s.y - delta.y*s.x;
-			float t = deltaXs / rXs;
-			//TODO replace 0.99
-			if (u > 0.99f  && t <= 1.0f && t >= 0.0f) {
-				return q + u * s;
-			}
-		}
-		throw 1;
-	}
-
 	/*Adds crosspoints for polygon cut*/
 	void ModificationProcessor::FillAddedVertices(bool isCurve) {
 		int max = isCurve ? _local_polygon.size() - 2 : _local_polygon.size();
 		crosspoints_ids = std::vector<unsigned int>(max);
 		crosspoints = std::vector<Vector2>(max);
 		for (int i = 0; i < max; i++) {
-			Vector2 crosspoint = FindVortexCrossPoint(_local_polygon[i], _local_polygon[(i + 1) % _local_polygon.size()]);
+			Vector2 crosspoint = ModificationHelper::FindPolyAndSegmentCrosspoints(
+				_local_polygon[i],
+				_local_polygon[(i + 1) % _local_polygon.size()],
+				_current_node_poly, true)[0];
 			crosspoints_ids[i] = _modification.AddVertex(crosspoint);
 			crosspoints[i] = crosspoint;
 		}
@@ -634,7 +617,7 @@ namespace FusionCrowd {
 		obst->_unitDir = (p1 - p0) / (p1 - p0).Length();
 		obst->_length = (p1 - p0).Length();
 		if (obst->_length > _modification.min_width) {
-			tmp_obst.push_back(obst);
+			//tmp_obst.push_back(obst);
 		}
 		else {
 			delete obst;
@@ -867,41 +850,5 @@ namespace FusionCrowd {
 		}
 	}
 
-	bool ModificationProcessor::ValidateModificator(NodeModificator * modificator) {
-		if (modificator->modification_type != CUT_CURVE) return true;
-		auto& poly = modificator->polygon_to_cut;
-		bool f = true;
-		while (f) {
-			f = false;
-			for (int i = poly.size() - 1; i >= 0; i--) {
-				if ((poly[i] - poly[(i + poly.size() - 1) % poly.size()]).Length() < 1e-3f) {
-					poly.erase(poly.begin() + i);
-					modificator->polygon_vertex_ids.erase(modificator->polygon_vertex_ids.begin() + i);
-					f = true;
-					break;
-				}
-			}
-		}
-		auto& node_poly = modificator->node->_poly;
-		//remove vertexes on edge
-		//todo
-		for (int i = 1; i < poly.size()-1; i++) {
-			auto v0 = poly[i];
-			for (int j = 0; j < node_poly.vertCount; j++) {
-				auto v1 = node_poly.vertices[node_poly.vertIDs[j]];
-				auto v2 = node_poly.vertices[node_poly.vertIDs[(j + 1) % node_poly.vertCount]];
-				if (fabs(v2.x - v1.x)<1e-6f) {
-					//if v1-v2 - vertical
-					if (fabs(v0.x - v2.x) < 1e-6f) return false;
-				}
-				else {
-					float k0 = (v2.y - v1.y) / (v2.x - v1.x);
-					float c0 = v2.y - k0 * v2.x;
-					if (fabs(k0*v0.x + c0 - v0.y) < 1e-6) return false;
-				}
-			}
 
-		}
-		return poly.size() > 2;
-	}
 }
