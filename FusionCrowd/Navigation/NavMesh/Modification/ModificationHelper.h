@@ -17,6 +17,7 @@ namespace FusionCrowd
 		void ResetNodePolySequence(NavMeshNode& node);
 		void SimplifyPoly(std::vector<Vector2> &poly);
 		bool ValidateModificator(NodeModificator * modificator);
+		bool IsPointsOnLine(Vector2 v0, Vector2 v1, Vector2 v2, float delta = 1e-2f);
 	};
 };
 

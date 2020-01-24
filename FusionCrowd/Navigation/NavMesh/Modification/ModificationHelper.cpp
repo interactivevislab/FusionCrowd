@@ -207,9 +207,11 @@ namespace FusionCrowd
 				}
 			}
 		}
+		if (poly.size() < 3) return false;
 		auto& node_poly = modificator->node->_poly;
 		//remove vertexes on edge
 		//todo
+		/*
 		for (int i = 1; i < poly.size() - 1; i++) {
 			auto v0 = poly[i];
 			for (int j = 0; j < node_poly.vertCount; j++) {
@@ -226,7 +228,46 @@ namespace FusionCrowd
 				}
 			}
 
+		}*/
+		for (int j = 0; j < node_poly.vertCount; j++) {
+			auto v1 = node_poly.vertices[node_poly.vertIDs[j]];
+			auto v2 = node_poly.vertices[node_poly.vertIDs[(j + 1) % node_poly.vertCount]];
+			bool prev_on_line = false;
+			for (int i = poly.size() - 1; i >=0; i--) {
+				auto v0 = poly[i];
+				bool on_line = IsPointsOnLine(v0, v1, v2);
+				if (on_line && prev_on_line) {
+					poly.erase(poly.begin() + i);
+				}
+				prev_on_line = on_line;
+			}
 		}
+
+		//todo points on line (remove)
+		int pol = 0;
+		bool prev_on_line = false;
+		for (int i = poly.size() - 1; i >= 0; i--) {
+			auto v0 = poly[i];
+			bool on_line = false;
+			for (int j = 0; j < node_poly.vertCount; j++) {
+				auto v1 = node_poly.vertices[node_poly.vertIDs[j]];
+				auto v2 = node_poly.vertices[node_poly.vertIDs[(j + 1) % node_poly.vertCount]];
+				if (IsPointsOnLine(v0, v1, v2)) {
+					pol++;
+					on_line = true;
+					break;
+				}
+			}
+			if (on_line && prev_on_line) {
+				//if 2 in a row on_line then change type to split
+			}
+			prev_on_line = on_line;
+		}
+		if (pol > 2) return false;
 		return poly.size() > 2;
+	}
+
+	bool ModificationHelper::IsPointsOnLine(Vector2 v0, Vector2 v1, Vector2 v2, float delta) {
+		return fabs((v0.y - v1.y) * (v0.x - v2.x) - (v0.y - v2.y) * (v0.x - v1.x)) < delta;
 	}
 }
