@@ -40,14 +40,14 @@ def read_trajectories(filename):
         traj_file = csv.reader(csvfile, delimiter=',')
 
         for step, row in enumerate(traj_file):
-            for agent_id, x, y in grouper(row, 3):
-                agent_id, x, y = int(agent_id), float(x), float(y)
+            for agent_id, x, y,orient_x,orient_y in grouper(row, 5):
+                agent_id, x, y,orient_x,orient_y = int(agent_id), float(x), float(y),float(orient_x),float(orient_y)
                 minx = min(x, minx)
                 miny = min(y, miny)
                 maxx = max(x, maxx)
                 maxy = max(y, maxy)
 
-                result[agent_id][step] = x, y
+                result[agent_id][step] = x, y, orient_x, orient_y
 
         for vals in result.values():
             steps = max(steps, len(vals))
@@ -62,10 +62,12 @@ def draw_trajectories(canvas: Player, tr):
             canvas.line(p1, p2, color)
 
 
-def redraw_positions(canvas: Player, tr, frame, size=1.0, ovals=None):
+def redraw_positions(canvas: Player, tr, frame, size=1.0, ovals=None,orint=None):
     if ovals is None:
         ovals = dict()
-
+    if orint is None:
+        orint = dict()
+    
     for agent_id, positions in tr.pos.items():
         if frame not in positions:
             if agent_id in ovals:
@@ -75,17 +77,25 @@ def redraw_positions(canvas: Player, tr, frame, size=1.0, ovals=None):
         if agent_id in ovals:
             canvas.show_item(ovals[agent_id])
             canvas.move_circle(ovals[agent_id], positions[frame])
+            if not hide_orintation:
+                canvas.move_orintation(orint[agent_id],positions[frame])
+            
         else:
             ovals[agent_id] = canvas.circle(positions[frame], size, all_colors[agent_id % len(all_colors)])
-            #ovals[agent_id] = canvas.create_text(
+            print(positions[frame])
+            if not hide_orintation:
+                orint[agent_id]=canvas.orintation(positions[frame],"black")
+
+			#ovals[agent_id] = canvas.create_text(
             #    (x - xmin) * scale,
             #    (y - ymin) * scale,
             #    text=str(agent_id),
             #    fill=all_colors[agent_id % len(all_colors)],
             #    anchor=CENTER
             #)
+    result_redraw=ovals,orint
+    return result_redraw
 
-    return ovals
 
 
 def read_mesh(filename):
@@ -162,7 +172,10 @@ def draw_mesh(canvas: Player, mesh: NavMesh, show_text=True):
         p_last = mesh.vertices[node.vertices[-1]]
         p0     = mesh.vertices[node.vertices[0]]
         canvas.line(p_last, p0, color="#ccc")
-
+        point1 = 0,0
+        point2 = 100,0
+        canvas.vector(point1, point2, "black")
+        #print(p0)
         if show_text:
             canvas.text(node.center, str(id), color="#ccc")
 
@@ -178,12 +191,14 @@ if __name__ == "__main__":
     parser.add_argument("--scale", default=1)
     parser.add_argument("--agent-size", default=1)
     parser.add_argument("--hide-trajectory", action='store_true')
+    parser.add_argument("--hide-orientation", action='store_true')
     parser.add_argument("--show-mesh-text", action='store_true')
 
     args = parser.parse_args()
     scale = float(args.scale)
     agent_size = float(args.agent_size)
     hide_trajectory = args.hide_trajectory
+    hide_orientation= args.hide_orientation
 
     tr = read_trajectories(args.source_file)
 
@@ -200,7 +215,9 @@ if __name__ == "__main__":
     if not hide_trajectory:
         draw_trajectories(canvas, tr)
 
-    ovals = redraw_positions(canvas, tr=tr, size=agent_size, frame=0)
-    canvas.set_redraw(lambda new_frame: redraw_positions(canvas, tr=tr, frame=int(new_frame), size=agent_size, ovals=ovals))
+    result_redraw= redraw_positions(canvas, tr=tr, size=agent_size, frame=0)
+    ovals = result_redraw[0]
+    orint = result_redraw[1]
+    canvas.set_redraw(lambda new_frame: redraw_positions(canvas, tr=tr, frame=int(new_frame), size=agent_size, ovals=ovals,orint=orint))
 
     canvas.main_loop()
