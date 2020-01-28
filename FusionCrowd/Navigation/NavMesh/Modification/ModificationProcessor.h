@@ -1,27 +1,15 @@
 #pragma once
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
+
+#include <vector>
 #include "ModificationHelper.h"
 #include "NavMeshModification.h"
+#include "Modificator.h"
 
 #include <vector>
 
 namespace FusionCrowd {
-	enum ModificationTypes {
-		SPLIT,
-		CUT_POLY,
-		CUT_CURVE
-	};
-
-	struct NodeModificator {
-		NavMeshNode* node;
-		std::vector<DirectX::SimpleMath::Vector2> polygon_to_cut;
-		std::vector<unsigned int> polygon_vertex_ids;
-		ModificationTypes modification_type;
-		bool side;
-		bool correct = true;
-	};
-
 	class ModificationProcessor
 	{
 	public:

@@ -33,6 +33,7 @@
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraphPathPlanner.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
     <ClInclude Include="Navigation\NavMesh\QuadTree.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\ModificationProcessor.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\ModificationHelper.h" />

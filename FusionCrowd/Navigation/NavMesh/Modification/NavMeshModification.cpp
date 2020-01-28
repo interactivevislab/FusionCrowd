@@ -45,6 +45,12 @@ namespace FusionCrowd {
 
 	/*Adds all created nodes and vertexes*/
 	int NavMeshModification::Finalize() {
+		//todo test
+		auto inside_nodes = GetNodesInsidePoly(_global_polygon);
+		for (auto n : *inside_nodes) {
+			_nodes_ids_to_delete.push_back(n);
+		}
+		delete inside_nodes;
 
 		for (int i = _addededges.size() - 1; i >= 0; i--) {
 			if (_addededges[i]->getWidth() <= min_width) {
@@ -421,5 +427,50 @@ namespace FusionCrowd {
 		for (int i = 0; i < _navmesh.nCount; i++) {
 			_navmesh.nodes[i].setVertices(_navmesh.vertices);
 		}
+	}
+
+	std::set<size_t>* NavMeshModification::GetNodesInsidePoly(std::vector<Vector2> poly) {
+		std::set<size_t>* res = new std::set<size_t>();
+
+		float minx = INFINITY;
+		float maxx = -INFINITY;
+		float miny = INFINITY;
+		float maxy = -INFINITY;
+
+		for (auto v : poly) {
+			if (v.x > maxx) maxx = v.x;
+			if (v.x < minx) minx = v.x;
+			if (v.y > maxy) maxy = v.y;
+			if (v.y < miny) miny = v.y;
+		}
+
+		auto crossing_nodes_ids = _localizer->findNodesCrossingBB(BoundingBox(minx, miny, maxx, maxy));
+		for (int j = 0; j < _navmesh.nCount; j++) {
+			if (_navmesh.nodes[j].deleted) continue;
+			if (std::find(crossing_nodes_ids.begin(),
+				crossing_nodes_ids.end(),
+				_navmesh.nodes[j]._id) != crossing_nodes_ids.end()) {
+				auto& node_poly = _navmesh.nodes[j]._poly;
+				bool node_inside = true;;
+				for (int i = 0; i < node_poly.vertCount; i++) {
+					auto node_v = node_poly.getVertexByPos(i);
+					bool inside = false;
+					for (int i = 0, j = poly.size() - 1; i < poly.size(); j = i++) {
+						float xi = poly[i].x, yi = poly[i].y;
+						float xj = poly[j].x, yj = poly[j].y;
+
+						bool intersect = ((yi > node_v.y) != (yj > node_v.y))
+							&& (node_v.x < (xj - xi) * (node_v.y - yi) / (yj - yi) + xi);
+						if (intersect) inside = !inside;
+					}
+					if (!inside) {
+						node_inside = false;
+						break;
+					}
+				}
+				if (node_inside) res->insert(_navmesh.nodes[j]._id);
+			}
+		}
+		return res;
 	}
 }

@@ -117,6 +117,7 @@
     <ClInclude Include="Navigation\NavGraph\NavGraphPathPlanner.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Export\INavMeshPublic.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
