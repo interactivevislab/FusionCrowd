@@ -43,7 +43,9 @@
     <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
     <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
-    <ClCompile Include="Navigation\NavMesh\NavMeshModifyer.cpp" />
+    <ClCompile Include="Navigation\NavMesh\Modification\ModificationHelper.cpp" />
+    <ClCompile Include="Navigation\NavMesh\Modification\NavMeshModification.cpp" />
+    <ClCompile Include="Navigation\NavMesh\Modification\ModificationProcessor.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
   </ItemGroup>
@@ -107,8 +109,10 @@
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="Navigation\NavMesh\QuadTree.h" />
-    <ClInclude Include="Navigation\NavMesh\NavMeshModifyer.h" />
     <ClInclude Include="Math\BoundingBox.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\ModificationHelper.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\NavMeshModification.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\ModificationProcessor.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraphPathPlanner.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />

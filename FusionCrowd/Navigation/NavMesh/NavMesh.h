@@ -20,7 +20,8 @@ namespace FusionCrowd
 	class NavMeshEdge;
 	class NavMeshLocalizer;
 	class PathPlanner;
-	class NavMeshModifyer;
+	class ModificationProcessor;
+	class NavMeshModification;
 
 	class NMNodeGroup
 	{
@@ -102,7 +103,8 @@ namespace FusionCrowd
 		NavMeshNode* nodes;
 		std::map<const std::string, NMNodeGroup> nodeGroups;
 
-		friend NavMeshModifyer;
+		friend ModificationProcessor;
+		friend NavMeshModification;
 
 	private:
 		size_t _version = 0;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 #include <memory>
 #include <queue>
 
@@ -63,5 +64,7 @@ namespace FusionCrowd
 		float _query_avg_weight = 0.5f;
 		size_t _containing_query_result_moving_avg = 0;
 		size_t _intersecting_query_result_moving_avg = 0;
+
+		void MakeDepthWalk(std::vector<size_t>& depth_walk, size_t parent_pos, std::set<size_t>& visited);
 	};
 }

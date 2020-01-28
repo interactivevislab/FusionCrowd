@@ -21,6 +21,7 @@ namespace FusionCrowd
 
 	class INavMeshPublic
 	{
+	public:
 		virtual size_t GetVertexCount() = 0;
 		virtual bool GetVertices(FCArray<NavMeshVetrex> & output) = 0;
 		virtual size_t GetNodesCount() = 0;

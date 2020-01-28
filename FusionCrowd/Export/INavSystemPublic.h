@@ -8,6 +8,7 @@ namespace FusionCrowd
 {
 	class FUSION_CROWD_API INavSystemPublic
 	{
+	public:
 		virtual INavMeshPublic* GetPublicNavMesh() const = 0;
 
 		virtual float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) = 0;
