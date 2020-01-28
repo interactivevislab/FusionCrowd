@@ -1,21 +1,22 @@
 #pragma once
 
-#include "../NavMesh.h"
-#include <vector>
+#include "Navigation/NavMesh/NavMesh.h"
+#include "Math/Util.h"
+#include "Export/INavMeshPublic.h"
 
-using namespace DirectX::SimpleMath;
+#include <vector>
 
 namespace FusionCrowd
 {
 	namespace ModificationHelper
 	{
-		bool IsPointUnderLine(Vector2 v0, Vector2 v1, Vector2 point, bool reverse = false, bool strict = false);
+		bool IsPointUnderLine(DirectX::SimpleMath::Vector2 v0, DirectX::SimpleMath::Vector2 v1, DirectX::SimpleMath::Vector2 point, bool reverse = false, bool strict = false);
 		bool IsClockwise(FCArray<NavMeshVetrex> & polygon);
-		std::vector<Vector2> FindPolyAndSegmentCrosspoints(Vector2 v0, Vector2 v1, NavMeshPoly* poly);
-		bool IsSegmentsIntersects(Vector2 v00, Vector2 v01, Vector2 v10, Vector2 v11);
-		void ConcaveHull(std::vector<Vector2>& poly);
+		std::vector<DirectX::SimpleMath::Vector2> FindPolyAndSegmentCrosspoints(DirectX::SimpleMath::Vector2 v0, DirectX::SimpleMath::Vector2 v1, NavMeshPoly* poly);
+		bool IsSegmentsIntersects(DirectX::SimpleMath::Vector2 v00, DirectX::SimpleMath::Vector2 v01, DirectX::SimpleMath::Vector2 v10, DirectX::SimpleMath::Vector2 v11);
+		void ConcaveHull(std::vector<DirectX::SimpleMath::Vector2>& poly);
 		void ResetNodePolySequence(NavMeshNode& node);
-		void SimplifyPoly(std::vector<Vector2> &poly);
+		void SimplifyPoly(std::vector<DirectX::SimpleMath::Vector2> &poly);
 	};
 };
 

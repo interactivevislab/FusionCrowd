@@ -2,6 +2,7 @@
 #include "../NavMeshLocalizer.h"
 
 using namespace DirectX::SimpleMath;
+
 namespace FusionCrowd {
 	ModificationProcessor::ModificationProcessor(NavMesh& navmesh,
 		std::shared_ptr<NavMeshLocalizer> localizer, NavMeshSpatialQuery* spatial_query)

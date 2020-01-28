@@ -1,11 +1,11 @@
 #pragma once
-#include "../NavMesh.h"
+#include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
-#include <vector>
 #include "ModificationHelper.h"
 #include "NavMeshModification.h"
 
-using namespace DirectX::SimpleMath;
+#include <vector>
+
 namespace FusionCrowd {
 	enum ModificationTypes {
 		SPLIT,
@@ -15,7 +15,7 @@ namespace FusionCrowd {
 
 	struct NodeModificator {
 		NavMeshNode* node;
-		std::vector<Vector2> polygon_to_cut;
+		std::vector<DirectX::SimpleMath::Vector2> polygon_to_cut;
 		std::vector<unsigned int> polygon_vertex_ids;
 		ModificationTypes modification_type;
 		bool side;
@@ -39,7 +39,7 @@ namespace FusionCrowd {
 		//node change data and methods
 		NavMeshPoly* _current_node_poly;
 		NavMeshNode* _current_node;
-		std::vector<Vector2> _local_polygon;
+		std::vector<DirectX::SimpleMath::Vector2> _local_polygon;
 		std::vector<unsigned int> _local_polygon_vertex_ids;
 		bool _side;
 
@@ -51,13 +51,13 @@ namespace FusionCrowd {
 		//vortex crosspoints
 		void FillAddedVertices(bool isCurve);
 		bool ValidateModificator(NodeModificator * modificator);
-		Vector2 FindVortexCrossPoint(Vector2 v0, Vector2 v1);
-		void CopyVortexObstacles(NavMeshNode* updnode, int j, Vector2 j0vert,
-			Vector2 j1vert, Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict = false);
-		void CopyVortexEdges(NavMeshNode* updnode, int j, Vector2 j0vert,
-			Vector2 j1vert, Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict = false);
+		DirectX::SimpleMath::Vector2 FindVortexCrossPoint(DirectX::SimpleMath::Vector2 v0, DirectX::SimpleMath::Vector2 v1);
+		void CopyVortexObstacles(NavMeshNode* updnode, int j, DirectX::SimpleMath::Vector2 j0vert,
+			DirectX::SimpleMath::Vector2 j1vert, DirectX::SimpleMath::Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict = false);
+		void CopyVortexEdges(NavMeshNode* updnode, int j, DirectX::SimpleMath::Vector2 j0vert,
+			DirectX::SimpleMath::Vector2 j1vert, DirectX::SimpleMath::Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict = false);
 		std::vector<unsigned int> crosspoints_ids;
-		std::vector<Vector2> crosspoints;
+		std::vector<DirectX::SimpleMath::Vector2> crosspoints;
 
 		//debug variable
 		float tres = 0;
