@@ -36,6 +36,7 @@ namespace FusionCrowd {
 		void FinalizeEdges();
 		bool ProcessEdge(NavMeshEdge* edge);
 		void FillNodeEdgeObstaclesArrays();
+		std::set<size_t>* GetNodesInsidePoly(std::vector<DirectX::SimpleMath::Vector2> poly);
 
 		//Interface
 		unsigned int AddVertex(DirectX::SimpleMath::Vector2 v);

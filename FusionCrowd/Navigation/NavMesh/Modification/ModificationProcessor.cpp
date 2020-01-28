@@ -22,10 +22,10 @@ namespace FusionCrowd {
 		SplitPolyByNodes(polygon);
 
 		if (_modification._global_polygon.size() < 3) return -1;
-		for (auto mod : _node_modificators) {
-
+		for (int i = 0; i < _node_modificators.size(); i++) {
+			auto mod = _node_modificators[i];
 			if (mod->modification_type == CUT_CURVE) {
-				if (!ModificationHelper::ValidateModificator(mod)) continue;
+				if (!ModificationHelper::ValidateModificator(mod, _node_modificators)) continue;
 				Initialize(mod);
 				FillAddedVertices(true);
 				CutCurveFromCurrentNode();
@@ -202,7 +202,12 @@ namespace FusionCrowd {
 				modificator->polygon_vertex_ids.push_back(_modification.AddVertex(post_cross_point));
 				modificator->polygon_to_cut.push_back(post_cross_point);
 			}
-			_node_modificators.push_back(modificator);
+			if (modificator->polygon_to_cut.size() >= 2) {
+				_node_modificators.push_back(modificator);
+			}
+			else {
+				delete modificator;
+			}
 #pragma endregion
 
 		} while (i != start_pos);

@@ -1,5 +1,6 @@
 #include "ModificationHelper.h"
 #include <algorithm>
+#include <set>
 
 namespace FusionCrowd
 {
@@ -74,7 +75,7 @@ namespace FusionCrowd
 		return res;
 	}
 
-	/*Sort poly vertices to make correct poly (with no segment intersections*/
+	/*Sort cut_poly vertices to make correct cut_poly (with no segment intersections*/
 	void ModificationHelper::ResetNodePolySequence(NavMeshNode& node) {
 		Vector2 last_added;
 		std::vector<size_t> ids_left = std::vector<size_t>(node._poly.vertCount);
@@ -192,82 +193,87 @@ namespace FusionCrowd
 		}
 	}
 
-	bool ModificationHelper::ValidateModificator(NodeModificator * modificator) {
+	bool IsSetsIntersects(std::set<int>& s0, std::set<int>& s1) {
+		for (auto e : s0) {
+			if (s1.count(e) > 0) return true;
+		}
+		return false;
+	}
+
+	bool ModificationHelper::ValidateModificator(NodeModificator * modificator, std::vector<NodeModificator*>& modifications) {
 		if (modificator->modification_type != CUT_CURVE) return true;
-		auto& poly = modificator->polygon_to_cut;
+		auto& cut_poly = modificator->polygon_to_cut;
 		bool f = true;
+		//remove point which to close to each other
 		while (f) {
 			f = false;
-			for (int i = poly.size() - 1; i >= 0; i--) {
-				if ((poly[i] - poly[(i + poly.size() - 1) % poly.size()]).Length() < 1e-3f) {
-					poly.erase(poly.begin() + i);
+			for (int i = cut_poly.size() - 1; i >= 0; i--) {
+				if ((cut_poly[i] - cut_poly[(i + cut_poly.size() - 1) % cut_poly.size()]).Length() < 1e-3f) {
+					cut_poly.erase(cut_poly.begin() + i);
 					modificator->polygon_vertex_ids.erase(modificator->polygon_vertex_ids.begin() + i);
 					f = true;
 					break;
 				}
 			}
 		}
-		if (poly.size() < 3) return false;
+		if (cut_poly.size() < 2) return false;
 		auto& node_poly = modificator->node->_poly;
-		//remove vertexes on edge
-		//todo
-		/*
-		for (int i = 1; i < poly.size() - 1; i++) {
-			auto v0 = poly[i];
+
+		//add new mods
+		std::map<int, std::set<int>> vert2edges;
+		bool modyfied = false;
+		for (int i = 0; i < cut_poly.size(); i++) {
+			auto v0 = cut_poly[i];
+			vert2edges.insert({ i, std::set<int>() });
 			for (int j = 0; j < node_poly.vertCount; j++) {
 				auto v1 = node_poly.vertices[node_poly.vertIDs[j]];
 				auto v2 = node_poly.vertices[node_poly.vertIDs[(j + 1) % node_poly.vertCount]];
-				if (fabs(v2.x - v1.x) < 1e-6f) {
-					//if v1-v2 - vertical
-					if (fabs(v0.x - v2.x) < 1e-6f) return false;
-				}
-				else {
-					float k0 = (v2.y - v1.y) / (v2.x - v1.x);
-					float c0 = v2.y - k0 * v2.x;
-					if (fabs(k0*v0.x + c0 - v0.y) < 1e-6) return false;
-				}
+				if (IsPointsOnLine(v0, v1, v2)) vert2edges[i].insert(j);
 			}
-
-		}*/
-		for (int j = 0; j < node_poly.vertCount; j++) {
-			auto v1 = node_poly.vertices[node_poly.vertIDs[j]];
-			auto v2 = node_poly.vertices[node_poly.vertIDs[(j + 1) % node_poly.vertCount]];
-			bool prev_on_line = false;
-			for (int i = poly.size() - 1; i >=0; i--) {
-				auto v0 = poly[i];
-				bool on_line = IsPointsOnLine(v0, v1, v2);
-				if (on_line && prev_on_line) {
-					poly.erase(poly.begin() + i);
+			if (i > 0 && i < cut_poly.size() - 1 && vert2edges[i].size() > 0) modyfied = true;
+		}
+		modyfied = modyfied || cut_poly.size() == 2;
+		if (!modyfied) return cut_poly.size() > 2;
+		NodeModificator* cur_mod = nullptr;
+		if (vert2edges[0].size() == 0) throw 1;
+		for (int i = 0; i < cut_poly.size()-1; i++) {
+			if (vert2edges[i].size() > 0) {
+				if (cur_mod != nullptr &&
+					(i == 0 || !IsSetsIntersects(vert2edges[i - 1], vert2edges[i]))) {
+					cur_mod->polygon_to_cut.push_back(modificator->polygon_to_cut[i]);
+					cur_mod->polygon_vertex_ids.push_back(modificator->polygon_vertex_ids[i]);
+					if (cur_mod->polygon_to_cut.size() == 2) cur_mod->modification_type = SPLIT;
+					if (cur_mod->polygon_to_cut.size() > 1) {
+						modifications.push_back(cur_mod);
+					}
+					else delete cur_mod;
 				}
-				prev_on_line = on_line;
+				cur_mod = new NodeModificator();
+				cur_mod->correct = true;
+				cur_mod->node = modificator->node;
+				cur_mod->side = IsPointUnderLine(cut_poly[i], cut_poly[(i + 1) % cut_poly.size()], cut_poly[(i + 2) % cut_poly.size()], true, true);
+				cur_mod->modification_type = CUT_CURVE;
+				cur_mod->polygon_to_cut.push_back(modificator->polygon_to_cut[i]);
+				cur_mod->polygon_vertex_ids.push_back(modificator->polygon_vertex_ids[i]);
+			}
+			if (vert2edges[i].size() == 0) {
+				cur_mod->polygon_to_cut.push_back(modificator->polygon_to_cut[i]);
+				cur_mod->polygon_vertex_ids.push_back(modificator->polygon_vertex_ids[i]);
 			}
 		}
-
-		//todo points on line (remove)
-		int pol = 0;
-		bool prev_on_line = false;
-		for (int i = poly.size() - 1; i >= 0; i--) {
-			auto v0 = poly[i];
-			bool on_line = false;
-			for (int j = 0; j < node_poly.vertCount; j++) {
-				auto v1 = node_poly.vertices[node_poly.vertIDs[j]];
-				auto v2 = node_poly.vertices[node_poly.vertIDs[(j + 1) % node_poly.vertCount]];
-				if (IsPointsOnLine(v0, v1, v2)) {
-					pol++;
-					on_line = true;
-					break;
-				}
-			}
-			if (on_line && prev_on_line) {
-				//if 2 in a row on_line then change type to split
-			}
-			prev_on_line = on_line;
+		if (cur_mod != nullptr &&
+			!IsSetsIntersects(vert2edges[vert2edges.size() - 2], vert2edges[vert2edges.size() - 1])) {
+			cur_mod->polygon_to_cut.push_back(modificator->polygon_to_cut[cut_poly.size() - 1]);
+			cur_mod->polygon_vertex_ids.push_back(modificator->polygon_vertex_ids[cut_poly.size() - 1]);
+			if (cur_mod->polygon_to_cut.size() == 2) cur_mod->modification_type = SPLIT;
+			modifications.push_back(cur_mod);
 		}
-		if (pol > 2) return false;
-		return poly.size() > 2;
+		else delete cur_mod;
+		return false;
 	}
 
 	bool ModificationHelper::IsPointsOnLine(Vector2 v0, Vector2 v1, Vector2 v2, float delta) {
 		return fabs((v0.y - v1.y) * (v0.x - v2.x) - (v0.y - v2.y) * (v0.x - v1.x)) < delta;
 	}
+
 }
