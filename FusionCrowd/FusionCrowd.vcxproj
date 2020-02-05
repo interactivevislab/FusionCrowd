@@ -41,6 +41,7 @@
     <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
     <ClInclude Include="Export\FCArray.h" />
@@ -98,6 +99,7 @@
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationHelper.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\NavMeshModification.cpp" />
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
+    <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
     <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
@@ -275,7 +277,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
