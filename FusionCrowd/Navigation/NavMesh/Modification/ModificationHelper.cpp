@@ -2,6 +2,8 @@
 #include <algorithm>
 #include <set>
 
+using namespace DirectX::SimpleMath;
+
 namespace FusionCrowd
 {
 	/*Returns is point under line v0->v1 (or point.x< line.x if line is vertical)*/
@@ -152,16 +154,18 @@ namespace FusionCrowd
 
 	/*make hull concave*/
 #pragma region ConcaveHullHelpFunctions
-	bool cmp(Vector2 a, Vector2 b) {
-		return a.x < b.x || a.x == b.x && a.y < b.y;
-	}
+	namespace {
+		bool cmp(Vector2 a, Vector2 b) {
+			return a.x < b.x || a.x == b.x && a.y < b.y;
+		}
 
-	bool cw(Vector2 a, Vector2 b, Vector2 c) {
-		return a.x*(b.y - c.y) + b.x*(c.y - a.y) + c.x*(a.y - b.y) < 0;
-	}
+		bool cw(Vector2 a, Vector2 b, Vector2 c) {
+			return a.x*(b.y - c.y) + b.x*(c.y - a.y) + c.x*(a.y - b.y) < 0;
+		}
 
-	bool ccw(Vector2 a, Vector2 b, Vector2 c) {
-		return a.x*(b.y - c.y) + b.x*(c.y - a.y) + c.x*(a.y - b.y) > 0;
+		bool ccw(Vector2 a, Vector2 b, Vector2 c) {
+			return a.x*(b.y - c.y) + b.x*(c.y - a.y) + c.x*(a.y - b.y) > 0;
+		}
 	}
 #pragma endregion
 

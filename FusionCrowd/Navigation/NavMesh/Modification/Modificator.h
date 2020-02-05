@@ -1,8 +1,9 @@
 #pragma once
-#include "../NavMesh.h"
-#include <vector>
 
-using namespace DirectX::SimpleMath;
+#include "Navigation/NavMesh/NavMesh.h"
+#include "Math/Util.h"
+
+#include <vector>
 
 namespace FusionCrowd {
 	enum ModificationTypes {
@@ -13,7 +14,7 @@ namespace FusionCrowd {
 
 	struct NodeModificator {
 		NavMeshNode* node;
-		std::vector<Vector2> polygon_to_cut;
+		std::vector<DirectX::SimpleMath::Vector2> polygon_to_cut;
 		std::vector<unsigned int> polygon_vertex_ids;
 		ModificationTypes modification_type;
 		bool side;
