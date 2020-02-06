@@ -9,6 +9,11 @@ namespace FusionCrowd
 {
 	struct AgentSpatialInfo
 	{
+		enum CollisionLevel
+		{
+			AGENT, GROUP
+		};
+
 		size_t id;
 		DirectX::SimpleMath::Vector2 pos;
 		DirectX::SimpleMath::Vector2 vel;
@@ -22,6 +27,7 @@ namespace FusionCrowd
 		float maxAngVel = 6.28f;
 
 		bool inertiaEnabled = true;
+		CollisionLevel collisionsLevel = AGENT;
 
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
 	};

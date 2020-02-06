@@ -48,6 +48,8 @@
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationProcessor.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
+    <ClCompile Include="Group\Group.cpp" />
+    <ClCompile Include="Group\GroupShape.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -118,6 +120,8 @@
     <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Export\INavMeshPublic.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
+    <ClInclude Include="Group\Group.h" />
+    <ClInclude Include="Group\GroupShape.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

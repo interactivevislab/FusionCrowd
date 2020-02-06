@@ -61,16 +61,25 @@ namespace FusionCrowd
 		for (auto & agtStruct : _agents)
 		{
 			size_t id = agtStruct.id;
+
+			size_t groupId = _simulator->GetAgent(id).GetGroupId();
 			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
 
-			if(IsReplanNeeded(info, agtStruct))
+			if(groupId != Group::NO_GROUP)
 			{
-				auto & curGoal = agtStruct.location.getPath()->getGoal();
-				agtStruct.location = Replan(info.pos, curGoal, info.radius);
+				SetGroupPrefVelocity(info, agtStruct, groupId, timeStep);
 			}
+			else
+			{
+				if(IsReplanNeeded(info, agtStruct))
+				{
+					auto & curGoal = agtStruct.location.getPath()->getGoal();
+					agtStruct.location = Replan(info.pos, curGoal, info.radius);
+				}
 
-			UpdateLocation(info, agtStruct, false);
-			SetPrefVelocity(info, agtStruct);
+				UpdateLocation(info, agtStruct, false);
+				SetPrefVelocity(info, agtStruct);
+			}
 		}
 	}
 
@@ -98,6 +107,28 @@ namespace FusionCrowd
 			path == nullptr ||
 			path->getGoal().getID() != agentGoal.getID() ||
 			!path->IsValid(_navMesh->GetVersion());
+	}
+
+	void NavMeshComponent::SetGroupPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, size_t groupId, float timeStep)
+	{
+		auto & group = _simulator->GetGroup(groupId);
+		auto & groupDummy = _simulator->GetSpatialInfo(group.dummyAgentId);
+
+		float rot = atan2f(groupDummy.orient.x, groupDummy.orient.y);
+
+		Vector2 relativePos = MathUtil::rotate(group.GetShape()->GetRelativePos(agentInfo.id), rot);
+		//Vector2 relativePos = group.GetShape()->GetRelativePos(agentInfo.id);
+		Vector2 targetPos = groupDummy.pos + relativePos;
+		Vector2 dir = targetPos - agentInfo.pos;
+
+		float speed = dir.LengthSquared() / timeStep;
+		if(agentInfo.maxSpeed < speed)
+			speed = agentInfo.maxSpeed;
+
+		agentInfo.prefVelocity.setSpeed(speed);
+
+		dir.Normalize();
+		agentInfo.prefVelocity.setSingle(dir);
 	}
 
 	void NavMeshComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)

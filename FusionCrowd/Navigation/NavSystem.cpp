@@ -82,6 +82,7 @@ namespace FusionCrowd
 		const std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const
 		{
 			const AgentSpatialInfo & agent = _agentsInfo.at(agentId);
+
 			auto cache = _agentsNeighbours.find(agentId);
 
 			if(cache == _agentsNeighbours.end())
@@ -279,7 +280,9 @@ namespace FusionCrowd
 				neighborsInfos.reserve(neighbors.neighborsCount);
 
 				for (int j = 0; j < neighbors.neighborsCount; j++) {
-					neighborsInfos.push_back(agentsInfos[neighbors.neighborsID[j]]);
+					auto & neighbour = agentsInfos[neighbors.neighborsID[j]];
+					if(neighbour.collisionsLevel == info.collisionsLevel)
+						neighborsInfos.push_back(neighbour);
 				}
 
 				i++;
