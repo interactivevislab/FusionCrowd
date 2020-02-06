@@ -29,6 +29,8 @@
     <ClInclude Include="Export\INavMeshPublic.h" />
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
+    <ClInclude Include="Group\Group.h" />
+    <ClInclude Include="Group\GroupShape.h" />
     <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
@@ -92,6 +94,7 @@
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export\Export.cpp" />
+    <ClCompile Include="Group\GroupShape.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
@@ -113,6 +116,7 @@
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
+    <ClCompile Include="Group\Group.cpp" />
     <ClCompile Include="Util\RecordingSerializer.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />

@@ -21,5 +21,10 @@ namespace FusionCrowd
 		std::weak_ptr<IStrategyComponent> stratComponent;
 
 		Goal currentGoal;
+
+		size_t GetGroupId() const;
+		void SetGroupId(size_t newGroupId);
+	private:
+		size_t _groupId;
 	};
 }

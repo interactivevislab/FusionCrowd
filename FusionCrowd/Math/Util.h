@@ -22,6 +22,14 @@ namespace FusionCrowd
 			return det(a - c, b - a);
 		}
 
+		inline DirectX::SimpleMath::Vector2 rotate(DirectX::SimpleMath::Vector2 vec, float rad)
+		{
+			return DirectX::SimpleMath::Vector2(
+				vec.x * cosf(rad) - vec.y * sinf(rad),
+				vec.x * sinf(rad) + vec.y * cosf(rad)
+			);
+		}
+
 		const float INFTY  = 3.402823E+38f;
 
 		const float PI     = 3.14159265f;

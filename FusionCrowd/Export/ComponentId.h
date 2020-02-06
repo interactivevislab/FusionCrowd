@@ -21,6 +21,8 @@ namespace FusionCrowd
 	//  Strategy  components are 9xx
 	namespace ComponentIds
 	{
+		FUSION_CROWD_API const ComponentId NO_COMPONENT  = 0;
+
 		FUSION_CROWD_API const ComponentId KARAMOUZAS_ID = 100;
 		FUSION_CROWD_API const ComponentId HELBING_ID    = 101;
 		FUSION_CROWD_API const ComponentId ORCA_ID       = 102;
@@ -30,7 +32,7 @@ namespace FusionCrowd
 		FUSION_CROWD_API const ComponentId GCF_ID        = 106;
 
 
-		FUSION_CROWD_API const ComponentId NAVMESH_ID = 200;
+		FUSION_CROWD_API const ComponentId NAVMESH_ID    = 200;
 
 		FUSION_CROWD_API const ComponentId FSM_ID        = 300;
 

@@ -58,7 +58,7 @@ def read_trajectories(filename):
 def draw_trajectories(canvas: Player, tr):
     for id, positions in tr.pos.items():
         color = all_colors[id % len(all_colors)]
-        for p1, p2 in pairwise(positions):
+        for p1, p2 in pairwise(positions.values()):
             canvas.line(p1, p2, color)
 
 
@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
     tr = read_trajectories(args.source_file)
 
-    canvas = Player(scale, len(tr[0]))
+    canvas = Player(scale, tr.steps)
 
     if args.navmesh is not None:
         mesh = read_mesh(args.navmesh)
