@@ -195,8 +195,8 @@ namespace FusionCrowd
 			poly.push_back(down[i]);
 	}
 
-	void ModificationHelper::SimplifyPoly(std::vector<Vector2> &poly) {
-		ModificationHelper::ConcaveHull(poly);
+	void ModificationHelper::SimplifyPoly(std::vector<Vector2> &poly, bool makeConcave) {
+		if (makeConcave) ModificationHelper::ConcaveHull(poly);
 		//remove close points
 		std::vector<float> distances = std::vector<float>(poly.size());
 		for (int i = 0; i < poly.size(); i++) {
