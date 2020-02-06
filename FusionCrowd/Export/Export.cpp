@@ -109,22 +109,28 @@ namespace FusionCrowd
 			return _sim->GetNavSystem();
 		}
 
-		size_t AddGridFormation(float x, float y, size_t agetsInRow, float interAgtDist)
+		size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist)
 		{
 			auto grid = std::make_unique<GroupGridShape>(agetsInRow, interAgtDist);
 
 			return _sim->AddGroup(std::move(grid), DirectX::SimpleMath::Vector2(x, y));
 		}
 
-		void SetAgentGroup(size_t agentId, size_t groupId)
+		void RemoveAgentFromGroup(size_t agentId, size_t groupId)
+		{
+			_sim->RemoveAgentFromGroup(agentId, groupId);
+		}
+
+		void SetGroupGoal(size_t groupId, float goalX, float goalY)
+		{
+			_sim->SetGroupGoal(groupId, DirectX::SimpleMath::Vector2(goalX, goalY));
+		}
+
+		void AddAgentToGroup(size_t agentId, size_t groupId)
 		{
 			_sim->AddAgentToGroup(agentId, groupId);
 		}
 
-		size_t GetGroupDummy(size_t groupId)
-		{
-			return _sim->GetGroup(groupId).dummyAgentId;
-		}
 	private:
 		std::shared_ptr<Simulator> _sim;
 	};

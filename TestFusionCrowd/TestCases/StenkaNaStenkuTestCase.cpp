@@ -31,14 +31,12 @@ namespace TestFusionCrowd
 		float x1 = -30, x2 = 30;
 		float y1 = -30, y2 = 30;
 
-		size_t group1 = _sim->AddGridFormation(x1, y1, 8, 0.5f);
-		size_t group2 = _sim->AddGridFormation(x2, y2, 8, 0.5f);
+		size_t group1 = _sim->AddGridGroup(x1, y1, 10, 0.2f);
+		size_t group2 = _sim->AddGridGroup(x2, y2, 10, 0.2f);
 
-		size_t dummy1 = _sim->GetGroupDummy(group1);
-		size_t dummy2 = _sim->GetGroupDummy(group2);
+		_sim->SetGroupGoal(group1, x2, y2);
+		_sim->SetGroupGoal(group2, x1, y1);
 
-		_sim->SetAgentGoal(dummy1, x2, y2);
-		_sim->SetAgentGoal(dummy2, x1, y1);
 
 		float z = sqrt(_agentsNum / 2.0f);
 
@@ -46,14 +44,14 @@ namespace TestFusionCrowd
 		{
 			size_t id = _sim->AddAgent(RandFloat(x1 - z, y1), RandFloat(x1 - z / 2, y1 + z / 2), op, -1);
 
-			_sim->SetAgentGroup(id, group1);
+			_sim->AddAgentToGroup(id, group1);
 		}
 
 		for (size_t i = _agentsNum / 2; i < _agentsNum; i++)
 		{
 			size_t id = _sim->AddAgent(RandFloat(x2, y2 + z), RandFloat(x2 - z / 2, y2 + z / 2), op, -1);
 
-			_sim->SetAgentGroup(id, group2);
+			_sim->AddAgentToGroup(id, group2);
 		}
 	}
 }

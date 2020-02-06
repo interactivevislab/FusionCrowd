@@ -59,9 +59,10 @@ namespace FusionCrowd
 			) = 0;
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
 
-			virtual size_t AddGridFormation(float x, float y, size_t agetsInRow, float interAgtDist) = 0;
-			virtual void SetAgentGroup(size_t agentId, size_t groupId) = 0;
-			virtual size_t GetGroupDummy(size_t groupId) = 0;
+			virtual size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist) = 0;
+			virtual void AddAgentToGroup(size_t agentId, size_t groupId) = 0;
+			virtual void RemoveAgentFromGroup(size_t agentId, size_t groupId) = 0;
+			virtual void SetGroupGoal(size_t groupId, float goalX, float goalY) = 0;
 
 			virtual IRecording & GetRecording() = 0;
 
