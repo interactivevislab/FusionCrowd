@@ -72,7 +72,7 @@ namespace FusionCrowd
 
 		OperationStatus RemoveAgent(size_t agentId)
 		{
-			return OperationStatus::NotImplemented;
+			return _sim->RemoveAgent(agentId);
 		}
 
 		IRecording & GetRecording()

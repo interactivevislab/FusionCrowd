@@ -86,6 +86,27 @@ namespace FusionCrowd
 			return AddAgent(info, opId, ComponentIds::NAVMESH_ID, strategyId);
 		}
 
+		OperationStatus RemoveAgent(size_t agentId) {
+			_navSystem->RemoveAgent(agentId);
+			auto & agent = _agents.find(agentId)->second;
+
+			for (auto& c : _operComponents) {
+				c.second->DeleteAgent(agentId);
+			}
+
+			for (auto& c : _tacticComponents) {
+				c.second->DeleteAgent(agentId);
+			}
+
+			for (auto& c : _strategyComponents)
+			{
+				c.second->RemoveAgent(agentId);
+			}
+
+			_agents.erase(agentId);
+			return OperationStatus::OK;
+		}
+
 		size_t AddAgent(
 			AgentSpatialInfo props,
 			ComponentId opId,
@@ -552,6 +573,11 @@ namespace FusionCrowd
 	size_t Simulator::AddAgent(AgentSpatialInfo props, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
 	{
 		return pimpl->AddAgent(props, opId, tacticId, strategyId);
+	}
+
+	OperationStatus Simulator::RemoveAgent(size_t agentId)
+	{
+		return pimpl->RemoveAgent(agentId);
 	}
 
 	void Simulator::SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)

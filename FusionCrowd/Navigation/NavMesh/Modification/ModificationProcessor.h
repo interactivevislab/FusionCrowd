@@ -6,6 +6,7 @@
 #include "ModificationHelper.h"
 #include "NavMeshModification.h"
 #include "Modificator.h"
+#include "Math/Util.h"
 
 #include <vector>
 
@@ -15,14 +16,15 @@ namespace FusionCrowd {
 	public:
 		ModificationProcessor(NavMesh& navmesh, std::shared_ptr<NavMeshLocalizer> localizer, NavMeshSpatialQuery* spatial_query);
 		~ModificationProcessor();
-		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
+		float CutPolygonFromMesh(std::vector<DirectX::SimpleMath::Vector2>& polygon);
 
 	private:
 		NavMeshModification _modification;
 
 		std::vector<NodeModificator*> _node_modificators;
 
-		float SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon);
+		float SplitPolyByNodes(std::vector<DirectX::SimpleMath::Vector2>& polygon);
+		void Clear();
 
 		//node change data and methods
 		NavMeshPoly* _current_node_poly;

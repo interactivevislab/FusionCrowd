@@ -8,6 +8,7 @@
 #include "Navigation/Obstacle.h"
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/NavMesh/Modification/ModificationProcessor.h"
+#include "Navigation/NavMesh//Modification/PolygonPreprocessor.h"
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
 #include "Navigation/FastFixedRadiusNearestNeighbors/NeighborsSeeker.h"
 
@@ -61,6 +62,10 @@ namespace FusionCrowd
 		void AddAgent(AgentSpatialInfo spatialInfo)
 		{
 			_agentsInfo[spatialInfo.id] = spatialInfo;
+		}
+
+		void RemoveAgent(unsigned int id) {
+			_agentsInfo.erase(id);
 		}
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId)
@@ -302,7 +307,8 @@ namespace FusionCrowd
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 			auto query = _navMeshQuery.get();
 			auto processor = ModificationProcessor(*_navMesh, _localizer, query);
-			return processor.CutPolygonFromMesh(polygon);
+			PolygonPreprocessor pp(polygon);
+			return pp.performAll(processor);
 		}
 
 		INavMeshPublic* GetPublicNavMesh() const
@@ -334,6 +340,11 @@ namespace FusionCrowd
 	void NavSystem::AddAgent(AgentSpatialInfo spatialInfo)
 	{
 		pimpl->AddAgent(spatialInfo);
+	}
+
+	void NavSystem::RemoveAgent(unsigned int id)
+	{
+		pimpl->RemoveAgent(id);
 	}
 
 	AgentSpatialInfo & NavSystem::GetSpatialInfo(size_t agentId)

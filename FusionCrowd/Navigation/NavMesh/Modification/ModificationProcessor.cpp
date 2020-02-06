@@ -18,8 +18,9 @@ namespace FusionCrowd {
 		}
 	}
 
-	float ModificationProcessor::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
+	float ModificationProcessor::CutPolygonFromMesh(std::vector<Vector2>& polygon) {
 		if (polygon.size() < 3) return 0;
+		Clear();
 		SplitPolyByNodes(polygon);
 
 		if (_modification._global_polygon.size() < 3) return -1;
@@ -58,23 +59,34 @@ namespace FusionCrowd {
 
 		_modification.Finalize();
 
-		return tres;
+		return mod_num;
 	}
 
-	float ModificationProcessor::SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon) {
+	void ModificationProcessor::Clear() {
+		for (auto m : _node_modificators) {
+			delete m;
+		}
+		_node_modificators.clear();
+		_current_node_poly = nullptr;
+		_current_node = nullptr;
+		_local_polygon.clear();
+		_local_polygon_vertex_ids.clear();
+	}
+
+	float ModificationProcessor::SplitPolyByNodes(std::vector<Vector2>& polygon) {
 		unsigned int global_poly_size = polygon.size();
 		float res = 0;
 		_modification._global_polygon = std::vector<Vector2>(polygon.size());
 		_node_modificators = std::vector<NodeModificator*>();
 		if (!ModificationHelper::IsClockwise(polygon)) {
 			for (int i = 0; i < polygon.size(); i++) {
-				Vector2 v = Vector2(polygon[i].X, polygon[i].Y);
+				Vector2 v = Vector2(polygon[i].x, polygon[i].y);
 				_modification._global_polygon[i] = v;
 			}
 		}
 		else {
 			for (int i = 0; i < polygon.size(); i++) {
-				Vector2 v = Vector2(polygon[i].X, polygon[i].Y);
+				Vector2 v = Vector2(polygon[i].x, polygon[i].y);
 				_modification._global_polygon[global_poly_size - i - 1] = v;
 			}
 		}

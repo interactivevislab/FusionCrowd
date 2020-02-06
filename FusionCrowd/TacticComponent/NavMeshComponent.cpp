@@ -22,11 +22,8 @@ namespace FusionCrowd
 
 	NavMeshLocation NavMeshComponent::Replan(Vector2 fromPoint, const Goal & target, float agentRadius)
 	{
-		Vector2 correctedFrom = GetClosestAvailablePoint(fromPoint);
-		Vector2 correctedTarget = GetClosestAvailablePoint(target.getCentroid());
-
-		unsigned int from = _localizer->getNodeId(correctedFrom);
-		unsigned int to = _localizer->getNodeId(correctedTarget);
+		unsigned int from = GetClosestAvailableNode(fromPoint);
+		unsigned int to = GetClosestAvailableNode(target.getCentroid());
 
 		auto planner = _localizer->getPlanner();
 		auto* route = planner->getRoute(from, to, agentRadius);
@@ -53,6 +50,12 @@ namespace FusionCrowd
 
 	bool NavMeshComponent::DeleteAgent(size_t id)
 	{
+		for (int i = 0; i < _agents.size(); i++) {
+			if (_agents[i].id == id) {
+				_agents.erase(_agents.begin() + i);
+				break;
+			}
+		}
 		return false;
 	}
 
@@ -96,6 +99,25 @@ namespace FusionCrowd
 				}
 			}
 		}
+		if (min_dist == INFINITY) throw 1;
+		return res;
+	}
+
+	size_t NavMeshComponent::GetClosestAvailableNode(DirectX::SimpleMath::Vector2 p) {
+		auto correct = _localizer->findNodeBlind(p);
+		if (correct != NavMeshLocation::NO_NODE) return correct;
+		float min_dist = INFINITY;
+		size_t res;
+		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--) {
+			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted) {
+				DirectX::SimpleMath::Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
+				if ((p - center).LengthSquared() < min_dist) {
+					min_dist = (p - center).LengthSquared();
+					res = i;
+				}
+			}
+		}
+		if (min_dist == INFINITY) throw 1;
 		return res;
 	}
 

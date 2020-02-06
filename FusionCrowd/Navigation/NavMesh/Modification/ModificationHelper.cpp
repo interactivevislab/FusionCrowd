@@ -39,12 +39,12 @@ namespace FusionCrowd
 		return reverse ? !res : res;
 	}
 
-	bool ModificationHelper::IsClockwise(FCArray<NavMeshVetrex> & polygon) {
+	bool ModificationHelper::IsClockwise(std::vector<Vector2>& polygon) {
 		float sum = 0;
 		for (int i = 0; i < polygon.size(); i++) {
-			NavMeshVetrex v0 = polygon[i];
-			NavMeshVetrex v1 = polygon[(i + 1) % polygon.size()];
-			sum += (v1.X - v0.X)*(v0.Y + v1.Y);
+			Vector2 v0 = polygon[i];
+			Vector2 v1 = polygon[(i + 1) % polygon.size()];
+			sum += (v1.x - v0.x)*(v0.y + v1.y);
 		}
 
 		return sum > 0;
@@ -67,14 +67,42 @@ namespace FusionCrowd
 			float u = deltaXr / rXs;
 			float deltaXs = delta.x*s.y - delta.y*s.x;
 			float t = deltaXs / rXs;
-			if (!ray_mode && u > 0.0f && u < 1.0f && t < 1.0f && t > 0.0f) {
+			if (!ray_mode && u >= 0.0f && u <= 1.0f && t <= 1.0f && t >= 0.0f) {
 					res.push_back(q + u * s);
 			}
 			if (ray_mode && u > 0.99f  && t <= 1.0f && t >= 0.0f) {
 				res.push_back(q + u * s);
 			}
 		}
+		for (int i = res.size() - 1; i > 0; i--) {
+			if (Vector2::Distance(res[i], res[i - 1]) < 1e-4f) res.erase(res.begin() + i);
+		}
 		return res;
+	}
+
+	void ModificationHelper::RemoveRepeatedVertex(NavMeshNode& node) {
+		std::vector<Vector2> vertices;
+		std::vector<unsigned int> ids;
+		for (int i = 0; i < node._poly.vertCount; i++) {
+			vertices.push_back(node._poly.getVertexByPos(i));
+			ids.push_back(node._poly.vertIDs[i]);
+		}
+		for (int i = vertices.size() - 1; i >= 0; i--) {
+			for (int j = vertices.size() - 1; j >= 0; j--) {
+				if (i == j) continue;
+				if (Vector2::Distance(vertices[i], vertices[j]) < 1e-6f) {
+					vertices.erase(vertices.begin() + i);
+					ids.erase(ids.begin() + i);
+					break;
+				}
+			}
+		}
+		node._poly.vertCount = ids.size();
+		delete[] node._poly.vertIDs;
+		node._poly.vertIDs = new unsigned int[ids.size()];
+		for (int i = 0; i < ids.size(); i++) {
+			node._poly.vertIDs[i] = ids[i];
+		}
 	}
 
 	/*Sort cut_poly vertices to make correct cut_poly (with no segment intersections*/
@@ -86,7 +114,8 @@ namespace FusionCrowd
 		Vector2 mean = Vector2(0, 0);
 		for (int i = 0; i < node._poly.vertCount; i++) {
 			ids_left[i] = node._poly.vertIDs[i];
-			mean += node._poly.vertices[node._poly.vertIDs[i]];
+			Vector2 v = node._poly.vertices[node._poly.vertIDs[i]];
+			mean += v;
 		}
 		mean /= node._poly.vertCount;
 
@@ -116,6 +145,10 @@ namespace FusionCrowd
 		//fill res
 		for (int i = 0; i < res.size(); i++) {
 			node._poly.vertIDs[i] = res[i];
+		}
+		Vector2 v;
+		for (int i = 0; i < node._poly.vertCount; i++) {
+			v = node._poly.vertices[node._poly.vertIDs[i]];
 		}
 	}
 
@@ -280,4 +313,36 @@ namespace FusionCrowd
 		return fabs((v0.y - v1.y) * (v0.x - v2.x) - (v0.y - v2.y) * (v0.x - v1.x)) < delta;
 	}
 
+	float ModificationHelper::area(Vector2 &a,  Vector2 &b,  Vector2 &c) {
+		return (((b.x - a.x)*(c.y - a.y)) - ((c.x - a.x)*(b.y - a.y)));
+	}
+
+	bool ModificationHelper::right(Vector2 &a, Vector2 &b, Vector2 &c) {
+		return area(a, b, c) < 0;
+	}
+
+	bool ModificationHelper::leftOn(Vector2 &a, Vector2 &b, Vector2 &c) {
+		return area(a, b, c) >= 0;
+	}
+
+	bool ModificationHelper::rightOn(Vector2 &a, Vector2 &b, Vector2 &c) {
+		return area(a, b, c) <= 0;
+	}
+
+	Vector2 ModificationHelper::GetLineIntersectionPoint(Vector2& p0, Vector2& p1, Vector2& o1, Vector2& o2) {
+		Vector2 res;
+		float a1, b1, c1, a2, b2, c2, det;
+		a1 = p1.y - p0.y;
+		b1 = p0.x - p1.x;
+		c1 = a1 * p0.x + b1 * p0.y;
+		a2 = o2.y - o1.y;
+		b2 = o1.x - o2.x;
+		c2 = a2 * o1.x + b2 * o1.y;
+		det = a1 * b2 - a2 * b1;
+		if (!abs(det)<1e-8f) { // lines are not parallel
+			res.x = (b2 * c1 - b1 * c2) / det;
+			res.y = (a1 * c2 - a2 * c1) / det;
+		}
+		return res;
+	}
 }

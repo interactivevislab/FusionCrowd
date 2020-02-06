@@ -45,12 +45,7 @@ namespace FusionCrowd {
 
 	/*Adds all created nodes and vertexes*/
 	int NavMeshModification::Finalize() {
-		//todo test
-		auto inside_nodes = GetNodesInsidePoly(_global_polygon);
-		for (auto n : *inside_nodes) {
-			_nodes_ids_to_delete.push_back(n);
-		}
-		delete inside_nodes;
+		RemoveNodesInsidePoly(_global_polygon);
 
 		for (int i = _addededges.size() - 1; i >= 0; i--) {
 			if (_addededges[i]->getWidth() <= min_width) {
@@ -230,6 +225,8 @@ namespace FusionCrowd {
 
 		_spatial_query->Update();
 		_navmesh.IncVersion();
+
+		Clear();
 		return 0;
 	}
 
@@ -296,6 +293,7 @@ namespace FusionCrowd {
 
 	void NavMeshModification::FinalizeNodes() {
 		for (auto n : _addednodes) {
+			ModificationHelper::RemoveRepeatedVertex(*n);
 			ModificationHelper::ResetNodePolySequence(*n);
 			Vector2 center = Vector2(0, 0);
 			for (int i = 0; i < n->_poly.vertCount; i++) {
@@ -429,9 +427,7 @@ namespace FusionCrowd {
 		}
 	}
 
-	std::set<size_t>* NavMeshModification::GetNodesInsidePoly(std::vector<Vector2> poly) {
-		std::set<size_t>* res = new std::set<size_t>();
-
+	void NavMeshModification::RemoveNodesInsidePoly(std::vector<Vector2> poly) {
 		float minx = INFINITY;
 		float maxx = -INFINITY;
 		float miny = INFINITY;
@@ -468,9 +464,17 @@ namespace FusionCrowd {
 						break;
 					}
 				}
-				if (node_inside) res->insert(_navmesh.nodes[j]._id);
+				if (node_inside) _nodes_ids_to_delete.push_back(_navmesh.nodes[j]._id);
 			}
 		}
-		return res;
+	}
+
+	void NavMeshModification::Clear() {
+		_addednodes.clear();
+		_addededges.clear();
+		_addedobstacles.clear();
+		_nodes_ids_to_delete.clear();
+		_addedvertices.clear();
+		_global_polygon.clear();
 	}
 }
