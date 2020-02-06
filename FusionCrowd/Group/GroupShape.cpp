@@ -15,7 +15,7 @@ namespace FusionCrowd
 		return _agents.size();
 	}
 
-	void GroupGridShape::AddAgent(size_t agentId)
+	void GroupGridShape::AddAgent(size_t agentId, AgentSpatialInfo& info)
 	{
 		auto a = std::find(_agents.begin(), _agents.end(), agentId);
 
@@ -25,6 +25,9 @@ namespace FusionCrowd
 		}
 
 		_agents.push_back(agentId);
+
+		if(info.radius * 2 > _agentSize)
+			_agentSize = info.radius * 2;
 	}
 
 	void GroupGridShape::RemoveAgent(size_t agentId)
@@ -55,8 +58,8 @@ namespace FusionCrowd
 		float totalWidth  = GetTotalWidth();
 		float totalHeight = GetTotalHeight();
 
-		float top   = AGENT_SIZE / 2.0f + row * (interAgentDist + AGENT_SIZE);
-		float left  = AGENT_SIZE / 2.0f + pos * (interAgentDist + AGENT_SIZE);
+		float top   = _agentSize / 2.0f + row * (interAgentDist + _agentSize);
+		float left  = _agentSize / 2.0f + pos * (interAgentDist + _agentSize);
 
 		return Vector2(totalWidth / 2.0f - left, -totalHeight / 2.0f + top);
 	}
@@ -75,11 +78,11 @@ namespace FusionCrowd
 		if(_agents.size() % agentsInRow > 0)
 			totalRows++;
 
-		return AGENT_SIZE + (totalRows - 1) * (interAgentDist + AGENT_SIZE);
+		return _agentSize + (totalRows - 1) * (interAgentDist + _agentSize);
 	}
 
 	float GroupGridShape::GetTotalHeight() const
 	{
-		return AGENT_SIZE + (agentsInRow - 1) * (interAgentDist + AGENT_SIZE);
+		return _agentSize + (agentsInRow - 1) * (interAgentDist + _agentSize);
 	}
 }

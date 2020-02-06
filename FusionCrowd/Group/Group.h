@@ -28,7 +28,7 @@ namespace FusionCrowd
 
 		bool Contains(size_t agentId);
 
-		void AddAgent(size_t agentId);
+		void AddAgent(size_t agentId, AgentSpatialInfo& info);
 		void RemoveAgent(size_t agentId);
 
 		std::vector<size_t> GetAgents();

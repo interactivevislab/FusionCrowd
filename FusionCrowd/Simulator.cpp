@@ -390,8 +390,10 @@ namespace FusionCrowd
 				return;
 			}
 
+			auto & agtInfo = _navSystem->GetSpatialInfo(agentId);
+
 			a->second.SetGroupId(groupId);
-			g->second.AddAgent(agentId);
+			g->second.AddAgent(agentId, agtInfo);
 
 			auto & dummy = _navSystem->GetSpatialInfo(g->second.dummyAgentId);
 			dummy.radius = g->second.GetShape()->GetRadius();

@@ -24,13 +24,13 @@ namespace  FusionCrowd
 		return _agents.find(agentId) != _agents.end();
 	}
 
-	void Group::AddAgent(size_t agentId)
+	void Group::AddAgent(size_t agentId, AgentSpatialInfo& info)
 	{
 		if(_agents.find(agentId) != _agents.end())
 			return;
 
 		_agents.insert(agentId);
-		_shape->AddAgent(agentId);
+		_shape->AddAgent(agentId, info);
 	}
 
 	void Group::RemoveAgent(size_t agentId)

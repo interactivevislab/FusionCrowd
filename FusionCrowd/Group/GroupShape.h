@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Util.h"
+#include "Navigation/AgentSpatialInfo.h"
 #include <vector>
 
 namespace FusionCrowd
@@ -8,7 +9,7 @@ namespace FusionCrowd
 	class IGroupShape
 	{
 	public:
-		virtual void AddAgent(size_t agentId) = 0;
+		virtual void AddAgent(size_t agentId, AgentSpatialInfo& info) = 0;
 		virtual void RemoveAgent(size_t agentId) = 0;
 		virtual DirectX::SimpleMath::Vector2 GetRelativePos(size_t agentId) const = 0;
 		virtual size_t GetSize() const = 0;
@@ -23,7 +24,7 @@ namespace FusionCrowd
 		const size_t agentsInRow;
 		const float interAgentDist;
 
-		void AddAgent(size_t agentId) override;
+		void AddAgent(size_t agentId, AgentSpatialInfo& info) override;
 		void RemoveAgent(size_t agentId) override;
 		DirectX::SimpleMath::Vector2 GetRelativePos(size_t agentId) const override;
 		size_t GetSize() const override;
@@ -35,6 +36,6 @@ namespace FusionCrowd
 
 		std::vector<size_t> _agents;
 
-		const float AGENT_SIZE = 0.4f;
+		float _agentSize = 0.0f;
 	};
 }
