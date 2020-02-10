@@ -50,9 +50,22 @@ namespace FusionCrowd
 		return sum > 0;
 	}
 
-	std::vector<Vector2> ModificationHelper::FindPolyAndSegmentCrosspoints(Vector2 q, Vector2 v1, NavMeshPoly* poly, bool ray_mode) {
+	std::vector<Vector2> ModificationHelper::FindPolyAndSegmentCrosspoints(Vector2 q, Vector2 v1, NavMeshPoly* poly, bool ray_mode)
+	{
 		//https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
 		std::vector<Vector2> res = std::vector<Vector2>();
+
+		auto addToResultSkipDuplicates = [&] (Vector2 v) {
+			for(auto r : res)
+			{
+				if(Vector2::Distance(r, v) < 1e-4)
+					return;
+			}
+
+			res.push_back(v);
+		};
+
+
 		//u = (q-p)Xr/(rXs)
 		//vXw = v.x*w.y-v.y*w.x
 		auto s = v1 - q;
@@ -68,15 +81,13 @@ namespace FusionCrowd
 			float deltaXs = delta.x*s.y - delta.y*s.x;
 			float t = deltaXs / rXs;
 			if (!ray_mode && u >= 0.0f && u <= 1.0f && t <= 1.0f && t >= 0.0f) {
-					res.push_back(q + u * s);
+				addToResultSkipDuplicates(q + u * s);
 			}
-			if (ray_mode && u > 0.99f  && t <= 1.0f && t >= 0.0f) {
-				res.push_back(q + u * s);
+			if (ray_mode && u > 0.99f && t <= 1.0f && t >= 0.0f) {
+				addToResultSkipDuplicates(q + u * s);
 			}
 		}
-		for (int i = res.size() - 1; i > 0; i--) {
-			if (Vector2::Distance(res[i], res[i - 1]) < 1e-4f) res.erase(res.begin() + i);
-		}
+
 		return res;
 	}
 
