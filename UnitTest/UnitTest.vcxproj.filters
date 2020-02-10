@@ -32,10 +32,11 @@
     <ClCompile Include="NavMeshUnitTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ModificationHelperUnitTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="square.nav">
-      <Filter>Resource Files</Filter>
-    </None>
+    <Text Include="square.nav" />
   </ItemGroup>
 </Project>
