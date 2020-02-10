@@ -81,6 +81,7 @@ class Player:
 
         self.scale *= scale
         self.canvas.scale("all", 0, 0, scale, scale)  # rescale all canvas objects
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def _move_from(self, event):
         """Remember previous coordinates for scrolling with the mouse"""
