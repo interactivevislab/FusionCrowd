@@ -14,6 +14,8 @@ namespace FusionCrowd
 		NavMeshPoly();
 		~NavMeshPoly();
 
+		NavMeshPoly(const NavMeshPoly& p);
+
 		NavMeshPoly& operator=(const NavMeshPoly& n);
 		bool containsPoint(const DirectX::SimpleMath::Vector2& point) const;
 		float getElevation(const DirectX::SimpleMath::Vector2& point) const;
