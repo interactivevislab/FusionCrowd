@@ -293,7 +293,7 @@ namespace FusionCrowd {
 
 	void NavMeshModification::FinalizeNodes() {
 		for (auto n : _addednodes) {
-			ModificationHelper::RemoveRepeatedVertex(*n);
+			ModificationHelper::RemoveDuplicateVerticesFromNodePoly(*n);
 			ModificationHelper::ResetNodePolySequence(*n);
 			Vector2 center = Vector2(0, 0);
 			for (int i = 0; i < n->_poly.vertCount; i++) {

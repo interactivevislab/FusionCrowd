@@ -18,7 +18,7 @@ namespace FusionCrowd
 
 		void ConcaveHull(std::vector<DirectX::SimpleMath::Vector2>& poly);
 		void ResetNodePolySequence(NavMeshNode& node);
-		void RemoveRepeatedVertex(NavMeshNode& node);
+		void RemoveDuplicateVerticesFromNodePoly(NavMeshNode& node);
 		void SimplifyPoly(std::vector<DirectX::SimpleMath::Vector2> &poly, bool makeConcave = true);
 		bool IsClockwise(std::vector<DirectX::SimpleMath::Vector2>& polygon);
 

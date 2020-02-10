@@ -80,7 +80,7 @@ namespace FusionCrowd
 		return res;
 	}
 
-	void ModificationHelper::RemoveRepeatedVertex(NavMeshNode& node) {
+	void ModificationHelper::RemoveDuplicateVerticesFromNodePoly(NavMeshNode& node) {
 		std::vector<Vector2> vertices;
 		std::vector<unsigned int> ids;
 		for (int i = 0; i < node._poly.vertCount; i++) {
