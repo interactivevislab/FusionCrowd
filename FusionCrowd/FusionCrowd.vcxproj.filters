@@ -117,8 +117,8 @@
     <ClInclude Include="TacticComponent\NavGraphComponent.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="navgraph.spec" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeeker.hlsl" />

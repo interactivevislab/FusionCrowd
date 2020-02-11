@@ -13,18 +13,18 @@ namespace FusionCrowd
 
 	void NavGraphComponent::AddAgent(size_t id)
 	{
-		//auto & agentGoal = _simulator->GetAgentGoal(id);
-		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(id);
-		size_t curNodeId = _navGraph->GetClosestNodeIdByPosition(agentInfo.pos, _navGraph->GetAllNodes());
-		//size_t goalNodeId = _navGraph->GetClosestNodeIdByPosition(agentGoal.getCentroid(), _navGraph->GetAllNodes());
-		NavGraphPathPlanner pathPlanner(_navGraph);
-		AgentStruct agtStruct;
-		agtStruct.id = id;
-		//agtStruct.routeNodes = &pathPlanner.GetRoute(curNodeId, curNodeId)->nodes;
-		agtStruct.route = pathPlanner.GetRoute(curNodeId, curNodeId);
-		agtStruct.nodesComplete = 0;
-		agtStruct.goalNodeID = agtStruct.route->nodes.at(agtStruct.nodesComplete);
-		_agents.push_back(agtStruct);
+			//auto & agentGoal = _simulator->GetAgentGoal(id);
+			AgentSpatialInfo& agentInfo = _simulator->GetSpatialInfo(id);
+			size_t curNodeId = _navGraph->GetClosestNodeIdByPosition(agentInfo.pos, _navGraph->GetAllNodes());
+			//size_t goalNodeId = _navGraph->GetClosestNodeIdByPosition(agentGoal.getCentroid(), _navGraph->GetAllNodes());
+			NavGraphPathPlanner pathPlanner(_navGraph);
+			AgentStruct agtStruct;
+			agtStruct.id = id;
+			//agtStruct.routeNodes = &pathPlanner.GetRoute(curNodeId, curNodeId)->nodes;
+			agtStruct.route = pathPlanner.GetRoute(curNodeId, curNodeId);
+			agtStruct.nodesComplete = 0;
+			agtStruct.goalNodeID = agtStruct.route->nodes.at(agtStruct.nodesComplete);
+			_agents.push_back(agtStruct);
 	}
 
 	void NavGraphComponent::Replan(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
