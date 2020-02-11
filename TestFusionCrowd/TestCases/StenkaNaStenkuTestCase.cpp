@@ -31,14 +31,14 @@ namespace TestFusionCrowd
 		float x1 = -30, x2 = 30;
 		float y1 = -30, y2 = 30;
 
-		size_t group1 = _sim->AddGridGroup(x1, y1, 10, 0.2f);
-		size_t group2 = _sim->AddGridGroup(x2, y2, 10, 0.2f);
+		size_t group1 = _sim->AddGridGroup(x1, y1, 10, 0.5f);
+		size_t group2 = _sim->AddGridGroup(x2, y2, 10, 0.5f);
 
 		_sim->SetGroupGoal(group1, x2, y2);
 		_sim->SetGroupGoal(group2, x1, y1);
 
 
-		float z = sqrt(_agentsNum / 2.0f);
+		float z = 30;
 
 		for (size_t i = 0; i < _agentsNum / 2; i++)
 		{

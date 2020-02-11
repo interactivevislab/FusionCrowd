@@ -109,6 +109,7 @@ class Player:
 
     def set_redraw(self, redraw):
         self.timeline.config(command=redraw)
+        pass
 
     def text(self, p, text, color="white"):
         x, y = p[0] * self.scale, p[1] * self.scale
@@ -154,4 +155,4 @@ class Player:
         self.line(p1, p2, color)
 
         p09 = p1[0] + (p2[0] - p1[0]) * 0.9, p1[1] + (p2[1] - p1[1]) * 0.9
-        self.circle(p09, 2/self.scale, color)
+        self.circle(p09, 0.02/self.scale, color)

@@ -26,7 +26,7 @@ namespace FusionCrowd
 
 		int numberOfPoints;
 		int numberOfCells;
-		static const int NUMBER_OF_NEIGHBORS = 10;
+		static const int NUMBER_OF_NEIGHBORS = 20;
 		static const std::string NUMBER_OF_NEIGHBORS_AS_STRING;
 		float searchRadius;
 		int maxNearCells;
@@ -78,7 +78,7 @@ namespace FusionCrowd
 			int neighborsID[NUMBER_OF_NEIGHBORS];
 		};
 
-		PointNeighbors* FindNeighbors(Point* points, int numberOfPoints, float worldWidth, float worldHeight, 
+		PointNeighbors* FindNeighbors(Point* points, int numberOfPoints, float worldWidth, float worldHeight,
 			float searchRadius, bool useGpu = true, bool simplified = true);
 	};
 

@@ -20,7 +20,7 @@ namespace FusionCrowd
 		DirectX::SimpleMath::Vector2 velNew;
 		DirectX::SimpleMath::Vector2 orient = DirectX::SimpleMath::Vector2(1.f, 0.f);
 
-		float radius    = 1.19f;
+		float radius    = 0.19f;
 		float maxSpeed  = 2.f;
 		float maxAccel  = 5.f;
 		float prefSpeed = 1.04f;

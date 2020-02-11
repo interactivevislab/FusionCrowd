@@ -56,12 +56,19 @@ namespace FusionCrowd
 			AgentSpatialInfo info;
 			info.id = agentId;
 			info.pos = position;
-			_agentsInfo[agentId] = info;
+
+			AddAgent(info);
 		}
 
 		void AddAgent(AgentSpatialInfo spatialInfo)
 		{
+			if(spatialInfo.collisionsLevel == AgentSpatialInfo::AGENT)
+				_numAgents++;
+			else
+				_numGroups++;
+
 			_agentsInfo[spatialInfo.id] = spatialInfo;
+			_agentsNeighbours[spatialInfo.id] = std::vector<AgentSpatialInfo>();
 		}
 
 		void RemoveAgent(unsigned int id) {
@@ -229,71 +236,60 @@ namespace FusionCrowd
 
 		void UpdateNeighbours()
 		{
-			int numAgents = _agentsInfo.size();
-
-			if(numAgents < 2)
-				return;
-
-			std::vector<AgentSpatialInfo> agentsInfos;
-			agentsInfos.reserve(numAgents);
-			for (auto info : _agentsInfo) {
-				agentsInfos.push_back(info.second);
-			}
-
 			float minX = std::numeric_limits<float>::max();
 			float minY = std::numeric_limits<float>::max();
 			float maxX = std::numeric_limits<float>::min();
 			float maxY = std::numeric_limits<float>::min();
-			for (auto & info : agentsInfos) {
-				if (info.pos.x < minX) minX = info.pos.x;
-				if (info.pos.x > maxX) maxX = info.pos.x;
-				if (info.pos.y < minY) minY = info.pos.y;
-				if (info.pos.y > maxY) maxY = info.pos.y;
+			for (auto & info : _agentsInfo) {
+				if (info.second.pos.x < minX) minX = info.second.pos.x;
+				if (info.second.pos.x > maxX) maxX = info.second.pos.x;
+				if (info.second.pos.y < minY) minY = info.second.pos.y;
+				if (info.second.pos.y > maxY) maxY = info.second.pos.y;
 			}
 
-			Point *agentsPositions = new Point[numAgents];
-			int i = 0;
-			for (auto & info : agentsInfos) {
-				agentsPositions[i].x = info.pos.x - minX;
-				agentsPositions[i].y = info.pos.y - minY;
-				i++;
-			}
+			auto agentsPositions = new Point[_numAgents];
+			auto groupsPositions = new Point[_numGroups];
 
-			auto allNeighbors = _neighborsSeeker.FindNeighbors(agentsPositions, numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, false);
-			//NeighborsSeeker::PointNeighbors *allNeighbors = new NeighborsSeeker::PointNeighbors[numAgents];
-			//for (int i = 0; i < numAgents; i++) {
-			//	allNeighbors[i] = { i, 0 };
-			//}
-
-			_agentsNeighbours.reserve(numAgents);
-			i = 0;
-
-			for (auto & info : agentsInfos) {
-
-				auto dataPair = _agentsNeighbours.find(info.id);
-				if (dataPair == _agentsNeighbours.end()) {
-					dataPair = _agentsNeighbours.insert({ info.id, std::vector<AgentSpatialInfo>() }).first;
-				}
-				else
+			size_t a = 0;
+			size_t g = 0;
+			for (auto & info : _agentsInfo)
+			{
+				if(info.second.collisionsLevel == AgentSpatialInfo::AGENT)
 				{
-					dataPair->second.clear();
+					agentsPositions[a].x = info.second.pos.x - minX;
+					agentsPositions[a].y = info.second.pos.y - minY;
+					a++;
+				} else
+				{
+					groupsPositions[g].x = info.second.pos.x - minX;
+					groupsPositions[g].y = info.second.pos.y - minY;
+					g++;
 				}
+			}
 
-				auto neighbors = allNeighbors[i];
+			auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, _numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, false);
+			auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, _numGroups, maxX - minX, maxY - minY, _groupSensitivityRadius, false);
 
-				auto &neighborsInfos = dataPair->second;
+			a = 0;
+			g = 0;
+			for (auto & info : _agentsInfo)
+			{
+				auto neighbors = (info.second.collisionsLevel == AgentSpatialInfo::AGENT) ? agentNeighbours[a] : groupNeighbours[g];
+
+				auto & neighborsInfos = _agentsNeighbours[info.second.id];
+				neighborsInfos.clear();
 				neighborsInfos.reserve(neighbors.neighborsCount);
 
 				for (int j = 0; j < neighbors.neighborsCount; j++) {
-					auto & neighbour = agentsInfos[neighbors.neighborsID[j]];
-					if(neighbour.collisionsLevel == info.collisionsLevel)
-						neighborsInfos.push_back(neighbour);
+					auto & neighbour = _agentsInfo[neighbors.neighborsID[j]];
+					neighborsInfos.push_back(neighbour);
 				}
 
-				i++;
+				if(info.second.collisionsLevel == AgentSpatialInfo::AGENT) { a++; } else { g++; }
 			}
 
 			delete[] agentsPositions;
+			delete[] groupsPositions;
 		}
 
 		void Init() {
@@ -325,6 +321,10 @@ namespace FusionCrowd
 		NeighborsSeeker _neighborsSeeker;
 		std::map<size_t, AgentSpatialInfo> _agentsInfo;
 		float _agentsSensitivityRadius = 1;
+		float _groupSensitivityRadius = 100;
+
+		size_t _numAgents = 0;
+		size_t _numGroups = 0;
 	};
 
 	NavSystem::NavSystem(std::shared_ptr<NavMeshLocalizer> localizer)

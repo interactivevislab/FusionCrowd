@@ -110,18 +110,8 @@ int main()
 		// std::shared_ptr<ITestCase>((ITestCase*) new CrossingTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new PinholeTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 200, 1000)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new TshapedFancyTestCase(FusionCrowd::ComponentIds::ORCA_ID, 200, 1000, true)),
-		std::shared_ptr<ITestCase>((ITestCase*) new StenkaNaStenkuTestCase(500, 1000, true)),
+		std::shared_ptr<ITestCase>((ITestCase*) new StenkaNaStenkuTestCase(200, 1000, true)),
 	};
-
-	/*
-	// Overclocking setup
-	cases.push_back(std::shared_ptr<ITestCase>((ITestCase*) new NeighbourSearchBenchCase(3.0f)));
-	cases.push_back(std::shared_ptr<ITestCase>((ITestCase*) new NeighbourSearchBenchCase(3.0f)));
-	for (float coeff = 0.5; coeff < 10; coeff += 0.25)
-	{
-		cases.push_back(std::shared_ptr<ITestCase>((ITestCase*) new NeighbourSearchBenchCase(coeff)));
-	}
-	*/
 
 	std::vector<long long> measurements;
 	time_point startTime;
