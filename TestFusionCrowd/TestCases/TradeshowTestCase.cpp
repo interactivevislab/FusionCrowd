@@ -45,7 +45,7 @@ namespace TestFusionCrowd
 
 		_sim = std::shared_ptr<ISimulatorFacade>(builder->Build(), SimulatorFacadeDeleter);
 
-		std::unique_ptr<Fsm::IBuilder, decltype(&Fsm::FsmBuilderDeleter)> fsmBuilder(Fsm::Builder(), Fsm::FsmBuilderDeleter);
+		std::unique_ptr<Fsm::IBuilder, decltype(&Fsm::BuilderDeleter)> fsmBuilder(Fsm::Builder(), Fsm::BuilderDeleter);
 
 		FCArray<Fsm::State> decisions(2);
 		decisions[0] = States::Angry;
