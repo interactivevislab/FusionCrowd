@@ -56,7 +56,7 @@ namespace FusionCrowd
 
 			FUSION_CROWD_API void Deleter(IFsm* machine);
 			FUSION_CROWD_API IBuilder* Builder();
-			FUSION_CROWD_API void BuilderDeleter(IBuilder * builder);
+			FUSION_CROWD_API void FsmBuilderDeleter(IBuilder * builder);
 		}
 	}
 }

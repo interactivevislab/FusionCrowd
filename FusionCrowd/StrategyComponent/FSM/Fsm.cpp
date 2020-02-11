@@ -2,6 +2,7 @@
 
 #include <map>
 #include <random>
+#include <memory>
 
 namespace FusionCrowd
 {
@@ -145,9 +146,9 @@ namespace FusionCrowd
 			return new BuilderImpl();
 		}
 
-		/*void BuilderDeleter(IBuilder * builder)
+		void FsmBuilderDeleter(IBuilder * builder)
 		{
-			delete builder;
-		}*/
+			//delete builder;
+		}
 	}
 }
