@@ -10,6 +10,7 @@
 #include "Export/INavSystemPublic.h"
 #include "Util/spimpl.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
+#include "Navigation/NavGraph/NavGraph.h"
 
 namespace FusionCrowd
 {
@@ -20,7 +21,11 @@ namespace FusionCrowd
 	class NavSystem : public INavSystemPublic
 	{
 	public:
-		NavSystem(std::shared_ptr<NavMeshLocalizer> localizer);
+		NavSystem();
+
+		void SetNavMesh(std::shared_ptr<NavMeshLocalizer> localizer);
+		void SetNavGraph(const std::string& name);
+		std::shared_ptr <NavGraph> GetNavGraph();
 
 		// Why do we need it?
 		void Init();

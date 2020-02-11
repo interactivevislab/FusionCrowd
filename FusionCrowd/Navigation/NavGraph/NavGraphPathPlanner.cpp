@@ -11,7 +11,7 @@ namespace FusionCrowd
 	NavGraphPathPlanner::NavGraphPathPlanner(std::shared_ptr<NavGraph> navGraph) : _navGraph(navGraph)
 	{ }
 
-	NavGraphRoute NavGraphPathPlanner::GetRoute(size_t nodeFrom, size_t nodeTo) const
+	std::shared_ptr <NavGraphRoute> NavGraphPathPlanner::GetRoute(size_t nodeFrom, size_t nodeTo) const
 	{
 		std::map<size_t, float> distance;
 		for(auto & node : _navGraph->GetAllNodes())
@@ -26,13 +26,19 @@ namespace FusionCrowd
 
 		visited.insert(nodeFrom);
 
-		for(auto & edge : _navGraph->GetOutEdges(nodeFrom))
+		for (auto & edge : _navGraph->GetOutEdges(nodeFrom))
+		{
+			auto d = (_navGraph->GetNode(edge.nodeFrom).position - _navGraph->GetNode(edge.nodeTo).position).Length();
+			distance.at(edge.nodeTo) = d;
 			remainingNodes.push(edge.nodeTo);
+		}
+			
 
 		while(!remainingNodes.empty())
 		{
 			size_t nodeId = remainingNodes.front(); remainingNodes.pop();
 			auto curDist = distance.at(nodeId);
+
 
 			for(auto & edge : _navGraph->GetOutEdges(nodeId))
 			{
@@ -43,7 +49,7 @@ namespace FusionCrowd
 					distance.at(edge.nodeTo) = curDist + d;
 				}
 
-				if(visited.find(edge.nodeTo) != visited.end())
+				if(visited.find(edge.nodeTo) == visited.end())
 					remainingNodes.push(edge.nodeTo);
 			}
 		}
@@ -70,6 +76,6 @@ namespace FusionCrowd
 			route_nodes.push_back(current);
 		}
 
-		return NavGraphRoute(route_nodes);
+		return std::make_shared <NavGraphRoute>(route_nodes);
 	}
 }

@@ -39,6 +39,7 @@
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
     <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
+    <ClInclude Include="TacticComponent\NavGraphComponent.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
     <ClInclude Include="Export\FCArray.h" />
     <ClInclude Include="Math\Util.h" />
@@ -106,6 +107,7 @@
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
+    <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
     <ClCompile Include="Util\RecordingSerializer.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
@@ -173,8 +175,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>

@@ -46,6 +46,7 @@
     <ClCompile Include="Navigation\NavMesh\NavMeshModifyer.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
+    <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -113,6 +114,7 @@
     <ClInclude Include="Navigation\NavGraph\NavGraphPathPlanner.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Export\INavMeshPublic.h" />
+    <ClInclude Include="TacticComponent\NavGraphComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

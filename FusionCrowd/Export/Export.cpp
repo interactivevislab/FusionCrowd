@@ -9,6 +9,7 @@
 #include "Navigation/NavSystem.h"
 
 #include "TacticComponent/NavMeshComponent.h"
+#include "TacticComponent/NavGraphComponent.h"
 
 #include "OperationComponent/KaramouzasComponent.h"
 #include "OperationComponent/HelbingComponent.h"
@@ -122,13 +123,28 @@ namespace FusionCrowd
 		ISimulatorBuilder*  WithNavMesh(const char* path)
 		{
 			auto localizer = std::make_shared<NavMeshLocalizer>(path, true);
-			navSystem = std::make_shared<NavSystem>(localizer);
+			navSystem = std::make_shared<NavSystem>();
+			navSystem->SetNavMesh(localizer);
 			navSystem->Init();
 
 			sim->UseNavSystem(navSystem);
 
 			auto spatial_query = std::make_shared<NavMeshSpatialQuery>(localizer);
 			auto tactic = std::make_shared<FusionCrowd::NavMeshComponent>(sim, localizer, spatial_query);
+			sim->AddTactic(tactic);
+
+			return this;
+		}
+
+		ISimulatorBuilder*  WithNavGraph(const char* path)
+		{
+			navSystem = std::make_shared<NavSystem>();
+			navSystem->SetNavGraph(path);
+			navSystem->Init();
+
+			sim->UseNavSystem(navSystem);
+
+			auto tactic = std::make_shared<FusionCrowd::NavGraphComponent>(sim, navSystem);
 			sim->AddTactic(tactic);
 
 			return this;

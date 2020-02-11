@@ -2,9 +2,9 @@ from navgraph import NavGraph, Node, Edge
 
 from random import random
 
-grid_width = 20
-grid_height = 20
-cell_size = 3
+grid_width = 6
+grid_height = 6
+cell_size = 10
 weight = 1
 width = 1
 
