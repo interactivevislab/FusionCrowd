@@ -56,17 +56,17 @@ namespace FusionCrowd
 
 			void ComputeNewVelocity(size_t agentId, float timeStep)
 			{
-				//std::vector<FusionCrowd::Math::Line> orcaLines;
- 				//const size_t numObstLines = ComputeORCALines(orcaLines, agentId, timeStep);
+				std::vector<FusionCrowd::Math::Line> orcaLines;
+ 				const size_t numObstLines = ComputeORCALines(orcaLines, agentId, timeStep);
 				auto & agentInfo = _navSystem->GetSpatialInfo(agentId);
 
 				Vector2 velPref(agentInfo.prefVelocity.getPreferredVel());
 
-				//size_t lineFail = LinearProgram2(orcaLines, agentInfo.maxSpeed, velPref, false, agentInfo.velNew);
+				size_t lineFail = LinearProgram2(orcaLines, agentInfo.maxSpeed, velPref, false, agentInfo.velNew);
 
-				//if (lineFail < orcaLines.size()) {
-					//LinearProgram3(orcaLines, numObstLines, lineFail, agentInfo.maxSpeed, agentInfo.velNew);
-				//}
+				if (lineFail < orcaLines.size()) {
+					LinearProgram3(orcaLines, numObstLines, lineFail, agentInfo.maxSpeed, agentInfo.velNew);
+				}
 			}
 
 			size_t ComputeORCALines(std::vector<FusionCrowd::Math::Line>& _orcaLines, size_t agentId, float timeStep)

@@ -38,8 +38,7 @@ namespace TestFusionCrowd
 	void TradeshowTestCase::Pre()
 	{
 		std::unique_ptr<ISimulatorBuilder, decltype(&BuilderDeleter)> builder(BuildSimulator(), BuilderDeleter);
-		//builder->WithNavMesh("Resources/tradeshow.nav")
-		builder->WithNavGraph("Resources/graph/circle.navgraph")
+		builder->WithNavMesh("Resources/tradeshow.nav")
 			->WithOp(_op)
 			->WithStrategy(ComponentIds::FSM_ID);
 
@@ -74,7 +73,7 @@ namespace TestFusionCrowd
 
 		size_t fsmId = fsmStrat->AddMachine(fsm);
 
-		std::ifstream tradeshowGoals("Resources/TradeshowCircleNavgraphGoals.txt");
+		std::ifstream tradeshowGoals("Resources/TradeshowGoals.txt");
 		std::vector<Fsm::Point> vectorGoals;
 		float x = 0;
 		float y = 0;
@@ -96,7 +95,7 @@ namespace TestFusionCrowd
 
 		Fsm::AgentParams flowMachineParams; flowMachineParams.FsmId = fsmId;
 
-		std::ifstream agentPositions("Resources/TradeshowCircleNavGraphAgents.txt");
+		std::ifstream agentPositions("Resources/TradeshowAgents.txt");
 		while(agentPositions >> x >> y)
 		{
 			size_t id = _sim->AddAgent(x, y, _op, ComponentIds::FSM_ID);
