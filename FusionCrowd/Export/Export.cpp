@@ -166,9 +166,47 @@ namespace FusionCrowd
 			return this;
 		}
 
-		ISimulatorBuilder*  WithNavGraph(const char* path)
+		ISimulatorBuilder* WithNavGraph(const char* path)
 		{
-			navSystem->SetNavGraph(path);
+			std::ifstream f(path);
+
+			if (!f.is_open())
+			{
+				throw std::ios_base::failure("Can't load navgraph");
+			}
+
+			navSystem->SetNavGraph(NavGraph::LoadFromStream(f));
+
+			auto tactic = std::make_shared<FusionCrowd::NavGraphComponent>(sim, navSystem);
+			sim->AddTactic(tactic);
+
+			return this;
+		}
+
+		ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> nodesArray, FCArray<Export::NavGraphEdge> edgesArray)
+		{
+			std::vector<NavGraphNode> nodes;
+			for(auto& n : nodesArray)
+			{
+				nodes.push_back({
+					n.id, DirectX::SimpleMath::Vector2(n.x, n.y)
+				});
+			}
+
+			std::vector<NavGraphEdge> edges;
+			size_t eId = 0;
+			for(auto& e : edgesArray)
+			{
+				edges.push_back({
+					eId++,
+					e.nodeFrom,
+					e.nodeTo,
+					e.weight,
+					e.width
+				});
+			}
+
+			navSystem->SetNavGraph(std::make_unique<NavGraph>(nodes, edges));
 
 			auto tactic = std::make_shared<FusionCrowd::NavGraphComponent>(sim, navSystem);
 			sim->AddTactic(tactic);

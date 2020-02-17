@@ -24,8 +24,8 @@ namespace FusionCrowd
 		NavSystem();
 
 		void SetNavMesh(std::shared_ptr<NavMeshLocalizer> localizer);
-		void SetNavGraph(const std::string& name);
-		std::shared_ptr <NavGraph> GetNavGraph();
+		void SetNavGraph(std::unique_ptr<NavGraph> navGraph);
+		NavGraph* GetNavGraph();
 
 		// Why do we need it?
 		void Init();
