@@ -13,14 +13,10 @@ namespace FusionCrowd
 
 	void NavGraphComponent::AddAgent(size_t id)
 	{
-		//auto & agentGoal = _simulator->GetAgentGoal(id);
-		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(id);
-		size_t curNodeId = _navGraph->GetClosestNodeIdByPosition(agentInfo.pos, _navGraph->GetAllNodes());
-		//size_t goalNodeId = _navGraph->GetClosestNodeIdByPosition(agentGoal.getCentroid(), _navGraph->GetAllNodes());
+		size_t curNodeId = getNodeId(id);
 		NavGraphPathPlanner pathPlanner(_navGraph);
 		AgentStruct agtStruct;
 		agtStruct.id = id;
-		//agtStruct.routeNodes = &pathPlanner.GetRoute(curNodeId, curNodeId)->nodes;
 		agtStruct.route = pathPlanner.GetRoute(curNodeId, curNodeId);
 		agtStruct.nodesComplete = 0;
 		agtStruct.goalNodeID = agtStruct.route->nodes.at(agtStruct.nodesComplete);
@@ -71,9 +67,6 @@ namespace FusionCrowd
 			agentInfo.prefVelocity.setSingle((goalNode.position - agentInfo.pos) / dist);
 			dir = (goalNode.position - agentInfo.pos) / dist;
 		}
-
-		agentInfo.vel = 3 * dir; // hardcode velocity, need to be changed
-		agentInfo.velNew = 3 * dir;
 		
 	}
 
@@ -94,6 +87,46 @@ namespace FusionCrowd
 		}
 		
 	}
+
+	std::shared_ptr<NavGraph> NavGraphComponent::GetNavGraph() const
+	{
+		return _navGraph;
+	}
+
+	unsigned int NavGraphComponent::getNodeId(size_t agentId) const
+	{
+		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(agentId);
+		return _navGraph->GetClosestNodeIdByPosition(agentInfo.pos, _navGraph->GetAllNodes());
+	}
+
+	/*size_t NavGraphComponent::GetForwardAgent(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
+	{
+		std::vector<size_t> nearestAgents = GetAllAgentsInRadius(agentInfo, agentStruct, 5.0f);
+
+		for (auto agentID : nearestAgents)
+		{
+			AgentSpatialInfo & info = _simulator->GetSpatialInfo(agentID);
+
+		}
+	}
+
+	std::vector<AgentStruct> NavGraphComponent::GetAllAgentsInRadius(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float radius)
+	{
+		std::vector<AgentStruct> ret;
+		for (auto & agtStruct : _agents)
+		{
+			size_t id = agtStruct.id;
+			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
+			float dist = info.pos.Distance(info.pos, agentInfo.pos);
+
+			if (dist < radius)
+			{
+				ret.push_back(agtStruct);
+			}
+		}
+
+		return ret;
+	}*/
 
 
 

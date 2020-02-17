@@ -32,13 +32,13 @@ namespace TestFusionCrowd
 
 		for (size_t i = 0; i < _agentsNum / 2; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(500 - z, 500), RandFloat(500 -z / 2, 500 + z / 2), op, -1);
+			size_t id = _sim->AddAgent(RandFloat(500 - z, 500), RandFloat(500 -z / 2, 500 + z / 2), op, -1, ComponentIds::NAVMESH_ID);
 			_sim->SetAgentGoal(id, RandFloat(500.0f, 500 + z), RandFloat(500 -z / 2, 500 + z / 2));
 		}
 
 		for (size_t i = _agentsNum / 2; i < _agentsNum; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(500.0f, 500 + z), RandFloat(500 - z / 2, 500 + z / 2), op, -1);
+			size_t id = _sim->AddAgent(RandFloat(500.0f, 500 + z), RandFloat(500 - z / 2, 500 + z / 2), op, -1, ComponentIds::NAVMESH_ID);
 			_sim->SetAgentGoal(id, RandFloat(500 - z, 500.0f), RandFloat(500 - z / 2, 500 + z / 2));
 		}
 	}

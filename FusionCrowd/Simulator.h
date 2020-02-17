@@ -57,7 +57,8 @@ namespace FusionCrowd
 		size_t AddAgent(
 			float x, float y,
 			ComponentId opId,
-			ComponentId strategyId
+			ComponentId strategyId,
+			ComponentId tacticId
 		);
 
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos);

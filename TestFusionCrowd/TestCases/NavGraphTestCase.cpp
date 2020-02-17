@@ -19,8 +19,9 @@ namespace TestFusionCrowd
 	void NavGraphTestCase::Pre()
 	{
 		std::unique_ptr<ISimulatorBuilder, decltype(&BuilderDeleter)> builder(BuildSimulator(), BuilderDeleter);
-		builder->WithNavGraph("Resources/graph/randomgrid_6x6.navgraph")
-			->WithOp(_opComponent);
+		builder->WithNavMesh("Resources/square.nav")->
+			WithNavGraph("Resources/graph/randomgrid_6x6.navgraph")->WithOp(_opComponent);
+
 
 		_sim = std::unique_ptr<ISimulatorFacade, decltype(&SimulatorFacadeDeleter)>(builder->Build(), SimulatorFacadeDeleter);
 
@@ -31,8 +32,17 @@ namespace TestFusionCrowd
 			float x = RandFloat(0, 60);
 			float y = RandFloat(0, 60);
 
-			size_t id = _sim->AddAgent(x, y, _opComponent, -1);
+			size_t id;
+			if (i % 2 == 0)
+			{
+				id = _sim->AddAgent(x, y, _opComponent, -1, ComponentIds::NAVGRAPH_ID);
+			}
+			else
+			{
+				id = _sim->AddAgent(x, y, _opComponent, -1, ComponentIds::NAVMESH_ID);
+			}
 			_sim->SetAgentGoal(id, goalX, goalY);
 		}
+
 	}
 }

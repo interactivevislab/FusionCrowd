@@ -41,6 +41,12 @@ namespace FusionCrowd
 			return OperationStatus::OK;
 		}
 
+		OperationStatus SetAgentTactic(size_t agentId, ComponentId tacticID)
+		{
+			_sim->SetTacticComponent(agentId, tacticID);
+			return OperationStatus::OK;
+		}
+
 		OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId)
 		{
 			_sim->SetStrategyComponent(agentId, strategyId);
@@ -63,10 +69,11 @@ namespace FusionCrowd
 		size_t AddAgent(
 			float x, float y,
 			ComponentId opId,
-			ComponentId strategyId
+			ComponentId strategyId,
+			ComponentId tacticId
 		)
 		{
-			return _sim->AddAgent(x, y, opId, strategyId);
+			return _sim->AddAgent(x, y, opId, strategyId, tacticId);
 		}
 
 		OperationStatus RemoveAgent(size_t agentId)

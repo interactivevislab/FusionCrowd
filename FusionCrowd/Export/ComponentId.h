@@ -31,6 +31,7 @@ namespace FusionCrowd
 
 
 		FUSION_CROWD_API const ComponentId NAVMESH_ID = 200;
+		FUSION_CROWD_API const ComponentId NAVGRAPH_ID = 201;
 
 		FUSION_CROWD_API const ComponentId FSM_ID        = 300;
 

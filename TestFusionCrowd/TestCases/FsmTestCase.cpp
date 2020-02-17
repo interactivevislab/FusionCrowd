@@ -107,13 +107,13 @@ namespace TestFusionCrowd
 		size_t firstHalf = _agentsNum / 2;
 		for (int i = 0; i < firstHalf; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(p1.x - 1, p1.x + 1), RandFloat(p1.y - 1, p1.y + 1), _opComponent, ComponentIds::FSM_ID);
+			size_t id = _sim->AddAgent(RandFloat(p1.x - 1, p1.x + 1), RandFloat(p1.y - 1, p1.y + 1), _opComponent, ComponentIds::FSM_ID, ComponentIds::NAVMESH_ID);
 			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, flowMachineParams);
 		}
 
 		for (int i = firstHalf; i < _agentsNum; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(p2.x - 1, p2.x + 1), RandFloat(p2.y - 1, p2.y + 1), _opComponent, ComponentIds::FSM_ID);
+			size_t id = _sim->AddAgent(RandFloat(p2.x - 1, p2.x + 1), RandFloat(p2.y - 1, p2.y + 1), _opComponent, ComponentIds::FSM_ID, ComponentIds::NAVMESH_ID);
 			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, flowMachineParams);
 		}
 	}
