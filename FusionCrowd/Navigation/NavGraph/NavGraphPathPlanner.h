@@ -4,6 +4,8 @@
 
 #include "Navigation/NavGraph/NavGraph.h"
 
+
+
 namespace FusionCrowd
 {
 	class NavGraphRoute
@@ -21,7 +23,7 @@ namespace FusionCrowd
 	public:
 		explicit NavGraphPathPlanner(std::shared_ptr<NavGraph> navGraph);
 
-		NavGraphRoute GetRoute(size_t nodeFrom, size_t nodeTo) const;
+		std::shared_ptr <NavGraphRoute> GetRoute(size_t nodeFrom, size_t nodeTo) const;
 
 	private:
 		std::shared_ptr<NavGraph> _navGraph;

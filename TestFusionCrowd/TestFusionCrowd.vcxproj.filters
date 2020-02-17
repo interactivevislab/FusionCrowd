@@ -51,7 +51,7 @@
     <ClInclude Include="TestCases\TradeshowTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NavGraph\NavGraph.h">
+    <ClInclude Include="TestCases\NavGraphTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,7 +86,7 @@
     <ClCompile Include="TestCases\TradeshowTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NavGraph\NavGraph.cpp">
+    <ClCompile Include="TestCases\NavGraphTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -562,9 +562,10 @@ namespace FusionCrowd
 	size_t Simulator::AddAgent(
 		float x, float y,
 		ComponentId opId,
-		ComponentId strategyId
+		ComponentId strategyId,
+		ComponentId tacticId
 	) {
-		return pimpl->AddAgent(x, y, opId, strategyId);
+		return pimpl->AddAgent(x, y, opId, strategyId, tacticId);
 	}
 
 	size_t Simulator::AddAgent(DirectX::SimpleMath::Vector2 pos)

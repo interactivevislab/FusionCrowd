@@ -65,7 +65,8 @@ namespace FusionCrowd
 		size_t AddAgent(
 			float x, float y,
 			ComponentId opId,
-			ComponentId strategyId
+			ComponentId strategyId,
+			ComponentId tacticId
 		);
 
 		size_t AddAgent(
