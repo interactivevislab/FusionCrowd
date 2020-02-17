@@ -14,10 +14,13 @@ namespace FusionCrowd
 		NavMeshPoly();
 		~NavMeshPoly();
 
+		NavMeshPoly(const NavMeshPoly& p);
+
 		NavMeshPoly& operator=(const NavMeshPoly& n);
 		bool containsPoint(const DirectX::SimpleMath::Vector2& point) const;
 		float getElevation(const DirectX::SimpleMath::Vector2& point) const;
 		DirectX::SimpleMath::Vector2 getGradient() const { return DirectX::SimpleMath::Vector2(A, B); }
+		DirectX::SimpleMath::Vector2 getVertexByPos(int pos) const { return vertices[vertIDs[pos]]; }
 		bool loadFromAscii(std::istream& f);
 		bool loadFromBinary(std::istream& f);
 		void initialize(size_t vCount, unsigned int* ids, float A = 0.f, float B = 0.f,

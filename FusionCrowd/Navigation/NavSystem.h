@@ -40,6 +40,8 @@ namespace FusionCrowd
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
 		void AddAgent(AgentSpatialInfo spatialInfo);
 
+		void RemoveAgent(unsigned int id);
+
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 		std::map<size_t, AgentSpatialInfo> GetAgentsSpatialInfos();
 

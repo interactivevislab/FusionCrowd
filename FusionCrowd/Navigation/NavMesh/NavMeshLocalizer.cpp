@@ -128,8 +128,8 @@ namespace FusionCrowd
 		float elevDiff = 1e6f;
 		unsigned int maxNode = NavMeshLocation::NO_NODE;
 
-		//TODO
 		for(size_t nodeId : _nodeBBTree->GetContainingBBIds(p))
+		//for (size_t nodeId = 0; nodeId <_navMesh->getNodeCount(); nodeId++)
 		{
 			const NavMeshNode* node = _navMesh->GetNodeByID(nodeId);
 			if (node->deleted) continue;
@@ -201,8 +201,6 @@ namespace FusionCrowd
 		for (int i = 0; i < added_nodes.size(); i++) {
 			added_boxes.push_back({ added_nodes[i]->GetBB(), added_nodes[i]->_id });
 		}
-
-		//TODO
-		//_nodeBBTree->UpdateTree(added_boxes, del_nodes);
+		_nodeBBTree->UpdateTree(added_boxes, del_nodes);
 	}
 }

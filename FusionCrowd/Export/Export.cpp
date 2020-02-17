@@ -20,6 +20,8 @@
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
 
+#include "Group/GroupShape.h"
+
 namespace FusionCrowd
 {
 	class SimulatorFacadeImpl : public ISimulatorFacade
@@ -78,7 +80,7 @@ namespace FusionCrowd
 
 		OperationStatus RemoveAgent(size_t agentId)
 		{
-			return OperationStatus::NotImplemented;
+			return _sim->RemoveAgent(agentId);
 		}
 
 		IRecording & GetRecording()
@@ -113,6 +115,28 @@ namespace FusionCrowd
 		INavSystemPublic* GetNavSystem() const
 		{
 			return _sim->GetNavSystem();
+		}
+
+		size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist)
+		{
+			auto grid = std::make_unique<GroupGridShape>(agetsInRow, interAgtDist);
+
+			return _sim->AddGroup(std::move(grid), DirectX::SimpleMath::Vector2(x, y));
+		}
+
+		void RemoveAgentFromGroup(size_t agentId, size_t groupId)
+		{
+			_sim->RemoveAgentFromGroup(agentId, groupId);
+		}
+
+		void SetGroupGoal(size_t groupId, float goalX, float goalY)
+		{
+			_sim->SetGroupGoal(groupId, DirectX::SimpleMath::Vector2(goalX, goalY));
+		}
+
+		void AddAgentToGroup(size_t agentId, size_t groupId)
+		{
+			_sim->AddAgentToGroup(agentId, groupId);
 		}
 
 	private:
