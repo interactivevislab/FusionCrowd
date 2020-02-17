@@ -25,14 +25,36 @@ namespace FusionCrowd
 	class NavSystem::NavSystemImpl
 	{
 	public:
-		NavSystemImpl(std::shared_ptr<NavMeshLocalizer> localizer) : _localizer(localizer)
+		NavSystemImpl() { }
+
+		~NavSystemImpl() { }
+
+		void SetNavMesh(std::shared_ptr<NavMeshLocalizer> localizer)
 		{
+			_localizer = localizer;
 			_navMeshQuery = std::make_unique<NavMeshSpatialQuery>(localizer);
 			_navMesh = localizer->getNavMesh();
 		}
 
-		~NavSystemImpl() { }
+		void SetNavGraph(const std::string& name)
+		{
+			std::ifstream f;
+			f.open(name);
 
+			if (f.is_open())
+			{
+				_navGraph = NavGraph::LoadFromStream(f);
+			}
+			else
+			{
+				throw std::ios_base::failure("Can't load navgraph");
+			}
+		}
+
+		std::shared_ptr <NavGraph> GetNavGraph()
+		{
+			return _navGraph;
+		}
 		//TEST METHOD, MUST BE DELETED
 		int CountNeighbors(size_t agentId) const
 		{
@@ -121,20 +143,30 @@ namespace FusionCrowd
 
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId)
 		{
-			std::vector<Obstacle> result;
-			AgentSpatialInfo & agent = _agentsInfo.at(agentId);
-
-
-			size_t nodeId = _localizer->getNodeId(agent.pos);
-			if(nodeId == NavMeshLocation::NO_NODE)
-				return result;
-
-			for(size_t obstId : _navMeshQuery->ObstacleQuery(agent.pos))
+			if (_navMesh != NULL)
 			{
-				result.push_back(_navMesh->GetObstacle(obstId));
+				std::vector<Obstacle> result;
+				AgentSpatialInfo & agent = _agentsInfo.at(agentId);
+
+
+				size_t nodeId = _localizer->getNodeId(agent.pos);
+				if (nodeId == NavMeshLocation::NO_NODE)
+					return result;
+
+				for (size_t obstId : _navMeshQuery->ObstacleQuery(agent.pos))
+				{
+					result.push_back(_navMesh->GetObstacle(obstId));
+				}
+
+				return result;
 			}
 
-			return result;
+			else
+			{
+				std::vector<Obstacle> res;
+				return res;
+			}
+			
 		}
 
 		void Update(float timeStep)
@@ -316,6 +348,7 @@ namespace FusionCrowd
 		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
+		std::shared_ptr<NavGraph> _navGraph;
 		std::shared_ptr<NavMeshLocalizer> _localizer;
 
 		NeighborsSeeker _neighborsSeeker;
@@ -327,8 +360,8 @@ namespace FusionCrowd
 		size_t _numGroups = 0;
 	};
 
-	NavSystem::NavSystem(std::shared_ptr<NavMeshLocalizer> localizer)
-		: pimpl(spimpl::make_unique_impl<NavSystemImpl>(localizer))
+	NavSystem::NavSystem()
+		: pimpl(spimpl::make_unique_impl<NavSystemImpl>())
 	{
 	}
 
@@ -397,5 +430,18 @@ namespace FusionCrowd
 	float NavSystem::CutPolygonFromMesh(FCArray<NavMeshVetrex>& polygon)
 	{
 		return pimpl->CutPolygonFromMesh(polygon);
+	}
+
+	void NavSystem::SetNavMesh(std::shared_ptr<NavMeshLocalizer> localizer)
+	{
+		pimpl->SetNavMesh(localizer);
+	}
+	void NavSystem::SetNavGraph(const std::string& name)
+	{
+		pimpl->SetNavGraph(name);
+	}
+	std::shared_ptr <NavGraph> NavSystem::GetNavGraph()
+	{
+		return pimpl->GetNavGraph();
 	}
 }

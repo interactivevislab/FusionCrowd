@@ -4,7 +4,7 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	NavGraph NavGraph::LoadFromStream(std::istream & istream)
+	std::shared_ptr <NavGraph> NavGraph::LoadFromStream(std::istream & istream)
 	{
 		std::vector<NavGraphNode> nodes;
 		std::vector<NavGraphEdge> edges;
@@ -46,8 +46,9 @@ namespace FusionCrowd
 			edges.push_back({ id, nFrom, nTo, weight, width});
 		}
 
-		return NavGraph(nodes, edges);
+		return std::make_shared<NavGraph>(nodes, edges);
 	}
+
 
 	NavGraph::NavGraph(std::vector<NavGraphNode> nodes, std::vector<NavGraphEdge> edges)
 	{
@@ -68,14 +69,43 @@ namespace FusionCrowd
 		return _nodes.at(id);
 	}
 
+	const size_t NavGraph::GetClosestNodeIdByPosition(Vector2 p, std::unordered_set<NavGraphNode> nodes)
+	{
+		float minDistance = INFINITY;
+		size_t retID = 0;
+		for (auto node : nodes)
+		{
+			Vector2 nodePos = node.position;
+
+			float dist = p.Distance(p, nodePos);
+			if (minDistance > dist)
+			{
+				minDistance = dist;
+				retID = node.id;
+			}
+		}
+
+		return retID;
+	}
+
 	std::vector<NavGraphEdge> NavGraph::GetOutEdges(size_t fromNodeId) const
 	{
-		return _outEdges.at(fromNodeId);
+		auto e = _outEdges.find(fromNodeId);
+
+		if (e == _outEdges.end())
+			return std::vector<NavGraphEdge>();
+
+		return e->second;
 	}
 
 	std::vector<NavGraphEdge> NavGraph::GetInEdges(size_t toNodeId) const
 	{
-		return _inEdges.at(toNodeId);
+		auto e = _inEdges.find(toNodeId);
+
+		if (e == _inEdges.end())
+			return std::vector<NavGraphEdge>();
+
+		return e->second;
 	}
 
 	std::unordered_set<NavGraphNode> NavGraph::GetOutNeighbours(size_t fromNodeId) const

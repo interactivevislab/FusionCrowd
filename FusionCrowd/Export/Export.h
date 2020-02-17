@@ -44,6 +44,7 @@ namespace FusionCrowd
 			virtual void DoStep(float timeStep = 0.1f) = 0;
 
 			virtual OperationStatus SetAgentOp(size_t agentId, ComponentId opId) = 0;
+			virtual OperationStatus SetAgentTactic(size_t agentId, ComponentId tacticID) = 0;
 			virtual OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId) = 0;
 			virtual void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params) = 0;
 			virtual OperationStatus SetAgentGoal(size_t agentId, float x, float y) = 0;
@@ -55,7 +56,8 @@ namespace FusionCrowd
 			virtual size_t AddAgent(
 				float x, float y,
 				ComponentId opId,
-				ComponentId strategyId
+				ComponentId strategyId,
+				ComponentId tacticId
 			) = 0;
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
 
@@ -87,6 +89,7 @@ namespace FusionCrowd
 		{
 		public:
 			virtual ISimulatorBuilder* WithNavMesh(const char* path) = 0;
+			virtual ISimulatorBuilder* WithNavGraph(const char* path) = 0;
 			virtual ISimulatorBuilder* WithOp(ComponentId opId) = 0;
 			virtual ISimulatorBuilder* WithStrategy(ComponentId strategyId) = 0;
 
