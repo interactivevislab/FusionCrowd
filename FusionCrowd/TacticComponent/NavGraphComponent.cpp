@@ -51,23 +51,33 @@ namespace FusionCrowd
 				Replan(info, agtStruct);
 			}
 
-			SetPrefVelocity(info, agtStruct);
+			SetPrefVelocity(info, agtStruct, timeStep);
 			UpdateLocation(info, agtStruct, timeStep);
 		}
 	}
 
-	void NavGraphComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
+	void NavGraphComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep)
 	{
-		agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
+
 		NavGraphNode goalNode = _navGraph->GetNode(agentStruct.goalNodeID);
 		float dist = goalNode.position.Distance(goalNode.position, agentInfo.pos);
-		Vector2 dir = { 1,1 };
-		if (abs(dist) > 1.0e-6)
+
+		if(dist < agentInfo.prefSpeed * timeStep)
+		{
+			agentInfo.prefVelocity.setSpeed(dist);
+		} else
+		{
+			agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
+		}
+
+		if (abs(dist) > 1e-6)
 		{
 			agentInfo.prefVelocity.setSingle((goalNode.position - agentInfo.pos) / dist);
-			dir = (goalNode.position - agentInfo.pos) / dist;
+		} else
+		{
+			agentInfo.prefVelocity.setSpeed(0);
 		}
-		
+
 	}
 
 	DirectX::SimpleMath::Vector2 NavGraphComponent::GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p)
@@ -85,7 +95,7 @@ namespace FusionCrowd
 
 			agentStruct.goalNodeID = agentStruct.route->nodes.at(agentStruct.route->nodes.size() - agentStruct.nodesComplete - 1);
 		}
-		
+
 	}
 
 	std::shared_ptr<NavGraph> NavGraphComponent::GetNavGraph() const

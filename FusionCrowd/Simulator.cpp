@@ -77,13 +77,13 @@ namespace FusionCrowd
 			return AddAgent(info, ComponentIds::NO_COMPONENT, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
 		}
 
-		size_t AddAgent(float x, float y, ComponentId opId, ComponentId strategyId)
+		size_t AddAgent(float x, float y, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
 		{
 			// Use default values
 			AgentSpatialInfo info;
 			info.pos = Vector2(x, y);
 
-			return AddAgent(info, opId, ComponentIds::NAVMESH_ID, strategyId);
+			return AddAgent(info, opId, tacticId, strategyId);
 		}
 
 		OperationStatus RemoveAgent(size_t agentId) {
@@ -562,10 +562,10 @@ namespace FusionCrowd
 	size_t Simulator::AddAgent(
 		float x, float y,
 		ComponentId opId,
-		ComponentId strategyId,
-		ComponentId tacticId
+		ComponentId tacticId,
+		ComponentId strategyId
 	) {
-		return pimpl->AddAgent(x, y, opId, strategyId, tacticId);
+		return pimpl->AddAgent(x, y, opId, tacticId, strategyId);
 	}
 
 	size_t Simulator::AddAgent(DirectX::SimpleMath::Vector2 pos)
