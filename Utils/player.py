@@ -155,4 +155,12 @@ class Player:
         self.line(p1, p2, color)
 
         p09 = p1[0] + (p2[0] - p1[0]) * 0.9, p1[1] + (p2[1] - p1[1]) * 0.9
-        self.circle(p09, 0.02/self.scale, color)
+        orto01 = -(p2[1] - p1[1]) * 0.05, (p2[0] - p1[0]) * 0.05
+
+        left_wing = p09[0] + orto01[0], p09[1] + orto01[1]
+        right_wing = p09[0] - orto01[0], p09[1] - orto01[1]
+
+        self.line(left_wing,  p2, color)
+        self.line(right_wing, p2, color)
+        self.line(right_wing, left_wing, color)
+
