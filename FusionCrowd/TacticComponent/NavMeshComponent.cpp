@@ -85,38 +85,61 @@ namespace FusionCrowd
 		}
 	}
 
-	DirectX::SimpleMath::Vector2 NavMeshComponent::GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) {
-		if (_localizer->findNodeBlind(p) != NavMeshLocation::NO_NODE) return p;
+	Vector2 NavMeshComponent::GetClosestAvailablePoint(Vector2 p)
+	{
+		if (_localizer->findNodeBlind(p) != NavMeshLocation::NO_NODE)
+		{
+			return p;
+		}
+
 		float min_dist = INFINITY;
-		DirectX::SimpleMath::Vector2 res;
-		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--) {
-			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted) {
-				DirectX::SimpleMath::Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
-				if ((p - center).LengthSquared() < min_dist) {
+		Vector2 res;
+		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--)
+		{
+			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted)
+			{
+				Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
+				if ((p - center).LengthSquared() < min_dist)
+				{
 					min_dist = (p - center).LengthSquared();
 					res = center;
 				}
 			}
 		}
-		if (min_dist == INFINITY) throw 1;
+		if (min_dist == INFINITY)
+		{
+			throw 1;
+		}
 		return res;
 	}
 
-	size_t NavMeshComponent::GetClosestAvailableNode(DirectX::SimpleMath::Vector2 p) {
+	size_t NavMeshComponent::GetClosestAvailableNode(Vector2 p)
+	{
 		auto correct = _localizer->findNodeBlind(p);
-		if (correct != NavMeshLocation::NO_NODE) return correct;
+		if (correct != NavMeshLocation::NO_NODE)
+		{
+			return correct;
+		}
+
 		float min_dist = INFINITY;
 		size_t res;
-		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--) {
-			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted) {
-				DirectX::SimpleMath::Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
-				if ((p - center).LengthSquared() < min_dist) {
+		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--)
+		{
+			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted)
+			{
+				Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
+				if ((p - center).LengthSquared() < min_dist)
+				{
 					min_dist = (p - center).LengthSquared();
 					res = i;
 				}
 			}
 		}
-		if (min_dist == INFINITY) throw 1;
+		if (min_dist == INFINITY)
+		{
+			throw 1;
+		}
+
 		return res;
 	}
 
@@ -138,14 +161,14 @@ namespace FusionCrowd
 		float rot = atan2f(groupDummy.orient.x, groupDummy.orient.y);
 
 		Vector2 relativePos = MathUtil::rotate(group.GetShape()->GetRelativePos(agentInfo.id), rot);
-		//Vector2 relativePos = group.GetShape()->GetRelativePos(agentInfo.id);
 		Vector2 targetPos = groupDummy.pos + relativePos;
 		Vector2 dir = targetPos - agentInfo.pos;
 
 		float speed = dir.LengthSquared() / timeStep;
 		if(agentInfo.maxSpeed < speed)
+		{
 			speed = agentInfo.maxSpeed;
-
+		}
 		agentInfo.prefVelocity.setSpeed(speed);
 
 		dir.Normalize();
