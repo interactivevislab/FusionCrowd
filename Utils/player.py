@@ -155,13 +155,13 @@ class Player:
         p09 = p1[0] + (p2[0] - p1[0]) * 0.9, p1[1] + (p2[1] - p1[1]) * 0.9
         self.circle(p09, 2/self.scale, color)
 
-    def move_orintation(self, item, info):
+    def move_orientation(self, item, info):
         position= info[0],info[1]
         orint= (info[0]+info[2]),(info[1]+info[3])
         self.canvas.coords(item,position[0]*self.scale, position[1]*self.scale, orint[0]*self.scale, orint[1]*self.scale)
         
 
-    def orintation(self, info, color="white"):
+    def orientation(self, info, color="white"):
         position= info[0],info[1]
         orint= (info[0]+info[2]),(info[1]+info[3])
         result=self.line(info, orint, color)

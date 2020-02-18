@@ -46,9 +46,7 @@ def read_trajectories(filename):
                 miny = min(y, miny)
                 maxx = max(x, maxx)
                 maxy = max(y, maxy)
-
                 result[agent_id][step] = x, y, orient_x, orient_y
-
         for vals in result.values():
             steps = max(steps, len(vals))
 
@@ -75,16 +73,18 @@ def redraw_positions(canvas: Player, tr, frame, size=1.0, ovals=None,orint=None)
             continue
 
         if agent_id in ovals:
+            
             canvas.show_item(ovals[agent_id])
             canvas.move_circle(ovals[agent_id], positions[frame])
-            if not hide_orintation:
-                canvas.move_orintation(orint[agent_id],positions[frame])
+            if not hide_orientation:
+                canvas.move_orientation(orint[agent_id],positions[frame])
             
         else:
+            
             ovals[agent_id] = canvas.circle(positions[frame], size, all_colors[agent_id % len(all_colors)])
             print(positions[frame])
-            if not hide_orintation:
-                orint[agent_id]=canvas.orintation(positions[frame],"black")
+            if not hide_orientation:
+                orint[agent_id]=canvas.orientation(positions[frame],"black")
 
 			#ovals[agent_id] = canvas.create_text(
             #    (x - xmin) * scale,
@@ -172,9 +172,6 @@ def draw_mesh(canvas: Player, mesh: NavMesh, show_text=True):
         p_last = mesh.vertices[node.vertices[-1]]
         p0     = mesh.vertices[node.vertices[0]]
         canvas.line(p_last, p0, color="#ccc")
-        point1 = 0,0
-        point2 = 100,0
-        canvas.vector(point1, point2, "black")
         #print(p0)
         if show_text:
             canvas.text(node.center, str(id), color="#ccc")
