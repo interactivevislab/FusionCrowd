@@ -92,6 +92,8 @@ def redraw_positions(canvas: Player, tr, frame, ovals=None):
             #    anchor=CENTER
             #)
 
+    canvas.update_scroll()
+
     return ovals
 
 
