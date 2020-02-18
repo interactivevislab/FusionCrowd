@@ -45,8 +45,16 @@ namespace UnitTest
 				Assert::IsTrue(arr[i] == i);
 			}
 
-			auto f = [&]() { arr[4]; };
-			Assert::ExpectException<char*>(f);
+			auto f = [&]() { };
+
+			try
+			{
+				arr[4] = 0;
+				Assert::Fail(L"Must throw an exception, out of bounds");
+			} catch(...)
+			{
+				Assert::IsTrue(true);
+			}
 		}
 
 		TEST_METHOD(FCArray__Copy_non_empty)

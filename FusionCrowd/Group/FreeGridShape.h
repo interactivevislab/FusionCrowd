@@ -1,15 +1,18 @@
 #pragma once
 
 #include "Group/IGroupShape.h"
+#include "Math/Util.h"
 
 #include <vector>
+#include <random>
+#include <map>
 
 namespace FusionCrowd
 {
-	class GroupGridShape : public IGroupShape
+	class FreeGridShape : public IGroupShape
 	{
 	public:
-		GroupGridShape(size_t agentsInRow, float interAgentDist);
+		FreeGridShape(size_t agentsInRow, float interAgentDist);
 
 		const size_t agentsInRow;
 		const float interAgentDist;
@@ -21,11 +24,15 @@ namespace FusionCrowd
 		float GetRadius() const override;
 
 	private:
+		std::vector<size_t> _agents;
+		std::map<size_t, DirectX::SimpleMath::Vector2> _random_shift;
+
 		float GetTotalWidth() const;
 		float GetTotalHeight() const;
 
-		std::vector<size_t> _agents;
-
 		float _agentSize = 0.0f;
+
+		std::random_device _rnd_device;
+		std::mt19937 _rnd_seed;
 	};
 }
