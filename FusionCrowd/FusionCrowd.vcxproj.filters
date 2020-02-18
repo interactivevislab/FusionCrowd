@@ -126,6 +126,7 @@
     <ClInclude Include="Group\Group.h" />
     <ClInclude Include="Group\GroupShape.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
+    <ClInclude Include="Export\NavGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

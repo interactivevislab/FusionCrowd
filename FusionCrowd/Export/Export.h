@@ -7,6 +7,7 @@
 #include "Export/INavSystemPublic.h"
 #include "Export/ComponentId.h"
 #include "Export/ModelAgentParams.h"
+#include "Export/NavGraph.h"
 
 namespace FusionCrowd
 {
@@ -56,8 +57,8 @@ namespace FusionCrowd
 			virtual size_t AddAgent(
 				float x, float y,
 				ComponentId opId,
-				ComponentId strategyId,
-				ComponentId tacticId
+				ComponentId tacticId,
+				ComponentId strategyId
 			) = 0;
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
 
@@ -90,6 +91,7 @@ namespace FusionCrowd
 		public:
 			virtual ISimulatorBuilder* WithNavMesh(const char* path) = 0;
 			virtual ISimulatorBuilder* WithNavGraph(const char* path) = 0;
+			virtual ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> nodesArray, FCArray<Export::NavGraphEdge> edgesArray) = 0;
 			virtual ISimulatorBuilder* WithOp(ComponentId opId) = 0;
 			virtual ISimulatorBuilder* WithStrategy(ComponentId strategyId) = 0;
 

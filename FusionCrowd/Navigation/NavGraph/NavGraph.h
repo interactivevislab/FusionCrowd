@@ -131,7 +131,7 @@ namespace FusionCrowd
 	class NavGraph
 	{
 	public:
-		static std::shared_ptr <NavGraph> LoadFromStream(std::istream & istream);
+		static std::unique_ptr <NavGraph> LoadFromStream(std::istream & istream);
 	public:
 		NavGraph(std::vector<NavGraphNode> nodes, std::vector<NavGraphEdge> edges);
 

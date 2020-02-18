@@ -35,11 +35,11 @@ namespace TestFusionCrowd
 			size_t id;
 			if (i % 2 == 0)
 			{
-				id = _sim->AddAgent(x, y, _opComponent, -1, ComponentIds::NAVGRAPH_ID);
+				id = _sim->AddAgent(x, y, _opComponent, ComponentIds::NAVGRAPH_ID, -1);
 			}
 			else
 			{
-				id = _sim->AddAgent(x, y, _opComponent, -1, ComponentIds::NAVMESH_ID);
+				id = _sim->AddAgent(x, y, _opComponent, ComponentIds::NAVMESH_ID, -1);
 			}
 			_sim->SetAgentGoal(id, goalX, goalY);
 		}

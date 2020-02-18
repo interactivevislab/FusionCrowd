@@ -29,6 +29,7 @@
     <ClInclude Include="Export\INavMeshPublic.h" />
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
+    <ClInclude Include="Export\NavGraph.h" />
     <ClInclude Include="Group\Group.h" />
     <ClInclude Include="Group\GroupShape.h" />
     <ClInclude Include="Math\BoundingBox.h" />

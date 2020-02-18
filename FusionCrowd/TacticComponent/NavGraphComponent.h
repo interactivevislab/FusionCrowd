@@ -41,7 +41,7 @@ namespace FusionCrowd
 			int nodesComplete;
 		};
 
-		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
+		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);
 		void UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, float deltaTime) const;
 		void Replan(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
 		size_t GetForwardAgent(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);

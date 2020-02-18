@@ -36,24 +36,14 @@ namespace FusionCrowd
 			_navMesh = localizer->getNavMesh();
 		}
 
-		void SetNavGraph(const std::string& name)
+		void SetNavGraph(std::unique_ptr<NavGraph> navGraph)
 		{
-			std::ifstream f;
-			f.open(name);
-
-			if (f.is_open())
-			{
-				_navGraph = NavGraph::LoadFromStream(f);
-			}
-			else
-			{
-				throw std::ios_base::failure("Can't load navgraph");
-			}
+			_navGraph = std::move(navGraph);
 		}
 
-		std::shared_ptr <NavGraph> GetNavGraph()
+		NavGraph* GetNavGraph()
 		{
-			return _navGraph;
+			return _navGraph.get();
 		}
 		//TEST METHOD, MUST BE DELETED
 		int CountNeighbors(size_t agentId) const
@@ -166,7 +156,7 @@ namespace FusionCrowd
 				std::vector<Obstacle> res;
 				return res;
 			}
-			
+
 		}
 
 		void Update(float timeStep)
@@ -436,11 +426,11 @@ namespace FusionCrowd
 	{
 		pimpl->SetNavMesh(localizer);
 	}
-	void NavSystem::SetNavGraph(const std::string& name)
+	void NavSystem::SetNavGraph(std::unique_ptr<NavGraph> navGraph)
 	{
-		pimpl->SetNavGraph(name);
+		pimpl->SetNavGraph(std::move(navGraph));
 	}
-	std::shared_ptr <NavGraph> NavSystem::GetNavGraph()
+	NavGraph* NavSystem::GetNavGraph()
 	{
 		return pimpl->GetNavGraph();
 	}

@@ -71,18 +71,17 @@ namespace FusionCrowd
 			if(groupId != Group::NO_GROUP)
 			{
 				SetGroupPrefVelocity(info, agtStruct, groupId, timeStep);
+				continue;
 			}
-			else
-			{
-				if(IsReplanNeeded(info, agtStruct))
-				{
-					auto & curGoal = agtStruct.location.getPath()->getGoal();
-					agtStruct.location = Replan(info.pos, curGoal, info.radius);
-				}
 
-				UpdateLocation(info, agtStruct, false);
-				SetPrefVelocity(info, agtStruct);
+			if(IsReplanNeeded(info, agtStruct))
+			{
+				auto & curGoal = agtStruct.location.getPath()->getGoal();
+				agtStruct.location = Replan(info.pos, curGoal, info.radius);
 			}
+
+			UpdateLocation(info, agtStruct, false);
+			SetPrefVelocity(info, agtStruct, timeStep);
 		}
 	}
 
@@ -153,7 +152,7 @@ namespace FusionCrowd
 		agentInfo.prefVelocity.setSingle(dir);
 	}
 
-	void NavMeshComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
+	void NavMeshComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep)
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
@@ -181,6 +180,17 @@ namespace FusionCrowd
 			// assign it to the localizer
 			agentStruct.location.setPath(newPath);
 		}
+
+		float dist = Vector2::Distance(agentGoal.getCentroid(), agentInfo.pos);
+
+		if(dist < agentInfo.prefSpeed * timeStep)
+		{
+			agentInfo.prefVelocity.setSpeed(dist);
+		} else
+		{
+			agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
+		}
+
 		agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
 		path->setPreferredDirection(agentInfo, _headingDevCos);
 	}

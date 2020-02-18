@@ -71,11 +71,11 @@ namespace FusionCrowd
 		size_t AddAgent(
 			float x, float y,
 			ComponentId opId,
-			ComponentId strategyId,
-			ComponentId tacticId
+			ComponentId tacticId,
+			ComponentId strategyId
 		)
 		{
-			return _sim->AddAgent(x, y, opId, strategyId, tacticId);
+			return _sim->AddAgent(x, y, opId, tacticId, strategyId);
 		}
 
 		OperationStatus RemoveAgent(size_t agentId)
@@ -149,16 +149,15 @@ namespace FusionCrowd
 		BuilderImpl(): sim(std::make_shared<Simulator>())
 		{
 			impl = new SimulatorFacadeImpl(sim);
+			navSystem = std::make_shared<NavSystem>();
+
+			sim->UseNavSystem(navSystem);
 		}
 
 		ISimulatorBuilder*  WithNavMesh(const char* path)
 		{
 			auto localizer = std::make_shared<NavMeshLocalizer>(path, true);
-			navSystem = std::make_shared<NavSystem>();
 			navSystem->SetNavMesh(localizer);
-			navSystem->Init();
-
-			sim->UseNavSystem(navSystem);
 
 			auto spatial_query = std::make_shared<NavMeshSpatialQuery>(localizer);
 			auto tactic = std::make_shared<FusionCrowd::NavMeshComponent>(sim, localizer, spatial_query);
@@ -167,13 +166,47 @@ namespace FusionCrowd
 			return this;
 		}
 
-		ISimulatorBuilder*  WithNavGraph(const char* path)
+		ISimulatorBuilder* WithNavGraph(const char* path)
 		{
-			navSystem = std::make_shared<NavSystem>();
-			navSystem->SetNavGraph(path);
-			navSystem->Init();
+			std::ifstream f(path);
 
-			sim->UseNavSystem(navSystem);
+			if (!f.is_open())
+			{
+				throw std::ios_base::failure("Can't load navgraph");
+			}
+
+			navSystem->SetNavGraph(NavGraph::LoadFromStream(f));
+
+			auto tactic = std::make_shared<FusionCrowd::NavGraphComponent>(sim, navSystem);
+			sim->AddTactic(tactic);
+
+			return this;
+		}
+
+		ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> nodesArray, FCArray<Export::NavGraphEdge> edgesArray)
+		{
+			std::vector<NavGraphNode> nodes;
+			for(auto& n : nodesArray)
+			{
+				nodes.push_back({
+					n.id, DirectX::SimpleMath::Vector2(n.x, n.y)
+				});
+			}
+
+			std::vector<NavGraphEdge> edges;
+			size_t eId = 0;
+			for(auto& e : edgesArray)
+			{
+				edges.push_back({
+					eId++,
+					e.nodeFrom,
+					e.nodeTo,
+					e.weight,
+					e.width
+				});
+			}
+
+			navSystem->SetNavGraph(std::make_unique<NavGraph>(nodes, edges));
 
 			auto tactic = std::make_shared<FusionCrowd::NavGraphComponent>(sim, navSystem);
 			sim->AddTactic(tactic);
@@ -234,6 +267,8 @@ namespace FusionCrowd
 
 		ISimulatorFacade* Build()
 		{
+			navSystem->Init();
+
 			return impl;
 		}
 	private:

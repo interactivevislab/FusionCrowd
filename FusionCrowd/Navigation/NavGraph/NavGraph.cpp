@@ -4,7 +4,7 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	std::shared_ptr <NavGraph> NavGraph::LoadFromStream(std::istream & istream)
+	std::unique_ptr <NavGraph> NavGraph::LoadFromStream(std::istream & istream)
 	{
 		std::vector<NavGraphNode> nodes;
 		std::vector<NavGraphEdge> edges;
@@ -46,7 +46,7 @@ namespace FusionCrowd
 			edges.push_back({ id, nFrom, nTo, weight, width});
 		}
 
-		return std::make_shared<NavGraph>(nodes, edges);
+		return std::make_unique<NavGraph>(nodes, edges);
 	}
 
 
