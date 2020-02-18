@@ -31,6 +31,10 @@ namespace FusionCrowd {
 
 		//Finalize
 		int Finalize();
+		/*Some times unnecessary obstacles spawns wich have same points as edges. This function deletes such obstalces*/
+		void RemoveObstaclesOnEdges();
+		/*Check is both obstacles point on node poly*/
+		bool ValidateObstalce(NavMeshObstacle* obst);
 		void FinalizeVertices();
 		void FinalizeNodes();
 		void FinalizeEdges();
