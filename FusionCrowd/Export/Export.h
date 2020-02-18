@@ -91,7 +91,7 @@ namespace FusionCrowd
 		public:
 			virtual ISimulatorBuilder* WithNavMesh(const char* path) = 0;
 			virtual ISimulatorBuilder* WithNavGraph(const char* path) = 0;
-			virtual ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> nodesArray, FCArray<Export::NavGraphEdge> edgesArray) = 0;
+			virtual ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> & nodesArray, FCArray<Export::NavGraphEdge> & edgesArray) = 0;
 			virtual ISimulatorBuilder* WithOp(ComponentId opId) = 0;
 			virtual ISimulatorBuilder* WithStrategy(ComponentId strategyId) = 0;
 

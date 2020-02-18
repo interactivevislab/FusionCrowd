@@ -30,8 +30,10 @@
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Export\NavGraph.h" />
+    <ClInclude Include="Group\FreeFormation.h" />
+    <ClInclude Include="Group\GroupGridShape.h" />
     <ClInclude Include="Group\Group.h" />
-    <ClInclude Include="Group\GroupShape.h" />
+    <ClInclude Include="Group\IGroupShape.h" />
     <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
@@ -96,7 +98,7 @@
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export\Export.cpp" />
-    <ClCompile Include="Group\GroupShape.cpp" />
+    <ClCompile Include="Group\GroupGridShape.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
