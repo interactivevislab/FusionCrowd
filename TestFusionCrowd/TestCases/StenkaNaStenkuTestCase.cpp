@@ -42,7 +42,7 @@ namespace TestFusionCrowd
 
 		for (size_t i = 0; i < _agentsNum / 2; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(x1 - z, y1), RandFloat(x1 - z / 2, y1 + z / 2), op, ComponentIds::NAVMESH_ID, -1);
+			size_t id = _sim->AddAgent(RandFloat(x1 - z, y1), RandFloat(x1 - z / 2, y1 + z / 2), 0.3f, op, ComponentIds::NAVMESH_ID, -1);
 
 			_sim->AddAgentToGroup(id, group1);
 		}

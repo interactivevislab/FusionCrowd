@@ -23,6 +23,8 @@
 #include "Group/FixedGridShape.h"
 #include "Group/FreeGridShape.h"
 
+using namespace DirectX::SimpleMath;
+
 namespace FusionCrowd
 {
 	class SimulatorFacadeImpl : public ISimulatorFacade
@@ -59,7 +61,7 @@ namespace FusionCrowd
 
 		OperationStatus SetAgentGoal(size_t agentId, float x, float y)
 		{
-			_sim->SetAgentGoal(agentId, DirectX::SimpleMath::Vector2(x, y));
+			_sim->SetAgentGoal(agentId, Vector2(x, y));
 
 			return OperationStatus::OK;
 		}
@@ -77,6 +79,20 @@ namespace FusionCrowd
 		)
 		{
 			return _sim->AddAgent(x, y, opId, tacticId, strategyId);
+		}
+
+		size_t AddAgent(
+			float x, float y, float radius,
+			ComponentId opId,
+			ComponentId tacticId,
+			ComponentId strategyId
+		)
+		{
+			AgentSpatialInfo info;
+			info.pos = Vector2(x, y);
+			info.radius = radius;
+
+			return _sim->AddAgent(info, opId, tacticId, strategyId);
 		}
 
 		OperationStatus RemoveAgent(size_t agentId)

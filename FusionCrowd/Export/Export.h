@@ -60,6 +60,14 @@ namespace FusionCrowd
 				ComponentId tacticId,
 				ComponentId strategyId
 			) = 0;
+
+			virtual size_t AddAgent(
+				float x, float y, float radius,
+				ComponentId opId,
+				ComponentId tacticId,
+				ComponentId strategyId
+			) = 0;
+
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
 
 			virtual size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist) = 0;
