@@ -1,4 +1,4 @@
-#include "GroupShape.h"
+#include "GroupGridShape.h"
 #include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;

@@ -20,7 +20,7 @@
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
 
-#include "Group/GroupShape.h"
+#include "Group/GroupGridShape.h"
 
 namespace FusionCrowd
 {
@@ -183,7 +183,7 @@ namespace FusionCrowd
 			return this;
 		}
 
-		ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> nodesArray, FCArray<Export::NavGraphEdge> edgesArray)
+		ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> & nodesArray, FCArray<Export::NavGraphEdge> & edgesArray)
 		{
 			std::vector<NavGraphNode> nodes;
 			for(auto& n : nodesArray)

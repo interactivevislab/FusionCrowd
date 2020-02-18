@@ -50,8 +50,8 @@
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
     <ClCompile Include="Group\Group.cpp" />
-    <ClCompile Include="Group\GroupShape.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
+    <ClCompile Include="Group\GroupGridShape.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -124,9 +124,11 @@
     <ClInclude Include="TacticComponent\NavGraphComponent.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
     <ClInclude Include="Group\Group.h" />
-    <ClInclude Include="Group\GroupShape.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="Export\NavGraph.h" />
+    <ClInclude Include="Group\FreeFormation.h" />
+    <ClInclude Include="Group\GroupGridShape.h" />
+    <ClInclude Include="Group\IGroupShape.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
