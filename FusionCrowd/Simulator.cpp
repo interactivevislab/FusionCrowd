@@ -123,6 +123,9 @@ namespace FusionCrowd
 			auto agentId = GetNextId();
 			info.id = agentId;
 
+			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
+			info.prefSpeed *= dist(_rnd_seed);
+
 			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.pos);
 			_navSystem->AddAgent(info);
 
