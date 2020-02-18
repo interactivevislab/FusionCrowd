@@ -20,7 +20,8 @@
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
 
-#include "Group/GroupGridShape.h"
+#include "Group/FixedGridShape.h"
+#include "Group/FreeGridShape.h"
 
 namespace FusionCrowd
 {
@@ -119,9 +120,16 @@ namespace FusionCrowd
 
 		size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist)
 		{
-			auto grid = std::make_unique<GroupGridShape>(agetsInRow, interAgtDist);
+			auto grid = std::make_unique<FixedGridShape>(agetsInRow, interAgtDist);
 
 			return _sim->AddGroup(std::move(grid), DirectX::SimpleMath::Vector2(x, y));
+		}
+
+		size_t AddFreeGridGroup(float x, float y, size_t agetsInRow, float interAgtDist)
+		{
+			auto freeGrid = std::make_unique<FreeGridShape>(agetsInRow, interAgtDist);
+
+			return _sim->AddGroup(std::move(freeGrid), DirectX::SimpleMath::Vector2(x, y));
 		}
 
 		void RemoveAgentFromGroup(size_t agentId, size_t groupId)
