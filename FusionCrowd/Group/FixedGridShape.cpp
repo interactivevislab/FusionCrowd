@@ -1,21 +1,21 @@
-#include "GroupGridShape.h"
+#include "FixedGridShape.h"
 #include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	GroupGridShape::GroupGridShape(size_t agentsInRow, float interAgentDist)
+	FixedGridShape::FixedGridShape(size_t agentsInRow, float interAgentDist)
 		: agentsInRow(agentsInRow), interAgentDist(interAgentDist)
 	{
 	}
 
-	size_t GroupGridShape::GetSize() const
+	size_t FixedGridShape::GetSize() const
 	{
 		return _agents.size();
 	}
 
-	void GroupGridShape::AddAgent(size_t agentId, AgentSpatialInfo& info)
+	void FixedGridShape::AddAgent(size_t agentId, AgentSpatialInfo& info)
 	{
 		auto a = std::find(_agents.begin(), _agents.end(), agentId);
 
@@ -30,7 +30,7 @@ namespace FusionCrowd
 			_agentSize = info.radius * 2;
 	}
 
-	void GroupGridShape::RemoveAgent(size_t agentId)
+	void FixedGridShape::RemoveAgent(size_t agentId)
 	{
 		auto a = std::find(_agents.begin(), _agents.end(), agentId);
 
@@ -42,7 +42,7 @@ namespace FusionCrowd
 		_agents.erase(a);
 	}
 
-	Vector2 GroupGridShape::GetRelativePos(size_t agentId) const
+	Vector2 FixedGridShape::GetRelativePos(size_t agentId) const
 	{
 		auto a = std::find(_agents.begin(), _agents.end(), agentId);
 		if(a == _agents.end())
@@ -64,7 +64,7 @@ namespace FusionCrowd
 		return Vector2(totalWidth / 2.0f - left, -totalHeight / 2.0f + top);
 	}
 
-	float GroupGridShape::GetRadius() const
+	float FixedGridShape::GetRadius() const
 	{
 		float totalHeight = GetTotalHeight();
 		float totalWidth  = GetTotalWidth();
@@ -72,7 +72,7 @@ namespace FusionCrowd
 		return sqrtf(totalHeight * totalHeight + totalWidth * totalWidth) / 2.0f;
 	}
 
-	float GroupGridShape::GetTotalWidth() const
+	float FixedGridShape::GetTotalWidth() const
 	{
 		size_t totalRows = _agents.size() / agentsInRow;
 		if(_agents.size() % agentsInRow > 0)
@@ -81,7 +81,7 @@ namespace FusionCrowd
 		return _agentSize + (totalRows - 1) * (interAgentDist + _agentSize);
 	}
 
-	float GroupGridShape::GetTotalHeight() const
+	float FixedGridShape::GetTotalHeight() const
 	{
 		return _agentSize + (agentsInRow - 1) * (interAgentDist + _agentSize);
 	}

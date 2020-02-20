@@ -51,7 +51,10 @@
     <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
     <ClCompile Include="Group\Group.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
-    <ClCompile Include="Group\GroupGridShape.cpp" />
+    <ClCompile Include="Group\FixedGridShape.cpp" />
+    <ClCompile Include="Group\FreeGridShape.cpp" />
+    <ClCompile Include="OperationComponent\BicycleComponent.cpp" />
+    <ClCompile Include="TacticComponent\Path\PathRandomization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -126,9 +129,11 @@
     <ClInclude Include="Group\Group.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="Export\NavGraph.h" />
-    <ClInclude Include="Group\FreeFormation.h" />
-    <ClInclude Include="Group\GroupGridShape.h" />
     <ClInclude Include="Group\IGroupShape.h" />
+    <ClInclude Include="Group\FixedGridShape.h" />
+    <ClInclude Include="Group\FreeGridShape.h" />
+    <ClInclude Include="OperationComponent\BicycleComponent.h" />
+    <ClInclude Include="TacticComponent\Path\PathRandomization.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

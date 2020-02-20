@@ -152,6 +152,16 @@ class Player:
 
         return result
 
+    def move_orientation(self, item, target_pos, target_orient):
+        pos1 = (target_pos[0] + target_orient[0]) * self.scale, (target_pos[1] + target_orient[1]) * self.scale
+        pos = target_pos[0] * self.scale, target_pos[1] * self.scale
+
+        self.canvas.coords(item, *pos, *pos1)
+
+    def orientation(self, pos, orient, color="white"):
+        pos1 = pos[0] + orient[0], pos[1] + orient[1]
+        return self.line(pos, pos1, color)
+
     def vector(self, p1, p2, color="white"):
         self.line(p1, p2, color)
 
@@ -164,4 +174,3 @@ class Player:
         self.line(left_wing,  p2, color)
         self.line(right_wing, p2, color)
         self.line(right_wing, left_wing, color)
-
