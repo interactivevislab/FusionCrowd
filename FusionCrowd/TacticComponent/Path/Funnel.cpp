@@ -1,6 +1,8 @@
 #include "Funnel.h"
 #include "PortalPath.h"
 
+#include "PathRandomization.h"
+
 #include <cassert>
 #include <iostream>
 
@@ -297,6 +299,8 @@ namespace FusionCrowd
 
 			path->setWaypoints(apex._id + 1, PORTAL_COUNT, goalPt, goalDir);
 		}
+		auto pr = PathRandomization();
+		pr.RandomizePath(path);
 #endif	// SIMPLE_FUNNEL
 	}
 }

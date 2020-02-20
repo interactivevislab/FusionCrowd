@@ -48,6 +48,7 @@
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
+    <ClInclude Include="TacticComponent\Path\PathRandomization.h" />
     <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
     <ClInclude Include="TacticComponent\NavGraphComponent.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
@@ -110,6 +111,7 @@
     <ClCompile Include="OperationComponent\bicycleComponent.cpp" />
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
+    <ClCompile Include="TacticComponent\Path\PathRandomization.cpp" />
     <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
