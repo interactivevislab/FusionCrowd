@@ -38,6 +38,7 @@ namespace FusionCrowd
 
 		bool IsValid(size_t navMeshVersion) const;
 
+		std::vector<DirectX::SimpleMath::Vector2> _headings;
 	protected:
 		const PortalRoute* _route;
 		const Goal _goal;
@@ -45,7 +46,6 @@ namespace FusionCrowd
 
 		void computeCrossing(const DirectX::SimpleMath::Vector2& startPos, float agentRadius);
 		std::vector<DirectX::SimpleMath::Vector2> _waypoints;
-		std::vector<DirectX::SimpleMath::Vector2> _headings;
 		void replan(const DirectX::SimpleMath::Vector2& startPos, unsigned int startNode, unsigned int endNode,
 		            float minWidth, const std::shared_ptr<PathPlanner> planner);
 	};
