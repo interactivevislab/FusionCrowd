@@ -290,6 +290,8 @@ namespace FusionCrowd
 		for (int i = 0; i < numberOfPoints; i++) {
 			pointNeighbors[i].neighborsCount = 0;
 		}
+
+
 		for (int i = 0; i < numberOfPoints; i++) {
 			Point point = points[i]; // i = id
 			for (int j = 0; j < numberOfPoints; j++) {

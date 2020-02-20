@@ -7,6 +7,7 @@
 #include "Export/INavSystemPublic.h"
 #include "Export/ComponentId.h"
 #include "Export/ModelAgentParams.h"
+#include "Export/NavGraph.h"
 
 namespace FusionCrowd
 {
@@ -44,6 +45,7 @@ namespace FusionCrowd
 			virtual void DoStep(float timeStep = 0.1f) = 0;
 
 			virtual OperationStatus SetAgentOp(size_t agentId, ComponentId opId) = 0;
+			virtual OperationStatus SetAgentTactic(size_t agentId, ComponentId tacticID) = 0;
 			virtual OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId) = 0;
 			virtual void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params) = 0;
 			virtual OperationStatus SetAgentGoal(size_t agentId, float x, float y) = 0;
@@ -55,9 +57,24 @@ namespace FusionCrowd
 			virtual size_t AddAgent(
 				float x, float y,
 				ComponentId opId,
+				ComponentId tacticId,
 				ComponentId strategyId
 			) = 0;
+
+			virtual size_t AddAgent(
+				float x, float y, float radius, float preferedVelocity,
+				ComponentId opId,
+				ComponentId tacticId,
+				ComponentId strategyId
+			) = 0;
+
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
+
+			virtual size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist) = 0;
+			virtual size_t AddFreeGridGroup(float x, float y, size_t agetsInRow, float interAgtDist) = 0;
+			virtual void AddAgentToGroup(size_t agentId, size_t groupId) = 0;
+			virtual void RemoveAgentFromGroup(size_t agentId, size_t groupId) = 0;
+			virtual void SetGroupGoal(size_t groupId, float goalX, float goalY) = 0;
 
 			virtual IRecording & GetRecording() = 0;
 
@@ -82,6 +99,8 @@ namespace FusionCrowd
 		{
 		public:
 			virtual ISimulatorBuilder* WithNavMesh(const char* path) = 0;
+			virtual ISimulatorBuilder* WithNavGraph(const char* path) = 0;
+			virtual ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> & nodesArray, FCArray<Export::NavGraphEdge> & edgesArray) = 0;
 			virtual ISimulatorBuilder* WithOp(ComponentId opId) = 0;
 			virtual ISimulatorBuilder* WithStrategy(ComponentId strategyId) = 0;
 

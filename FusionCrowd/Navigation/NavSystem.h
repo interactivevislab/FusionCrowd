@@ -10,6 +10,7 @@
 #include "Export/INavSystemPublic.h"
 #include "Util/spimpl.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
+#include "Navigation/NavGraph/NavGraph.h"
 
 namespace FusionCrowd
 {
@@ -20,7 +21,11 @@ namespace FusionCrowd
 	class NavSystem : public INavSystemPublic
 	{
 	public:
-		NavSystem(std::shared_ptr<NavMeshLocalizer> localizer);
+		NavSystem();
+
+		void SetNavMesh(std::shared_ptr<NavMeshLocalizer> localizer);
+		void SetNavGraph(std::unique_ptr<NavGraph> navGraph);
+		NavGraph* GetNavGraph();
 
 		// Why do we need it?
 		void Init();
@@ -34,6 +39,8 @@ namespace FusionCrowd
 		// Very confusing methods pair
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
 		void AddAgent(AgentSpatialInfo spatialInfo);
+
+		void RemoveAgent(unsigned int id);
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 		std::map<size_t, AgentSpatialInfo> GetAgentsSpatialInfos();

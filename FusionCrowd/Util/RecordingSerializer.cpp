@@ -35,7 +35,12 @@ namespace FusionCrowd
 					{
 						trajs << separator;
 					}
-					trajs << id << separator << info.posX << separator << info.posY<< separator << info.orientX << separator << info.orientY;
+
+					trajs << id << separator
+					      << info.posX << separator << info.posY << separator
+					      << info.orientX << separator << info.orientY << separator
+					      << info.radius;
+
 					first = false;
 				}
 				trajs << std::endl;

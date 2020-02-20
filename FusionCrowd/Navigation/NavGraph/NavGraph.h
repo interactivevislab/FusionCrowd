@@ -131,11 +131,13 @@ namespace FusionCrowd
 	class NavGraph
 	{
 	public:
-		static NavGraph LoadFromStream(std::istream & istream);
+		static std::unique_ptr <NavGraph> LoadFromStream(std::istream & istream);
 	public:
 		NavGraph(std::vector<NavGraphNode> nodes, std::vector<NavGraphEdge> edges);
 
 		const NavGraphNode & GetNode(size_t id) const;
+
+		const size_t GetClosestNodeIdByPosition(DirectX::SimpleMath::Vector2 p, std::unordered_set<NavGraphNode> nodes);
 
 		std::vector<NavGraphEdge> GetOutEdges(size_t fromNodeId) const;
 		std::vector<NavGraphEdge> GetInEdges(size_t toNodeId) const;

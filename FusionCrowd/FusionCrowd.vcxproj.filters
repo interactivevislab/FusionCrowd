@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Simulator.cpp" />
@@ -48,6 +48,12 @@
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationProcessor.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
+    <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
+    <ClCompile Include="Group\Group.cpp" />
+    <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
+    <ClCompile Include="Group\FixedGridShape.cpp" />
+    <ClCompile Include="Group\FreeGridShape.cpp" />
+    <ClCompile Include="OperationComponent\bicycleComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -117,6 +123,15 @@
     <ClInclude Include="Navigation\NavGraph\NavGraphPathPlanner.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Export\INavMeshPublic.h" />
+    <ClInclude Include="TacticComponent\NavGraphComponent.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
+    <ClInclude Include="Group\Group.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
+    <ClInclude Include="Export\NavGraph.h" />
+    <ClInclude Include="Group\IGroupShape.h" />
+    <ClInclude Include="Group\FixedGridShape.h" />
+    <ClInclude Include="Group\FreeGridShape.h" />
+    <ClInclude Include="OperationComponent\bicycleComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

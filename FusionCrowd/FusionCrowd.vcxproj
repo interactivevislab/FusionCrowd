@@ -29,18 +29,27 @@
     <ClInclude Include="Export\INavMeshPublic.h" />
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
+    <ClInclude Include="Export\NavGraph.h" />
+    <ClInclude Include="Group\FreeGridShape.h" />
+    <ClInclude Include="Group\FixedGridShape.h" />
+    <ClInclude Include="Group\Group.h" />
+    <ClInclude Include="Group\IGroupShape.h" />
     <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraphPathPlanner.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
     <ClInclude Include="Navigation\NavMesh\QuadTree.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\ModificationProcessor.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\ModificationHelper.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\NavMeshModification.h" />
+    <ClInclude Include="OperationComponent\bicycleComponent.h" />
     <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
+    <ClInclude Include="TacticComponent\NavGraphComponent.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
     <ClInclude Include="Export\FCArray.h" />
     <ClInclude Include="Math\Util.h" />
@@ -90,13 +99,17 @@
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export\Export.cpp" />
+    <ClCompile Include="Group\FreeGridShape.cpp" />
+    <ClCompile Include="Group\FixedGridShape.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationProcessor.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationHelper.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\NavMeshModification.cpp" />
+    <ClCompile Include="OperationComponent\bicycleComponent.cpp" />
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
+    <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
     <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />
@@ -110,6 +123,8 @@
     <ClCompile Include="OperationComponent\PedVOComponent.cpp" />
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
+    <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
+    <ClCompile Include="Group\Group.cpp" />
     <ClCompile Include="Util\RecordingSerializer.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
@@ -177,8 +192,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>

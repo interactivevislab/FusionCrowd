@@ -44,7 +44,26 @@ namespace FusionCrowd {
 	/*--------------------------------------FINALIZE--------------------------------------------*/
 
 	/*Adds all created nodes and vertexes*/
+	/*
+	Finalize
+		RemoveInsidePoly
+		RemoveObstaclesOnEdges
+		Validate obstalces/edges by width
+		Copy vertices
+		Copy old edges
+		Copy new obstalces
+		Save edge obstalces ids
+		Finalize nodes
+		Load edge pbstacles ids
+		Finalize edges
+		Add new obstalces
+		Add new edges
+		Fill nodes obstalce/edges arrays
+		Clear
+	*/
 	int NavMeshModification::Finalize() {
+		RemoveNodesInsidePoly(_global_polygon);
+		RemoveObstaclesOnEdges();
 
 		for (int i = _addededges.size() - 1; i >= 0; i--) {
 			if (_addededges[i]->getWidth() <= min_width) {
@@ -189,9 +208,11 @@ namespace FusionCrowd {
 #pragma region add_new_obsts
 
 		for (int i = 0; i < _addedobstacles.size(); i++) {
-			_addedobstacles[i]->_id = oid;
-			oid++;
-			tmp_obstacles.push_back(*_addedobstacles[i]);
+			if (ValidateObstalce(_addedobstacles[i])) {
+				_addedobstacles[i]->_id = oid;
+				oid++;
+				tmp_obstacles.push_back(*_addedobstacles[i]);
+			}
 		}
 
 		for (int i = 0; i < _addedobstacles.size(); i++) {
@@ -224,7 +245,45 @@ namespace FusionCrowd {
 
 		_spatial_query->Update();
 		_navmesh.IncVersion();
+
+		Clear();
 		return 0;
+	}
+
+
+	void NavMeshModification::RemoveObstaclesOnEdges() {
+		for (int i = _addedobstacles.size() - 1; i >= 0; i--) {
+			auto obst = _addedobstacles[i];
+			bool delete_obst = false;
+			for (auto e : _addededges) {
+				if ((Vector2::Distance(e->getP0(), obst->getP0()) < 1e-3f &&
+					Vector2::Distance(e->getP1(), obst->getP1()) < 1e-3f) ||
+					(Vector2::Distance(e->getP0(), obst->getP1()) < 1e-3f &&
+						Vector2::Distance(e->getP1(), obst->getP0()) < 1e-3f)) {
+					delete_obst = true;
+					break;
+				}
+			}
+			if (delete_obst) {
+				_addedobstacles.erase(_addedobstacles.begin() + i);
+				delete obst;
+				continue;
+			}
+			for (int j = 0; j < _navmesh.eCount; j++) {
+				auto& e = _navmesh.edges[j];
+				if ((Vector2::Distance(e.getP0(), obst->getP0()) < 1e-3f &&
+					Vector2::Distance(e.getP1(), obst->getP1()) < 1e-3f) ||
+					(Vector2::Distance(e.getP0(), obst->getP1()) < 1e-3f &&
+						Vector2::Distance(e.getP1(), obst->getP0()) < 1e-3f)) {
+					delete_obst = true;
+					break;
+				}
+			}
+			if (delete_obst) {
+				_addedobstacles.erase(_addedobstacles.begin() + i);
+				delete obst;
+			}
+		}
 	}
 
 	/*Find second/first node if it == nullptr, adds obstacle if node can't be finded*/
@@ -265,6 +324,13 @@ namespace FusionCrowd {
 		}
 		if (node_id == NavMeshLocation::NO_NODE) {
 
+			//TODO why it's happend?
+			Vector2 perpendicular = Vector2(-edge->getDirection().y, edge->getDirection().x);
+			perpendicular *= 0.25f;
+			size_t n0 = _localizer->getNodeId(mid_edge + perpendicular);
+			size_t n1 = _localizer->getNodeId(mid_edge - perpendicular);
+			if (n0 != exist_id && n1 != exist_id) return false;
+
 			NavMeshObstacle* obst = new NavMeshObstacle();
 			obst->setNode(edge->getFirstNode() == nullptr ? edge->getSecondNode() : edge->getFirstNode());
 			obst->_point = edge->getP0();
@@ -288,8 +354,24 @@ namespace FusionCrowd {
 		return true;
 	}
 
+
+	bool NavMeshModification::ValidateObstalce(NavMeshObstacle* obst) {
+		auto& poly = obst->getNode()->_poly;
+		auto p0 = obst->getP0();
+		auto p1 = obst->getP1();
+		bool b0 = false, b1 = false;
+		for (int i = 0; i < poly.vertCount; i++) {
+			auto vpoly = poly.getVertexByPos(i);
+			if (Vector2::Distance(vpoly, p0) < 1e-4f) b0 = true;
+			if (Vector2::Distance(vpoly, p1) < 1e-4f) b1 = true;
+			if (b0 && b1) return true;
+		}
+		return b0 && b1;
+	}
+
 	void NavMeshModification::FinalizeNodes() {
 		for (auto n : _addednodes) {
+			ModificationHelper::RemoveDuplicateVerticesFromNodePoly(*n);
 			ModificationHelper::ResetNodePolySequence(*n);
 			Vector2 center = Vector2(0, 0);
 			for (int i = 0; i < n->_poly.vertCount; i++) {
@@ -421,5 +503,56 @@ namespace FusionCrowd {
 		for (int i = 0; i < _navmesh.nCount; i++) {
 			_navmesh.nodes[i].setVertices(_navmesh.vertices);
 		}
+	}
+
+	void NavMeshModification::RemoveNodesInsidePoly(std::vector<Vector2> poly) {
+		float minx = INFINITY;
+		float maxx = -INFINITY;
+		float miny = INFINITY;
+		float maxy = -INFINITY;
+
+		for (auto v : poly) {
+			if (v.x > maxx) maxx = v.x;
+			if (v.x < minx) minx = v.x;
+			if (v.y > maxy) maxy = v.y;
+			if (v.y < miny) miny = v.y;
+		}
+
+		auto crossing_nodes_ids = _localizer->findNodesCrossingBB(BoundingBox(minx, miny, maxx, maxy));
+		for (int j = 0; j < _navmesh.nCount; j++) {
+			if (_navmesh.nodes[j].deleted) continue;
+			if (std::find(crossing_nodes_ids.begin(),
+				crossing_nodes_ids.end(),
+				_navmesh.nodes[j]._id) != crossing_nodes_ids.end()) {
+				auto& node_poly = _navmesh.nodes[j]._poly;
+				bool node_inside = true;;
+				for (int i = 0; i < node_poly.vertCount; i++) {
+					auto node_v = node_poly.getVertexByPos(i);
+					bool inside = false;
+					for (int i = 0, j = poly.size() - 1; i < poly.size(); j = i++) {
+						float xi = poly[i].x, yi = poly[i].y;
+						float xj = poly[j].x, yj = poly[j].y;
+
+						bool intersect = ((yi > node_v.y) != (yj > node_v.y))
+							&& (node_v.x < (xj - xi) * (node_v.y - yi) / (yj - yi) + xi);
+						if (intersect) inside = !inside;
+					}
+					if (!inside) {
+						node_inside = false;
+						break;
+					}
+				}
+				if (node_inside) _nodes_ids_to_delete.push_back(_navmesh.nodes[j]._id);
+			}
+		}
+	}
+
+	void NavMeshModification::Clear() {
+		_addednodes.clear();
+		_addededges.clear();
+		_addedobstacles.clear();
+		_nodes_ids_to_delete.clear();
+		_addedvertices.clear();
+		_global_polygon.clear();
 	}
 }

@@ -98,7 +98,7 @@ namespace TestFusionCrowd
 		std::ifstream agentPositions("Resources/TradeshowAgents.txt");
 		while(agentPositions >> x >> y)
 		{
-			size_t id = _sim->AddAgent(x, y, _op, ComponentIds::FSM_ID);
+			size_t id = _sim->AddAgent(x, y, _op, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
 			_sim->SetAgentStrategyParam(id, ComponentIds::FSM_ID, flowMachineParams);
 		}
 	}

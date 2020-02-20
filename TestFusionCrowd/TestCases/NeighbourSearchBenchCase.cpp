@@ -38,7 +38,7 @@ namespace TestFusionCrowd
 
 		for (int i = 0; i < _agentsNum; i++)
 		{
-			auto id = _sim->AddAgent(RandFloat(0, worldSide), RandFloat(0, worldSide), FusionCrowd::ComponentIds::KARAMOUZAS_ID, -1);
+			auto id = _sim->AddAgent(RandFloat(0, worldSide), RandFloat(0, worldSide), FusionCrowd::ComponentIds::KARAMOUZAS_ID, ComponentIds::NAVMESH_ID, -1);
 			_sim->SetAgentGoal(id, RandFloat(0, worldSide), RandFloat(0, worldSide));
 		}
 	}

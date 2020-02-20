@@ -9,6 +9,12 @@ namespace FusionCrowd
 	{
 	}
 
+	NavMeshPoly::NavMeshPoly(const NavMeshPoly& p)
+		: vertIDs(new unsigned int[p.vertCount]), vertCount(p.vertCount), vertices(p.vertices), A(p.A), B(p.B), C(p.C)
+	{
+		memcpy(&vertIDs[0], &p.vertIDs[0], vertCount * sizeof(unsigned int));
+	}
+
 
 	NavMeshPoly::~NavMeshPoly()
 	{

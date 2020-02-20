@@ -31,11 +31,17 @@ namespace FusionCrowd {
 
 		//Finalize
 		int Finalize();
+		/*Some times unnecessary obstacles spawns wich have same points as edges. This function deletes such obstalces*/
+		void RemoveObstaclesOnEdges();
+		/*Check is both obstacles point on node poly*/
+		bool ValidateObstalce(NavMeshObstacle* obst);
 		void FinalizeVertices();
 		void FinalizeNodes();
 		void FinalizeEdges();
 		bool ProcessEdge(NavMeshEdge* edge);
 		void FillNodeEdgeObstaclesArrays();
+		void RemoveNodesInsidePoly(std::vector<DirectX::SimpleMath::Vector2> poly);
+		void Clear();
 
 		//Interface
 		unsigned int AddVertex(DirectX::SimpleMath::Vector2 v);

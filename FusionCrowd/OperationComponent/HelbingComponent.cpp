@@ -18,7 +18,8 @@ namespace FusionCrowd
 {
 	namespace Helbing
 	{
-		HelbingComponent::HelbingComponent(std::shared_ptr<NavSystem> navSystem): _navSystem(navSystem), _agentScale(2000.f), _obstScale(2000.f), _reactionTime(0.5f), _bodyForse(1.2e5f), _friction(2.4e5f), _forceDistance(0.08f)
+		HelbingComponent::HelbingComponent(std::shared_ptr<NavSystem> navSystem)
+			: _navSystem(navSystem), _agentScale(2000.f), _obstScale(2000.f), _reactionTime(0.5f), _bodyForse(1.2e5f), _friction(2.4e5f), _forceDistance(0.08f)
 		{
 		}
 
@@ -72,6 +73,8 @@ namespace FusionCrowd
 			const float D = _forceDistance;
 			Vector2 normal_ij = agent->pos - other->pos;
 			float distance_ij = normal_ij.Length();
+			normal_ij.Normalize();
+
 			float Radii_ij = agent->radius + other->radius;
 
 			float AGENT_SCALE = _agentScale;

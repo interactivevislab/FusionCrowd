@@ -21,7 +21,7 @@ class AutoScrollbar(ttk.Scrollbar):
 
 class Player:
     def __init__(self, scale, frame_count):
-        self._playing = True
+        self._playing = False
         self._paused = 0
         self._play_speed = 100
 
@@ -81,6 +81,7 @@ class Player:
 
         self.scale *= scale
         self.canvas.scale("all", 0, 0, scale, scale)  # rescale all canvas objects
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def _move_from(self, event):
         """Remember previous coordinates for scrolling with the mouse"""
@@ -108,6 +109,10 @@ class Player:
 
     def set_redraw(self, redraw):
         self.timeline.config(command=redraw)
+        pass
+
+    def update_scroll(self):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def text(self, p, text, color="white"):
         x, y = p[0] * self.scale, p[1] * self.scale
@@ -117,7 +122,6 @@ class Player:
             text=text,
             fill=color
         )
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         return result
 
     def hide_item(self, item):
@@ -138,31 +142,35 @@ class Player:
         sp2 = p2[0] * self.scale, p2[1] * self.scale
 
         result = self.canvas.create_line(*sp1, *sp2, fill=color)
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
         return result
 
     def circle(self, p, R, fill="white", outline="white"):
         x, y = p[0] * self.scale, p[1] * self.scale
         r = R * self.scale
         result = self.canvas.create_oval(x - r, y - r, x + r, y + r, fill=fill, outline=outline)
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
         return result
+
+    def move_orientation(self, item, target_pos, target_orient):
+        pos1 = (target_pos[0] + target_orient[0]) * self.scale, (target_pos[1] + target_orient[1]) * self.scale
+        pos = target_pos[0] * self.scale, target_pos[1] * self.scale
+
+        self.canvas.coords(item, *pos, *pos1)
+
+    def orientation(self, pos, orient, color="white"):
+        pos1 = pos[0] + orient[0], pos[1] + orient[1]
+        return self.line(pos, pos1, color)
 
     def vector(self, p1, p2, color="white"):
         self.line(p1, p2, color)
 
         p09 = p1[0] + (p2[0] - p1[0]) * 0.9, p1[1] + (p2[1] - p1[1]) * 0.9
-        self.circle(p09, 2/self.scale, color)
+        orto01 = -(p2[1] - p1[1]) * 0.05, (p2[0] - p1[0]) * 0.05
 
-    def move_orientation(self, item, info):
-        position= info[0],info[1]
-        orint= (info[0]+info[2]),(info[1]+info[3])
-        self.canvas.coords(item,position[0]*self.scale, position[1]*self.scale, orint[0]*self.scale, orint[1]*self.scale)
-        
+        left_wing = p09[0] + orto01[0], p09[1] + orto01[1]
+        right_wing = p09[0] - orto01[0], p09[1] - orto01[1]
 
-    def orientation(self, info, color="white"):
-        position= info[0],info[1]
-        orint= (info[0]+info[2]),(info[1]+info[3])
-        result=self.line(info, orint, color)
-        return result
+        self.line(left_wing,  p2, color)
+        self.line(right_wing, p2, color)
+        self.line(right_wing, left_wing, color)

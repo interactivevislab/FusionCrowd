@@ -28,18 +28,30 @@ namespace TestFusionCrowd
 
 		_sim = std::shared_ptr<FusionCrowd::ISimulatorFacade>(builder->Build(), SimulatorFacadeDeleter);
 
-		float z = sqrt(_agentsNum / 2.0f);
+		float x1 = -30, x2 = 30;
+		float y1 = -30, y2 = 30;
+
+		size_t group1 = _sim->AddGridGroup(x1, y1, 10, 0.5f);
+		size_t group2 = _sim->AddFreeGridGroup(x2, y2, 10, 0.5f);
+
+		_sim->SetGroupGoal(group1, x2, y2);
+		_sim->SetGroupGoal(group2, x1, y1);
+
+
+		float z = 30;
 
 		for (size_t i = 0; i < _agentsNum / 2; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(500 - z, 500), RandFloat(500 -z / 2, 500 + z / 2), op, -1);
-			_sim->SetAgentGoal(id, RandFloat(500.0f, 500 + z), RandFloat(500 -z / 2, 500 + z / 2));
+			size_t id = _sim->AddAgent(RandFloat(x1 - z, y1), RandFloat(x1 - z / 2, y1 + z / 2), op, ComponentIds::NAVMESH_ID, -1);
+
+			_sim->AddAgentToGroup(id, group1);
 		}
 
 		for (size_t i = _agentsNum / 2; i < _agentsNum; i++)
 		{
-			size_t id = _sim->AddAgent(RandFloat(500.0f, 500 + z), RandFloat(500 - z / 2, 500 + z / 2), op, -1);
-			_sim->SetAgentGoal(id, RandFloat(500 - z, 500.0f), RandFloat(500 - z / 2, 500 + z / 2));
+			size_t id = _sim->AddAgent(RandFloat(x2, y2 + z), RandFloat(x2 - z / 2, y2 + z / 2), op, ComponentIds::NAVMESH_ID, -1);
+
+			_sim->AddAgentToGroup(id, group2);
 		}
 	}
 }

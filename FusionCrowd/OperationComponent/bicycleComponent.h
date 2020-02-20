@@ -11,13 +11,8 @@
 
 namespace FusionCrowd
 {
-	namespace bicycle
-
+	namespace Bicycle
 	{
-
-		
-
-
 		struct AgentParamentrs
 		{
 			float _mass;
@@ -31,19 +26,19 @@ namespace FusionCrowd
 
 			AgentParamentrs() :_mass(80.0f), _theta(0.0f),_delta(0.0f),_length(2.0f),_orintX(1.0f),_orintY(0.0f), _acceleration(0.5f), _negativeAcceleration(0.5f)
 			{
-				
+
 			}
 			AgentParamentrs(float mass) : _mass(mass)
 			{
 			}
 		};
 
-		class bicycleComponent : public IOperationComponent
+		class BicycleComponent : public IOperationComponent
 		{
 		public:
-			bicycleComponent(std::shared_ptr<NavSystem> navSystem);
-			bicycleComponent(std::shared_ptr<NavSystem> navSystem, float AGENT_SCALE, float OBST_SCALE, float REACTION_TIME, float BODY_FORCE, float FRICTION, float FORCE_DISTANCE);
-			~bicycleComponent();
+			BicycleComponent(std::shared_ptr<NavSystem> navSystem);
+			BicycleComponent(std::shared_ptr<NavSystem> navSystem, float AGENT_SCALE, float OBST_SCALE, float REACTION_TIME, float BODY_FORCE, float FRICTION, float FORCE_DISTANCE);
+			~BicycleComponent();
 
 			ComponentId GetId() override { return ComponentIds::BICYCLE; };
 

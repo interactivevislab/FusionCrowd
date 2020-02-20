@@ -1,7 +1,9 @@
 #include "ModificationProcessor.h"
 #include "../NavMeshLocalizer.h"
+#include "ModificationHelper.h"
 
 using namespace DirectX::SimpleMath;
+
 namespace FusionCrowd {
 	ModificationProcessor::ModificationProcessor(NavMesh& navmesh,
 		std::shared_ptr<NavMeshLocalizer> localizer, NavMeshSpatialQuery* spatial_query)
@@ -16,20 +18,75 @@ namespace FusionCrowd {
 		}
 	}
 
-	float ModificationProcessor::SplitPolyByNodes(FCArray<NavMeshVetrex> & polygon) {
+	float ModificationProcessor::CutPolygonFromMesh(std::vector<Vector2>& polygon) {
+		if (polygon.size() < 3) return 0;
+		Clear();
+		SplitPolyByNodes(polygon);
+
+		if (_modification._global_polygon.size() < 3) return -1;
+		for (int i = 0; i < _node_modificators.size(); i++) {
+			auto mod = _node_modificators[i];
+			if (mod->modification_type == CUT_CURVE) {
+				if (!ModificationHelper::ValidateModificator(mod, _node_modificators)) continue;
+				Initialize(mod);
+				FillAddedVertices(true);
+				CutCurveFromCurrentNode();
+			}
+
+			if (mod->modification_type == CUT_POLY) {
+				Initialize(mod);
+				FillAddedVertices(false);
+				CutPolyFromCurrentNode();
+			}
+
+			if (mod->modification_type == SPLIT) {
+				Initialize(mod);
+				SplitNode();
+			}
+
+			if (std::find(_modification._nodes_ids_to_delete.begin(), _modification._nodes_ids_to_delete.end(), mod->node->getID())
+				== _modification._nodes_ids_to_delete.end()) {
+				_modification._nodes_ids_to_delete.push_back(mod->node->getID());
+			}
+
+		}
+
+		int mod_num = 0;
+		for (auto m : _node_modificators) {
+			if (m->correct) mod_num++;
+		}
+		if (mod_num == 0) return tres - 10000;
+
+		_modification.Finalize();
+
+		return mod_num;
+	}
+
+	void ModificationProcessor::Clear() {
+		for (auto m : _node_modificators) {
+			delete m;
+		}
+		_node_modificators.clear();
+		_current_node_poly = nullptr;
+		_current_node = nullptr;
+		_local_polygon.clear();
+		_local_polygon_vertex_ids.clear();
+	}
+
+	float ModificationProcessor::SplitPolyByNodes(std::vector<Vector2>& polygon) {
 		unsigned int global_poly_size = polygon.size();
 		float res = 0;
 		_modification._global_polygon = std::vector<Vector2>(polygon.size());
 		_node_modificators = std::vector<NodeModificator*>();
 		if (!ModificationHelper::IsClockwise(polygon)) {
 			for (int i = 0; i < polygon.size(); i++) {
-				Vector2 v = Vector2(polygon[i].X, polygon[i].Y);
+				Vector2 v = Vector2(polygon[i].x, polygon[i].y);
 				_modification._global_polygon[i] = v;
 			}
 		}
 		else {
 			for (int i = 0; i < polygon.size(); i++) {
-				Vector2 v = Vector2(polygon[i].X, polygon[i].Y);
+				Vector2 v = Vector2(polygon[i].x, polygon[i].y);
 				_modification._global_polygon[global_poly_size - i - 1] = v;
 			}
 		}
@@ -136,20 +193,11 @@ namespace FusionCrowd {
 				_modification._global_polygon[prev_point_id],
 				_modification._global_polygon[i],
 				nodeptr);
-			//TODO fix
-			if (tmp.size() == 0) {
-				delete modificator;
-				tres = -1;
-				int previ = i;
-				do {
-					previ = i;
-					i = (i + 1) % global_poly_size;
-				} while (nodes_ids[i] == nodes_ids[previ]);
-				continue;
+			if (tmp.size() > 0) {
+				Vector2 prev_cross_point = tmp[0];
+				modificator->polygon_vertex_ids.push_back(_modification.AddVertex(prev_cross_point));
+				modificator->polygon_to_cut.push_back(prev_cross_point);
 			}
-			Vector2 prev_cross_point = tmp[0];
-			modificator->polygon_vertex_ids.push_back(_modification.AddVertex(prev_cross_point));
-			modificator->polygon_to_cut.push_back(prev_cross_point);
 			int previ = i;
 			do {
 				previ = i;
@@ -162,65 +210,30 @@ namespace FusionCrowd {
 				_modification._global_polygon[previ],
 				_modification._global_polygon[i],
 				nodeptr);
-			//TODO fix
-			if (cross_points.size() == 0) {
-				delete modificator;
-				tres = -2;
-				continue;
+			if (cross_points.size() > 0) {
+				Vector2 post_cross_point = cross_points[0];
+				modificator->polygon_vertex_ids.push_back(_modification.AddVertex(post_cross_point));
+				modificator->polygon_to_cut.push_back(post_cross_point);
 			}
-			Vector2 post_cross_point = cross_points[0];
-
-			modificator->polygon_vertex_ids.push_back(_modification.AddVertex(post_cross_point));
-			modificator->polygon_to_cut.push_back(post_cross_point);
-			_node_modificators.push_back(modificator);
+			if (modificator->polygon_to_cut.size() >= 2) {
+				_node_modificators.push_back(modificator);
+			}
+			else {
+				delete modificator;
+			}
 #pragma endregion
 
 		} while (i != start_pos);
 		return 	res;
 	}
 
-
-	float ModificationProcessor::CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
-		if (polygon.size() < 3) return 0;
-		SplitPolyByNodes(polygon);
-
-		if (_modification._global_polygon.size() < 3) return -1;
-		for (auto mod : _node_modificators) {
-
-			if (mod->modification_type == CUT_CURVE) {
-				if (!ValidateModificator(mod)) continue;
-				Initialize(mod);
-				FillAddedVertices(true);
-				CutCurveFromCurrentNode();
-			}
-
-			if (mod->modification_type == CUT_POLY) {
-				Initialize(mod);
-				FillAddedVertices(false);
-				CutPolyFromCurrentNode();
-			}
-
-			if (mod->modification_type == SPLIT) {
-				Initialize(mod);
-				SplitNode();
-			}
-
-			if (std::find(_modification._nodes_ids_to_delete.begin(), _modification._nodes_ids_to_delete.end(), mod->node->getID())
-				== _modification._nodes_ids_to_delete.end()) {
-				_modification._nodes_ids_to_delete.push_back(mod->node->getID());
-			}
-
-		}
-
-		int mod_num = 0;
-		for (auto m : _node_modificators) {
-			if (m->correct) mod_num++;
-		}
-		if (mod_num == 0) return tres-10000;
-
-		_modification.Finalize();
-
-		return tres;
+	int ModificationProcessor::Initialize(NodeModificator * modificator) {
+		_current_node_poly = &modificator->node->_poly;
+		_current_node = modificator->node;
+		_local_polygon = modificator->polygon_to_cut;
+		_local_polygon_vertex_ids = modificator->polygon_vertex_ids;
+		_side = modificator->side;
+		return 0;
 	}
 
 	int ModificationProcessor::SplitNode() {
@@ -386,17 +399,6 @@ namespace FusionCrowd {
 #pragma endregion
 
 		_modification._addednodes.push_back(updnode);
-		return 0;
-	}
-
-
-	/*Creates arrays*/
-	int ModificationProcessor::Initialize(NodeModificator * modificator) {
-		_current_node_poly = &modificator->node->_poly;
-		_current_node = modificator->node;
-		_local_polygon = modificator->polygon_to_cut;
-		_local_polygon_vertex_ids = modificator->polygon_vertex_ids;
-		_side = modificator->side;
 		return 0;
 	}
 
@@ -588,35 +590,16 @@ namespace FusionCrowd {
 		return 0;
 	}
 
-	/*Returns cross point with current_poly in dirrection v0->v1*/
-	Vector2 ModificationProcessor::FindVortexCrossPoint(Vector2 q, Vector2 v1) {
-		auto s = v1 - q;
-		for (int i = 0; i < _current_node_poly->vertCount; i++) {
-			auto p = _current_node_poly->vertices[_current_node_poly->vertIDs[i]];
-			auto r = _current_node_poly->vertices[_current_node_poly->vertIDs[(i + 1) % _current_node_poly->vertCount]] - p;
-
-			auto rXs = r.x*s.y - r.y*s.x;
-			if (fabs(rXs) < 1e-7f) continue;
-			auto delta = q - p;
-			auto deltaXr = delta.x*r.y - delta.y*r.x;
-			float u = deltaXr / rXs;
-			float deltaXs = delta.x*s.y - delta.y*s.x;
-			float t = deltaXs / rXs;
-			//TODO replace 0.99
-			if (u > 0.99f  && t <= 1.0f && t >= 0.0f) {
-				return q + u * s;
-			}
-		}
-		throw 1;
-	}
-
 	/*Adds crosspoints for polygon cut*/
 	void ModificationProcessor::FillAddedVertices(bool isCurve) {
 		int max = isCurve ? _local_polygon.size() - 2 : _local_polygon.size();
 		crosspoints_ids = std::vector<unsigned int>(max);
 		crosspoints = std::vector<Vector2>(max);
 		for (int i = 0; i < max; i++) {
-			Vector2 crosspoint = FindVortexCrossPoint(_local_polygon[i], _local_polygon[(i + 1) % _local_polygon.size()]);
+			Vector2 crosspoint = ModificationHelper::FindPolyAndSegmentCrosspoints(
+				_local_polygon[i],
+				_local_polygon[(i + 1) % _local_polygon.size()],
+				_current_node_poly, true)[0];
 			crosspoints_ids[i] = _modification.AddVertex(crosspoint);
 			crosspoints[i] = crosspoint;
 		}
@@ -628,17 +611,16 @@ namespace FusionCrowd {
 		std::vector<NavMeshObstacle*> tmp_obst = std::vector<NavMeshObstacle*>();
 		NavMeshObstacle *obst = new NavMeshObstacle();
 		obst->setNode(updnode);
-		Vector2 p0 = _local_polygon[(j + 1) % _local_polygon.size()];
-		Vector2 p1 = _local_polygon[(j + 2) % _local_polygon.size()];
-		obst->_point = p0;
-		obst->_unitDir = (p1 - p0) / (p1 - p0).Length();
-		obst->_length = (p1 - p0).Length();
-		if (obst->_length > _modification.min_width) {
+		Vector2 poly0 = _local_polygon[(j + 1) % _local_polygon.size()];
+		Vector2 poly1 = _local_polygon[(j + 2) % _local_polygon.size()];
+		obst->_point = poly0;
+		obst->_unitDir = (poly1 - poly0) / (poly1 - poly0).Length();
+		obst->_length = (poly1 - poly0).Length();
+		//TODO
+		//some times here spawns unnecessary obstacles then j = -1. if should be removed
+		//if (j != -1) {
 			tmp_obst.push_back(obst);
-		}
-		else {
-			delete obst;
-		}
+		//}
 
 		for (int i = 0; i < _current_node->_obstCount; i++) {
 			NavMeshObstacle *obst = _current_node->_obstacles[i];
@@ -654,18 +636,12 @@ namespace FusionCrowd {
 			}
 
 			if (p0side && p1side) {
-
 				NavMeshObstacle *nobst = new NavMeshObstacle();
 				nobst->setNode(updnode);
 				nobst->_point = p0;
 				nobst->_unitDir = (p1 - p0) / (p1 - p0).Length();
 				nobst->_length = (p1 - p0).Length();
-				if (nobst->_length > _modification.min_width) {
-					tmp_obst.push_back(nobst);
-				}
-				else {
-					delete nobst;
-				}
+				tmp_obst.push_back(nobst);
 			}
 			else {
 				Vector2 v0 = crosspoints[j];
@@ -676,23 +652,12 @@ namespace FusionCrowd {
 				if (p0side || p1side) {
 #pragma region one_x_on_obst
 					Vector2 divpoint;
-					if (p0.x == p1.x) {
-						if (v1.x == p0.x) divpoint = v1;
-						else if (v0.x == p0.x) {
-							divpoint = v0;
-						}
-						else divpoint = _local_polygon[_local_polygon.size() - 1];
-					}
-					else {
-						float k = (p0.y - p1.y) / (p0.x - p1.x);
-						float c = p0.y - k * p0.x;
-						if (v0.y == k * v0.x + c) divpoint = v0;
-						else if (v1.y == k * v1.x + c) {
-							divpoint = v1;
-							divpoint = v1;
-						}
-						else divpoint = _local_polygon[_local_polygon.size() - 1];
-					}
+					if (ModificationHelper::IsPointsOnLine(p0, p1, v0)) divpoint = v0;
+					else if (ModificationHelper::IsPointsOnLine(p0, p1, v1)) divpoint = v1;
+					else if (ModificationHelper::IsPointsOnLine(p0, p1, poly0)) divpoint = poly0;
+					else if (ModificationHelper::IsPointsOnLine(p0, p1, poly1)) divpoint = poly1;
+					//TODO is it valid?
+					else divpoint = p0side ? p0 : p1;
 					NavMeshObstacle *nobst = new NavMeshObstacle();
 					nobst->setNode(updnode);
 					nobst->_point = divpoint;
@@ -704,52 +669,31 @@ namespace FusionCrowd {
 						nobst->_unitDir = (p1 - divpoint) / (p1 - divpoint).Length();
 						nobst->_length = (p1 - divpoint).Length();
 					}
-
-					if (nobst->_length > _modification.min_width) {
-						tmp_obst.push_back(nobst);
-					}
-					else {
-						delete nobst;
-					}
+					tmp_obst.push_back(nobst);
 #pragma endregion
 				}
 				else {
 #pragma region both_x_on_obst
 					//is both crosspoints on edge?
-					bool create_obst = true;
-					if (p0.x == p1.x) {
-						if (v0.x != p0.x) create_obst = false;
-					}
-					else {
-						float k = (p0.y - p1.y) / (p0.x - p1.x);
-						float c = p0.y - k * p0.x;
-						if (v0.y != k * v0.x + c) create_obst = false;
-					}
-					if (p0.x == p1.x) {
-						if (v1.x != p0.x) create_obst = false;
-					}
-					else {
-						float k = (p0.y - p1.y) / (p0.x - p1.x);
-						float c = p0.y - k * p0.x;
-						if (v1.y != k * v1.x + c) create_obst = false;
-					}
-					if (create_obst) {
+					if (ModificationHelper::IsPointsOnLine(p0, p1, v0)
+						&& ModificationHelper::IsPointsOnLine(p0, p1, v1)) {
 						NavMeshObstacle *nobst = new NavMeshObstacle();
 						nobst->setNode(updnode);
 						nobst->_point = v0;
 						nobst->_unitDir = (v1 - v0) / (v1 - v0).Length();
 						nobst->_length = (v1 - v0).Length();
-
-						if (nobst->_length > _modification.min_width) {
-							tmp_obst.push_back(nobst);
-						}
-						else {
-							delete nobst;
-						}
+						tmp_obst.push_back(nobst);
 					}
 #pragma endregion
 
 				}
+			}
+		}
+
+		for (int i = tmp_obst.size() - 1; i >=0; i--) {
+			if (tmp_obst[i]->length() < _modification.min_width) {
+				delete tmp_obst[i];
+				tmp_obst.erase(tmp_obst.begin() + i);
 			}
 		}
 
@@ -764,7 +708,6 @@ namespace FusionCrowd {
 
 	void ModificationProcessor::CopyVortexEdges(NavMeshNode* updnode, int j,
 		Vector2 j0vert, Vector2 j1vert, Vector2 j2vert, bool node_side0, bool node_side1, bool onestrict) {
-
 		std::vector<NavMeshEdge*> tmp_edges = std::vector<NavMeshEdge*>();
 
 		for (int i = 0; i < _current_node->_edgeCount; i++) {
@@ -795,16 +738,10 @@ namespace FusionCrowd {
 				}
 				if (p0side || p1side) {
 					Vector2 divpoint;
-					if (p0.x == p1.x) {
-						if (v0.x == p0.x) divpoint = v0;
-						else divpoint = v1;
-					}
-					else {
-						float k = (p0.y - p1.y) / (p0.x - p1.x);
-						float c = p0.y - k * p0.x;
-						if (v0.y == k * v0.x + c) divpoint = v0;
-						else divpoint = v1;
-					}
+					if (ModificationHelper::IsPointsOnLine(p0, p1, v0)) divpoint = v0;
+					else if (ModificationHelper::IsPointsOnLine(p0, p1, v1)) divpoint = v1;
+					//TODO is it valid?
+					else divpoint = p0side ? p0 : p1;
 					NavMeshEdge *nedge = new NavMeshEdge();
 					nedge->setNodes(updnode, nullptr);
 					nedge->setPoint(divpoint);
@@ -816,46 +753,27 @@ namespace FusionCrowd {
 						nedge->setDirection((p1 - divpoint) / (p1 - divpoint).Length());
 						nedge->setWidth((p1 - divpoint).Length());
 					}
-					if (nedge->getWidth() > _modification.min_width) {
-						tmp_edges.push_back(nedge);
-					}
-					else {
-						delete nedge;
-					}
+					tmp_edges.push_back(nedge);
 				}
 				else {
 					//is both crosspoints on edge?
-					bool create_edge = true;
-					if (p0.x == p1.x) {
-						if (v0.x != p0.x) create_edge = false;
-					}
-					else {
-						float k = (p0.y - p1.y) / (p0.x - p1.x);
-						float c = p0.y - k * p0.x;
-						if (v0.y != k * v0.x + c) create_edge = false;
-					}
-					if (p0.x == p1.x) {
-						if (v1.x != p0.x) create_edge = false;
-					}
-					else {
-						float k = (p0.y - p1.y) / (p0.x - p1.x);
-						float c = p0.y - k * p0.x;
-						if (v1.y != k * v1.x + c) create_edge = false;
-					}
-					if (create_edge) {
+					if (ModificationHelper::IsPointsOnLine(p0, p1, v0)
+						&& ModificationHelper::IsPointsOnLine(p0, p1, v1)) {
 						NavMeshEdge *nedge = new NavMeshEdge();
 						nedge->setNodes(updnode, nullptr);
 						nedge->setPoint(v0);
 						nedge->setDirection((v1 - v0) / (v1 - v0).Length());
 						nedge->setWidth((v1 - v0).Length());
-						if (nedge->getWidth() > _modification.min_width) {
-							tmp_edges.push_back(nedge);
-						}
-						else {
-							delete nedge;
-						}
+						tmp_edges.push_back(nedge);
 					}
 				}
+			}
+		}
+
+		for (int i = tmp_edges.size() - 1; i >= 0; i--) {
+			if (tmp_edges[i]->getWidth() < _modification.min_width ) {
+				delete tmp_edges[i];
+				tmp_edges.erase(tmp_edges.begin() + i);
 			}
 		}
 
@@ -867,41 +785,5 @@ namespace FusionCrowd {
 		}
 	}
 
-	bool ModificationProcessor::ValidateModificator(NodeModificator * modificator) {
-		if (modificator->modification_type != CUT_CURVE) return true;
-		auto& poly = modificator->polygon_to_cut;
-		bool f = true;
-		while (f) {
-			f = false;
-			for (int i = poly.size() - 1; i >= 0; i--) {
-				if ((poly[i] - poly[(i + poly.size() - 1) % poly.size()]).Length() < 1e-3f) {
-					poly.erase(poly.begin() + i);
-					modificator->polygon_vertex_ids.erase(modificator->polygon_vertex_ids.begin() + i);
-					f = true;
-					break;
-				}
-			}
-		}
-		auto& node_poly = modificator->node->_poly;
-		//remove vertexes on edge
-		//todo
-		for (int i = 1; i < poly.size()-1; i++) {
-			auto v0 = poly[i];
-			for (int j = 0; j < node_poly.vertCount; j++) {
-				auto v1 = node_poly.vertices[node_poly.vertIDs[j]];
-				auto v2 = node_poly.vertices[node_poly.vertIDs[(j + 1) % node_poly.vertCount]];
-				if (fabs(v2.x - v1.x)<1e-6f) {
-					//if v1-v2 - vertical
-					if (fabs(v0.x - v2.x) < 1e-6f) return false;
-				}
-				else {
-					float k0 = (v2.y - v1.y) / (v2.x - v1.x);
-					float c0 = v2.y - k0 * v2.x;
-					if (fabs(k0*v0.x + c0 - v0.y) < 1e-6) return false;
-				}
-			}
 
-		}
-		return poly.size() > 2;
-	}
 }

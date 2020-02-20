@@ -22,11 +22,8 @@ namespace FusionCrowd
 
 	NavMeshLocation NavMeshComponent::Replan(Vector2 fromPoint, const Goal & target, float agentRadius)
 	{
-		Vector2 correctedFrom = GetClosestAvailablePoint(fromPoint);
-		Vector2 correctedTarget = GetClosestAvailablePoint(target.getCentroid());
-
-		unsigned int from = _localizer->getNodeId(correctedFrom);
-		unsigned int to = _localizer->getNodeId(correctedTarget);
+		unsigned int from = GetClosestAvailableNode(fromPoint);
+		unsigned int to = GetClosestAvailableNode(target.getCentroid());
 
 		auto planner = _localizer->getPlanner();
 		auto* route = planner->getRoute(from, to, agentRadius);
@@ -53,6 +50,12 @@ namespace FusionCrowd
 
 	bool NavMeshComponent::DeleteAgent(size_t id)
 	{
+		for (int i = 0; i < _agents.size(); i++) {
+			if (_agents[i].id == id) {
+				_agents.erase(_agents.begin() + i);
+				break;
+			}
+		}
 		return false;
 	}
 
@@ -61,7 +64,15 @@ namespace FusionCrowd
 		for (auto & agtStruct : _agents)
 		{
 			size_t id = agtStruct.id;
+
+			size_t groupId = _simulator->GetAgent(id).GetGroupId();
 			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
+
+			if(groupId != Group::NO_GROUP)
+			{
+				SetGroupPrefVelocity(info, agtStruct, groupId, timeStep);
+				continue;
+			}
 
 			if(IsReplanNeeded(info, agtStruct))
 			{
@@ -70,23 +81,65 @@ namespace FusionCrowd
 			}
 
 			UpdateLocation(info, agtStruct, false);
-			SetPrefVelocity(info, agtStruct);
+			SetPrefVelocity(info, agtStruct, timeStep);
 		}
 	}
 
-	DirectX::SimpleMath::Vector2 NavMeshComponent::GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) {
-		if (_localizer->findNodeBlind(p) != NavMeshLocation::NO_NODE) return p;
+	Vector2 NavMeshComponent::GetClosestAvailablePoint(Vector2 p)
+	{
+		if (_localizer->findNodeBlind(p) != NavMeshLocation::NO_NODE)
+		{
+			return p;
+		}
+
 		float min_dist = INFINITY;
-		DirectX::SimpleMath::Vector2 res;
-		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--) {
-			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted) {
-				DirectX::SimpleMath::Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
-				if ((p - center).LengthSquared() < min_dist) {
+		Vector2 res;
+		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--)
+		{
+			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted)
+			{
+				Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
+				if ((p - center).LengthSquared() < min_dist)
+				{
 					min_dist = (p - center).LengthSquared();
 					res = center;
 				}
 			}
 		}
+		if (min_dist == INFINITY)
+		{
+			throw 1;
+		}
+		return res;
+	}
+
+	size_t NavMeshComponent::GetClosestAvailableNode(Vector2 p)
+	{
+		auto correct = _localizer->findNodeBlind(p);
+		if (correct != NavMeshLocation::NO_NODE)
+		{
+			return correct;
+		}
+
+		float min_dist = INFINITY;
+		size_t res;
+		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--)
+		{
+			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted)
+			{
+				Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
+				if ((p - center).LengthSquared() < min_dist)
+				{
+					min_dist = (p - center).LengthSquared();
+					res = i;
+				}
+			}
+		}
+		if (min_dist == INFINITY)
+		{
+			throw 1;
+		}
+
 		return res;
 	}
 
@@ -100,7 +153,29 @@ namespace FusionCrowd
 			!path->IsValid(_navMesh->GetVersion());
 	}
 
-	void NavMeshComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
+	void NavMeshComponent::SetGroupPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, size_t groupId, float timeStep)
+	{
+		auto & group = _simulator->GetGroup(groupId);
+		auto & groupDummy = _simulator->GetSpatialInfo(group.dummyAgentId);
+
+		float rot = atan2f(groupDummy.orient.x, groupDummy.orient.y);
+
+		Vector2 relativePos = MathUtil::rotate(group.GetShape()->GetRelativePos(agentInfo.id), rot);
+		Vector2 targetPos = groupDummy.pos + relativePos;
+		Vector2 dir = targetPos - agentInfo.pos;
+
+		float speed = dir.LengthSquared() / timeStep;
+		if(agentInfo.maxSpeed < speed)
+		{
+			speed = agentInfo.maxSpeed;
+		}
+		agentInfo.prefVelocity.setSpeed(speed);
+
+		dir.Normalize();
+		agentInfo.prefVelocity.setSingle(dir);
+	}
+
+	void NavMeshComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep)
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
@@ -128,6 +203,17 @@ namespace FusionCrowd
 			// assign it to the localizer
 			agentStruct.location.setPath(newPath);
 		}
+
+		float dist = Vector2::Distance(agentGoal.getCentroid(), agentInfo.pos);
+
+		if(dist < agentInfo.prefSpeed * timeStep)
+		{
+			agentInfo.prefVelocity.setSpeed(dist);
+		} else
+		{
+			agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
+		}
+
 		agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
 		path->setPreferredDirection(agentInfo, _headingDevCos);
 	}
