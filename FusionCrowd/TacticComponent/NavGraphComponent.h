@@ -29,13 +29,13 @@ namespace FusionCrowd
 
 		ComponentId GetId() override { return ComponentIds::NAVGRAPH_ID; }
 
-
+		const float acceptanceRadius = 2.5f;
 	private:
 
 		struct AgentStruct
 		{
 		public:
-			unsigned int id;
+			size_t id;
 			std::shared_ptr <NavGraphRoute> route;
 			size_t goalNodeID;
 			int nodesComplete;
