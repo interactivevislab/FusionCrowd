@@ -1,7 +1,6 @@
 #pragma once
 
-#include "StrategyComponent/Goal/Goal.h"
-#include "GroupShape.h"
+#include "Group/IGroupShape.h"
 
 #include <vector>
 #include <memory>

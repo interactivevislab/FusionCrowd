@@ -32,7 +32,7 @@ namespace TestFusionCrowd
 		float y1 = -30, y2 = 30;
 
 		size_t group1 = _sim->AddGridGroup(x1, y1, 10, 0.5f);
-		size_t group2 = _sim->AddGridGroup(x2, y2, 10, 0.5f);
+		size_t group2 = _sim->AddFreeGridGroup(x2, y2, 10, 0.5f);
 
 		_sim->SetGroupGoal(group1, x2, y2);
 		_sim->SetGroupGoal(group2, x1, y1);

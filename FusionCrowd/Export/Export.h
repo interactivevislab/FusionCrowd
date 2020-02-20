@@ -60,9 +60,18 @@ namespace FusionCrowd
 				ComponentId tacticId,
 				ComponentId strategyId
 			) = 0;
+
+			virtual size_t AddAgent(
+				float x, float y, float radius, float preferedVelocity,
+				ComponentId opId,
+				ComponentId tacticId,
+				ComponentId strategyId
+			) = 0;
+
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
 
 			virtual size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist) = 0;
+			virtual size_t AddFreeGridGroup(float x, float y, size_t agetsInRow, float interAgtDist) = 0;
 			virtual void AddAgentToGroup(size_t agentId, size_t groupId) = 0;
 			virtual void RemoveAgentFromGroup(size_t agentId, size_t groupId) = 0;
 			virtual void SetGroupGoal(size_t groupId, float goalX, float goalY) = 0;
@@ -91,7 +100,7 @@ namespace FusionCrowd
 		public:
 			virtual ISimulatorBuilder* WithNavMesh(const char* path) = 0;
 			virtual ISimulatorBuilder* WithNavGraph(const char* path) = 0;
-			virtual ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> nodesArray, FCArray<Export::NavGraphEdge> edgesArray) = 0;
+			virtual ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> & nodesArray, FCArray<Export::NavGraphEdge> & edgesArray) = 0;
 			virtual ISimulatorBuilder* WithOp(ComponentId opId) = 0;
 			virtual ISimulatorBuilder* WithStrategy(ComponentId strategyId) = 0;
 

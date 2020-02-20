@@ -16,6 +16,6 @@ public:
 	std::string GetName() const override { return "Tradeshow"; };
 
 private:
-	FusionCrowd::ComponentId _op = FusionCrowd::ComponentIds::ORCA_ID;
+	FusionCrowd::ComponentId _op = FusionCrowd::ComponentIds::BICYCLE;
 };
 }
