@@ -133,12 +133,11 @@ namespace FusionCrowd
 
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId)
 		{
-			if (_navMesh != NULL)
+			std::vector<Obstacle> result;
+			AgentSpatialInfo & agent = _agentsInfo.at(agentId);
+
+			if ((agent.useNavMeshObstacles) && (_navMesh != NULL))
 			{
-				std::vector<Obstacle> result;
-				AgentSpatialInfo & agent = _agentsInfo.at(agentId);
-
-
 				size_t nodeId = _localizer->getNodeId(agent.pos);
 				if (nodeId == NavMeshLocation::NO_NODE)
 					return result;
@@ -147,16 +146,8 @@ namespace FusionCrowd
 				{
 					result.push_back(_navMesh->GetObstacle(obstId));
 				}
-
-				return result;
 			}
-
-			else
-			{
-				std::vector<Obstacle> res;
-				return res;
-			}
-
+			return result;
 		}
 
 		void Update(float timeStep)

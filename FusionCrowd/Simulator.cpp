@@ -126,6 +126,8 @@ namespace FusionCrowd
 			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
 			info.prefSpeed *= dist(_rnd_seed);
 
+			info.useNavMeshObstacles = (tacticId == ComponentIds::NAVMESH_ID);
+
 			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.pos);
 			_navSystem->AddAgent(info);
 

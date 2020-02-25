@@ -30,5 +30,7 @@ namespace FusionCrowd
 		CollisionLevel collisionsLevel = AGENT;
 
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
+
+		bool useNavMeshObstacles = true;
 	};
 }
