@@ -179,6 +179,11 @@ namespace FusionCrowd
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
+		//TODO: replace with correct disk goal
+		if ((agentGoal.getCentroid() - agentInfo.pos).Length() < 3.0f) {
+			agentInfo.prefVelocity.setSpeed(0);
+			return;
+		}
 		if (path == nullptr || path->getGoal().getID() != agentGoal.getID())
 		{
 			Vector2 goalPoint = agentGoal.getCentroid();
