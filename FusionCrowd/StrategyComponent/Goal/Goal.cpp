@@ -42,8 +42,8 @@ namespace FusionCrowd
 
 	Goal GoalFactory::CreateDiscGoal(const DirectX::SimpleMath::Vector2& p, float R)
 	{
-		auto geometry = std::make_unique<FusionCrowd::Math::PointShape>(p);
-
+		auto geometry = std::make_unique < FusionCrowd::Math::DiskShape>(p, R);
+		//auto geometry = std::make_unique<FusionCrowd::Math::PointShape>(p);
 		return Goal(goalId++, std::move(geometry));
 	}
 
