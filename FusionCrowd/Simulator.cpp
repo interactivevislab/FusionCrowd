@@ -160,9 +160,12 @@ namespace FusionCrowd
 
 		void SetAgentGoal(Agent & agent, DirectX::SimpleMath::Vector2 goalPos)
 		{
-			auto point = _tacticComponents[ComponentIds::NAVMESH_ID]->GetClosestAvailablePoint(goalPos);
-			auto goal = _goalFactory.CreateDiscGoal(point, 1.5f);
-			agent.currentGoal = goal;
+			if (auto tactic = agent.tacticComponent.lock())
+			{
+				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goalPos);
+				auto goal = _goalFactory.CreateDiscGoal(point, 1.5f);
+				agent.currentGoal = goal;
+			}
 		}
 
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
