@@ -124,6 +124,8 @@ namespace FusionCrowd
 
 				maxRul = 0.5 / (1 + LengthVector(agent.vel));
 
+				float deltaDelta = 0.15f;//0.05f * (1 + 1.f / (10 * LengthVector(agent.vel) + 0.2f));
+
 				if (Angel > 5)
 				{
 					if ( LengthVector( agent.vel) > 0.5)
@@ -132,7 +134,7 @@ namespace FusionCrowd
 					}
 					if (_agents[agent.id]._delta < 0.5 )
 					{
-						_agents[agent.id]._delta += 0.05f;
+						_agents[agent.id]._delta += deltaDelta;
 
 
 					}
@@ -146,7 +148,7 @@ namespace FusionCrowd
 
 					if (_agents[agent.id]._delta > -0.5 )
 					{
-						_agents[agent.id]._delta -= 0.05f;
+						_agents[agent.id]._delta -= deltaDelta;
 					}
 
 				}
