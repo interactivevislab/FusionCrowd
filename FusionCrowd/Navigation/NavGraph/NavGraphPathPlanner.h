@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "Navigation/NavGraph/NavGraph.h"
+#include "Math/Util.h"
 
 
 
@@ -16,6 +17,7 @@ namespace FusionCrowd
 
 	public:
 		std::vector<size_t> nodes;
+		std::vector<DirectX::SimpleMath::Vector2> points;
 	};
 
 	class NavGraphPathPlanner

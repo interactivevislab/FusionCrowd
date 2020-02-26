@@ -88,6 +88,29 @@ namespace FusionCrowd
 		return retID;
 	}
 
+
+	const DirectX::SimpleMath::Vector2 NavGraph::GetClosiestPointAndNodeId(DirectX::SimpleMath::Vector2 p, size_t& node_id) {
+		float min_dist = INFINITY;
+		Vector2 res;
+		node_id = -1;
+		for (auto node : _nodes) {
+			for (auto e : GetOutEdges(node.first)) {
+				Vector2 AB = _nodes[e.nodeTo].position - node.second.position;
+				Vector2 AP = p - node.second.position;
+				float sqrAB = AB.LengthSquared();
+				float t = (AP.x * AB.x + AP.y*AB.y) / sqrAB;
+				Vector2 tmp_res = node.second.position + t * AB;
+				float dist = Vector2::DistanceSquared(tmp_res, p);
+				if (dist < min_dist) {
+					res = tmp_res;
+					min_dist = dist;
+					node_id = e.nodeTo;
+				}
+			}
+		}
+		return res;
+	}
+
 	std::vector<NavGraphEdge> NavGraph::GetOutEdges(size_t fromNodeId) const
 	{
 		auto e = _outEdges.find(fromNodeId);
