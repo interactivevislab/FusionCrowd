@@ -38,7 +38,6 @@ namespace FusionCrowd
 		public:
 			BicycleComponent(std::shared_ptr<NavSystem> navSystem);
 			BicycleComponent(std::shared_ptr<NavSystem> navSystem, float AGENT_SCALE, float OBST_SCALE, float REACTION_TIME, float BODY_FORCE, float FRICTION, float FORCE_DISTANCE);
-			~BicycleComponent();
 
 			ComponentId GetId() override { return ComponentIds::BICYCLE; };
 
@@ -50,8 +49,6 @@ namespace FusionCrowd
 
 		private:
 			void ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep);
-
-
 
 			std::shared_ptr<NavSystem> _navSystem;
 			std::map<int, AgentParamentrs> _agents;
