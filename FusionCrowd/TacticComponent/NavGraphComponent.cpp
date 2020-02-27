@@ -20,6 +20,7 @@ namespace FusionCrowd
 		agtStruct.route = pathPlanner.GetRoute(curNodeId, curNodeId);
 		agtStruct.route->points.push_back(Vector2());
 		agtStruct.nodesComplete = 0;
+		agtStruct.pointsComplete = 0;
 		agtStruct.goalNodeID = agtStruct.route->nodes.at(agtStruct.nodesComplete);
 		_agents.push_back(agtStruct);
 	}
@@ -45,6 +46,7 @@ namespace FusionCrowd
 		agentStruct.route->points.push_back(goal_point);
 
 		agentStruct.nodesComplete = 0;
+		agentStruct.pointsComplete = 0;
 		agentStruct.goalNodeID = agentStruct.route->nodes.at(agentStruct.route->nodes.size() - agentStruct.nodesComplete - 1);
 	}
 
@@ -78,7 +80,7 @@ namespace FusionCrowd
 
 	void NavGraphComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep)
 	{
-		Vector2 currentGoal = agentStruct.route->points[0];
+		Vector2 currentGoal = agentStruct.route->points[agentStruct.pointsComplete];
 		/*if(agentStruct.nodesComplete == agentStruct.route->nodes.size())
 		{
 			// getting to destination point directly
@@ -90,11 +92,6 @@ namespace FusionCrowd
 
 		float dist = Vector2::Distance(currentGoal, agentInfo.pos);
 
-		if (abs(dist) < 1.5f && agentStruct.route->points.size() > 1) {
-			agentStruct.route->points.erase(agentStruct.route->points.begin());
-			currentGoal = agentStruct.route->points[0];
-			dist = Vector2::Distance(currentGoal, agentInfo.pos);
-		}
 
 		if(dist < agentInfo.prefSpeed * timeStep)
 		{
@@ -139,6 +136,11 @@ namespace FusionCrowd
 			else {
 				agentStruct.goalNodeID = agentStruct.route->nodes.at(agentStruct.route->nodes.size() - agentStruct.nodesComplete - 1);
 			}
+		}
+
+		float point_dist =Vector2::Distance(agentStruct.route->points[agentStruct.pointsComplete], agentInfo.pos);
+		if (abs(point_dist) < acceptanceRadius && agentStruct.pointsComplete < agentStruct.route->points.size() - 1) {
+			agentStruct.pointsComplete++;
 		}
 
 	}

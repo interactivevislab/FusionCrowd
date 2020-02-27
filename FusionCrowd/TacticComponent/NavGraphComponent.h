@@ -40,6 +40,7 @@ namespace FusionCrowd
 			size_t goalNodeID;
 			DirectX::SimpleMath::Vector2 goalPoint;
 			int nodesComplete;
+			int pointsComplete;
 		};
 
 		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);

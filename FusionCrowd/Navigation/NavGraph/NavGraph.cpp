@@ -99,6 +99,8 @@ namespace FusionCrowd
 				Vector2 AP = p - node.second.position;
 				float sqrAB = AB.LengthSquared();
 				float t = (AP.x * AB.x + AP.y*AB.y) / sqrAB;
+				t = t < 0.0f ? 0.0f : t;
+				t = t > 1.0f ? 1.0f : t;
 				Vector2 tmp_res = node.second.position + t * AB;
 				float dist = Vector2::DistanceSquared(tmp_res, p);
 				if (dist < min_dist) {

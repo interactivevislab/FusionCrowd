@@ -55,6 +55,7 @@
     <ClCompile Include="Group\FreeGridShape.cpp" />
     <ClCompile Include="OperationComponent\BicycleComponent.cpp" />
     <ClCompile Include="TacticComponent\Path\PathRandomization.cpp" />
+    <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -134,6 +135,7 @@
     <ClInclude Include="Group\FreeGridShape.h" />
     <ClInclude Include="OperationComponent\BicycleComponent.h" />
     <ClInclude Include="TacticComponent\Path\PathRandomization.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -9,6 +9,7 @@
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/NavMesh/Modification/ModificationProcessor.h"
 #include "Navigation/NavMesh//Modification/PolygonPreprocessor.h"
+#include "Navigation/NavMesh//Modification/EdgeObstacleReplaner.h"
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
 #include "Navigation/FastFixedRadiusNearestNeighbors/NeighborsSeeker.h"
 
@@ -323,7 +324,9 @@ namespace FusionCrowd
 			auto query = _navMeshQuery.get();
 			auto processor = ModificationProcessor(*_navMesh, _localizer, query);
 			PolygonPreprocessor pp(polygon);
-			return pp.performAll(processor);
+			auto res =  pp.performAll(processor);
+			//EdgeObstacleReplaner(*_navMesh, _localizer).Replan();
+			return res;
 		}
 
 		INavMeshPublic* GetPublicNavMesh() const

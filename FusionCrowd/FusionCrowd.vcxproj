@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
+    <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
     <ClInclude Include="Export\ComponentId.h" />
     <ClInclude Include="Export\Config.h" />
     <ClInclude Include="Export\Export.h" />
@@ -99,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
+    <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="Export\Export.cpp" />
     <ClCompile Include="Group\FreeGridShape.cpp" />
     <ClCompile Include="Group\FixedGridShape.cpp" />
