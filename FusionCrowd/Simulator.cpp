@@ -87,6 +87,7 @@ namespace FusionCrowd
 
 			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
 			info.prefSpeed *= dist(_rnd_seed);
+			info.maxSpeed = info.maxSpeed < info.prefSpeed ? info.prefSpeed : info.maxSpeed;
 
 			return AddAgent(info, opId, tacticId, strategyId);
 		}

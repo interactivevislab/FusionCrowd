@@ -108,6 +108,7 @@ namespace FusionCrowd
 		{
 			agentInfo.prefVelocity.setSpeed(0);
 		}
+		agentInfo.prefVelocity.setTarget(currentGoal);
 	}
 
 	DirectX::SimpleMath::Vector2 NavGraphComponent::GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p)
