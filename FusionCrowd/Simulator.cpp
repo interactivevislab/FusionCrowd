@@ -446,7 +446,6 @@ namespace FusionCrowd
 					continue;
 				}
 
-				if (_agents.find(agentId) == _agents.end()) continue;
 				Agent & agent = _agents.find(agentId)->second;
 				if(auto old = agent.opComponent.lock())
 				{
