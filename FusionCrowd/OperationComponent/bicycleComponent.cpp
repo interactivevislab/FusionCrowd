@@ -98,17 +98,20 @@ namespace FusionCrowd
 
 		void BicycleComponent::ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep)
 		{
-			float Angel=0;
+			float mult = timeStep * 10.0f;
+			float acceleration = 0.01f * mult;
+			float deltaDelta = 0.05 * mult;// *mult;//0.05f * (1 + 1.f / (10 * LengthVector(agent.vel) + 0.2f));
+
+			float Angle=0;
 			Vector2 prefVel;
 			Vector2 normalizePrefVel;
 			Vector2 orint;
-			float maxRul;
 			prefVel = agent.prefVelocity.getPreferredVel();
-
 			if(LengthVector(prefVel) < 1e-6f)
 				return;
 
-			if (LengthVector(agent.vel) != 0)
+			Vector2 vel = agent.vel;
+			if (LengthVector(vel) != 0)
 			{
 
 				normalizePrefVel = normalizeVector(prefVel);
@@ -116,64 +119,64 @@ namespace FusionCrowd
 				orint.x = agent.orient.x;
 				orint.y = agent.orient.y;
 
-				Angel = (float)atan2(orint.x * normalizePrefVel.y - orint.y * normalizePrefVel.x, orint.x * normalizePrefVel.x + orint.y * normalizePrefVel.y);
-				Angel = Angel * 180 / PI;
+				Angle = (float)atan2(orint.x * normalizePrefVel.y - orint.y * normalizePrefVel.x, orint.x * normalizePrefVel.x + orint.y * normalizePrefVel.y);
+				Angle = Angle * 180 / PI;
 
-
-
-
-				maxRul = 0.5 / (1 + LengthVector(agent.vel));
-
-				float deltaDelta = 0.3f;//0.05f * (1 + 1.f / (10 * LengthVector(agent.vel) + 0.2f));
-
-				if (Angel > 5)
+				if (Angle > 5)
 				{
-					if ( LengthVector( agent.vel) > 0.5)
+					if ( LengthVector( vel) > 0.5)
 					{
-						agent.vel = agent.vel / 1.02;
+						float speed = vel.Length();
+						speed -= acceleration;
+						if (speed < 0.0f) speed = 0.0f;
+						vel.Normalize();
+						vel = vel*speed;
 					}
 					if (_agents[agent.id]._delta < 0.5 )
 					{
 						_agents[agent.id]._delta += deltaDelta;
-
-
+						//_agents[agent.id]._delta = _agents[agent.id]._delta > 0.5f ? 0.5f : _agents[agent.id]._delta;
 					}
 				}
-				else if (Angel < -5)
+				else if (Angle < -5)
 				{
-					if (LengthVector(agent.vel )> 0.5)
+					if (LengthVector(vel )> 0.5)
 					{
-						agent.vel = agent.vel / 1.02;
+						float speed = vel.Length();
+						speed -= acceleration;
+						if (speed < 0.0f) speed = 0.0f;
+						vel.Normalize();
+						vel = vel*speed;
 					}
 
 					if (_agents[agent.id]._delta > -0.5 )
 					{
 						_agents[agent.id]._delta -= deltaDelta;
+						//_agents[agent.id]._delta = _agents[agent.id]._delta < -0.5f ? -0.5f : _agents[agent.id]._delta;
 					}
 
 				}
 				else
 				{
-					if (LengthVector(agent.vel) < 2)
+					if (LengthVector(vel) < agent.maxSpeed && Vector2::Distance(agent.prefVelocity.getTarget(), agent.pos) > 10.0f )
 					{
-						agent.vel = agent.vel*1.01;
+						float speed = vel.Length();
+						speed += acceleration;
+						if (speed > agent.maxSpeed) speed = agent.maxSpeed;
+						vel.Normalize();
+						vel = vel*speed;
+					}
+					if (Vector2::Distance(agent.prefVelocity.getTarget(), agent.pos) < 10.0f) {
+						float speed = vel.Length();
+						speed -= acceleration;
+						if (speed < 0.5) speed = 0.5f;
+						vel.Normalize();
+						vel = vel * speed;
+
 					}
 					_agents[agent.id]._delta = 0.0f;
 
 					_agents[agent.id]._theta = atan2(normalizePrefVel.y, normalizePrefVel.x);
-						/*if (_agents[agent.id]._delta < -0.1f)
-						{
-							_agents[agent.id]._delta += 0.1f;
-						}
-						else if (_agents[agent.id]._delta > 0.1f)
-						{
-							_agents[agent.id]._delta -= 0.08f;
-						}*/
-						/*else
-						{
-							_agents[agent.id]._delta = 0.0f;
-
-						}*/
 				}
 
 
@@ -186,19 +189,16 @@ namespace FusionCrowd
 					if (obst.distanceSqToPoint(agent.pos, nearPt, sqDist) == Obstacle::LAST) continue;
 					if (SAFE_DIST2 > sqDist)
 					{
-
 						_agents[agent.id]._delta = 0.0f;
 						_agents[agent.id]._theta = atan2(normalizePrefVel.y, normalizePrefVel.x);
-						//std::cout << "Collisonh step: " << step << "\n";
-
 					}
 				}
 
 
-				_agents[agent.id]._theta +=LengthVector(agent.vel) * tan(_agents[agent.id]._delta) / _agents[agent.id]._length;
+				_agents[agent.id]._theta +=LengthVector(vel) * tan(_agents[agent.id]._delta) / _agents[agent.id]._length;
 
-				agent.velNew.x = LengthVector(agent.vel) * cos(_agents[agent.id]._theta);
-				agent.velNew.y = LengthVector(agent.vel) * sin(_agents[agent.id]._theta);
+				agent.velNew.x = LengthVector(vel) * cos(_agents[agent.id]._theta);
+				agent.velNew.y = LengthVector(vel) * sin(_agents[agent.id]._theta);
 
 
 				_agents[agent.id]._orintX = cos(_agents[agent.id]._theta);
