@@ -180,7 +180,7 @@ namespace FusionCrowd
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
 		//TODO: replace with correct disk goal
-		if ((agentGoal.getCentroid() - agentInfo.pos).Length() < 3.0f) {
+		if ((agentGoal.getCentroid() - agentInfo.pos).Length() < 1.5f) {
 			agentInfo.prefVelocity.setSpeed(0);
 			return;
 		}

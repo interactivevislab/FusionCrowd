@@ -138,6 +138,7 @@ namespace FusionCrowd
 		const NavGraphNode & GetNode(size_t id) const;
 
 		const size_t GetClosestNodeIdByPosition(DirectX::SimpleMath::Vector2 p, std::unordered_set<NavGraphNode> nodes);
+		const DirectX::SimpleMath::Vector2 GetClosiestPointAndNodeId(DirectX::SimpleMath::Vector2 p, size_t& node_id);
 
 		std::vector<NavGraphEdge> GetOutEdges(size_t fromNodeId) const;
 		std::vector<NavGraphEdge> GetInEdges(size_t toNodeId) const;

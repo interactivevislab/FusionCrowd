@@ -124,7 +124,7 @@ namespace FusionCrowd
 
 				maxRul = 0.5 / (1 + LengthVector(agent.vel));
 
-				float deltaDelta = 0.15f;//0.05f * (1 + 1.f / (10 * LengthVector(agent.vel) + 0.2f));
+				float deltaDelta = 0.3f;//0.05f * (1 + 1.f / (10 * LengthVector(agent.vel) + 0.2f));
 
 				if (Angel > 5)
 				{
