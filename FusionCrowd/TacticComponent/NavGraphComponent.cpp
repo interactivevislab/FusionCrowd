@@ -74,8 +74,8 @@ namespace FusionCrowd
 				Replan(info, agtStruct);
 			}
 
-			SetPrefVelocity(info, agtStruct, timeStep);
 			UpdateLocation(info, agtStruct, timeStep);
+			SetPrefVelocity(info, agtStruct, timeStep);
 		}
 	}
 
@@ -135,7 +135,11 @@ namespace FusionCrowd
 		}
 
 		NavGraphNode goalNode = _navGraph->GetNode(agentStruct.goalNodeID);
-		float dist = goalNode.position.Distance(goalNode.position, agentInfo.pos);
+
+		Vector2 oldPos = agentInfo.pos - agentInfo.vel * deltaTime;
+
+		// Check if touched
+		float dist = MathUtil::distanceToSegment(oldPos, agentInfo.pos, goalNode.position);
 		if (abs(dist) < acceptanceRadius && agentStruct.nodesComplete < agentStruct.route->nodes.size())
 		{
 			agentStruct.nodesComplete++;
@@ -149,7 +153,7 @@ namespace FusionCrowd
 			}
 		}
 
-		float point_dist =Vector2::Distance(agentStruct.route->points[agentStruct.pointsComplete], agentInfo.pos);
+		float point_dist = MathUtil::distanceToSegment(oldPos, agentInfo.pos, agentStruct.route->points[agentStruct.pointsComplete]);
 		if (abs(point_dist) < acceptanceRadius && agentStruct.pointsComplete < agentStruct.route->points.size() - 1) {
 			agentStruct.pointsComplete++;
 		}

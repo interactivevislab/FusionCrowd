@@ -43,6 +43,18 @@ namespace FusionCrowd
 			return val;
 		}
 
+		inline float distanceToSegment(DirectX::SimpleMath::Vector2 s1, DirectX::SimpleMath::Vector2 s2, DirectX::SimpleMath::Vector2 p)
+		{
+			  const float l2 = (s2 - s1).LengthSquared();
+
+			  if (l2 == 0.0)
+				  return DirectX::SimpleMath::Vector2::Distance(p, s2);
+
+			  const float t = clamp((p - s1).Dot(s2 - s1) / l2, 0, 1);
+			  const DirectX::SimpleMath::Vector2 projection = s1 + t * (s2 - s1);  // Projection falls on the segment
+			  return DirectX::SimpleMath::Vector2::Distance(p, projection);
+		}
+
 		const float INFTY  = 3.402823E+38f;
 
 		const float PI     = 3.14159265f;

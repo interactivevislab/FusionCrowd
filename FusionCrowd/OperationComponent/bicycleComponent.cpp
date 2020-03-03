@@ -87,7 +87,7 @@ namespace FusionCrowd
 
 		float GetAdjustedPreferredSpeed(float prefSpeed, float distanceToTarget)
 		{
-			const float closeSpeed = 0.75f * prefSpeed;
+			const float closeSpeed = 0.5f * prefSpeed;
 
 			const float closeDist  =  3.0f;
 			const float farDist    = 10.0f;
@@ -120,6 +120,8 @@ namespace FusionCrowd
 				return;
 
 			Vector2 vel = spatialInfo.vel;
+			// Angle between current direction and target direction
+			float angleToTarget = (float) atan2(orient.x * normalizedPrefVel.y - orient.y * normalizedPrefVel.x, orient.x * normalizedPrefVel.x + orient.y * normalizedPrefVel.y);
 
 			float currentSteeringR = 0;
 			if(abs(agent._delta) < 0.0001f)
@@ -134,29 +136,19 @@ namespace FusionCrowd
 
 			float speed = vel.Length();
 			float adjustedPreferredSpeed = GetAdjustedPreferredSpeed(spatialInfo.prefVelocity.getSpeed(), distanceToTarget);
-			float accelerationToPref = (adjustedPreferredSpeed - speed) / timeStep;
+			float accelerationToPref = adjustedPreferredSpeed - speed;
+
+			bool sameSide = MathUtil::sgn(angleToTarget) == MathUtil::sgn(agent._delta);
+			bool noNeedToBrake = abs(currentSteeringR - targetSteeringR) < 0.1f;
 
 			// Catching up to preferred velocity if we can
-			float reqiredAcceleration = 0.0f;
-			if(targetSteeringR >= _maxSteeringR && currentSteeringR >= _maxSteeringR)
-			{
-				reqiredAcceleration = accelerationToPref;
-			}
-
-			if(targetSteeringR < currentSteeringR && currentSteeringR < _maxSteeringR)
-			{
-				reqiredAcceleration = -maxAcceleration;
-			}
-
-			if(abs(currentSteeringR - targetSteeringR) < 5.0f && targetSteeringR< _maxSteeringR)
-			{
-				reqiredAcceleration = accelerationToPref;
-			}
+			float reqiredAcceleration = accelerationToPref;
 
 			if(abs(reqiredAcceleration) > maxAcceleration)
 			{
 				reqiredAcceleration = MathUtil::sgn(reqiredAcceleration) * maxAcceleration;
 			}
+
 			speed += reqiredAcceleration;
 
 			if(speed < 0.05f)
@@ -180,8 +172,6 @@ namespace FusionCrowd
 
 			float deltaDelta = timeStep * 10.0f * 0.05f * (3.f + 1.f / (10.f * speed + 0.2f));
 
-			// Angle between current direction and target direction
-			float angleToTarget = (float) atan2(orient.x * normalizedPrefVel.y - orient.y * normalizedPrefVel.x, orient.x * normalizedPrefVel.x + orient.y * normalizedPrefVel.y);
 
 			float targetDelta = atan(angleToTarget * agent._length / speed);
 
