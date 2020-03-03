@@ -44,7 +44,7 @@ namespace FusionCrowd
 		private:
 			void ComputeNewVelocity(AgentSpatialInfo & spatialInfo, float timeStep);
 
-			float calcTargetSteeringRadius(const AgentParamentrs & agent, const AgentSpatialInfo & spatialInfo, DirectX::SimpleMath::Vector2 targetPoint);
+			float CalcTargetSteeringRadius(const AgentParamentrs & agent, const AgentSpatialInfo & spatialInfo, DirectX::SimpleMath::Vector2 targetPoint);
 
 			std::shared_ptr<NavSystem> _navSystem;
 			std::map<int, AgentParamentrs> _agents;

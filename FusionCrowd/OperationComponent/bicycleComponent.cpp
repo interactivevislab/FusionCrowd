@@ -52,7 +52,7 @@ namespace FusionCrowd
 			std::cout << "NewVel" << agent.velNew.x << ',' << agent.velNew.y << "\n";
 		}
 
-		float BicycleComponent::calcTargetSteeringRadius(const AgentParamentrs & agent, const AgentSpatialInfo & spatialInfo, Vector2 targetPoint)
+		float BicycleComponent::CalcTargetSteeringRadius(const AgentParamentrs & agent, const AgentSpatialInfo & spatialInfo, Vector2 targetPoint)
 		{
 			Vector2 wheelPos = spatialInfo.pos + (agent._length / 2.0f) * spatialInfo.orient;
 			Vector2 delta = targetPoint - wheelPos;
@@ -85,6 +85,22 @@ namespace FusionCrowd
 			return (wheelPos - center).Length();
 		}
 
+		float GetAdjustedPreferredSpeed(float prefSpeed, float distanceToTarget)
+		{
+			const float closeSpeed = 0.75f * prefSpeed;
+
+			const float closeDist  =  3.0f;
+			const float farDist    = 10.0f;
+
+			if(distanceToTarget > farDist)
+				return prefSpeed;
+
+			if(distanceToTarget < closeDist)
+				return closeSpeed;
+
+			return (distanceToTarget - closeDist) / (farDist - closeDist) * (prefSpeed - closeSpeed) + closeSpeed;
+		}
+
 		void BicycleComponent::ComputeNewVelocity(AgentSpatialInfo & spatialInfo, float timeStep)
 		{
 			const float maxAcceleration = spatialInfo.maxAccel * timeStep;
@@ -106,45 +122,47 @@ namespace FusionCrowd
 			Vector2 vel = spatialInfo.vel;
 
 			float currentSteeringR = 0;
-			if(abs(agent._delta) < 0.001f)
+			if(abs(agent._delta) < 0.0001f)
 			{
-				currentSteeringR = abs(agent._length / cos(MathUtil::PI / 2.0f - 0.001f));
+				currentSteeringR = _maxSteeringR;
 			} else
 			{
-				currentSteeringR = abs(agent._length / cos(MathUtil::PI / 2.0f - agent._delta));
+				currentSteeringR = agent._length / cos(MathUtil::PI / 2.0f - abs(agent._delta));
 			}
 
-			float targetSteeringR = calcTargetSteeringRadius(agent, spatialInfo, spatialInfo.prefVelocity.getTarget());
+			float targetSteeringR = CalcTargetSteeringRadius(agent, spatialInfo, spatialInfo.prefVelocity.getTarget());
 
 			float speed = vel.Length();
+			float adjustedPreferredSpeed = GetAdjustedPreferredSpeed(spatialInfo.prefVelocity.getSpeed(), distanceToTarget);
+			float accelerationToPref = (adjustedPreferredSpeed - speed) / timeStep;
 
 			// Catching up to preferred velocity if we can
-			if(targetSteeringR >= _maxSteeringR)
+			float reqiredAcceleration = 0.0f;
+			if(targetSteeringR >= _maxSteeringR && currentSteeringR >= _maxSteeringR)
 			{
-				float reqiredAcceleration = (spatialInfo.prefVelocity.getSpeed() - speed) / timeStep;
-
-				if(abs(reqiredAcceleration) < maxAcceleration)
-				{
-					speed += reqiredAcceleration;
-				} else
-				{
-					speed += MathUtil::sgn(reqiredAcceleration) * maxAcceleration;
-				}
+				reqiredAcceleration = accelerationToPref;
 			}
 
-			if(currentSteeringR > targetSteeringR && targetSteeringR < _maxSteeringR)
+			if(targetSteeringR < currentSteeringR && currentSteeringR < _maxSteeringR)
 			{
-				speed -= maxAcceleration;
-			} else
-			{
-				speed += maxAcceleration;
+				reqiredAcceleration = -maxAcceleration;
 			}
 
-			if(speed < 0.01f)
+			if(abs(currentSteeringR - targetSteeringR) < 5.0f && targetSteeringR< _maxSteeringR)
 			{
-				speed = 0.01f;
+				reqiredAcceleration = accelerationToPref;
 			}
 
+			if(abs(reqiredAcceleration) > maxAcceleration)
+			{
+				reqiredAcceleration = MathUtil::sgn(reqiredAcceleration) * maxAcceleration;
+			}
+			speed += reqiredAcceleration;
+
+			if(speed < 0.05f)
+			{
+				speed = 0.05f;
+			}
 			/*
 			for (auto const & obst : _navSystem->GetClosestObstacles(agent.id)) {
 
@@ -160,7 +178,7 @@ namespace FusionCrowd
 			}
 			*/
 
-			float deltaDelta = timeStep * 10.0f * 0.05f * (3 + 1.f / (10 * speed + 0.2f));
+			float deltaDelta = timeStep * 10.0f * 0.05f * (3.f + 1.f / (10.f * speed + 0.2f));
 
 			// Angle between current direction and target direction
 			float angleToTarget = (float) atan2(orient.x * normalizedPrefVel.y - orient.y * normalizedPrefVel.x, orient.x * normalizedPrefVel.x + orient.y * normalizedPrefVel.y);
