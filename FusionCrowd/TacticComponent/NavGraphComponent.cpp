@@ -44,6 +44,7 @@ namespace FusionCrowd
 			agentStruct.route->points.push_back(_navGraph->GetNode(agentStruct.route->nodes[i]).position);
 		}
 		agentStruct.route->points.push_back(goal_point);
+		agentStruct.route->points.push_back(agentGoal.getCentroid());
 
 		agentStruct.nodesComplete = 0;
 		agentStruct.pointsComplete = 0;
@@ -68,7 +69,7 @@ namespace FusionCrowd
 			size_t id = agtStruct.id;
 			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
 
-			if (agtStruct.route->nodes.size() < 2 )
+			if (IsReplanNeeded(info, agtStruct))
 			{
 				Replan(info, agtStruct);
 			}
@@ -76,6 +77,15 @@ namespace FusionCrowd
 			SetPrefVelocity(info, agtStruct, timeStep);
 			UpdateLocation(info, agtStruct, timeStep);
 		}
+	}
+
+	bool NavGraphComponent::IsReplanNeeded(AgentSpatialInfo& agentInfo, AgentStruct& agentStruct)
+	{
+		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
+		return
+			//agentStruct.route == nullptr ||
+			agentStruct.route->nodes.size() < 2 ||
+			agentStruct.route->points.back() != agentGoal.getCentroid();
 	}
 
 	void NavGraphComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep)

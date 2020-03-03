@@ -48,6 +48,7 @@ namespace FusionCrowd
 		void Replan(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
 		size_t GetForwardAgent(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
 		std::vector<AgentStruct> GetAllAgentsInRadius(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float radius);
+		bool IsReplanNeeded(AgentSpatialInfo& agentInfo, AgentStruct& agentStruct);
 
 		std::shared_ptr<Simulator> _simulator;
 		std::shared_ptr<NavGraph> _navGraph;
