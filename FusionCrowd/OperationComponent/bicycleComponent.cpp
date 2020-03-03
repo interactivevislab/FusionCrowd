@@ -20,16 +20,7 @@ namespace FusionCrowd
 	namespace Bicycle
 	{
 		int step = 0;
-		BicycleComponent::BicycleComponent(std::shared_ptr<NavSystem> navSystem) : _navSystem(navSystem), _agentScale(2000.f), _obstScale(2000.f), _reactionTime(0.5f), _bodyForse(1.2e5f), _friction(2.4e5f), _forceDistance(0.08f)
-		{
-		}
-
-		BicycleComponent::BicycleComponent(std::shared_ptr<NavSystem> navSystem, float AGENT_SCALE, float OBST_SCALE, float REACTION_TIME, float BODY_FORCE, float FRICTION, float FORCE_DISTANCE) :
-			_navSystem(navSystem), _agentScale(AGENT_SCALE), _obstScale(OBST_SCALE), _reactionTime(REACTION_TIME), _bodyForse(BODY_FORCE), _friction(FRICTION), _forceDistance(FORCE_DISTANCE)
-		{
-		}
-
-		BicycleComponent::~BicycleComponent()
+		BicycleComponent::BicycleComponent(std::shared_ptr<NavSystem> navSystem) : _navSystem(navSystem)
 		{
 		}
 
@@ -51,27 +42,6 @@ namespace FusionCrowd
 			return rotatedVector;
 		}
 
-		double ToDegrees(double angel)
-		{
-			return angel * 180 / 3.1415926;
-		}
-		double ToRadian(float angel)
-		{
-			return angel / 180 * 3.1415926;
-		}
-		float mathAngel(Vector2 a, Vector2 b)
-		{
-
-
-			float scalarSum = a.x*b.x + a.y + b.y;
-
-			float absA = sqrt(pow(a.x, 2) + pow(a.y, 2));
-			float absB = sqrt(pow(b.x, 2) + pow(b.y, 2));
-
-			float cosAngel = scalarSum / (absA*absB);
-			return ToDegrees(acos(cosAngel));
-
-		}
 		void dump(AgentSpatialInfo & agent)
 		{
 			std::cout << step<<"\n";
@@ -82,137 +52,138 @@ namespace FusionCrowd
 			std::cout << "NewVel" << agent.velNew.x << ',' << agent.velNew.y << "\n";
 		}
 
-		float LengthVector(Vector2 vect)
+		float BicycleComponent::calcTargetSteeringRadius(const AgentParamentrs & agent, const AgentSpatialInfo & spatialInfo, Vector2 targetPoint)
 		{
-			float l= sqrt(pow(vect.x, 2) + pow(vect.y, 2));
+			Vector2 wheelPos = spatialInfo.pos + (agent._length / 2.0f) * spatialInfo.orient;
+			Vector2 delta = targetPoint - wheelPos;
 
-			return l;
+			Vector2 middleLinePoint = wheelPos + delta * .5f;
+			Vector2 middleLineDir(delta.y, -delta.x); middleLineDir.Normalize();
+
+			Vector2 backWheelLinePoint = spatialInfo.pos - (agent._length / 2.0f) * spatialInfo.orient;
+			Vector2 backWheelLineDir(spatialInfo.orient.y, -spatialInfo.orient.x);
+
+			// https://math.stackexchange.com/questions/406864/intersection-of-two-lines-in-vector-form
+			float u1 = middleLineDir.x;
+			float v1 = middleLineDir.y;
+			float u2 = backWheelLineDir.x;
+			float v2 = backWheelLineDir.y;
+
+			float dx = backWheelLinePoint.x - middleLinePoint.x;
+			float dy = backWheelLinePoint.y - middleLinePoint.y;
+
+			float det1 = (u1 * (-v2) - v1 * (-u2));
+
+			if(det1 < 1e-6) // Target radius is very large
+			{
+				return _maxSteeringR * 2;
+			}
+
+			float a = 1.0f / det1 * (dx *(-v2) - dy * (-u2));
+
+			Vector2 center = middleLinePoint + a * middleLineDir;
+			return (wheelPos - center).Length();
 		}
 
-		Vector2 normalizeVector(Vector2 vect)
+		void BicycleComponent::ComputeNewVelocity(AgentSpatialInfo & spatialInfo, float timeStep)
 		{
-			float inverseLength = 1 / LengthVector(vect);
-			Vector2 norm = Vector2(vect.x*inverseLength, vect.y*inverseLength);
-			return norm;
-		}
+			const float maxAcceleration = spatialInfo.maxAccel * timeStep;
 
-		void BicycleComponent::ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep)
-		{
-			float mult = timeStep * 10.0f;
-			float acceleration = 0.01f * mult;
-			float deltaDelta = 0.05 * mult;// *mult;//0.05f * (1 + 1.f / (10 * LengthVector(agent.vel) + 0.2f));
+			AgentParamentrs & agent = _agents[spatialInfo.id];
 
-			float Angle=0;
-			Vector2 prefVel;
-			Vector2 normalizePrefVel;
-			Vector2 orint;
-			prefVel = agent.prefVelocity.getPreferredVel();
-			if(LengthVector(prefVel) < 1e-6f)
+			//Update our length if it was changed for some reason
+			agent._length = spatialInfo.radius * 2.0f;
+			agent._theta  = atan2(spatialInfo.orient.y, spatialInfo.orient.x);
+
+			float distanceToTarget = Vector2::Distance(spatialInfo.prefVelocity.getTarget(), spatialInfo.pos);
+			Vector2 prefVel = spatialInfo.prefVelocity.getPreferredVel();
+			Vector2 normalizedPrefVel; prefVel.Normalize(normalizedPrefVel);
+			Vector2 orient = spatialInfo.orient;
+
+			if(prefVel.Length() < 1e-6f)
 				return;
 
-			Vector2 vel = agent.vel;
-			if (LengthVector(vel) != 0)
+			Vector2 vel = spatialInfo.vel;
+
+			float currentSteeringR = 0;
+			if(abs(agent._delta) < 0.001f)
 			{
+				currentSteeringR = abs(agent._length / cos(MathUtil::PI / 2.0f - 0.001f));
+			} else
+			{
+				currentSteeringR = abs(agent._length / cos(MathUtil::PI / 2.0f - agent._delta));
+			}
 
-				normalizePrefVel = normalizeVector(prefVel);
+			float targetSteeringR = calcTargetSteeringRadius(agent, spatialInfo, spatialInfo.prefVelocity.getTarget());
 
-				orint.x = agent.orient.x;
-				orint.y = agent.orient.y;
+			float speed = vel.Length();
 
-				Angle = (float)atan2(orint.x * normalizePrefVel.y - orint.y * normalizePrefVel.x, orint.x * normalizePrefVel.x + orint.y * normalizePrefVel.y);
-				Angle = Angle * 180 / PI;
+			// Catching up to preferred velocity if we can
+			if(targetSteeringR >= _maxSteeringR)
+			{
+				float reqiredAcceleration = (spatialInfo.prefVelocity.getSpeed() - speed) / timeStep;
 
-				if (Angle > 5)
+				if(abs(reqiredAcceleration) < maxAcceleration)
 				{
-					if ( LengthVector( vel) > 0.5)
-					{
-						float speed = vel.Length();
-						speed -= acceleration;
-						if (speed < 0.0f) speed = 0.0f;
-						vel.Normalize();
-						vel = vel*speed;
-					}
-					if (_agents[agent.id]._delta < 0.5 )
-					{
-						_agents[agent.id]._delta += deltaDelta;
-						//_agents[agent.id]._delta = _agents[agent.id]._delta > 0.5f ? 0.5f : _agents[agent.id]._delta;
-					}
+					speed += reqiredAcceleration;
+				} else
+				{
+					speed += MathUtil::sgn(reqiredAcceleration) * maxAcceleration;
 				}
-				else if (Angle < -5)
+			}
+
+			if(currentSteeringR > targetSteeringR && targetSteeringR < _maxSteeringR)
+			{
+				speed -= maxAcceleration;
+			} else
+			{
+				speed += maxAcceleration;
+			}
+
+			if(speed < 0.01f)
+			{
+				speed = 0.01f;
+			}
+
+			/*
+			for (auto const & obst : _navSystem->GetClosestObstacles(agent.id)) {
+
+				Vector2 nearPt;
+				float sqDist;
+				float SAFE_DIST2 = 0.03;
+				if (obst.distanceSqToPoint(agent.pos, nearPt, sqDist) == Obstacle::LAST) continue;
+				if (SAFE_DIST2 > sqDist)
 				{
-					if (LengthVector(vel )> 0.5)
-					{
-						float speed = vel.Length();
-						speed -= acceleration;
-						if (speed < 0.0f) speed = 0.0f;
-						vel.Normalize();
-						vel = vel*speed;
-					}
-
-					if (_agents[agent.id]._delta > -0.5 )
-					{
-						_agents[agent.id]._delta -= deltaDelta;
-						//_agents[agent.id]._delta = _agents[agent.id]._delta < -0.5f ? -0.5f : _agents[agent.id]._delta;
-					}
-
-				}
-				else
-				{
-					if (LengthVector(vel) < agent.maxSpeed && Vector2::Distance(agent.prefVelocity.getTarget(), agent.pos) > 10.0f )
-					{
-						float speed = vel.Length();
-						speed += acceleration;
-						if (speed > agent.maxSpeed) speed = agent.maxSpeed;
-						vel.Normalize();
-						vel = vel*speed;
-					}
-					if (Vector2::Distance(agent.prefVelocity.getTarget(), agent.pos) < 10.0f) {
-						float speed = vel.Length();
-						speed -= acceleration;
-						if (speed < 0.5) speed = 0.5f;
-						vel.Normalize();
-						vel = vel * speed;
-
-					}
 					_agents[agent.id]._delta = 0.0f;
-
-					_agents[agent.id]._theta = atan2(normalizePrefVel.y, normalizePrefVel.x);
+					_agents[agent.id]._theta = atan2(normalizedPrefVel.y, normalizedPrefVel.x);
 				}
-
-
-
-				for (auto const & obst : _navSystem->GetClosestObstacles(agent.id)) {
-
-					Vector2 nearPt;
-					float sqDist;
-					float SAFE_DIST2 = 0.03;
-					if (obst.distanceSqToPoint(agent.pos, nearPt, sqDist) == Obstacle::LAST) continue;
-					if (SAFE_DIST2 > sqDist)
-					{
-						_agents[agent.id]._delta = 0.0f;
-						_agents[agent.id]._theta = atan2(normalizePrefVel.y, normalizePrefVel.x);
-					}
-				}
-
-
-				_agents[agent.id]._theta +=LengthVector(vel) * tan(_agents[agent.id]._delta) / _agents[agent.id]._length;
-
-				agent.velNew.x = LengthVector(vel) * cos(_agents[agent.id]._theta);
-				agent.velNew.y = LengthVector(vel) * sin(_agents[agent.id]._theta);
-
-
-				_agents[agent.id]._orintX = cos(_agents[agent.id]._theta);
-				_agents[agent.id]._orintY = sin(_agents[agent.id]._theta);
-				step++;
-
-
 			}
+			*/
 
-			else
+			float deltaDelta = timeStep * 10.0f * 0.05f * (3 + 1.f / (10 * speed + 0.2f));
+
+			// Angle between current direction and target direction
+			float angleToTarget = (float) atan2(orient.x * normalizedPrefVel.y - orient.y * normalizedPrefVel.x, orient.x * normalizedPrefVel.x + orient.y * normalizedPrefVel.y);
+
+			float targetDelta = atan(angleToTarget * agent._length / speed);
+
+			float steer = targetDelta - agent._delta;
+
+			// Actually steer now
+			if(abs(steer) < deltaDelta)
 			{
-				agent.velNew.x = agent.orient.x;
-				agent.velNew.y = agent.orient.y;
+				agent._delta += steer;
+			} else
+			{
+				agent._delta += MathUtil::sgn(steer) * deltaDelta;
 			}
+
+			// rotate virtual bike body
+			agent._theta += speed * tan(agent._delta) / agent._length;
+
+			spatialInfo.velNew = speed * Vector2(cos(agent._theta), sin(agent._theta));
+
+			step++;
 		}
 
 

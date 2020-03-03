@@ -30,6 +30,11 @@ namespace FusionCrowd
 			);
 		}
 
+		inline int sgn(float val)
+		{
+			return (0 < val) - (val < 0);
+		}
+
 		const float INFTY  = 3.402823E+38f;
 
 		const float PI     = 3.14159265f;

@@ -96,6 +96,7 @@ def redraw_positions(canvas: Player, tr, frame, size=1.0, ovals=None,orint=None)
             if not hide_orientation:
                 orint[agent_id] = canvas.orientation(infos[frame].pos, infos[frame].orient, "black")
 
+    canvas.update_scroll()
     return ovals, orint
 
 
@@ -213,7 +214,8 @@ if __name__ == "__main__":
     if not hide_trajectory:
         draw_trajectories(canvas, tr)
 
-    ovals, orient = redraw_positions(canvas, tr=tr, size=agent_size, frame=0)
+    result_redraw= redraw_positions(canvas, tr=tr, size=agent_size, frame=0)
+    ovals, orient = result_redraw
     canvas.set_redraw(lambda new_frame: redraw_positions(canvas, tr=tr, frame=int(new_frame), size=agent_size, ovals=ovals, orint=orient))
 
     canvas.main_loop()
