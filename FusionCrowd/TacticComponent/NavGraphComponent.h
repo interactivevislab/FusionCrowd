@@ -29,7 +29,7 @@ namespace FusionCrowd
 
 		ComponentId GetId() override { return ComponentIds::NAVGRAPH_ID; }
 
-		const float acceptanceRadius = 3.5f;
+		const float acceptanceRadius = 1.5f;
 	private:
 
 		struct AgentStruct
