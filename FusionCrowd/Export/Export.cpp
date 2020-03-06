@@ -10,6 +10,7 @@
 
 #include "TacticComponent/NavMeshComponent.h"
 #include "TacticComponent/NavGraphComponent.h"
+#include "TacticComponent/ExternalControl.h"
 
 #include "OperationComponent/KaramouzasComponent.h"
 #include "OperationComponent/HelbingComponent.h"
@@ -180,6 +181,14 @@ namespace FusionCrowd
 			navSystem = std::make_shared<NavSystem>();
 
 			sim->UseNavSystem(navSystem);
+		}
+
+		ISimulatorBuilder*  WithExternal(IExternalControllInterface*& returned_controll)
+		{
+			auto tactic = std::make_shared<FusionCrowd::ExternalControl>(sim);
+			sim->AddTactic(tactic);
+			returned_controll = tactic.get();
+			return this;
 		}
 
 		ISimulatorBuilder*  WithNavMesh(const char* path)

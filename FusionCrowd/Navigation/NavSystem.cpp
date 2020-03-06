@@ -343,7 +343,7 @@ namespace FusionCrowd
 
 		NeighborsSeeker _neighborsSeeker;
 		std::map<size_t, AgentSpatialInfo> _agentsInfo;
-		float _agentsSensitivityRadius = 3;
+		float _agentsSensitivityRadius = 6;
 		float _groupSensitivityRadius = 100;
 
 		size_t _numAgents = 0;

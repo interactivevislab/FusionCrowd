@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
+    <ClInclude Include="Export\IExternalControlInterface.h" />
+    <ClInclude Include="TacticComponent\ExternalControl.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
     <ClInclude Include="Export\ComponentId.h" />
     <ClInclude Include="Export\Config.h" />
@@ -101,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
+    <ClCompile Include="TacticComponent\ExternalControl.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="Export\Export.cpp" />
     <ClCompile Include="Group\FreeGridShape.cpp" />

@@ -74,8 +74,17 @@ namespace FusionCrowd
 				speed = 0.05f;
 			}
 
+			if (distanceToTarget > 5.0f && speed < spatialInfo.prefSpeed) {
+				speed += maxAcceleration;
+				if (speed > spatialInfo.prefSpeed) speed = spatialInfo.prefSpeed;
+			}
+			if (distanceToTarget < 5.0f && speed > 0.3f) {
+				speed -= maxAcceleration;
+				if (speed < 0.3f) speed = 0.3f;
+			}
+
 			if (distanceToTarget < 1e-2f) {
-				//speed = 0.0f;
+				speed = 0.0f;
 			}
 
 			spatialInfo.velNew =Vector2(normalizedPrefVel.x * speed, normalizedPrefVel.y * speed);

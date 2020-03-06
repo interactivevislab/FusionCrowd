@@ -160,6 +160,7 @@ namespace FusionCrowd
 
 		float rot = atan2f(groupDummy.orient.x, groupDummy.orient.y);
 
+		rot = rot - (MathUtil::PI / 4.0f);
 		Vector2 relativePos = MathUtil::rotate(group.GetShape()->GetRelativePos(agentInfo.id), rot);
 		Vector2 targetPos = groupDummy.pos + relativePos;
 		Vector2 dir = targetPos - agentInfo.pos;

@@ -57,6 +57,7 @@
     <ClCompile Include="TacticComponent\Path\PathRandomization.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="OperationComponent\StrictComponent.cpp" />
+    <ClCompile Include="TacticComponent\ExternalControl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -138,6 +139,8 @@
     <ClInclude Include="TacticComponent\Path\PathRandomization.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
     <ClInclude Include="OperationComponent\StrictComponent.h" />
+    <ClInclude Include="TacticComponent\ExternalControl.h" />
+    <ClInclude Include="Export\IExternalControlInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

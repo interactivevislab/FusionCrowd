@@ -5,6 +5,7 @@
 #include "Export/IStrategyComponent.h"
 #include "Export/INavMeshPublic.h"
 #include "Export/INavSystemPublic.h"
+#include "Export/IExternalControlInterface.h"
 #include "Export/ComponentId.h"
 #include "Export/ModelAgentParams.h"
 #include "Export/NavGraph.h"
@@ -98,6 +99,8 @@ namespace FusionCrowd
 		class FUSION_CROWD_API ISimulatorBuilder
 		{
 		public:
+
+			virtual ISimulatorBuilder* WithExternal(IExternalControllInterface*& returned_controll) = 0;
 			virtual ISimulatorBuilder* WithNavMesh(const char* path) = 0;
 			virtual ISimulatorBuilder* WithNavGraph(const char* path) = 0;
 			virtual ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> & nodesArray, FCArray<Export::NavGraphEdge> & edgesArray) = 0;

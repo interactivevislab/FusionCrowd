@@ -163,6 +163,7 @@ namespace FusionCrowd
 
 		void SetAgentGoal(Agent & agent, DirectX::SimpleMath::Vector2 goalPos)
 		{
+			if (agent.tacticComponent.expired()) return;
 			if (auto tactic = agent.tacticComponent.lock())
 			{
 				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goalPos);
@@ -173,6 +174,7 @@ namespace FusionCrowd
 
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
 		{
+			if (_agents.find(agentId) == _agents.end()) return;
 			SetAgentGoal(_agents.find(agentId)->second, goalPos);
 		}
 
@@ -347,7 +349,8 @@ namespace FusionCrowd
 			dummyInfo.collisionsLevel = AgentSpatialInfo::CollisionLevel::GROUP;
 			dummyInfo.radius = shape->GetRadius();
 			dummyInfo.maxSpeed = 1.0f;
-			dummyInfo.maxAngVel = 0.5f;
+			dummyInfo.maxAngVel = 50.5f;
+			dummyInfo.inertiaEnabled = false;
 
 			size_t dummyId = AddAgent(dummyInfo, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
 

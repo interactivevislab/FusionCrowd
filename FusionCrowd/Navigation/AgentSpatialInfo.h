@@ -22,9 +22,9 @@ namespace FusionCrowd
 
 		float radius    = 0.19f;
 		float maxSpeed  = 2.f;
-		float maxAccel  = 5.f;
+		float maxAccel  = 0.5f;
 		float prefSpeed = 1.04f;
-		float maxAngVel = 6.28f;
+		float maxAngVel = 1.0f;
 
 		bool inertiaEnabled = true;
 		CollisionLevel collisionsLevel = AGENT;
