@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Util.h"
+#include "Math/Geometry2D.h"
 #include "TacticComponent/Path/PrefVelocity.h"
 #include "Export/IRecording.h"
 #include "Export/Export.h"
@@ -30,6 +30,8 @@ namespace FusionCrowd
 		CollisionLevel collisionsLevel = AGENT;
 
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
+
+		Math::Geometry2D* neighbourSearchShape = new Math::DiskShape(DirectX::SimpleMath::Vector2(0.f, 0.f), 6.0f);
 
 		bool useNavMeshObstacles = true;
 	};

@@ -2,6 +2,7 @@
 #include "GpuCalculator.h"
 #include <iostream>
 #include <string>
+#include "Math/Util.h"
 
 namespace FusionCrowd
 {
@@ -180,14 +181,19 @@ namespace FusionCrowd
 	}
 
 
+	NeighborsSeeker::PointNeighbors* NeighborsSeeker::FindNeighbors(Point* points, Math::Geometry2D** shapes, int numberOfPoints) {
+		this->points = points;
+		this->shapes = shapes;
+		this->numberOfPoints = numberOfPoints;
+		FindNeighborsCpuSquare();
+		return pointNeighbors;
+
+	}
+
 	NeighborsSeeker::PointNeighbors* NeighborsSeeker::FindNeighbors(Point* points, int numberOfPoints,
-		float worldWidth, float worldHeight, float searchRadius, bool useGpu, bool simplified)
+		float worldWidth, float worldHeight, float searchRadius, bool useGpu)
 	{
 		Init(points, numberOfPoints, worldWidth, worldHeight, searchRadius);
-		if (simplified) {
-			FindNeighborsCpuSquare();
-			return pointNeighbors;
-		}
 		SetInitialData(useGpu);
 
 		FillCellDictioanary();
@@ -280,7 +286,7 @@ namespace FusionCrowd
 	}
 
 	void NeighborsSeeker::FindNeighborsCpuSquare() {
-
+		using namespace DirectX::SimpleMath;
 		if (pointNeighbors == nullptr) {
 			pointNeighbors = new PointNeighbors[numberOfPoints];
 			for (int i = 0; i < numberOfPoints; i++) {
@@ -293,11 +299,12 @@ namespace FusionCrowd
 
 
 		for (int i = 0; i < numberOfPoints; i++) {
-			Point point = points[i]; // i = id
+			Math::Geometry2D& geometry = *shapes[i]; // i = id
+			auto& point = points[i];
 			for (int j = 0; j < numberOfPoints; j++) {
 				if (i == j) continue;
 				Point otherPoint = points[j];
-				if (point.InRange(otherPoint, searchRadius)) {
+				if (geometry.containsPoint(Vector2(otherPoint.x, otherPoint.y), Vector2(point.x, point.y))) {
 					PointNeighbors* neighbors = &pointNeighbors[i];
 					neighbors->neighborsID[neighbors->neighborsCount] = j;
 					neighbors->neighborsCount++;

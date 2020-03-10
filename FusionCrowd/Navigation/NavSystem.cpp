@@ -85,6 +85,10 @@ namespace FusionCrowd
 		}
 
 		void RemoveAgent(unsigned int id) {
+			if (_agentsInfo[id].collisionsLevel == AgentSpatialInfo::AGENT)
+				_numAgents--;
+			else
+				_numGroups--;
 			_agentsInfo.erase(id);
 		}
 
@@ -263,7 +267,8 @@ namespace FusionCrowd
 
 			auto agentsPositions = new Point[_numAgents];
 			auto groupsPositions = new Point[_numGroups];
-
+			auto agentsShapes = new Math::Geometry2D*[_numAgents];
+			auto groupsShapes = new Math::Geometry2D*[_numGroups];
 			//maps transform from position in existance array to agentInfo.id
 			std::map<size_t, size_t> _m_agentNeighbours;
 			std::map<size_t, size_t> _m_groupNeighbours;
@@ -276,18 +281,22 @@ namespace FusionCrowd
 					_m_agentNeighbours.insert({ a, info.first });
 					agentsPositions[a].x = info.second.pos.x - minX;
 					agentsPositions[a].y = info.second.pos.y - minY;
+					agentsShapes[a] = info.second.neighbourSearchShape;
 					a++;
 				} else
 				{
 					_m_groupNeighbours.insert({ g, info.first });
 					groupsPositions[g].x = info.second.pos.x - minX;
 					groupsPositions[g].y = info.second.pos.y - minY;
+					groupsShapes[g] = info.second.neighbourSearchShape;
 					g++;
 				}
 			}
 
-			auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, _numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, false);
-			auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, _numGroups, maxX - minX, maxY - minY, _groupSensitivityRadius, false);
+			//auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, _numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, false);
+			//auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, _numGroups, maxX - minX, maxY - minY, _groupSensitivityRadius, false);
+			auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, agentsShapes, _numAgents);
+			auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, groupsShapes, _numGroups);
 			a = 0;
 			g = 0;
 			for (auto & info : _agentsInfo)

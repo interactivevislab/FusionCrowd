@@ -2,6 +2,8 @@
 
 #include "GpuCalculator.h"
 #include "Export/Config.h"
+//#include "Math/Util.h"
+#include "Math/Geometry2D.h"
 #include <string>
 
 namespace FusionCrowd
@@ -18,6 +20,7 @@ namespace FusionCrowd
 		struct PointNeighbors;
 
 		Point* points = nullptr;
+		Math::Geometry2D** shapes = nullptr;
 		GridCell* cells = nullptr;
 		int* pointsCells = nullptr;
 		int* pointsInCells = nullptr;
@@ -79,7 +82,8 @@ namespace FusionCrowd
 		};
 
 		PointNeighbors* FindNeighbors(Point* points, int numberOfPoints, float worldWidth, float worldHeight,
-			float searchRadius, bool useGpu = true, bool simplified = true);
+			float searchRadius, bool useGpu = true);
+		PointNeighbors* FindNeighbors(Point* points, Math::Geometry2D** shapes, int numberOfPoints);
 	};
 
 

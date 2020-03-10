@@ -87,7 +87,7 @@ namespace FusionCrowd
 
 		bool DiskShape::containsPoint(const DirectX::SimpleMath::Vector2& pt, const DirectX::SimpleMath::Vector2& pos) const
 		{
-			return (pt - _center).LengthSquared() <= _R * _R;
+			return (pt - (_center+pos)).LengthSquared() <= _R * _R;
 		}
 
 		float DiskShape::squaredDistance(const DirectX::SimpleMath::Vector2& pt) const
