@@ -61,7 +61,7 @@ namespace FusionCrowd
 		float top   = _agentSize / 2.0f + row * (interAgentDist + _agentSize);
 		float left  = _agentSize / 2.0f + pos * (interAgentDist + _agentSize);
 
-		return Vector2(totalWidth / 2.0f - left, -totalHeight / 2.0f + top);
+		return Vector2(totalWidth / 2.0f + left, -totalHeight / 2.0f + top);
 	}
 
 	float FixedGridShape::GetRadius() const
