@@ -91,6 +91,7 @@ namespace FusionCrowd
 	public:
 		float x;
 		float y;
+		float rot;
 		bool InRange(Point otherPoint, float range);
 	};
 

@@ -1,5 +1,7 @@
 #include "Geometry2D.h"
 #include "TacticComponent/Path/PrefVelocity.h"
+#include <iostream>
+#include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -37,7 +39,7 @@ namespace FusionCrowd
 
 		/////////////////////////////////////////////////////////////////////
 
-		bool PointShape::containsPoint(const Vector2 & pt, const Vector2 & pos) const {
+		bool PointShape::containsPoint(const Vector2 & pt, const Vector2 & pos, float yaw) const {
 			float distSq = (pt - pos).LengthSquared();
 			return distSq < 1e-6f;
 		}
@@ -85,7 +87,7 @@ namespace FusionCrowd
 			return (pt - _center).LengthSquared() <= _R * _R;
 		}
 
-		bool DiskShape::containsPoint(const DirectX::SimpleMath::Vector2& pt, const DirectX::SimpleMath::Vector2& pos) const
+		bool DiskShape::containsPoint(const DirectX::SimpleMath::Vector2& pt, const DirectX::SimpleMath::Vector2& pos, float yaw) const
 		{
 			return (pt - (_center+pos)).LengthSquared() <= _R * _R;
 		}
@@ -120,6 +122,39 @@ namespace FusionCrowd
 		Vector2 DiskShape::getCentroid() const
 		{
 			return _center;
+		}
+
+
+		/////////////////////////////////////////////////////////////////////
+		//                   Implementation of ConeShape
+		/////////////////////////////////////////////////////////////////////
+		bool ConeShape::containsPoint(const Vector2 & pt) const {
+			if (Vector2::DistanceSquared(pt, _point) > _range * _range) return false;
+			float pt_cos = pt.x / pt.Length();
+			float min_cos = cos(_angle / 2);
+			return pt_cos >= min_cos;
+		}
+
+		bool ConeShape::containsPoint(const Vector2 & pt, const Vector2 & pos, float yaw) const {
+			Vector2 local_pt = pt - pos;
+			local_pt = MathUtil::rotate(local_pt, -_angle);
+			return containsPoint(local_pt);
+		}
+
+		float ConeShape::squaredDistance(const Vector2 & pt) const {
+			throw std::runtime_error("Not implemented");
+		}
+
+		void ConeShape::setDirections(const Vector2 & q, float r, Agents::PrefVelocity & directions) const {
+			throw std::runtime_error("Not implemented");
+		}
+
+		Vector2 ConeShape::getTargetPoint(const Vector2 & q, float r) const {
+			throw std::runtime_error("Not implemented");
+		}
+
+		Vector2 ConeShape::getCentroid() const {
+			throw std::runtime_error("Not implemented");
 		}
 	}
 }

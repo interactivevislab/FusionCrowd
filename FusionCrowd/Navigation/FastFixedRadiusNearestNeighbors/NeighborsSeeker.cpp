@@ -304,7 +304,7 @@ namespace FusionCrowd
 			for (int j = 0; j < numberOfPoints; j++) {
 				if (i == j) continue;
 				Point otherPoint = points[j];
-				if (geometry.containsPoint(Vector2(otherPoint.x, otherPoint.y), Vector2(point.x, point.y))) {
+				if (geometry.containsPoint(Vector2(otherPoint.x, otherPoint.y), Vector2(point.x, point.y), point.rot)) {
 					PointNeighbors* neighbors = &pointNeighbors[i];
 					neighbors->neighborsID[neighbors->neighborsCount] = j;
 					neighbors->neighborsCount++;

@@ -281,6 +281,7 @@ namespace FusionCrowd
 					_m_agentNeighbours.insert({ a, info.first });
 					agentsPositions[a].x = info.second.pos.x - minX;
 					agentsPositions[a].y = info.second.pos.y - minY;
+					agentsPositions[a].rot = atan2(info.second.orient.y, info.second.orient.x);
 					agentsShapes[a] = info.second.neighbourSearchShape;
 					a++;
 				} else
@@ -288,6 +289,7 @@ namespace FusionCrowd
 					_m_groupNeighbours.insert({ g, info.first });
 					groupsPositions[g].x = info.second.pos.x - minX;
 					groupsPositions[g].y = info.second.pos.y - minY;
+					groupsPositions[g].rot = atan2(info.second.orient.y, info.second.orient.x);
 					groupsShapes[g] = info.second.neighbourSearchShape;
 					g++;
 				}
