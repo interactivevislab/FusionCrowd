@@ -265,10 +265,10 @@ namespace FusionCrowd
 				if (info.second.pos.y > maxY) maxY = info.second.pos.y;
 			}
 
-			auto agentsPositions = new Point[_numAgents];
-			auto groupsPositions = new Point[_numGroups];
-			auto agentsShapes = new Math::Geometry2D*[_numAgents];
-			auto groupsShapes = new Math::Geometry2D*[_numGroups];
+			auto agentsPositions = std::vector<AgentSpatialInfo>();
+			auto groupsPositions = std::vector<AgentSpatialInfo>();
+			auto agentsShapes = std::vector<Math::Geometry2D*>();
+			auto groupsShapes = std::vector<Math::Geometry2D*>();
 			//maps transform from position in existance array to agentInfo.id
 			std::map<size_t, size_t> _m_agentNeighbours;
 			std::map<size_t, size_t> _m_groupNeighbours;
@@ -279,26 +279,25 @@ namespace FusionCrowd
 				if(info.second.collisionsLevel == AgentSpatialInfo::AGENT)
 				{
 					_m_agentNeighbours.insert({ a, info.first });
-					agentsPositions[a].x = info.second.pos.x - minX;
-					agentsPositions[a].y = info.second.pos.y - minY;
-					agentsPositions[a].rot = atan2(info.second.orient.y, info.second.orient.x);
-					agentsShapes[a] = info.second.neighbourSearchShape;
+					agentsPositions.push_back(info.second);
+					agentsShapes.push_back(info.second.neighbourSearchShape);
 					a++;
 				} else
 				{
 					_m_groupNeighbours.insert({ g, info.first });
-					groupsPositions[g].x = info.second.pos.x - minX;
-					groupsPositions[g].y = info.second.pos.y - minY;
-					groupsPositions[g].rot = atan2(info.second.orient.y, info.second.orient.x);
-					groupsShapes[g] = info.second.neighbourSearchShape;
+					groupsPositions.push_back(info.second);
+					groupsShapes.push_back(info.second.neighbourSearchShape);
 					g++;
 				}
 			}
 
 			//auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, _numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, false);
 			//auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, _numGroups, maxX - minX, maxY - minY, _groupSensitivityRadius, false);
-			auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, agentsShapes, _numAgents);
-			auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, groupsShapes, _numGroups);
+			//auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, agentsShapes, _numAgents);
+			//auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, groupsShapes, _numGroups);
+			auto agentNeighbours = _neighborsSeeker.FindNeighborsCpuSquare(agentsPositions, agentsShapes);
+			auto groupNeighbours = _neighborsSeeker.FindNeighborsCpuSquare(groupsPositions, groupsShapes);
+
 			a = 0;
 			g = 0;
 			for (auto & info : _agentsInfo)
@@ -308,9 +307,9 @@ namespace FusionCrowd
 
 				auto & neighborsInfos = _agentsNeighbours[info.second.id];
 				neighborsInfos.clear();
-				neighborsInfos.reserve(neighbors.neighborsCount);
+				neighborsInfos.reserve(neighbors.neighborsID.size());
 
-				for (int j = 0; j < neighbors.neighborsCount; j++) {
+				for (int j = 0; j < neighbors.neighborsID.size(); j++) {
 					size_t neighbour_id = isAgent ? _m_agentNeighbours[neighbors.neighborsID[j]] : _m_groupNeighbours[neighbors.neighborsID[j]];
 					auto & neighbour = _agentsInfo[neighbour_id];
 					neighborsInfos.push_back(neighbour);
@@ -319,16 +318,12 @@ namespace FusionCrowd
 				if(isAgent) { a++; } else { g++; }
 			}
 
-			delete[] agentsPositions;
-			delete[] groupsPositions;
+			//delete[] agentsPositions;
+			//delete[] groupsPositions;
 		}
 
 		void Init() {
 			UpdateNeighbours();
-		}
-
-		void SetGridCoeff(float coeff) {
-			_neighborsSeeker.gridCellCoeff = coeff;
 		}
 
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
@@ -416,10 +411,6 @@ namespace FusionCrowd
 
 	void NavSystem::Init() {
 		pimpl->Init();
-	}
-
-	void NavSystem::SetGridCoeff(float coeff) {
-		pimpl->SetGridCoeff(coeff);
 	}
 
 

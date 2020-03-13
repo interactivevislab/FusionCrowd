@@ -34,7 +34,6 @@ namespace FusionCrowd
 
 		// Those looks very specific, are we sure they should be in public api?
 		void SetAgentsSensitivityRadius(float radius);
-		void SetGridCoeff(float coeff);
 
 		// Very confusing methods pair
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
