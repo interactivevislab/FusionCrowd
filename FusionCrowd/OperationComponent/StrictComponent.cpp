@@ -19,7 +19,6 @@ namespace FusionCrowd
 {
 	namespace StrictComp
 	{
-		int step = 0;
 		StrictComponent::StrictComponent(std::shared_ptr<NavSystem> navSystem) : _navSystem(navSystem)
 		{
 		}
@@ -48,6 +47,7 @@ namespace FusionCrowd
 
 		void StrictComponent::ComputeNewVelocity(AgentSpatialInfo & spatialInfo, float timeStep)
 		{
+			auto neighbours = _navSystem->GetNeighbours(spatialInfo.id);
 			const float maxAcceleration = spatialInfo.maxAccel * timeStep;
 
 			AgentParamentrs & agent = _agents[spatialInfo.id];
@@ -67,29 +67,30 @@ namespace FusionCrowd
 
 			float speed = vel.Length();
 
-			speed = spatialInfo.prefSpeed;
+			//speed = spatialInfo.prefSpeed;
 
 			if (speed < 0.05f)
 			{
 				speed = 0.05f;
 			}
 
-			if (distanceToTarget > 5.0f && speed < spatialInfo.prefSpeed) {
+			if (distanceToTarget > 5.0f && speed < spatialInfo.prefSpeed && neighbours.size() < 10) {
 				speed += maxAcceleration;
 				if (speed > spatialInfo.prefSpeed) speed = spatialInfo.prefSpeed;
 			}
 			if (distanceToTarget < 5.0f && speed > 0.3f) {
-				speed -= maxAcceleration;
-				if (speed < 0.3f) speed = 0.3f;
 			}
 
 			if (distanceToTarget < 1e-2f) {
 				speed = 0.0f;
 			}
+			float inCrowdSpeed = spatialInfo.prefSpeed * 0.3f;
+			if (neighbours.size() > 5 && speed > inCrowdSpeed) {
+				speed -= maxAcceleration;
+			}
 
 			spatialInfo.velNew =Vector2(normalizedPrefVel.x * speed, normalizedPrefVel.y * speed);
 
-			step++;
 		}
 	}
 }

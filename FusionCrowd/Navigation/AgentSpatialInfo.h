@@ -31,7 +31,7 @@ namespace FusionCrowd
 
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
 
-		Math::Geometry2D* neighbourSearchShape = new Math::DiskShape(DirectX::SimpleMath::Vector2(0.f, 0.f), 6.0f);
+		Math::Geometry2D* neighbourSearchShape = new Math::DiskShape(DirectX::SimpleMath::Vector2(0.f, 0.f), 4.0f);
 
 		bool useNavMeshObstacles = true;
 	};
