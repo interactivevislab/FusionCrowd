@@ -6,102 +6,121 @@
 
 #include "NavGraphPathPlanner.h"
 
+using namespace DirectX::SimpleMath;
+
 namespace FusionCrowd
 {
 	NavGraphPathPlanner::NavGraphPathPlanner(std::shared_ptr<NavGraph> navGraph) : _navGraph(navGraph)
 	{ }
 
-	std::shared_ptr <NavGraphRoute> NavGraphPathPlanner::GetRoute(size_t nodeFrom, size_t nodeTo) const
+	std::vector<NavGraphNodeId> NavGraphPathPlanner::GetRouteNodes(NavGraphNodeId nodeFrom, NavGraphNodeId nodeTo) const
 	{
-		std::vector<size_t> route_nodes;
-
 		if (nodeFrom == nodeTo)
 		{
-			route_nodes.push_back(nodeFrom);
-			return std::make_shared <NavGraphRoute>(route_nodes);
+			return { nodeFrom };
 		}
 
-		std::map<size_t, float> distance;
-		for (auto& node : _navGraph->GetAllNodes())
+		std::vector<NavGraphNodeId> route_nodes;
+
+		std::map<NavGraphNodeId, float> distance;
+		for (const auto& node : _navGraph->GetAllNodes())
 		{
 			distance.insert({ node.id, INFINITY });
 		}
-
 		distance.at(nodeFrom) = 0;
 
-		std::set<size_t> visited;
-		std::queue<size_t> remainingNodes;
-
-		visited.insert(nodeFrom);
-
-		for (auto& edge : _navGraph->GetOutEdges(nodeFrom))
+		auto distComparator = [&](NavGraphNodeId left, NavGraphNodeId right)
 		{
-			auto d = (_navGraph->GetNode(edge.nodeFrom).position - _navGraph->GetNode(edge.nodeTo).position).Length();
-			distance.at(edge.nodeTo) = d;
-			remainingNodes.push(edge.nodeTo);
+			// we need node with smallest distance to be at the top of the queue, hence "greater than"
+			return distance[left] > distance[right];
+		};
+
+		std::priority_queue<NavGraphNodeId, std::vector<NavGraphNodeId>, decltype(distComparator)> remainingNodes(distComparator);
+		std::map<NavGraphNodeId, NavGraphNodeId> prev;
+		std::set<NavGraphNodeId> unvisited;
+		for(const auto & node : _navGraph->GetAllNodes())
+		{
+			unvisited.insert(node.id);
 		}
 
-		if (remainingNodes.empty())
-		{
-			route_nodes.push_back(nodeFrom);
-			return std::make_shared <NavGraphRoute>(route_nodes);
-		}
+		unvisited.erase(nodeFrom);
+		remainingNodes.push(nodeFrom);
+		prev[nodeFrom] = nodeFrom;
 
 		bool thereIsRoute = false;
 		while (!remainingNodes.empty())
 		{
-			size_t nodeId = remainingNodes.front(); remainingNodes.pop();
-			auto curDist = distance.at(nodeId);
-			visited.insert(nodeId);
+			NavGraphNodeId nodeId = remainingNodes.top(); remainingNodes.pop();
+			float curDist = distance.at(nodeId);
+			unvisited.erase(nodeId);
 
-
-			for (auto& edge : _navGraph->GetOutEdges(nodeId))
+			for (const auto& edge : _navGraph->GetOutEdges(nodeId))
 			{
 				auto d = (_navGraph->GetNode(nodeId).position - _navGraph->GetNode(edge.nodeTo).position).Length();
 
-				if (curDist + d < distance.at(edge.nodeTo))
+				if (curDist + d < distance[edge.nodeTo])
 				{
-					distance.at(edge.nodeTo) = curDist + d;
+					distance[edge.nodeTo] = curDist + d;
+					prev[edge.nodeTo] = nodeId;
 				}
 
-				if (visited.find(edge.nodeTo) == visited.end())
+				if (unvisited.find(edge.nodeTo) != unvisited.end())
+				{
 					remainingNodes.push(edge.nodeTo);
-			}
-
-			if (!remainingNodes.empty() && remainingNodes.front() == nodeTo)
-			{
-				thereIsRoute = true;
-				break;
-			}
-		}
-
-		if (!thereIsRoute)
-		{
-			route_nodes.push_back(nodeFrom);
-			return std::make_shared <NavGraphRoute>(route_nodes);
-		}
-
-		size_t current = nodeTo;
-		route_nodes.push_back(current);
-
-		float curDistance = distance.at(current);
-		while (current != nodeFrom)
-		{
-			float minDist = curDistance;
-			size_t next = -1;
-			for (auto& e : _navGraph->GetInEdges(current))
-			{
-				if (distance.at(e.nodeFrom) < minDist)
-				{
-					minDist = distance.at(e.nodeFrom);
-					next = e.nodeFrom;
 				}
 			}
-
-			current = next;
-			route_nodes.push_back(current);
 		}
 
-		return std::make_shared <NavGraphRoute>(route_nodes);
+		if (isinf(distance[nodeTo]))
+		{
+			return { };
+		}
+
+		NavGraphNodeId current = nodeTo;
+		do
+		{
+			route_nodes.push_back(current);
+			current = prev[current];
+		} while(current != nodeFrom);
+
+		return route_nodes;
+	}
+
+	NavGraphRoute NavGraphPathPlanner::GetRoute(DirectX::SimpleMath::Vector2 from, DirectX::SimpleMath::Vector2 to) const
+	{
+		NavGraphNodeId nodeFrom;
+		Vector2 init_point = _navGraph->GetClosiestPointAndNodeId(from, nodeFrom);
+
+		NavGraphNodeId nodeTo;
+		Vector2 goal_point = _navGraph->GetClosiestPointAndNodeId(to, nodeTo);
+
+		std::vector<NavGraphNodeId> routeNodesReversed = GetRouteNodes(nodeFrom, nodeTo);
+
+		if(routeNodesReversed.size() == 0)
+		{
+			return NavGraphRoute({ from });
+		}
+
+		if(routeNodesReversed.size() == 1)
+		{
+			return NavGraphRoute({ from, to });
+		}
+
+		std::vector<Vector2> path;
+
+		path.push_back(from);
+		path.push_back(init_point);
+
+		auto nodeId = routeNodesReversed.rbegin();
+		while(nodeId != routeNodesReversed.rend())
+		{
+			path.push_back(_navGraph->GetNode(*nodeId).position);
+			nodeId++;
+		}
+
+		path.push_back(goal_point);
+		path.push_back(to);
+
+		return NavGraphRoute(path);
 	}
 }

@@ -16,7 +16,7 @@ namespace FusionCrowd
 		}
 		for(size_t n = 0; n < nodeCount; n++)
 		{
-			size_t id;
+			NavGraphNodeId id;
 			float x, y;
 			if(! (istream >> id >> x >> y))
 			{
@@ -34,8 +34,8 @@ namespace FusionCrowd
 
 		for(size_t e = 0; e < edgeCount; e++)
 		{
-			size_t id;
-			size_t nFrom, nTo;
+			NavGraphEdgeId id;
+			NavGraphNodeId nFrom, nTo;
 			float width, weight;
 
 			if(! (istream >> id >> nFrom >> nTo >> width >> weight))
@@ -49,31 +49,30 @@ namespace FusionCrowd
 		return std::make_unique<NavGraph>(nodes, edges);
 	}
 
-
 	NavGraph::NavGraph(std::vector<NavGraphNode> nodes, std::vector<NavGraphEdge> edges)
 	{
-		for(auto & n : nodes)
+		for(const auto & n : nodes)
 		{
 			_nodes[n.id] = n;
 		}
 
-		for(auto & e : edges)
+		for(const auto & e : edges)
 		{
 			_outEdges[e.nodeFrom].push_back(e);
 			_inEdges[e.nodeTo].push_back(e);
 		}
 	}
 
-	const NavGraphNode& NavGraph::GetNode(size_t id) const
+	const NavGraphNode& NavGraph::GetNode(NavGraphNodeId id) const
 	{
 		return _nodes.at(id);
 	}
 
-	const size_t NavGraph::GetClosestNodeIdByPosition(Vector2 p, std::unordered_set<NavGraphNode> nodes)
+	const NavGraphNodeId NavGraph::GetClosestNodeIdByPosition(Vector2 p, std::unordered_set<NavGraphNode> nodes)
 	{
 		float minDistance = INFINITY;
-		size_t retID = 0;
-		for (auto node : nodes)
+		NavGraphNodeId retID = 0;
+		for (const auto & node : nodes)
 		{
 			Vector2 nodePos = node.position;
 
@@ -88,34 +87,55 @@ namespace FusionCrowd
 		return retID;
 	}
 
-
-	const DirectX::SimpleMath::Vector2 NavGraph::GetClosiestPointAndNodeId(DirectX::SimpleMath::Vector2 p, size_t& node_id) {
+	const DirectX::SimpleMath::Vector2 NavGraph::GetClosiestPointAndNodeId(DirectX::SimpleMath::Vector2 p, NavGraphNodeId& nodeId) {
 		float min_dist = INFINITY;
 		Vector2 res;
-		node_id = -1;
-		for (auto node : _nodes) {
-			for (auto e : GetOutEdges(node.first)) {
-				Vector2 AB = _nodes[e.nodeTo].position - node.second.position;
-				Vector2 AP = p - node.second.position;
+		nodeId = -1;
+
+		for (auto & node : _nodes)
+		{
+			float dist2 = (node.second.position - p).LengthSquared();
+			if(dist2 < min_dist)
+			{
+				min_dist = dist2;
+				res = p;
+				nodeId = node.second.id;
+			}
+		}
+
+		if(nodeId != -1)
+		{
+			return res;
+		}
+
+		for(auto & edgeList : _outEdges)
+		{
+			auto & node = _nodes[edgeList.first];
+
+			for(auto & e : edgeList.second)
+			{
+				Vector2 AB = _nodes[e.nodeTo].position - node.position;
+				Vector2 AP = p - node.position;
 				float sqrAB = AB.LengthSquared();
 				float t = (AP.x * AB.x + AP.y*AB.y) / sqrAB;
 				t = t < 0.0f ? 0.0f : t;
 				t = t > 1.0f ? 1.0f : t;
-				Vector2 tmp_res = node.second.position + t * AB;
+				Vector2 tmp_res = node.position + t * AB;
 				float dist = Vector2::DistanceSquared(tmp_res, p);
 				if (dist < min_dist) {
 					res = tmp_res;
 					min_dist = dist;
-					node_id = e.nodeTo;
+					nodeId = e.nodeTo;
 				}
 			}
 		}
+
 		return res;
 	}
 
-	std::vector<NavGraphEdge> NavGraph::GetOutEdges(size_t fromNodeId) const
+	std::vector<NavGraphEdge> NavGraph::GetOutEdges(NavGraphNodeId from) const
 	{
-		auto e = _outEdges.find(fromNodeId);
+		auto e = _outEdges.find(from);
 
 		if (e == _outEdges.end())
 			return std::vector<NavGraphEdge>();
@@ -123,9 +143,9 @@ namespace FusionCrowd
 		return e->second;
 	}
 
-	std::vector<NavGraphEdge> NavGraph::GetInEdges(size_t toNodeId) const
+	std::vector<NavGraphEdge> NavGraph::GetInEdges(NavGraphNodeId to) const
 	{
-		auto e = _inEdges.find(toNodeId);
+		auto e = _inEdges.find(to);
 
 		if (e == _inEdges.end())
 			return std::vector<NavGraphEdge>();
@@ -133,14 +153,16 @@ namespace FusionCrowd
 		return e->second;
 	}
 
-	std::unordered_set<NavGraphNode> NavGraph::GetOutNeighbours(size_t fromNodeId) const
+	std::unordered_set<NavGraphNode> NavGraph::GetOutNeighbours(NavGraphNodeId from) const
 	{
-		if(_outEdges.find(fromNodeId) == _outEdges.end())
+		if(_outEdges.find(from) == _outEdges.end())
+		{
 			return std::unordered_set<NavGraphNode>();
+		}
 
 		std::unordered_set<NavGraphNode> result;
 
-		for(auto e : _outEdges.at(fromNodeId))
+		for(const auto & e : _outEdges.at(from))
 		{
 			result.insert(_nodes.at(e.nodeTo));
 		}
@@ -148,14 +170,16 @@ namespace FusionCrowd
 		return result;
 	}
 
-	std::unordered_set<NavGraphNode> NavGraph::GetInNeighbours(size_t toNodeId) const
+	std::unordered_set<NavGraphNode> NavGraph::GetInNeighbours(NavGraphNodeId to) const
 	{
-		if(_inEdges.find(toNodeId) == _inEdges.end())
+		if(_inEdges.find(to) == _inEdges.end())
+		{
 			return std::unordered_set<NavGraphNode>();
+		}
 
 		std::unordered_set<NavGraphNode> result;
 
-		for(auto e : _inEdges.at(toNodeId))
+		for(const auto & e : _inEdges.at(to))
 		{
 			result.insert(_nodes.at(e.nodeFrom));
 		}
@@ -167,7 +191,7 @@ namespace FusionCrowd
 	{
 		std::unordered_set<NavGraphNode> result;
 
-		for(auto & n : _nodes)
+		for(const auto & n : _nodes)
 		{
 			result.insert(n.second);
 		}

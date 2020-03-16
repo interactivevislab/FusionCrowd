@@ -84,7 +84,7 @@ def redraw_positions(canvas: Player, tr, frame, size=1.0, ovals=None,orint=None)
             canvas.move_circle(ovals[agent_id], infos[frame].pos)
 
             if not hide_orientation:
-                canvas.move_orientation(orint[agent_id], infos[frame].pos, infos[frame].orient)
+                canvas.move_orientation(orint[agent_id], infos[frame])
             
         else:
             ovals[agent_id] = canvas.circle(
@@ -94,7 +94,7 @@ def redraw_positions(canvas: Player, tr, frame, size=1.0, ovals=None,orint=None)
             )
 
             if not hide_orientation:
-                orint[agent_id] = canvas.orientation(infos[frame].pos, infos[frame].orient, "black")
+                orint[agent_id] = canvas.orientation(infos[frame], "black")
 
     canvas.update_scroll()
     return ovals, orint

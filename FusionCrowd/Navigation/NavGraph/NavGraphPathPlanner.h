@@ -12,11 +12,13 @@ namespace FusionCrowd
 	class NavGraphRoute
 	{
 	public:
-		NavGraphRoute(std::vector<size_t> nodes) : nodes(nodes)
+		NavGraphRoute()
+		{ }
+
+		NavGraphRoute(std::vector<DirectX::SimpleMath::Vector2> points) : points(points)
 		{ }
 
 	public:
-		std::vector<size_t> nodes;
 		std::vector<DirectX::SimpleMath::Vector2> points;
 	};
 
@@ -25,9 +27,11 @@ namespace FusionCrowd
 	public:
 		explicit NavGraphPathPlanner(std::shared_ptr<NavGraph> navGraph);
 
-		std::shared_ptr <NavGraphRoute> GetRoute(size_t nodeFrom, size_t nodeTo) const;
+		NavGraphRoute GetRoute(DirectX::SimpleMath::Vector2 from, DirectX::SimpleMath::Vector2 to) const;
 
 	private:
+		std::vector<size_t> GetRouteNodes(size_t from, size_t to) const;
+
 		std::shared_ptr<NavGraph> _navGraph;
 	};
 }

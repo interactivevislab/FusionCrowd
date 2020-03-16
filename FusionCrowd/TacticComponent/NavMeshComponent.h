@@ -52,8 +52,6 @@ namespace FusionCrowd
 		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);
 		unsigned int UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const;
 
-		void SetGroupPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, size_t groupId, float timeStep);
-
 	private:
 		std::shared_ptr<Simulator> _simulator;
 

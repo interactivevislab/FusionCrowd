@@ -79,8 +79,9 @@ namespace FusionCrowd
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos);
 		Agent & GetAgent(size_t id);
 
-
 		size_t AddGroup(std::unique_ptr<IGroupShape> shape, DirectX::SimpleMath::Vector2 origin);
+		size_t AddGroup(std::unique_ptr<IGroupShape> shape, DirectX::SimpleMath::Vector2 origin, ComponentId operation, ComponentId tactic, ComponentId strategy);
+
 		const Group & GetGroup(size_t groupId) const;
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos);
 		void RemoveGroup(size_t groupId);

@@ -16,6 +16,7 @@
 #include "TestCases/StenkaNaStenkuTestCase.h"
 #include "TestCases/ITestCase.h"
 #include "TestCases/NavGraphTestCase.h"
+#include "TestCases/GroupMovementTestCase.h"
 
 #include "Export/ComponentId.h"
 #include "Export/Export.h"
@@ -105,7 +106,7 @@ int main()
 	std::vector<std::shared_ptr<ITestCase>> cases =
 	{
 
-		std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::BICYCLE, 50, 2000, true)),
+		// std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::BICYCLE, 50, 2000, true)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new TradeshowTestCase(1025, 1000, true)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new ZanlungoCase()),
 		// std::shared_ptr<ITestCase>((ITestCase*) new CrossingTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false)),
@@ -113,6 +114,7 @@ int main()
 		// std::shared_ptr<ITestCase>((ITestCase*) new TshapedFancyTestCase(FusionCrowd::ComponentIds::ORCA_ID, 200, 1000, true)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new NavGraphTestCase(100, 1000, true)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new StenkaNaStenkuTestCase(500, 1000, true)),
+		std::shared_ptr<ITestCase>((ITestCase*) new GroupMovementTestCase(1000, true)),
 	};
 
 	std::vector<long long> measurements;

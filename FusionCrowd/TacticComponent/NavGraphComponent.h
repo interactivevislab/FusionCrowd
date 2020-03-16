@@ -25,7 +25,7 @@ namespace FusionCrowd
 
 		void Update(float timeStep) override;
 		DirectX::SimpleMath::Vector2 GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) override;
-		unsigned int getNodeId(size_t agentId) const;
+		size_t getNodeId(size_t agentId) const;
 
 		ComponentId GetId() override { return ComponentIds::NAVGRAPH_ID; }
 
@@ -36,24 +36,21 @@ namespace FusionCrowd
 		{
 		public:
 			size_t id;
-			std::shared_ptr <NavGraphRoute> route;
-			size_t goalNodeID;
+			NavGraphRoute route;
 			DirectX::SimpleMath::Vector2 goalPoint;
-			int nodesComplete;
 			int pointsComplete;
 		};
 
 		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);
 		void UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, float deltaTime) const;
 		void Replan(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
-		size_t GetForwardAgent(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
-		std::vector<AgentStruct> GetAllAgentsInRadius(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float radius);
 		bool IsReplanNeeded(AgentSpatialInfo& agentInfo, AgentStruct& agentStruct);
 
 		std::shared_ptr<Simulator> _simulator;
 		std::shared_ptr<NavGraph> _navGraph;
 		std::shared_ptr<NavSystem> _navSystem;
 		std::vector<AgentStruct> _agents;
-		std::shared_ptr <NavGraphRoute> _route;
+
+		NavGraphPathPlanner _pathPlanner;
 	};
 }

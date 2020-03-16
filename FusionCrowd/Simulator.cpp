@@ -344,15 +344,21 @@ namespace FusionCrowd
 
 		size_t AddGroup(std::unique_ptr<IGroupShape> shape, Vector2 origin)
 		{
+			return AddGroup(std::move(shape), origin, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		}
+
+		size_t AddGroup(std::unique_ptr<IGroupShape> shape, Vector2 origin, ComponentId operation, ComponentId tactic, ComponentId strategy)
+		{
 			AgentSpatialInfo dummyInfo;
 			dummyInfo.pos = origin;
 			dummyInfo.collisionsLevel = AgentSpatialInfo::CollisionLevel::GROUP;
 			dummyInfo.radius = shape->GetRadius();
-			dummyInfo.maxSpeed = 1.0f;
+			dummyInfo.prefSpeed /= 2.0f;
+			dummyInfo.maxSpeed  /= 2.0f;
 			dummyInfo.maxAngVel = 50.5f;
 			dummyInfo.inertiaEnabled = false;
 
-			size_t dummyId = AddAgent(dummyInfo, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+			size_t dummyId = AddAgent(dummyInfo, operation, tactic, strategy);
 
 			_groups.insert({ _nextGroupId, Group(_nextGroupId, dummyId, std::move(shape))});
 			return _nextGroupId++;
@@ -638,6 +644,11 @@ namespace FusionCrowd
 	size_t Simulator::AddGroup(std::unique_ptr<IGroupShape> shape, Vector2 origin)
 	{
 		return pimpl->AddGroup(std::move(shape), origin);
+	}
+
+	size_t Simulator::AddGroup(std::unique_ptr<IGroupShape> shape, Vector2 origin, ComponentId operation, ComponentId tactic, ComponentId strategy)
+	{
+		return pimpl->AddGroup(std::move(shape), origin, operation, tactic, strategy);
 	}
 
 	const Group & Simulator::GetGroup(size_t groupId) const

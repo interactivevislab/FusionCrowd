@@ -70,7 +70,10 @@ namespace FusionCrowd
 
 			if(groupId != Group::NO_GROUP)
 			{
-				SetGroupPrefVelocity(info, agtStruct, groupId, timeStep);
+				auto & grp = _simulator->GetGroup(groupId);
+				auto & dummy = _simulator->GetSpatialInfo(grp.dummyAgentId);
+
+				grp.SetAgentPrefVelocity(dummy, info, timeStep);
 				continue;
 			}
 
@@ -151,29 +154,6 @@ namespace FusionCrowd
 			path == nullptr ||
 			path->getGoal().getID() != agentGoal.getID() ||
 			!path->IsValid(_navMesh->GetVersion());
-	}
-
-	void NavMeshComponent::SetGroupPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, size_t groupId, float timeStep)
-	{
-		auto & group = _simulator->GetGroup(groupId);
-		auto & groupDummy = _simulator->GetSpatialInfo(group.dummyAgentId);
-
-		float rot = atan2f(groupDummy.orient.x, groupDummy.orient.y);
-
-		rot = rot - (MathUtil::PI / 4.0f);
-		Vector2 relativePos = MathUtil::rotate(group.GetShape()->GetRelativePos(agentInfo.id), rot);
-		Vector2 targetPos = groupDummy.pos + relativePos;
-		Vector2 dir = targetPos - agentInfo.pos;
-
-		float speed = dir.LengthSquared() / timeStep;
-		if(agentInfo.maxSpeed < speed)
-		{
-			speed = agentInfo.maxSpeed;
-		}
-		agentInfo.prefVelocity.setSpeed(speed);
-
-		dir.Normalize();
-		agentInfo.prefVelocity.setSingle(dir);
 	}
 
 	void NavMeshComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep)

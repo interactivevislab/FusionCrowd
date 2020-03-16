@@ -139,16 +139,23 @@ namespace FusionCrowd
 			return _sim->GetNavSystem();
 		}
 
-		size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist)
+		size_t AddGridGroup(float x, float y, size_t agentsInRow, float interAgtDist)
 		{
-			auto grid = std::make_unique<FixedGridShape>(agetsInRow, interAgtDist);
+			auto grid = std::make_unique<FixedGridShape>(agentsInRow, interAgtDist);
 
 			return _sim->AddGroup(std::move(grid), DirectX::SimpleMath::Vector2(x, y));
 		}
 
-		size_t AddFreeGridGroup(float x, float y, size_t agetsInRow, float interAgtDist)
+		size_t AddGridGroup(float x, float y, size_t agentsInRow, float interAgtDist, ComponentId op, ComponentId tactic, ComponentId strategy)
 		{
-			auto freeGrid = std::make_unique<FreeGridShape>(agetsInRow, interAgtDist);
+			auto grid = std::make_unique<FixedGridShape>(agentsInRow, interAgtDist);
+
+			return _sim->AddGroup(std::move(grid), DirectX::SimpleMath::Vector2(x, y), op, tactic, strategy);
+		}
+
+		size_t AddFreeGridGroup(float x, float y, size_t agentsInRow, float interAgtDist)
+		{
+			auto freeGrid = std::make_unique<FreeGridShape>(agentsInRow, interAgtDist);
 
 			return _sim->AddGroup(std::move(freeGrid), DirectX::SimpleMath::Vector2(x, y));
 		}
@@ -166,6 +173,11 @@ namespace FusionCrowd
 		void AddAgentToGroup(size_t agentId, size_t groupId)
 		{
 			_sim->AddAgentToGroup(agentId, groupId);
+		}
+
+		size_t GetGroupDummyAgent(size_t groupId)
+		{
+			return _sim->GetGroup(groupId).dummyAgentId;
 		}
 
 	private:

@@ -32,6 +32,8 @@ namespace FusionCrowd
 
 		std::vector<size_t> GetAgents();
 
+		void SetAgentPrefVelocity(AgentSpatialInfo & dummyInfo, AgentSpatialInfo & agentInfo, float timeStep) const;
+
 	private:
 		std::unique_ptr<IGroupShape> _shape;
 
