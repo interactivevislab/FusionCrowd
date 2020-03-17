@@ -15,7 +15,7 @@ using namespace FusionCrowd;
 namespace TestFusionCrowd
 {
 	GroupMovementTestCase::GroupMovementTestCase(size_t steps, bool writeTraj)
-		: ITestCase(7, steps, writeTraj)
+		: ITestCase(10, steps, writeTraj)
 	{
 	}
 
@@ -103,7 +103,7 @@ namespace TestFusionCrowd
 
 		Fsm::AgentParams flowMachineParams; flowMachineParams.FsmId = fsmId;
 
-		size_t groupId = _sim->AddGridGroup(0.0f, 0.0f, 2, 0.2, ComponentIds::ORCA_ID, ComponentIds::NAVGRAPH_ID, ComponentIds::FSM_ID);
+		size_t groupId = _sim->AddGridGroup(0.0f, 0.0f, 3, 0.2, ComponentIds::ORCA_ID, ComponentIds::NAVGRAPH_ID, ComponentIds::FSM_ID);
 		for (int i = 0; i < GetAgentCount(); i++)
 		{
 			size_t id = _sim->AddAgent(RandFloat(-2, 2), RandFloat(-2, 2), ComponentIds::ORCA_ID, ComponentIds::NAVGRAPH_ID, ComponentIds::NO_COMPONENT);
@@ -111,6 +111,8 @@ namespace TestFusionCrowd
 		}
 
 		size_t groupDummy = _sim->GetGroupDummyAgent(groupId);
+
+		//_sim->SetGroupGoal(groupId, 0, 0);
 
 		_sim->SetAgentStrategyParam(groupDummy, ComponentIds::FSM_ID, flowMachineParams);
 	}

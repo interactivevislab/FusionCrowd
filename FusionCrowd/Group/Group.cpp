@@ -56,16 +56,18 @@ namespace  FusionCrowd
 	void Group::SetAgentPrefVelocity(AgentSpatialInfo & dummyInfo, AgentSpatialInfo & agentInfo, float timeStep) const
 	{
 		float rot = atan2f(dummyInfo.orient.y, dummyInfo.orient.x);
-		Vector2 relativePos = MathUtil::rotate(GetShape()->GetRelativePos(agentInfo.id), rot);
-		Vector2 targetPos = dummyInfo.pos + relativePos;
+		Vector2 relativePos = GetShape()->GetRelativePos(agentInfo.id);
+		Vector2 rotRelativePos = MathUtil::rotate(relativePos, rot);
+		Vector2 targetPos = dummyInfo.pos + rotRelativePos + dummyInfo.vel * timeStep;
 		Vector2 dir = targetPos - agentInfo.pos;
 
-		float speed = dir.Length() * timeStep;
-		if(agentInfo.prefSpeed < speed)
+		float speed = dir.Length() / timeStep;
+		if(speed > agentInfo.maxSpeed)
 		{
-			speed = agentInfo.prefSpeed;
+			speed = agentInfo.maxSpeed;
 		}
-		agentInfo.prefVelocity.setSpeed(dir.Length());
+
+		agentInfo.prefVelocity.setSpeed(speed);
 
 		dir.Normalize();
 		agentInfo.prefVelocity.setSingle(dir);

@@ -185,6 +185,16 @@ namespace FusionCrowd
 
 		void UpdateOrient(AgentSpatialInfo & agent, float timeStep)
 		{
+			if(agent.vel.Length() < MathUtil::EPS)
+			{
+				agent.orient = Vector2(0, 1);
+				return;
+			}
+
+			agent.orient = agent.vel;
+			agent.orient.Normalize();
+			return;
+
 			if(!agent.inertiaEnabled)
 			{
 				agent.orient = agent.vel;

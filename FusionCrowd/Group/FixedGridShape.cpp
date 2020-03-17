@@ -58,8 +58,8 @@ namespace FusionCrowd
 		float totalWidth  = GetTotalWidth();
 		float totalHeight = GetTotalHeight();
 
-		float paddingRight = _agentSize / 2.0f + row * (interAgentDist + _agentSize);
-		float paddingTop   = _agentSize / 2.0f + pos * (interAgentDist + _agentSize);
+		float paddingRight = _agentSize / 2.f + row * (interAgentDist + _agentSize);
+		float paddingTop   = _agentSize / 2.f + pos * (interAgentDist + _agentSize);
 
 		return Vector2(totalWidth / 2.0f - paddingRight, totalHeight / 2.0f - paddingTop);
 	}
@@ -72,12 +72,12 @@ namespace FusionCrowd
 		return sqrtf(totalHeight * totalHeight + totalWidth * totalWidth) / 2.0f;
 	}
 
-	float FixedGridShape::GetTotalWidth() const
+	float FixedGridShape::GetTotalHeight() const
 	{
 		return _agentSize + (agentsInRow - 1) * (interAgentDist + _agentSize);
 	}
 
-	float FixedGridShape::GetTotalHeight() const
+	float FixedGridShape::GetTotalWidth() const
 	{
 		if(_agents.size() == 0)
 		{
@@ -85,8 +85,10 @@ namespace FusionCrowd
 		}
 
 		size_t totalRows = _agents.size() / agentsInRow;
-		if(_agents.size() % agentsInRow > 0)
+		if(_agents.size() % agentsInRow != 0)
+		{
 			totalRows++;
+		}
 
 		return _agentSize + (totalRows - 1) * (interAgentDist + _agentSize);
 	}
