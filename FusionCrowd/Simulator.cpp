@@ -8,6 +8,7 @@
 #include "StrategyComponent/Goal/Goal.h"
 #include "Navigation/OnlineRecording/OnlineRecording.h"
 #include "Group/Group.h"
+#include "Math/Geometry2D.h"
 
 #include <random>
 
@@ -128,6 +129,9 @@ namespace FusionCrowd
 			info.prefSpeed *= dist(_rnd_seed);
 
 			info.useNavMeshObstacles = (tacticId == ComponentIds::NAVMESH_ID);
+			if (tacticId == ComponentIds::NAVGRAPH_ID) {
+				info.neighbourSearchShape = new Math::ConeShape(Vector2(0,0), 10.0f, MathUtil::PI/6.0f);
+			}
 
 			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.pos);
 			_navSystem->AddAgent(info);

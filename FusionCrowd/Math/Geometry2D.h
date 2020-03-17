@@ -18,7 +18,7 @@ namespace FusionCrowd
 			Geometry2D() {}
 			virtual ~Geometry2D() {}
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt) const = 0;
-			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos) const = 0;
+			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos, float yaw) const = 0;
 			virtual float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const = 0;
 			virtual void setDirections(const DirectX::SimpleMath::Vector2 & q, float r, Agents::PrefVelocity & directions) const = 0;
 			virtual DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const = 0;
@@ -36,7 +36,7 @@ namespace FusionCrowd
 			void setPosition(const DirectX::SimpleMath::Vector2 & pos) { _position = pos; }
 			const DirectX::SimpleMath::Vector2 & getPosition() const { return _position; }
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt) const;
-			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos) const;
+			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos, float yaw) const;
 			virtual float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const;
 			virtual void setDirections(const DirectX::SimpleMath::Vector2 & q, float r,
 				Agents::PrefVelocity & directions) const;
@@ -52,7 +52,7 @@ namespace FusionCrowd
 			DiskShape(DirectX::SimpleMath::Vector2 center, float size);
 
 			bool containsPoint(const DirectX::SimpleMath::Vector2& pt) const override;
-			bool containsPoint(const DirectX::SimpleMath::Vector2& pt, const DirectX::SimpleMath::Vector2& pos) const override;
+			bool containsPoint(const DirectX::SimpleMath::Vector2& pt, const DirectX::SimpleMath::Vector2& pos, float yaw) const override;
 			float squaredDistance(const DirectX::SimpleMath::Vector2& pt) const override;
 			void setDirections(const DirectX::SimpleMath::Vector2& q, float r, Agents::PrefVelocity& directions) const override;
 			DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2& q, float r) const override;
@@ -61,6 +61,23 @@ namespace FusionCrowd
 		private:
 			DirectX::SimpleMath::Vector2 _center;
 			float _R;
+		};
+
+		class FUSION_CROWD_API ConeShape : public Geometry2D
+		{
+		public:
+			ConeShape(DirectX::SimpleMath::Vector2 point, float range, float angle_rad) : _point(point), _range(range), _angle(angle_rad){}
+			virtual ~ConeShape() {}
+			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt) const override;
+			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos, float yaw) const override;
+			virtual float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const;
+			virtual void setDirections(const DirectX::SimpleMath::Vector2 & q, float r, Agents::PrefVelocity & directions) const override;
+			virtual DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const override;
+			virtual DirectX::SimpleMath::Vector2 getCentroid() const override;
+		private:
+			float _range;
+			float _angle;
+			DirectX::SimpleMath::Vector2 _point;
 		};
 	}
 }
