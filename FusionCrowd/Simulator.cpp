@@ -80,6 +80,21 @@ namespace FusionCrowd
 			return AddAgent(info, ComponentIds::NO_COMPONENT, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
 		}
 
+
+		bool UpdateAgent(AgentParams params) {
+			SetOperationComponent(params.id, params.opCompId);
+			SetTacticComponent(params.id, params.tacticCompId);
+			auto& si = _navSystem->GetSpatialInfo(params.id);
+			si.radius = params.radius;
+			si.maxSpeed = params.maxSpeed;
+			si.maxAccel = params.maxAccel;
+			si.prefSpeed = params.prefSpeed;
+			si.maxAngVel = params.maxAngVel;
+			si.inertiaEnabled = params.inertiaEnabled;
+			si.useNavMeshObstacles = params.useNavMeshObstacles;
+			return true;
+		}
+
 		size_t AddAgent(float x, float y, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
 		{
 			// Use default values
@@ -604,6 +619,9 @@ namespace FusionCrowd
 		return pimpl->AddAgent(pos);
 	}
 
+	bool Simulator::UpdateAgent(AgentParams params) {
+		return pimpl->UpdateAgent(params);
+	}
 	size_t Simulator::AddAgent(AgentSpatialInfo props, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
 	{
 		return pimpl->AddAgent(props, opId, tacticId, strategyId);

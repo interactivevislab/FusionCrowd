@@ -100,6 +100,11 @@ namespace FusionCrowd
 			return _sim->AddAgent(info, opId, tacticId, strategyId);
 		}
 
+
+		bool UpdateAgent(AgentParams params) {
+			return _sim->UpdateAgent(params);
+		}
+
 		OperationStatus RemoveAgent(size_t agentId)
 		{
 			return _sim->RemoveAgent(agentId);

@@ -60,6 +60,8 @@ namespace FusionCrowd
 
 		size_t AddAgent(DirectX::SimpleMath::Vector2 pos);
 
+		bool UpdateAgent(AgentParams params);
+
 		OperationStatus RemoveAgent(size_t agentId);
 
 		size_t AddAgent(
