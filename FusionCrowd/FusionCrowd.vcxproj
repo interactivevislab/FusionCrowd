@@ -33,8 +33,7 @@
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Export\NavGraph.h" />
-    <ClInclude Include="Group\FreeGridShape.h" />
-    <ClInclude Include="Group\FixedGridShape.h" />
+    <ClInclude Include="Group\GridGroup.h" />
     <ClInclude Include="Group\Group.h" />
     <ClInclude Include="Group\IGroupShape.h" />
     <ClInclude Include="Math\BoundingBox.h" />
@@ -106,8 +105,7 @@
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="Export\Export.cpp" />
-    <ClCompile Include="Group\FreeGridShape.cpp" />
-    <ClCompile Include="Group\FixedGridShape.cpp" />
+    <ClCompile Include="Group\GridGroup.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
