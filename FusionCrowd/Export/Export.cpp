@@ -110,6 +110,12 @@ namespace FusionCrowd
 			return _sim->RemoveAgent(agentId);
 		}
 
+
+		OperationStatus RemoveGroup(size_t groupId)
+		{
+			return _sim->RemoveGroup(groupId);
+		}
+
 		IRecording & GetRecording()
 		{
 			return _sim->GetRecording();

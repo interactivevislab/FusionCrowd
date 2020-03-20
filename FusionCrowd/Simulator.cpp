@@ -107,6 +107,29 @@ namespace FusionCrowd
 
 			return AddAgent(info, opId, tacticId, strategyId);
 		}
+		OperationStatus RemoveGroup(size_t groupId) {
+
+			if (_groups.find(groupId) == _groups.end())
+			{
+				return OperationStatus::InvalidArgument;
+			}
+
+			auto & g = _groups[groupId];
+
+			for (size_t agentId : g.GetAgents())
+			{
+				auto a = _agents.find(agentId);
+				if (a == _agents.end())
+				{
+					continue;
+				}
+
+				a->second.SetGroupId(Group::NO_GROUP);
+			}
+
+			_groups.erase(groupId);
+			return OperationStatus::OK;
+		}
 
 		OperationStatus RemoveAgent(size_t agentId) {
 			_navSystem->RemoveAgent(agentId);
@@ -401,29 +424,6 @@ namespace FusionCrowd
 			SetAgentGoal(dummyId, goalPos);
 		}
 
-		void RemoveGroup(size_t groupId)
-		{
-			if(_groups.find(groupId) == _groups.end())
-			{
-				return;
-			}
-
-			auto & g = _groups[groupId];
-
-			for(size_t agentId : g.GetAgents())
-			{
-				auto a = _agents.find(agentId);
-				if(a ==_agents.end())
-				{
-					continue;
-				}
-
-				a->second.SetGroupId(Group::NO_GROUP);
-			}
-
-			_groups.erase(groupId);
-		}
-
 		void AddAgentToGroup(size_t agentId, size_t groupId)
 		{
 			auto g = _groups.find(groupId);
@@ -633,6 +633,9 @@ namespace FusionCrowd
 	{
 		return pimpl->RemoveAgent(agentId);
 	}
+	OperationStatus Simulator::RemoveGroup(size_t groupId) {
+		return pimpl->RemoveGroup(groupId);
+	}
 
 	void Simulator::SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
 	{
@@ -683,11 +686,6 @@ namespace FusionCrowd
 	void Simulator::SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos)
 	{
 		pimpl->SetGroupGoal(groupId, goalPos);
-	}
-
-	void Simulator::RemoveGroup(size_t groupId)
-	{
-		pimpl->RemoveGroup(groupId);
 	}
 
 	void Simulator::AddAgentToGroup(size_t agentId, size_t groupId)

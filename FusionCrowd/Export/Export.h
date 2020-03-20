@@ -86,6 +86,7 @@ namespace FusionCrowd
 			virtual bool UpdateAgent(AgentParams params) = 0;
 
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
+			virtual OperationStatus RemoveGroup(size_t groupId) = 0;
 
 			virtual size_t AddGridGroup(float x, float y, size_t agentsInRow, float interAgtDist) = 0;
 			virtual size_t AddFreeGridGroup(float x, float y, size_t agentsInRow, float interAgtDist) = 0;
