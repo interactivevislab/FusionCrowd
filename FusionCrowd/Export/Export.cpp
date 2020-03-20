@@ -182,7 +182,7 @@ namespace FusionCrowd
 
 		size_t GetGroupDummyAgent(size_t groupId)
 		{
-			return _sim->GetGroup(groupId).dummyAgentId;
+			return _sim->GetGroup(groupId)->dummyAgentId;
 		}
 
 	private:

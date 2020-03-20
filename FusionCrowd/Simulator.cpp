@@ -383,9 +383,11 @@ namespace FusionCrowd
 			return _nextGroupId++;
 		}
 
-		const Group & GetGroup(size_t groupId) const
+		const Group * GetGroup(size_t groupId) const
 		{
-			return _groups.find(groupId)->second;
+			auto p = _groups.find(groupId);
+			if (p == _groups.end()) return nullptr;
+			return &p->second;
 		}
 
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos)
@@ -673,7 +675,7 @@ namespace FusionCrowd
 		return pimpl->AddGroup(std::move(shape), origin, operation, tactic, strategy);
 	}
 
-	const Group & Simulator::GetGroup(size_t groupId) const
+	const Group * Simulator::GetGroup(size_t groupId) const
 	{
 		return pimpl->GetGroup(groupId);
 	}

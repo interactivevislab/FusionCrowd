@@ -70,10 +70,14 @@ namespace FusionCrowd
 
 			if(groupId != Group::NO_GROUP)
 			{
-				auto & grp = _simulator->GetGroup(groupId);
-				auto & dummy = _simulator->GetSpatialInfo(grp.dummyAgentId);
+				auto grp = _simulator->GetGroup(groupId);
+				if (grp == nullptr) {
+					info.prefVelocity.setSpeed(0);
+					continue;
+				}
+				auto & dummy = _simulator->GetSpatialInfo(grp->dummyAgentId);
 
-				grp.SetAgentPrefVelocity(dummy, info, timeStep);
+				grp->SetAgentPrefVelocity(dummy, info, timeStep);
 				continue;
 			}
 
