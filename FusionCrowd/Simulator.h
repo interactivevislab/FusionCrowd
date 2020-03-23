@@ -18,8 +18,7 @@
 #include "Util/spimpl.h"
 #include "Math/Util.h"
 
-#include "Group/Group.h"
-#include "Group/IGroupShape.h"
+#include "Group/IGroup.h"
 
 #include <memory>
 
@@ -58,10 +57,9 @@ namespace FusionCrowd
 		size_t GetAgentCount() const;
 		const Goal & GetAgentGoal(size_t agentId) const;
 
-		size_t AddAgent(DirectX::SimpleMath::Vector2 pos);
-
 		OperationStatus RemoveAgent(size_t agentId);
 
+		size_t AddAgent(DirectX::SimpleMath::Vector2 pos);
 		size_t AddAgent(
 			float x, float y,
 			ComponentId opId,
@@ -79,10 +77,9 @@ namespace FusionCrowd
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos);
 		Agent & GetAgent(size_t id);
 
-		size_t AddGroup(std::unique_ptr<IGroupShape> shape, DirectX::SimpleMath::Vector2 origin);
-		size_t AddGroup(std::unique_ptr<IGroupShape> shape, DirectX::SimpleMath::Vector2 origin, ComponentId operation, ComponentId tactic, ComponentId strategy);
+		size_t AddGroup(DirectX::SimpleMath::Vector2 origin);
 
-		const Group & GetGroup(size_t groupId) const;
+		const IGroup & GetGroup(size_t groupId) const;
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos);
 		void RemoveGroup(size_t groupId);
 

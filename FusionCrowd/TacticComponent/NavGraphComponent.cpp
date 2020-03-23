@@ -55,7 +55,7 @@ namespace FusionCrowd
 			size_t groupId = _simulator->GetAgent(id).GetGroupId();
 			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
 
-			if(groupId != Group::NO_GROUP)
+			if(groupId != IGroup::NO_GROUP)
 			{
 				auto & grp = _simulator->GetGroup(groupId);
 				auto & dummy = _simulator->GetSpatialInfo(grp.dummyAgentId);

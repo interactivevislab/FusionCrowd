@@ -33,10 +33,11 @@
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Export\NavGraph.h" />
-    <ClInclude Include="Group\FreeGridShape.h" />
-    <ClInclude Include="Group\FixedGridShape.h" />
+    <ClInclude Include="Group\GridGroup.h" />
     <ClInclude Include="Group\Group.h" />
     <ClInclude Include="Group\IGroupShape.h" />
+    <ClInclude Include="Group\GridGroup.h" />
+    <ClInclude Include="Group\IGroup.h" />
     <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
@@ -103,11 +104,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
+    <ClCompile Include="Group\IGroup.cpp" />
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="Export\Export.cpp" />
-    <ClCompile Include="Group\FreeGridShape.cpp" />
-    <ClCompile Include="Group\FixedGridShape.cpp" />
+    <ClCompile Include="Group\GridGroup.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
@@ -133,7 +134,6 @@
     <ClCompile Include="OperationComponent\ZanlungoComponent.cpp" />
     <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
     <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
-    <ClCompile Include="Group\Group.cpp" />
     <ClCompile Include="Util\RecordingSerializer.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />

@@ -49,15 +49,14 @@
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
-    <ClCompile Include="Group\Group.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
-    <ClCompile Include="Group\FixedGridShape.cpp" />
-    <ClCompile Include="Group\FreeGridShape.cpp" />
     <ClCompile Include="OperationComponent\BicycleComponent.cpp" />
     <ClCompile Include="TacticComponent\Path\PathRandomization.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="OperationComponent\StrictComponent.cpp" />
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
+    <ClCompile Include="Group\IGroup.cpp" />
+    <ClCompile Include="Group\GridGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -129,18 +128,19 @@
     <ClInclude Include="Export\INavMeshPublic.h" />
     <ClInclude Include="TacticComponent\NavGraphComponent.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
-    <ClInclude Include="Group\Group.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="Export\NavGraph.h" />
     <ClInclude Include="Group\IGroupShape.h" />
-    <ClInclude Include="Group\FixedGridShape.h" />
-    <ClInclude Include="Group\FreeGridShape.h" />
     <ClInclude Include="OperationComponent\BicycleComponent.h" />
     <ClInclude Include="TacticComponent\Path\PathRandomization.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
     <ClInclude Include="OperationComponent\StrictComponent.h" />
     <ClInclude Include="TacticComponent\ExternalControl.h" />
     <ClInclude Include="Export\IExternalControlInterface.h" />
+    <ClInclude Include="Group\GridGroup.h" />
+    <ClInclude Include="Group\IGroup.h" />
+    <ClInclude Include="Group\Group.h" />
+    <ClInclude Include="Group\GridGroup.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
