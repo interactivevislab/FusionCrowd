@@ -4,8 +4,6 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	IGroup::IGroup() : _id(0), _dummyAgentId(-1) { }
-
 	IGroup::IGroup(size_t id, size_t dummyId) : _id(id), _dummyAgentId(dummyId) { }
 
 	void IGroup::SetAgentPrefVelocity(AgentSpatialInfo & dummyInfo, AgentSpatialInfo & agentInfo, float timeStep) const

@@ -9,8 +9,8 @@ namespace FusionCrowd
 	class GridGroup : public IGroup
 	{
 	public:
-		GridGroup(size_t agentsInRow, float interAgentDist);
-
+		GridGroup(size_t id, size_t dummyId, size_t agentsInRow, float interAgentDist);
+		
 		const size_t agentsInRow;
 		const float interAgentDist;
 
@@ -18,9 +18,11 @@ namespace FusionCrowd
 		void RemoveAgent(size_t agentId) override;
 		DirectX::SimpleMath::Vector2 GetRelativePos(size_t agentId) const override;
 		size_t GetSize() const override;
-
+		bool Contains(size_t agentId) const override;
+		std::vector<size_t> GetAgents() const override;
+		float GetRadius() const override;
+		
 	private:
-		float GetRadius() const;
 		float GetTotalWidth() const;
 		float GetTotalHeight() const;
 

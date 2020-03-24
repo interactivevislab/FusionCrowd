@@ -23,9 +23,6 @@
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
 
-#include "Group/FixedGridShape.h"
-#include "Group/FreeGridShape.h"
-
 using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
@@ -34,8 +31,7 @@ namespace FusionCrowd
 	{
 	public:
 		SimulatorFacadeImpl(std::shared_ptr<Simulator> sim) : _sim(sim)
-		{
-		}
+		{}
 
 		void DoStep(float timeStep)
 		{
@@ -141,23 +137,12 @@ namespace FusionCrowd
 
 		size_t AddGridGroup(float x, float y, size_t agentsInRow, float interAgtDist)
 		{
-			auto grid = std::make_unique<FixedGridShape>(agentsInRow, interAgtDist);
-
-			return _sim->AddGroup(std::move(grid), DirectX::SimpleMath::Vector2(x, y));
+			return _sim->AddGridGroup(Vector2(x, y), agentsInRow, interAgtDist);
 		}
 
-		size_t AddGridGroup(float x, float y, size_t agentsInRow, float interAgtDist, ComponentId op, ComponentId tactic, ComponentId strategy)
+		size_t AddGuidedGroup(size_t leaderId)
 		{
-			auto grid = std::make_unique<FixedGridShape>(agentsInRow, interAgtDist);
-
-			return _sim->AddGroup(std::move(grid), DirectX::SimpleMath::Vector2(x, y), op, tactic, strategy);
-		}
-
-		size_t AddFreeGridGroup(float x, float y, size_t agentsInRow, float interAgtDist)
-		{
-			auto freeGrid = std::make_unique<FreeGridShape>(agentsInRow, interAgtDist);
-
-			return _sim->AddGroup(std::move(freeGrid), DirectX::SimpleMath::Vector2(x, y));
+			return _sim->AddGuidedGroup(leaderId);
 		}
 
 		void RemoveAgentFromGroup(size_t agentId, size_t groupId)
@@ -177,7 +162,7 @@ namespace FusionCrowd
 
 		size_t GetGroupDummyAgent(size_t groupId)
 		{
-			return _sim->GetGroup(groupId).dummyAgentId;
+			return _sim->GetGroup(groupId)->GetDummyId();
 		}
 
 	private:

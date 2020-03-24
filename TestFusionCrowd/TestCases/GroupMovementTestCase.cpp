@@ -103,7 +103,13 @@ namespace TestFusionCrowd
 
 		Fsm::AgentParams flowMachineParams; flowMachineParams.FsmId = fsmId;
 
-		size_t groupId = _sim->AddGridGroup(0.0f, 0.0f, 3, 0.2, ComponentIds::ORCA_ID, ComponentIds::NAVGRAPH_ID, ComponentIds::FSM_ID);
+		size_t groupId = _sim->AddGridGroup(0.0f, 0.0f, 3, 0.2);
+		size_t groupDummyId = _sim->GetGroupDummyAgent(groupId);
+		
+		_sim->SetAgentOp(groupDummyId, ComponentIds::ORCA_ID);
+		_sim->SetAgentTactic(groupDummyId, ComponentIds::NAVGRAPH_ID);
+		_sim->SetAgentStrategy(groupDummyId, ComponentIds::FSM_ID);
+		
 		for (int i = 0; i < GetAgentCount(); i++)
 		{
 			size_t id = _sim->AddAgent(RandFloat(-2, 2), RandFloat(-2, 2), ComponentIds::ORCA_ID, ComponentIds::NAVGRAPH_ID, ComponentIds::NO_COMPONENT);

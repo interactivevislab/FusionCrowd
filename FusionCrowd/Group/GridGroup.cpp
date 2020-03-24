@@ -5,8 +5,8 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	GridGroup::GridGroup(size_t agentsInRow, float interAgentDist)
-		: agentsInRow(agentsInRow), interAgentDist(interAgentDist)
+	GridGroup::GridGroup(size_t id, size_t dummyId, size_t agentsInRow, float interAgentDist)
+		: IGroup(id, dummyId), agentsInRow(agentsInRow), interAgentDist(interAgentDist)
 	{
 	}
 
@@ -91,5 +91,15 @@ namespace FusionCrowd
 		}
 
 		return _agentSize + (totalRows - 1) * (interAgentDist + _agentSize);
+	}
+
+	bool GridGroup::Contains(size_t agentId) const
+	{		
+		return std::find(_agents.begin(), _agents.end(), agentId) == _agents.end();
+	}
+
+	std::vector<size_t> GridGroup::GetAgents() const
+	{
+		return std::vector<size_t>(_agents);
 	}
 }

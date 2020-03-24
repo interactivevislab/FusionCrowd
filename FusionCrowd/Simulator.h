@@ -77,15 +77,16 @@ namespace FusionCrowd
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos);
 		Agent & GetAgent(size_t id);
 
-		size_t AddGroup(DirectX::SimpleMath::Vector2 origin);
+		size_t AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance);
+		size_t AddGuidedGroup(size_t leaderId);
 
-		const IGroup & GetGroup(size_t groupId) const;
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos);
 		void RemoveGroup(size_t groupId);
 
 		void AddAgentToGroup(size_t agentId, size_t groupId);
 		void RemoveAgentFromGroup(size_t agentId, size_t groupId);
 
+		IGroup* GetGroup(size_t groupId);
 
 		FCArray<AgentInfo> GetAgentsInfo();
 

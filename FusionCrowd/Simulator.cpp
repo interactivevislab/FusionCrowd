@@ -7,7 +7,7 @@
 #include "TacticComponent/NavMeshComponent.h"
 #include "StrategyComponent/Goal/Goal.h"
 #include "Navigation/OnlineRecording/OnlineRecording.h"
-#include "Group/AbstractGroup.h"
+#include "Group/GridGroup.h"
 #include "Math/Geometry2D.h"
 
 #include <random>
@@ -346,13 +346,10 @@ namespace FusionCrowd
 			return res;
 		}
 
-		size_t AddGroup(AbstractGroup group, Vector2 origin)
+		size_t AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance)
 		{
-			return AddGroup(group, origin, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
-		}
+			size_t grpId = _nextGroupId++;
 
-		size_t AddGroup(AbstractGroup group, Vector2 origin, ComponentId operation, ComponentId tactic, ComponentId strategy)
-		{
 			AgentSpatialInfo dummyInfo;
 			dummyInfo.pos = origin;
 			dummyInfo.collisionsLevel = AgentSpatialInfo::CollisionLevel::GROUP;
@@ -361,15 +358,16 @@ namespace FusionCrowd
 			dummyInfo.maxAngVel = 50.5f;
 			dummyInfo.inertiaEnabled = false;
 
-			group.SetDummyId(AddAgent(dummyInfo, operation, tactic, strategy));
-
-			_groups.insert({ _nextGroupId, AbstractGroup(_nextGroupId, dummyId, std::move(shape))});
-			return _nextGroupId++;
+			size_t dummyId = AddAgent(dummyInfo, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		
+			_groups[grpId] = std::make_unique<GridGroup>(grpId, dummyId, agentsInRow, interAgentDistance);
+			
+			return grpId;
 		}
-
-		const AbstractGroup & GetGroup(size_t groupId) const
+		
+		size_t AddGuidedGroup(size_t leaderId)
 		{
-			return _groups.find(groupId)->second;
+			throw "Not implemented";
 		}
 
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos)
@@ -379,7 +377,7 @@ namespace FusionCrowd
 				return;
 			}
 
-			size_t dummyId = _groups[groupId].dummyAgentId;
+			size_t dummyId = _groups[groupId]->GetDummyId();
 			SetAgentGoal(dummyId, goalPos);
 		}
 
@@ -392,7 +390,7 @@ namespace FusionCrowd
 
 			auto & g = _groups[groupId];
 
-			for(size_t agentId : g.GetAgents())
+			for(size_t agentId : g->GetAgents())
 			{
 				auto a = _agents.find(agentId);
 				if(a ==_agents.end())
@@ -400,7 +398,7 @@ namespace FusionCrowd
 					continue;
 				}
 
-				a->second.SetGroupId(AbstractGroup::NO_GROUP);
+				a->second.SetGroupId(IGroup::NO_GROUP);
 			}
 
 			_groups.erase(groupId);
@@ -419,10 +417,10 @@ namespace FusionCrowd
 			auto & agtInfo = _navSystem->GetSpatialInfo(agentId);
 
 			a->second.SetGroupId(groupId);
-			g->second.AddAgent(agentId, agtInfo);
+			g->second->AddAgent(agentId, agtInfo);
 
-			auto & dummy = _navSystem->GetSpatialInfo(g->second.dummyAgentId);
-			dummy.radius = g->second.GetShape()->GetRadius();
+			auto & dummy = _navSystem->GetSpatialInfo(g->second->GetDummyId());
+			dummy.radius = g->second->GetRadius();
 		}
 
 		void RemoveAgentFromGroup(size_t agentId, size_t groupId)
@@ -435,8 +433,13 @@ namespace FusionCrowd
 				return;
 			}
 
-			a->second.SetGroupId(AbstractGroup::NO_GROUP);
-			g->second.RemoveAgent(agentId);
+			a->second.SetGroupId(IGroup::NO_GROUP);
+			g->second->RemoveAgent(agentId);
+		}
+
+		IGroup* GetGroup(size_t groupId)
+		{
+			return _groups[groupId].get();
 		}
 
 	private:
@@ -474,12 +477,12 @@ namespace FusionCrowd
 
 			_switchComponentTasks.clear();
 		}
-
 	private:
 		size_t _nextAgentId = 0;
 
 		// groupId == 0 means that agent has no group
 		size_t _nextGroupId = 1;
+		std::map<size_t, std::unique_ptr<IGroup>> _groups;
 
 		std::map<size_t, ComponentId> _switchComponentTasks;
 
@@ -489,8 +492,7 @@ namespace FusionCrowd
 		OnlineRecording _recording;
 		bool _isRecording = false;
 
-		std::map<size_t, FusionCrowd::Agent> _agents;
-		std::map<size_t, AbstractGroup> _groups;
+		std::map<size_t, FusionCrowd::Agent> _agents;		
 
 		std::map<ComponentId, std::shared_ptr<IStrategyComponent>> _strategyComponents;
 		std::map<ComponentId, std::shared_ptr<ITacticComponent>> _tacticComponents;
@@ -644,19 +646,14 @@ namespace FusionCrowd
 		return pimpl->GetStrategy(strategyId);
 	}
 
-	size_t Simulator::AddGroup(std::unique_ptr<IGroupShape> shape, Vector2 origin)
+	size_t Simulator::AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance)
 	{
-		return pimpl->AddGroup(std::move(shape), origin);
+		return pimpl->AddGridGroup(origin, agentsInRow, interAgentDistance);
 	}
-
-	size_t Simulator::AddGroup(std::unique_ptr<IGroupShape> shape, Vector2 origin, ComponentId operation, ComponentId tactic, ComponentId strategy)
+	
+	size_t Simulator::AddGuidedGroup(size_t leaderId)
 	{
-		return pimpl->AddGroup(std::move(shape), origin, operation, tactic, strategy);
-	}
-
-	const AbstractGroup & Simulator::GetGroup(size_t groupId) const
-	{
-		return pimpl->GetGroup(groupId);
+		return pimpl->AddGuidedGroup(leaderId);
 	}
 
 	void Simulator::SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos)
@@ -677,6 +674,11 @@ namespace FusionCrowd
 	void Simulator::RemoveAgentFromGroup(size_t agentId, size_t groupId)
 	{
 		pimpl->RemoveAgentFromGroup(agentId, groupId);
+	}
+
+	IGroup* Simulator::GetGroup(size_t groupId)
+	{
+		return pimpl->GetGroup(groupId);
 	}
 #pragma endregion
 }

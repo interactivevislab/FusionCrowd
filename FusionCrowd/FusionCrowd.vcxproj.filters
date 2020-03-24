@@ -57,6 +57,7 @@
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
     <ClCompile Include="Group\IGroup.cpp" />
     <ClCompile Include="Group\GridGroup.cpp" />
+    <ClCompile Include="Group\GuidedGroup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -130,7 +131,6 @@
     <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="Export\NavGraph.h" />
-    <ClInclude Include="Group\IGroupShape.h" />
     <ClInclude Include="OperationComponent\BicycleComponent.h" />
     <ClInclude Include="TacticComponent\Path\PathRandomization.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
@@ -139,8 +139,7 @@
     <ClInclude Include="Export\IExternalControlInterface.h" />
     <ClInclude Include="Group\GridGroup.h" />
     <ClInclude Include="Group\IGroup.h" />
-    <ClInclude Include="Group\Group.h" />
-    <ClInclude Include="Group\GridGroup.h" />
+    <ClInclude Include="Group\GuidedGroup.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
