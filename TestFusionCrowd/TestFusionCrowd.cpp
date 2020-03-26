@@ -120,7 +120,7 @@ int main()
 	std::vector<long long> measurements;
 	time_point startTime;
 
-	std::string folderName = date::format("%Y%m%d", std::chrono::system_clock::now());
+	std::string folderName = "Runs\\" + date::format("%Y%m%d", std::chrono::system_clock::now());
 	_mkdir(folderName.c_str());
 
 	for(auto testCase : cases)

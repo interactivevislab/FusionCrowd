@@ -100,7 +100,7 @@
       <AdditionalDependencies>FusionCrowd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)\Resources" "$(TargetDir)\Resources\"</Command>
+      <Command>xcopy /Y /E "$(ProjectDir)\Resources" "$(TargetDir)\Resources\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
