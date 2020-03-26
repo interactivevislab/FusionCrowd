@@ -356,9 +356,9 @@ namespace FusionCrowd
 			dummyInfo.prefSpeed /= 2.0f;
 			dummyInfo.maxSpeed  /= 2.0f;
 			dummyInfo.maxAngVel = 50.5f;
-			dummyInfo.inertiaEnabled = false;
+			dummyInfo.inertiaEnabled = false;			
 
-			size_t dummyId = AddAgent(dummyInfo, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+			size_t dummyId = AddAgent(dummyInfo, GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
 		
 			_groups[grpId] = std::make_unique<GridGroup>(grpId, dummyId, agentsInRow, interAgentDistance);
 			
@@ -476,6 +476,16 @@ namespace FusionCrowd
 			}
 
 			_switchComponentTasks.clear();
+		}
+
+		ComponentId GetAnyTactic()
+		{
+			return _tacticComponents.begin()->first;
+		}
+
+		ComponentId GetAnyOperational()
+		{
+			return _operComponents.begin()->first;
 		}
 	private:
 		size_t _nextAgentId = 0;

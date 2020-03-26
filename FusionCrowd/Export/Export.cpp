@@ -180,15 +180,18 @@ namespace FusionCrowd
 			sim->UseNavSystem(navSystem);
 		}
 
-		ISimulatorBuilder*  WithExternal(IExternalControllInterface*& returned_controll)
+		ISimulatorBuilder* WithExternal(IExternalControllInterface*& returned_controll)
 		{
 			auto tactic = std::make_shared<FusionCrowd::ExternalControl>(sim);
 			sim->AddTactic(tactic);
 			returned_controll = tactic.get();
+
+			atLeastOneTactic = true;
+			
 			return this;
 		}
 
-		ISimulatorBuilder*  WithNavMesh(const char* path)
+		ISimulatorBuilder* WithNavMesh(const char* path)
 		{
 			auto localizer = std::make_shared<NavMeshLocalizer>(path, true);
 			navSystem->SetNavMesh(localizer);
@@ -197,6 +200,8 @@ namespace FusionCrowd
 			auto tactic = std::make_shared<FusionCrowd::NavMeshComponent>(sim, localizer, spatial_query);
 			sim->AddTactic(tactic);
 
+			atLeastOneTactic = true;
+			
 			return this;
 		}
 
@@ -214,6 +219,8 @@ namespace FusionCrowd
 			auto tactic = std::make_shared<FusionCrowd::NavGraphComponent>(sim, navSystem);
 			sim->AddTactic(tactic);
 
+			atLeastOneTactic = true;
+			
 			return this;
 		}
 
@@ -245,6 +252,8 @@ namespace FusionCrowd
 			auto tactic = std::make_shared<FusionCrowd::NavGraphComponent>(sim, navSystem);
 			sim->AddTactic(tactic);
 
+			atLeastOneTactic = true;
+			
 			return this;
 		}
 
@@ -279,6 +288,9 @@ namespace FusionCrowd
 				default:
 					break;
 			}
+
+			atLeastOneOperational = true;
+			
 			return this;
 		}
 
@@ -307,6 +319,12 @@ namespace FusionCrowd
 
 		ISimulatorFacade* Build()
 		{
+			if(!atLeastOneOperational)
+				throw "At least one op component has to be defined";
+			
+			if(!atLeastOneTactic)
+				throw "At least one tactic component has to be defined";				
+			
 			navSystem->Init();
 
 			return impl;
@@ -315,6 +333,9 @@ namespace FusionCrowd
 		ComponentId nextExternalStrategyId = 900;
 
 		SimulatorFacadeImpl* impl;
+
+		bool atLeastOneTactic      = false;
+		bool atLeastOneOperational = false;
 
 		std::shared_ptr<Simulator> sim;
 		std::shared_ptr<NavSystem> navSystem;

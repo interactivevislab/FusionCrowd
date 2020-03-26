@@ -8,11 +8,13 @@ namespace FusionCrowd
 	{}
 
 	void GuidedGroup::AddAgent(size_t agentId, AgentSpatialInfo& info)
-	{
+	{		
 		if(_leader == agentId || _followers.find(agentId) != _followers.end())
 		{
 			return;
 		}
+
+		info.inertiaEnabled = false;
 
 		_followers.insert(agentId);
 	}
