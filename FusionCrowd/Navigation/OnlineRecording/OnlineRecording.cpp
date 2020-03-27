@@ -3,7 +3,11 @@
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <string>
 
+#include "Util/RecordingSerializer.h"
 #include "Navigation/AgentSpatialInfo.h"
 
 namespace FusionCrowd
@@ -52,6 +56,70 @@ namespace FusionCrowd
 
 		const IRecordingSlice * End() const {
 			return m_slices.end()._Ptr;
+		}
+
+		bool LoadFromFile(char const * path, size_t path_length) {
+			std::string filename(path, path_length);
+			std::ifstream inFile(filename);
+			if (!inFile.good()) return false;
+			m_slices.clear();
+			m_snapshotTimes.clear();
+			std::string line;
+			while (std::getline(inFile, line)) {
+				int i = 0;
+				std::stringstream ss(line);
+				std::string value;
+				bool first_value = true;
+				OnlineRecordingSlice* cur_slice = nullptr;
+				AgentInfo* cur_info = new AgentInfo();
+				while (std::getline(ss, value, ',')) {
+					if (first_value) {
+						float slice_time = std::stof(value);
+						cur_slice = new OnlineRecordingSlice(slice_time);
+						m_snapshotTimes.push_back(slice_time);
+						first_value = false;
+						continue;
+					}
+					switch (i % 6) {
+					case 0 :
+						cur_info->id = std::stoi(value);
+						break;
+					case 1 :
+						cur_info->posX = std::stof(value);
+						break;
+					case 2 :
+						cur_info->posY = std::stof(value);
+						break;
+					case 3 :
+						cur_info->orientX = std::stof(value);
+						break;
+					case 4 :
+						cur_info->orientY = std::stof(value);
+						break;
+					case 5 :
+						cur_info->radius = std::stof(value);
+						break;
+					}
+					i++;
+					if (i == 6) {
+						i = 0;
+						cur_slice->AddAgent(*cur_info);
+						delete cur_info;
+						cur_info = new AgentInfo();
+					}
+				}
+				m_slices.push_back(*cur_slice);
+				delete cur_slice;
+				delete cur_info;
+			}
+			m_currentSlice = *std::prev(m_slices.end());
+			m_currentTime = m_currentSlice.GetTime();
+			m_prevAgentCount = std::prev(std::prev(m_slices.end()))->GetAgentCount();
+			return true;
+		}
+
+		void Serialize(IRecording const &  rec, char const * destFilePath, size_t pathLen) const {
+			FusionCrowd::Recordings::Serialize(rec, destFilePath, pathLen);
 		}
 
 		size_t GetAgentCount() const
@@ -125,6 +193,15 @@ namespace FusionCrowd
 	const IRecordingSlice * OnlineRecording::End() const
 	{
 		return pimpl->End();
+	}
+
+	bool OnlineRecording::LoadFromFile(char const * path, size_t path_length) {
+		return pimpl->LoadFromFile(path, path_length);
+	}
+
+	void OnlineRecording::Serialize(char const * destFilePath, size_t pathLen) const
+	{
+		return pimpl->Serialize(*this, destFilePath, pathLen);
 	}
 
 	size_t OnlineRecording::GetAgentCount() const

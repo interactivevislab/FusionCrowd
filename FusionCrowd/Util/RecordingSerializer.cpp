@@ -9,7 +9,7 @@ namespace FusionCrowd
 {
 	namespace Recordings
 	{
-		void Serialize(IRecording & rec, char const * destFilePath, size_t pathLen)
+		void Serialize(IRecording const &  rec, char const * destFilePath, size_t pathLen)
 		{
 			std::string filename(destFilePath, pathLen);
 			std::ofstream trajs(filename);
@@ -28,6 +28,7 @@ namespace FusionCrowd
 				slice.GetAgentIds(ids);
 
 				bool first = true;
+				trajs << slice.GetTime() << separator;
 				for(size_t id : ids)
 				{
 					auto info = slice.GetAgentInfo(id);
