@@ -8,6 +8,7 @@
 #include "StrategyComponent/Goal/Goal.h"
 #include "Navigation/OnlineRecording/OnlineRecording.h"
 #include "Group/GridGroup.h"
+#include "Group/GuidedGroup.h"
 #include "Math/Geometry2D.h"
 
 #include <random>
@@ -356,18 +357,36 @@ namespace FusionCrowd
 			dummyInfo.prefSpeed /= 2.0f;
 			dummyInfo.maxSpeed  /= 2.0f;
 			dummyInfo.maxAngVel = 50.5f;
-			dummyInfo.inertiaEnabled = false;			
+			dummyInfo.inertiaEnabled = false;
 
 			size_t dummyId = AddAgent(dummyInfo, GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
-		
+
 			_groups[grpId] = std::make_unique<GridGroup>(grpId, dummyId, agentsInRow, interAgentDistance);
-			
+
 			return grpId;
 		}
-		
+
 		size_t AddGuidedGroup(size_t leaderId)
 		{
-			throw "Not implemented";
+			size_t grpId = _nextGroupId++;
+
+			auto & leaderInfo = _navSystem->GetSpatialInfo(leaderId);
+
+			AgentSpatialInfo dummyInfo;
+			dummyInfo.pos = leaderInfo.pos;
+			dummyInfo.collisionsLevel = AgentSpatialInfo::CollisionLevel::GROUP;
+			dummyInfo.prefSpeed /= 2.0f;
+			dummyInfo.maxSpeed  /= 2.0f;
+			dummyInfo.maxAngVel = 50.5f;
+			dummyInfo.inertiaEnabled = false;
+
+			size_t dummyId = AddAgent(dummyInfo, GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
+
+			_groups[grpId] = std::make_unique<GuidedGroup>(grpId, dummyId, leaderInfo);
+
+			AddAgentToGroup(leaderId, grpId);
+
+			return grpId;
 		}
 
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos)
@@ -502,7 +521,7 @@ namespace FusionCrowd
 		OnlineRecording _recording;
 		bool _isRecording = false;
 
-		std::map<size_t, FusionCrowd::Agent> _agents;		
+		std::map<size_t, FusionCrowd::Agent> _agents;
 
 		std::map<ComponentId, std::shared_ptr<IStrategyComponent>> _strategyComponents;
 		std::map<ComponentId, std::shared_ptr<ITacticComponent>> _tacticComponents;
@@ -660,7 +679,7 @@ namespace FusionCrowd
 	{
 		return pimpl->AddGridGroup(origin, agentsInRow, interAgentDistance);
 	}
-	
+
 	size_t Simulator::AddGuidedGroup(size_t leaderId)
 	{
 		return pimpl->AddGuidedGroup(leaderId);

@@ -313,7 +313,7 @@ namespace FusionCrowd
 			for (auto & info : _agentsInfo)
 			{
 				bool isAgent = info.second.collisionsLevel == AgentSpatialInfo::AGENT;
-				auto neighbors = isAgent ? agentNeighbours[a] : groupNeighbours[g];
+				auto & neighbors = isAgent ? agentNeighbours[a] : groupNeighbours[g];
 
 				auto & neighborsInfos = _agentsNeighbours[info.second.id];
 				neighborsInfos.clear();

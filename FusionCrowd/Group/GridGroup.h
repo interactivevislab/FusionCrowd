@@ -10,7 +10,7 @@ namespace FusionCrowd
 	{
 	public:
 		GridGroup(size_t id, size_t dummyId, size_t agentsInRow, float interAgentDist);
-		
+
 		const size_t agentsInRow;
 		const float interAgentDist;
 
@@ -21,7 +21,7 @@ namespace FusionCrowd
 		bool Contains(size_t agentId) const override;
 		std::vector<size_t> GetAgents() const override;
 		float GetRadius() const override;
-		
+
 	private:
 		float GetTotalWidth() const;
 		float GetTotalHeight() const;

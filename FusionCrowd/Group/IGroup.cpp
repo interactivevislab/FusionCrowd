@@ -13,7 +13,7 @@ namespace FusionCrowd
 		Vector2 rotRelativePos = MathUtil::rotate(relativePos, rot);
 		Vector2 targetPos = dummyInfo.pos + rotRelativePos + dummyInfo.vel * timeStep;
 		Vector2 dir = targetPos - agentInfo.pos;
-		
+
 		float speed = dir.Length();
 		if(speed > agentInfo.maxSpeed)
 		{

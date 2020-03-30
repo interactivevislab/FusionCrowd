@@ -4,17 +4,16 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	GuidedGroup::GuidedGroup(size_t id, size_t dummyId, size_t leaderId) : IGroup(id, dummyId), _leader(leaderId)
+	GuidedGroup::GuidedGroup(size_t id, size_t dummyId, const AgentSpatialInfo& leader)
+		: IGroup(id, dummyId), _leader(leader.id), _maxRadius(leader.radius)
 	{}
 
 	void GuidedGroup::AddAgent(size_t agentId, AgentSpatialInfo& info)
-	{		
+	{
 		if(_leader == agentId || _followers.find(agentId) != _followers.end())
 		{
 			return;
 		}
-
-		info.inertiaEnabled = false;
 
 		_followers.insert(agentId);
 	}
@@ -26,35 +25,26 @@ namespace FusionCrowd
 
 	DirectX::SimpleMath::Vector2 GuidedGroup::GetRelativePos(size_t agentId) const
 	{
-		if(agentId == _leader || _followers.find(agentId) == _followers.end())
-			return Vector2();
-
-		throw "Not implemented";
 		return Vector2();
 	}
 
 	size_t GuidedGroup::GetSize() const
 	{
-		throw "Not implemented";
-		return 0;
+		return _followers.size();
 	}
-
 
 	bool GuidedGroup::Contains(size_t agentId) const
 	{
-		throw "Not implemented";
-		return false;
+		return _followers.find(agentId) != _followers.end();
 	}
 
 	std::vector<size_t> GuidedGroup::GetAgents() const
 	{
-		throw "Not implemented";
-		return std::vector<size_t>();
+		return std::vector<size_t>(_followers.begin(), _followers.end());
 	}
 
 	float GuidedGroup::GetRadius() const
 	{
-		throw "Not implemented";
-		return 0;
+		return _maxRadius;
 	}
 }

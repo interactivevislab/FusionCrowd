@@ -94,7 +94,7 @@ namespace FusionCrowd
 	}
 
 	bool GridGroup::Contains(size_t agentId) const
-	{		
+	{
 		return std::find(_agents.begin(), _agents.end(), agentId) == _agents.end();
 	}
 
