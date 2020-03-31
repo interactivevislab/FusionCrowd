@@ -1,42 +1,39 @@
 #include "NeighborsSeeker.h"
-#include "GpuCalculator.h"
-#include <iostream>
-#include <string>
-#include "Math/Util.h"
 
 namespace FusionCrowd
 {
-	using namespace DirectX::SimpleMath;
-
 	NeighborsSeeker::NeighborsSeeker()
 	{
 	}
-	NeighborsSeeker::~NeighborsSeeker()
+
+	NeighborsSeeker::SearchResult NeighborsSeeker::FindNeighborsCpuSquare(std::vector<NeighborsSeeker::SearchRequest> searchRequests)
 	{
-	}
+		NeighborsSeeker::SearchResult result;
 
-	std::vector<NeighborsSeeker::PointNeighbors> NeighborsSeeker::FindNeighborsCpuSquare(std::vector<AgentSpatialInfo> positions, std::vector<Math::Geometry2D*> search_areas) {
-		using namespace DirectX::SimpleMath;
-		std::vector<PointNeighbors> res;
-		for (int i = 0; i < positions.size(); i++) {
-			PointNeighbors pn;
-			pn.pointID = i;
-			res.push_back(pn);
-		}
+		if(searchRequests.size() == 0)
+			return result;
 
+		for(size_t i = 0; i < searchRequests.size() - 1; i++)
+		{
+			for(size_t j = i + 1; j < searchRequests.size(); j++)
+			{
+				if(i == j) continue;
 
-		for (int i = 0; i < positions.size(); i++) {
-			Math::Geometry2D& geometry = *search_areas[i]; // i = id
-			PointNeighbors& neighbors = res[i];
-			for (int j = 0; j < positions.size(); j++) {
-				if (i == j) continue;
-				if (geometry.containsPoint(positions[j].pos, positions[i].pos, atan2(positions[i].orient.y, positions[i].orient.x))) {
-					neighbors.neighborsID.push_back(j);
+				auto & req1 = searchRequests[i];
+				auto & req2 = searchRequests[j];
+
+				if(req1.neighbourSearchShape->containsPoint(req2.pos - req1.pos))
+				{
+					result[req1.id].push_back(req2.id);
+				}
+
+				if(req2.neighbourSearchShape->containsPoint(req1.pos - req2.pos))
+				{
+					result[req2.id].push_back(req1.id);
 				}
 			}
 		}
-		return res;
-	}
-#pragma endregion
 
+		return result;
+	}
 }

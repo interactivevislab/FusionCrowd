@@ -81,7 +81,7 @@ namespace FusionCrowd
 				_numGroups++;
 
 			_agentsInfo[spatialInfo.id] = spatialInfo;
-			_agentsNeighbours[spatialInfo.id] = std::vector<AgentSpatialInfo>();
+			_agentsNeighbours[spatialInfo.id] = std::vector<size_t>();
 		}
 
 		void RemoveAgent(unsigned int id) {
@@ -117,23 +117,11 @@ namespace FusionCrowd
 			if(cache == _agentsNeighbours.end())
 				return std::vector<AgentSpatialInfo>();
 
-			return cache->second;
-
-			/*
-			std::vector<NearAgent> neighbours;
-			for(const AgentSpatialInfo & other : cache->second)
-			{
-				neighbours.push_back({ other, (agent.pos - other.pos).LengthSquared()});
-			}
-
-			std::sort(neighbours.begin(), neighbours.end(), [](const NearAgent & a, const NearAgent & b) { return a.distSq < b.distSq; });
-
 			std::vector<AgentSpatialInfo> result;
-			for(const NearAgent & na : neighbours)
-				result.push_back(na.agt);
+			for(size_t neighbourID : cache->second)
+				result.push_back(_agentsInfo.at(neighbourID));
 
 			return result;
-			*/
 		}
 
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId)
@@ -264,72 +252,29 @@ namespace FusionCrowd
 
 		void UpdateNeighbours()
 		{
-			float minX = std::numeric_limits<float>::max();
-			float minY = std::numeric_limits<float>::max();
-			float maxX = std::numeric_limits<float>::min();
-			float maxY = std::numeric_limits<float>::min();
-			for (auto & info : _agentsInfo) {
-				if (info.second.pos.x < minX) minX = info.second.pos.x;
-				if (info.second.pos.x > maxX) maxX = info.second.pos.x;
-				if (info.second.pos.y < minY) minY = info.second.pos.y;
-				if (info.second.pos.y > maxY) maxY = info.second.pos.y;
-			}
+			std::vector<NeighborsSeeker::SearchRequest> agentRequests;
+			std::vector<NeighborsSeeker::SearchRequest> groupRequests;
 
-			auto agentsPositions = std::vector<AgentSpatialInfo>();
-			auto groupsPositions = std::vector<AgentSpatialInfo>();
-			auto agentsShapes = std::vector<Math::Geometry2D*>();
-			auto groupsShapes = std::vector<Math::Geometry2D*>();
-			//maps transform from position in existance array to agentInfo.id
-			std::map<size_t, size_t> _m_agentNeighbours;
-			std::map<size_t, size_t> _m_groupNeighbours;
-			size_t a = 0;
-			size_t g = 0;
 			for (auto & info : _agentsInfo)
 			{
 				if(info.second.collisionsLevel == AgentSpatialInfo::AGENT)
 				{
-					_m_agentNeighbours.insert({ a, info.first });
-					agentsPositions.push_back(info.second);
-					agentsShapes.push_back(info.second.neighbourSearchShape);
-					a++;
+					agentRequests.push_back(info.second);
 				} else
 				{
-					_m_groupNeighbours.insert({ g, info.first });
-					groupsPositions.push_back(info.second);
-					groupsShapes.push_back(info.second.neighbourSearchShape);
-					g++;
+					groupRequests.push_back(info.second);
 				}
 			}
 
-			//auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, _numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, false);
-			//auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, _numGroups, maxX - minX, maxY - minY, _groupSensitivityRadius, false);
-			//auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, agentsShapes, _numAgents);
-			//auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, groupsShapes, _numGroups);
-			auto agentNeighbours = _neighborsSeeker.FindNeighborsCpuSquare(agentsPositions, agentsShapes);
-			auto groupNeighbours = _neighborsSeeker.FindNeighborsCpuSquare(groupsPositions, groupsShapes);
-
-			a = 0;
-			g = 0;
-			for (auto & info : _agentsInfo)
+			for(const auto& p : _neighborsSeeker.FindNeighborsCpuSquare(agentRequests))
 			{
-				bool isAgent = info.second.collisionsLevel == AgentSpatialInfo::AGENT;
-				auto & neighbors = isAgent ? agentNeighbours[a] : groupNeighbours[g];
-
-				auto & neighborsInfos = _agentsNeighbours[info.second.id];
-				neighborsInfos.clear();
-				neighborsInfos.reserve(neighbors.neighborsID.size());
-
-				for (int j = 0; j < neighbors.neighborsID.size(); j++) {
-					size_t neighbour_id = isAgent ? _m_agentNeighbours[neighbors.neighborsID[j]] : _m_groupNeighbours[neighbors.neighborsID[j]];
-					auto & neighbour = _agentsInfo[neighbour_id];
-					neighborsInfos.push_back(neighbour);
-				}
-
-				if(isAgent) { a++; } else { g++; }
+				_agentsNeighbours[p.first] = p.second;
 			}
 
-			//delete[] agentsPositions;
-			//delete[] groupsPositions;
+			for(const auto& p : _neighborsSeeker.FindNeighborsCpuSquare(groupRequests))
+			{
+				_agentsNeighbours[p.first] = p.second;
+			}
 		}
 
 		void Init() {
@@ -351,7 +296,7 @@ namespace FusionCrowd
 		}
 
 	private:
-		std::unordered_map<size_t, std::vector<AgentSpatialInfo>> _agentsNeighbours;
+		std::unordered_map<size_t, std::vector<size_t>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
 		std::shared_ptr<NavGraph> _navGraph;
