@@ -96,9 +96,20 @@ namespace FusionCrowd
 			return _sim->AddAgent(info, opId, tacticId, strategyId);
 		}
 
+
+		bool UpdateAgent(AgentParams params) {
+			return _sim->UpdateAgent(params);
+		}
+
 		OperationStatus RemoveAgent(size_t agentId)
 		{
 			return _sim->RemoveAgent(agentId);
+		}
+
+
+		OperationStatus RemoveGroup(size_t groupId)
+		{
+			return _sim->RemoveGroup(groupId);
 		}
 
 		IRecording & GetRecording()
@@ -187,7 +198,7 @@ namespace FusionCrowd
 			returned_controll = tactic.get();
 
 			atLeastOneTactic = true;
-			
+
 			return this;
 		}
 
@@ -201,7 +212,7 @@ namespace FusionCrowd
 			sim->AddTactic(tactic);
 
 			atLeastOneTactic = true;
-			
+
 			return this;
 		}
 
@@ -220,7 +231,7 @@ namespace FusionCrowd
 			sim->AddTactic(tactic);
 
 			atLeastOneTactic = true;
-			
+
 			return this;
 		}
 
@@ -253,7 +264,7 @@ namespace FusionCrowd
 			sim->AddTactic(tactic);
 
 			atLeastOneTactic = true;
-			
+
 			return this;
 		}
 
@@ -290,7 +301,7 @@ namespace FusionCrowd
 			}
 
 			atLeastOneOperational = true;
-			
+
 			return this;
 		}
 
@@ -321,10 +332,10 @@ namespace FusionCrowd
 		{
 			if(!atLeastOneOperational)
 				throw "At least one op component has to be defined";
-			
+
 			if(!atLeastOneTactic)
-				throw "At least one tactic component has to be defined";				
-			
+				throw "At least one tactic component has to be defined";
+
 			navSystem->Init();
 
 			return impl;

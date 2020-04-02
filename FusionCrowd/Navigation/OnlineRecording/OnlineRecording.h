@@ -26,6 +26,8 @@ namespace FusionCrowd
 		const OnlineRecordingSlice & GetCurrentSlice() const override;
 		const IRecordingSlice * Begin() const override;
 		const IRecordingSlice * End() const override;
+		bool LoadFromFile(char const * path, size_t path_length) override;
+		void Serialize(char const * destFilePath, size_t pathLen) const override;
 
 		size_t GetAgentCount() const;
 

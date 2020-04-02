@@ -32,6 +32,20 @@ namespace FusionCrowd
 			float goalX, goalY;
 		};
 
+		struct FUSION_CROWD_API AgentParams
+		{
+			size_t id;
+			float radius;
+			float maxSpeed;
+			float maxAccel;
+			float prefSpeed;
+			float maxAngVel;
+			bool inertiaEnabled;
+			bool useNavMeshObstacles;
+			ComponentId opCompId;
+			ComponentId tacticCompId;
+		};
+
 		enum FUSION_CROWD_API OperationStatus
 		{
 			OK,
@@ -69,7 +83,10 @@ namespace FusionCrowd
 				ComponentId strategyId
 			) = 0;
 
+			virtual bool UpdateAgent(AgentParams params) = 0;
+
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
+			virtual OperationStatus RemoveGroup(size_t groupId) = 0;
 
 			virtual size_t AddGridGroup(float x, float y, size_t agentsInRow, float interAgtDist) = 0;
 			virtual size_t AddGuidedGroup(size_t leaderId) = 0;

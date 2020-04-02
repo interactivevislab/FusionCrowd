@@ -81,6 +81,21 @@ namespace FusionCrowd
 			return AddAgent(info, ComponentIds::NO_COMPONENT, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
 		}
 
+
+		bool UpdateAgent(AgentParams params) {
+			SetOperationComponent(params.id, params.opCompId);
+			SetTacticComponent(params.id, params.tacticCompId);
+			auto& si = _navSystem->GetSpatialInfo(params.id);
+			si.radius = params.radius;
+			si.maxSpeed = params.maxSpeed;
+			si.maxAccel = params.maxAccel;
+			si.prefSpeed = params.prefSpeed;
+			si.maxAngVel = params.maxAngVel;
+			si.inertiaEnabled = params.inertiaEnabled;
+			si.useNavMeshObstacles = params.useNavMeshObstacles;
+			return true;
+		}
+
 		size_t AddAgent(float x, float y, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
 		{
 			// Use default values
@@ -92,6 +107,29 @@ namespace FusionCrowd
 			info.maxSpeed = info.maxSpeed < info.prefSpeed ? info.prefSpeed : info.maxSpeed;
 
 			return AddAgent(info, opId, tacticId, strategyId);
+		}
+		OperationStatus RemoveGroup(size_t groupId) {
+
+			if (_groups.find(groupId) == _groups.end())
+			{
+				return OperationStatus::InvalidArgument;
+			}
+
+			auto & g = _groups[groupId];
+
+			for (size_t agentId : g->GetAgents())
+			{
+				auto a = _agents.find(agentId);
+				if (a == _agents.end())
+				{
+					continue;
+				}
+
+				a->second.SetGroupId(IGroup::NO_GROUP);
+			}
+
+			_groups.erase(groupId);
+			return OperationStatus::OK;
 		}
 
 		OperationStatus RemoveAgent(size_t agentId) {
@@ -400,29 +438,6 @@ namespace FusionCrowd
 			SetAgentGoal(dummyId, goalPos);
 		}
 
-		void RemoveGroup(size_t groupId)
-		{
-			if(_groups.find(groupId) == _groups.end())
-			{
-				return;
-			}
-
-			auto & g = _groups[groupId];
-
-			for(size_t agentId : g->GetAgents())
-			{
-				auto a = _agents.find(agentId);
-				if(a ==_agents.end())
-				{
-					continue;
-				}
-
-				a->second.SetGroupId(IGroup::NO_GROUP);
-			}
-
-			_groups.erase(groupId);
-		}
-
 		void AddAgentToGroup(size_t agentId, size_t groupId)
 		{
 			auto g = _groups.find(groupId);
@@ -634,6 +649,9 @@ namespace FusionCrowd
 		return pimpl->AddAgent(pos);
 	}
 
+	bool Simulator::UpdateAgent(AgentParams params) {
+		return pimpl->UpdateAgent(params);
+	}
 	size_t Simulator::AddAgent(AgentSpatialInfo props, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
 	{
 		return pimpl->AddAgent(props, opId, tacticId, strategyId);
@@ -642,6 +660,9 @@ namespace FusionCrowd
 	OperationStatus Simulator::RemoveAgent(size_t agentId)
 	{
 		return pimpl->RemoveAgent(agentId);
+	}
+	OperationStatus Simulator::RemoveGroup(size_t groupId) {
+		return pimpl->RemoveGroup(groupId);
 	}
 
 	void Simulator::SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
@@ -688,11 +709,6 @@ namespace FusionCrowd
 	void Simulator::SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos)
 	{
 		pimpl->SetGroupGoal(groupId, goalPos);
-	}
-
-	void Simulator::RemoveGroup(size_t groupId)
-	{
-		pimpl->RemoveGroup(groupId);
 	}
 
 	void Simulator::AddAgentToGroup(size_t agentId, size_t groupId)

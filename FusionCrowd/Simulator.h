@@ -57,9 +57,14 @@ namespace FusionCrowd
 		size_t GetAgentCount() const;
 		const Goal & GetAgentGoal(size_t agentId) const;
 
+		bool UpdateAgent(AgentParams params);
+
 		OperationStatus RemoveAgent(size_t agentId);
 
+		OperationStatus RemoveGroup(size_t groupId);
+
 		size_t AddAgent(DirectX::SimpleMath::Vector2 pos);
+
 		size_t AddAgent(
 			float x, float y,
 			ComponentId opId,
@@ -81,7 +86,6 @@ namespace FusionCrowd
 		size_t AddGuidedGroup(size_t leaderId);
 
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos);
-		void RemoveGroup(size_t groupId);
 
 		void AddAgentToGroup(size_t agentId, size_t groupId);
 		void RemoveAgentFromGroup(size_t agentId, size_t groupId);

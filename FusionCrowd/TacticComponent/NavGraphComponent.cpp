@@ -59,6 +59,10 @@ namespace FusionCrowd
 			{
 				auto grp = _simulator->GetGroup(groupId);
 				auto & dummy = _simulator->GetSpatialInfo(grp->GetDummyId());
+				if (grp == nullptr) {
+					info.prefVelocity.setSpeed(0);
+					continue;
+				}
 
 				grp->SetAgentPrefVelocity(dummy, info, timeStep);
 				continue;

@@ -36,7 +36,7 @@ namespace FusionCrowd
 			void AddAgent(size_t id)
 			{
 				_agents.insert(id);
-				_navSystem->GetSpatialInfo(id).inertiaEnabled = true;
+				_navSystem->GetSpatialInfo(id).inertiaEnabled = false;
 				_navSystem->GetSpatialInfo(id).maxAngVel = 60.0f;
 			}
 

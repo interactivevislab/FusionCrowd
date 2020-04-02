@@ -108,7 +108,7 @@ namespace FusionCrowd
 			NearAgent(AgentSpatialInfo agt, float dist) : agt(agt), distSq(dist) {}
 		};
 
-		const std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const
+		std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const
 		{
 			const AgentSpatialInfo & agent = _agentsInfo.at(agentId);
 
@@ -340,7 +340,7 @@ namespace FusionCrowd
 		return pimpl->GetAgentsSpatialInfos();
 	}
 
-	const std::vector<AgentSpatialInfo> NavSystem::GetNeighbours(size_t agentId) const
+	std::vector<AgentSpatialInfo> NavSystem::GetNeighbours(size_t agentId) const
 	{
 		return pimpl->GetNeighbours(agentId);
 	}
