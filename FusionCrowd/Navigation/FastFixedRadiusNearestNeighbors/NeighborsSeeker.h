@@ -18,6 +18,6 @@ namespace FusionCrowd
 	public:
 		NeighborsSeeker();
 
-		SearchResult FindNeighborsCpuSquare(std::vector<SearchRequest> searchRequests);
+		SearchResult FindNeighborsCpu(std::vector<SearchRequest> searchRequests);
 	};
 }

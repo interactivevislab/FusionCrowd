@@ -29,13 +29,12 @@ namespace FusionCrowd
 		return l.x == r.x && l.y == r.y;
 	}
 
-	NeighborsSeeker::SearchResult NeighborsSeeker::FindNeighborsCpuSquare(std::vector<NeighborsSeeker::SearchRequest> searchRequests)
+	NeighborsSeeker::SearchResult NeighborsSeeker::FindNeighborsCpu(std::vector<NeighborsSeeker::SearchRequest> searchRequests)
 	{
 		NeighborsSeeker::SearchResult result;
 
 		if(searchRequests.size() == 0)
 			return result;
-
 
 		float minX = MathUtil::INFTY, maxX = -MathUtil::INFTY;
 		float minY = MathUtil::INFTY, maxY = -MathUtil::INFTY;
@@ -68,8 +67,8 @@ namespace FusionCrowd
 
 		for(const auto& r : searchRequests)
 		{
-			const int x = (r.pos.x - minX) / cellSizeX;
-			const int y = (r.pos.y - minY) / cellSizeY;
+			const int x = r.pos.x / cellSizeX;
+			const int y = r.pos.y / cellSizeY;
 
 			grid[{x, y}].push_back(r);
 		}
@@ -77,11 +76,11 @@ namespace FusionCrowd
 		for(const auto& r : searchRequests)
 		{
 			const float R = r.neighbourSearchShape->BoundingRadius();
-			int minCellX = (r.pos.x - minX - R) / cellSizeX;
-			int maxCellX = (r.pos.x - minX + R) / cellSizeX + 1;
+			int minCellX = (r.pos.x - R) / cellSizeX;
+			int maxCellX = (r.pos.x + R) / cellSizeX + 1;
 
-			int minCellY = (r.pos.y - minY - R) / cellSizeY;
-			int maxCellY = (r.pos.y - minY + R) / cellSizeY + 1;
+			int minCellY = (r.pos.y - R) / cellSizeY;
+			int maxCellY = (r.pos.y + R) / cellSizeY + 1;
 
 			for(int x = minCellX; x <= maxCellX; x++)
 			{
@@ -99,30 +98,5 @@ namespace FusionCrowd
 		}
 
 		return result;
-
-		/*
-		for(size_t i = 0; i < searchRequests.size() - 1; i++)
-		{
-			for(size_t j = i + 1; j < searchRequests.size(); j++)
-			{
-				if(i == j) continue;
-
-				auto & req1 = searchRequests[i];
-				auto & req2 = searchRequests[j];
-
-				if(req1.neighbourSearchShape->containsPoint(req2.pos - req1.pos))
-				{
-					result[req1.id].push_back(req2.id);
-				}
-
-				if(req2.neighbourSearchShape->containsPoint(req1.pos - req2.pos))
-				{
-					result[req2.id].push_back(req1.id);
-				}
-			}
-		}
-
-		return result;
-		*/
 	}
 }

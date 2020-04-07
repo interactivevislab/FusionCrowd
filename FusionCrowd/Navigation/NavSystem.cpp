@@ -266,12 +266,12 @@ namespace FusionCrowd
 				}
 			}
 
-			for(const auto& p : _neighborsSeeker.FindNeighborsCpuSquare(agentRequests))
+			for(const auto& p : _neighborsSeeker.FindNeighborsCpu(agentRequests))
 			{
 				_agentsNeighbours[p.first] = p.second;
 			}
 
-			for(const auto& p : _neighborsSeeker.FindNeighborsCpuSquare(groupRequests))
+			for(const auto& p : _neighborsSeeker.FindNeighborsCpu(groupRequests))
 			{
 				_agentsNeighbours[p.first] = p.second;
 			}
