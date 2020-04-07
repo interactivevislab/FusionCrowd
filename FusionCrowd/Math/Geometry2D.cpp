@@ -9,48 +9,32 @@ namespace FusionCrowd
 {
 	namespace Math
 	{
-		/////////////////////////////////////////////////////////////////////
-		//                   Implementation of PointShape
-		/////////////////////////////////////////////////////////////////////
-
 		PointShape::PointShape(const PointShape & shape)
 		{
 			_position = shape._position;
 		}
 
-		/////////////////////////////////////////////////////////////////////
-
 		PointShape::PointShape(const PointShape & shape, const Vector2 & offset) {
 			_position = shape._position + offset;
 		}
 
-		/////////////////////////////////////////////////////////////////////
-
 		PointShape PointShape::operator+(const Vector2 & pt) {
 			return PointShape(*this, pt);
 		}
-
-		/////////////////////////////////////////////////////////////////////
 
 		bool PointShape::containsPoint(const Vector2 & pt) const {
 			float distSq = (pt - _position).LengthSquared();
 			return distSq < 1e-6f;
 		}
 
-		/////////////////////////////////////////////////////////////////////
-
 		bool PointShape::containsPoint(const Vector2 & pt, const Vector2 & pos, float yaw) const {
 			float distSq = (pt - pos).LengthSquared();
 			return distSq < 1e-6f;
 		}
 
-		/////////////////////////////////////////////////////////////////////
-
 		float PointShape::squaredDistance(const Vector2 & pt) const {
 			return (pt - _position).LengthSquared();
 		}
-
-		/////////////////////////////////////////////////////////////////////
 
 		void PointShape::setDirections(const Vector2 & q, float r, Agents::PrefVelocity & directions) const
 		{
@@ -68,17 +52,20 @@ namespace FusionCrowd
 			directions.setTarget(_position);
 		}
 
-		/////////////////////////////////////////////////////////////////////
-
 		Vector2 PointShape::getTargetPoint(const Vector2 & q, float r) const {
 			return _position;
 		}
 
-		/////////////////////////////////////////////////////////////////////
-
 		Vector2 PointShape::getCentroid() const {
 			return _position;
 		}
+
+		float PointShape::BoundingRadius() const
+		{
+			return 1e-5;
+		}
+
+		/////////////////////////////////////////////////////////////////////
 
 		DiskShape::DiskShape(DirectX::SimpleMath::Vector2 center, float R) : _center(center), _R(R) {}
 
@@ -124,6 +111,10 @@ namespace FusionCrowd
 			return _center;
 		}
 
+		float DiskShape::BoundingRadius() const
+		{
+			return _R;
+		}
 
 		/////////////////////////////////////////////////////////////////////
 		//                   Implementation of ConeShape
@@ -155,6 +146,11 @@ namespace FusionCrowd
 
 		Vector2 ConeShape::getCentroid() const {
 			throw std::runtime_error("Not implemented");
+		}
+
+		float ConeShape::BoundingRadius() const
+		{
+			return _range;
 		}
 	}
 }

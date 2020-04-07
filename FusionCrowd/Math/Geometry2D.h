@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Export/Config.h"
 #include "Math/Util.h"
 
 namespace FusionCrowd
@@ -12,7 +11,7 @@ namespace FusionCrowd
 
 	namespace Math
 	{
-		class FUSION_CROWD_API Geometry2D
+		class Geometry2D
 		{
 		public:
 			Geometry2D() {}
@@ -23,9 +22,11 @@ namespace FusionCrowd
 			virtual void setDirections(const DirectX::SimpleMath::Vector2 & q, float r, Agents::PrefVelocity & directions) const = 0;
 			virtual DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const = 0;
 			virtual DirectX::SimpleMath::Vector2 getCentroid() const = 0;
+
+			virtual float BoundingRadius() const = 0;
 		};
 
-		class FUSION_CROWD_API PointShape : public Geometry2D
+		class PointShape : public Geometry2D
 		{
 		public:
 			PointShape() : _position(0.f, 0.f) {}
@@ -42,11 +43,13 @@ namespace FusionCrowd
 				Agents::PrefVelocity & directions) const;
 			virtual DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const;
 			virtual DirectX::SimpleMath::Vector2 getCentroid() const;
+
+			float BoundingRadius() const;
 		protected:
 			DirectX::SimpleMath::Vector2 _position;
 		};
 
-		class FUSION_CROWD_API DiskShape: public Geometry2D
+		class DiskShape: public Geometry2D
 		{
 		public:
 			DiskShape(DirectX::SimpleMath::Vector2 center, float size);
@@ -58,12 +61,13 @@ namespace FusionCrowd
 			DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2& q, float r) const override;
 			DirectX::SimpleMath::Vector2 getCentroid() const override;
 
+			float BoundingRadius() const;
 		private:
-			DirectX::SimpleMath::Vector2 _center;
-			float _R;
+			const DirectX::SimpleMath::Vector2 _center;
+			const float _R;
 		};
 
-		class FUSION_CROWD_API ConeShape : public Geometry2D
+		class ConeShape : public Geometry2D
 		{
 		public:
 			ConeShape(DirectX::SimpleMath::Vector2 point, float range, float angle_rad) : _point(point), _range(range), _angle(angle_rad){}
@@ -74,6 +78,8 @@ namespace FusionCrowd
 			virtual void setDirections(const DirectX::SimpleMath::Vector2 & q, float r, Agents::PrefVelocity & directions) const override;
 			virtual DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const override;
 			virtual DirectX::SimpleMath::Vector2 getCentroid() const override;
+
+			float BoundingRadius() const;
 		private:
 			float _range;
 			float _angle;

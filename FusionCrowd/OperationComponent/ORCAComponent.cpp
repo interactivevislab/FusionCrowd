@@ -17,7 +17,7 @@ namespace ORCA
 	{}
 
 	ORCAComponent::ORCAComponent(std::shared_ptr<NavSystem> navSystem, float timeHorizon, float timeHorizonObst)
-		: _navSystem(navSystem), _timeHorizon(timeHorizon), _timeHorizonObst(timeHorizonObst), _pool(11) //std::thread::hardware_concurrency() - 1)
+		: _navSystem(navSystem), _timeHorizon(timeHorizon), _timeHorizonObst(timeHorizonObst), _pool(1) //std::thread::hardware_concurrency() - 1)
 	{}
 
 	void ORCAComponent::AddAgent(size_t id)
