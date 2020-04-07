@@ -6,6 +6,9 @@
 #include "OperationComponent/IOperationComponent.h"
 #include "Export/ComponentId.h"
 
+#include "Navigation/NeighborInfo.h"
+#include "Navigation/AgentSpatialInfo.h"
+
 #include <map>
 
 namespace FusionCrowd
@@ -41,7 +44,7 @@ namespace FusionCrowd
 
 		private:
 			void ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep);
-			DirectX::SimpleMath::Vector2 AgentForce(AgentSpatialInfo* agent, AgentSpatialInfo * other) const;
+			DirectX::SimpleMath::Vector2 AgentForce(AgentSpatialInfo* agent, NeighborInfo * other) const;
 			DirectX::SimpleMath::Vector2 ObstacleForce(AgentSpatialInfo* agent, Obstacle * obst) const;
 			DirectX::SimpleMath::Vector2 DrivingForce(AgentSpatialInfo* agent);
 

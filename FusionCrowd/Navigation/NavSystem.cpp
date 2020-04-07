@@ -81,7 +81,7 @@ namespace FusionCrowd
 				_numGroups++;
 
 			_agentsInfo[spatialInfo.id] = spatialInfo;
-			_agentsNeighbours[spatialInfo.id] = std::vector<size_t>();
+			_agentsNeighbours[spatialInfo.id] = std::vector<NeighborInfo>();
 		}
 
 		void RemoveAgent(unsigned int id) {
@@ -101,27 +101,14 @@ namespace FusionCrowd
 			return _agentsInfo;
 		}
 
-		struct NearAgent
+		std::vector<NeighborInfo> GetNeighbours(size_t agentId) const
 		{
-			AgentSpatialInfo agt;
-			float distSq;
-			NearAgent(AgentSpatialInfo agt, float dist) : agt(agt), distSq(dist) {}
-		};
-
-		std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const
-		{
-			const AgentSpatialInfo & agent = _agentsInfo.at(agentId);
-
 			auto cache = _agentsNeighbours.find(agentId);
 
 			if(cache == _agentsNeighbours.end())
-				return std::vector<AgentSpatialInfo>();
+				return std::vector<NeighborInfo>();
 
-			std::vector<AgentSpatialInfo> result;
-			for(size_t neighbourID : cache->second)
-				result.push_back(_agentsInfo.at(neighbourID));
-
-			return result;
+			return cache->second;
 		}
 
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId)
@@ -296,7 +283,7 @@ namespace FusionCrowd
 		}
 
 	private:
-		std::unordered_map<size_t, std::vector<size_t>> _agentsNeighbours;
+		std::unordered_map<size_t, std::vector<NeighborInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
 		std::shared_ptr<NavMesh> _navMesh;
 		std::shared_ptr<NavGraph> _navGraph;
@@ -340,7 +327,7 @@ namespace FusionCrowd
 		return pimpl->GetAgentsSpatialInfos();
 	}
 
-	std::vector<AgentSpatialInfo> NavSystem::GetNeighbours(size_t agentId) const
+	std::vector<NeighborInfo> NavSystem::GetNeighbours(size_t agentId) const
 	{
 		return pimpl->GetNeighbours(agentId);
 	}

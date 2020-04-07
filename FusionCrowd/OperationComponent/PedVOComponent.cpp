@@ -184,7 +184,8 @@ namespace FusionCrowd
 				//float rightOfWay = fabs(agentInfo.priority - other->_priority);
 				//if (rightOfWay > 1.f)
 				//	rightOfWay = 1.f;
-				float rightOfWay = .9f;
+				//
+				float rightOfWay = rand();
 
 				// Right of way-dependent calculations
 				Vector2 myVel = agentInfo.vel;
@@ -195,14 +196,14 @@ namespace FusionCrowd
 				float const MAX_DEV_SQD = MAX_DEV * MAX_DEV;
 
 				// TODO: we don't have priorities yet, so lets flip a coin.
-				bool myAdvantage = rand() > 0.5f;
+				bool myAdvantage = rightOfWay > 0.5f;
 				//if (agent->_priority < other->_priority) {
 				if (!myAdvantage) {
 					// his advantage
 					weight += 0.5f * rightOfWay;
-					hisVel = other.prefVelocity.getPreferredVel() * rightOfWay + (1.f - rightOfWay) * other.vel;
+					hisVel = other.prefVel * rightOfWay + (1.f - rightOfWay) * other.vel;
 					if ((hisVel - other.vel).LengthSquared() > MAX_DEV_SQD) {
-						hisVel = other.prefVelocity.getPreferredVel() - other.vel;
+						hisVel = other.prefVel - other.vel;
 						hisVel.Normalize();
 
 						hisVel = hisVel * MAX_DEV + other.vel;

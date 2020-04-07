@@ -4,7 +4,6 @@
 #include "Math/geomQuery.h"
 #include "Math/Util.h"
 
-#include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/Obstacle.h"
 
 #include <algorithm>
@@ -45,10 +44,10 @@ namespace FusionCrowd
 		void HelbingComponent::ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep)
 		{
 			Vector2 force(DrivingForce(&agent));
-			std::vector<AgentSpatialInfo> nearAgents = _navSystem->GetNeighbours(agent.id);
+			std::vector<NeighborInfo> nearAgents(_navSystem->GetNeighbours(agent.id));
 			for (size_t i = 0; i < nearAgents.size(); ++i)
 			{
-				AgentSpatialInfo other = nearAgents[i];
+				NeighborInfo other = nearAgents.at(i);
 
 				force += AgentForce(&agent, &other);
 			}
@@ -60,7 +59,7 @@ namespace FusionCrowd
 			agent.velNew = agent.vel + acc * timeStep;
 		}
 
-		Vector2 HelbingComponent::AgentForce(AgentSpatialInfo* agent, AgentSpatialInfo * other) const
+		Vector2 HelbingComponent::AgentForce(AgentSpatialInfo* agent, NeighborInfo * other) const
 		{
 			/* compute right of way */
 			//float rightOfWay = fabs(agent->_priority - other->_priority);

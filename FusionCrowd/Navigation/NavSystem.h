@@ -11,12 +11,13 @@
 #include "Util/spimpl.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 #include "Navigation/NavGraph/NavGraph.h"
+#include "Navigation/NeighborInfo.h"
+#include "Navigation/AgentSpatialInfo.h"
 
 namespace FusionCrowd
 {
 	class NavMeshComponent;
 	class Obstacle;
-	struct AgentSpatialInfo;
 
 	class NavSystem : public INavSystemPublic
 	{
@@ -44,7 +45,7 @@ namespace FusionCrowd
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 		std::map<size_t, AgentSpatialInfo> GetAgentsSpatialInfos();
 
-		std::vector<AgentSpatialInfo> GetNeighbours(size_t agentId) const;
+		std::vector<NeighborInfo> GetNeighbours(size_t agentId) const;
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId);
 
 		void Update(float timeStep);

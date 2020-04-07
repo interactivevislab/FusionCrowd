@@ -45,7 +45,7 @@ namespace ORCA
 		std::vector<Task> tasks;
 		for(size_t agentId : _agents)
 		{
-			AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agentId);
+			auto & info = _navSystem->GetSpatialInfo(agentId);
 
 			EnvironmentArgs args {
 				_timeHorizon,

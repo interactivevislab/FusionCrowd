@@ -1,6 +1,6 @@
 #include "GCFComponent.h"
+
 #include "Math/geomQuery.h"
-#include "Navigation/AgentSpatialInfo.h"
 
 #include <algorithm>
 
@@ -91,7 +91,7 @@ namespace FusionCrowd
 		{
 			Vector2 force(DriveForce(agentInfo));  // driving force
 
-			for (const AgentSpatialInfo & other : _navSystem->GetNeighbours(agentInfo.id))
+			for (const auto & other : _navSystem->GetNeighbours(agentInfo.id))
 			{
 				float effDist, K_ij, response, velScale, magnitude;
 				Vector2 forceDir;
@@ -135,7 +135,7 @@ namespace FusionCrowd
 		}
 
 		int GCFComponent::GetRepulsionParameters(
-			const AgentSpatialInfo & agent, const AgentSpatialInfo & other,
+			const AgentSpatialInfo & agent, const NeighborInfo & other,
 			float& effDist, DirectX::SimpleMath::Vector2& forceDir,
 			float& K_ij, float& response, float& velScale, float& magnitude) const
 		{

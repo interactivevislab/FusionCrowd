@@ -79,7 +79,7 @@ namespace FusionCrowd
 			struct SpatialInfoWithCollisionTime
 			{
 				float tc;
-				AgentSpatialInfo info;
+				NeighborInfo info;
 			};
 
 			void ComputeNewVelocity(AgentSpatialInfo & agent, float timeStep)
@@ -126,7 +126,7 @@ namespace FusionCrowd
 				float totalTime = 1.f;
 
 				auto const & neighbours = _navSystem->GetNeighbours(agent.id);
-				for (const AgentSpatialInfo & other : neighbours)
+				for (const auto & other : neighbours)
 				{
 					float circRadius = _agents[agent.id]._perSpace + other.radius;
 					Vector2 relVel = desVel - other.vel;
@@ -170,7 +170,7 @@ namespace FusionCrowd
 
 				int count = 0;
 				for (auto itr = collidingSet.begin(); itr != collidingSet.end(); ++itr) {
-					AgentSpatialInfo const & other = itr->info;
+					const auto& other = itr->info;
 					float tc = itr->tc;
 					// future positions
 					Vector2 myPos = agent.pos + desVel * tc;

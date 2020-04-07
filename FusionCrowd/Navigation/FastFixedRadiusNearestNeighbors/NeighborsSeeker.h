@@ -2,6 +2,7 @@
 
 #include "GpuCalculator.h"
 #include "Navigation/AgentSpatialInfo.h"
+#include "Navigation/NeighborInfo.h"
 #include "Math/Geometry2D.h"
 
 #include <vector>
@@ -13,7 +14,7 @@ namespace FusionCrowd
 	{
 	public:
 		using SearchRequest = AgentSpatialInfo;
-		using SearchResult = std::unordered_map<size_t, std::vector<size_t>>;
+		using SearchResult = std::unordered_map<size_t, std::vector<NeighborInfo>>;
 
 	public:
 		NeighborsSeeker();

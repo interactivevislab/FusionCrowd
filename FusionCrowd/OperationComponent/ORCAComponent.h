@@ -10,6 +10,7 @@
 #include "Math/Util.h"
 #include "Navigation/Obstacle.h"
 #include "Navigation/AgentSpatialInfo.h"
+#include "Navigation/NeighborInfo.h"
 #include "Navigation/NavSystem.h"
 
 #include "OperationComponent/IOperationComponent.h"
@@ -32,7 +33,7 @@ namespace FusionCrowd
 
 				const AgentSpatialInfo& info;
 				std::vector<Obstacle> obstacles;
-				std::vector<AgentSpatialInfo> neighbors;
+				std::vector<NeighborInfo> neighbors;
 			};
 
 		public:

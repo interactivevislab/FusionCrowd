@@ -58,6 +58,7 @@
     <ClCompile Include="Group\IGroup.cpp" />
     <ClCompile Include="Group\GridGroup.cpp" />
     <ClCompile Include="Group\GuidedGroup.cpp" />
+    <ClCompile Include="Navigation\NeighborInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Group\IGroup.h" />
     <ClInclude Include="Group\GuidedGroup.h" />
     <ClInclude Include="Util\ctpl_stl.h" />
+    <ClInclude Include="Navigation\NeighborInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

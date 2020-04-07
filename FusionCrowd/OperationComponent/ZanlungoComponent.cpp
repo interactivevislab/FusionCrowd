@@ -69,11 +69,11 @@ namespace FusionCrowd
 					const float SPEED = agent.vel.Length();
 					const float B = _forceDistance;
 
-					std::vector<AgentSpatialInfo> nearAgents = _navSystem->GetNeighbours(agent.id);
+					std::vector<NeighborInfo> nearAgents(_navSystem->GetNeighbours(agent.id));
 					// const float MAG = Simulator::AGENT_SCALE * SPEED / T_i;
 					for (size_t j = 0; j < nearAgents.size(); ++j) {
 						// 2. Use T_i to compute the direction
-						AgentSpatialInfo other = nearAgents[j];
+						NeighborInfo other = nearAgents[j];
 
 						force += AgentForce(&agent, &other, T_i);
 					}
@@ -106,9 +106,9 @@ namespace FusionCrowd
 #ifdef COLLIDE_PRIORITY
 				float t_collision = T_i;
 #endif
-				std::vector<AgentSpatialInfo> nearAgents = _navSystem->GetNeighbours(agent->id);
+				std::vector<NeighborInfo> nearAgents = _navSystem->GetNeighbours(agent->id);
 				for (size_t j = 0; j < nearAgents.size(); ++j) {
-					AgentSpatialInfo other = nearAgents[j];
+					NeighborInfo other = nearAgents[j];
 
 					// Right of way-dependent calculations
 					Vector2 myVel = agent->vel;
@@ -222,7 +222,7 @@ namespace FusionCrowd
 			//	}
 			//}
 
-			Vector2 AgentForce(AgentSpatialInfo* agent, AgentSpatialInfo * other, float T_i) const
+			Vector2 AgentForce(AgentSpatialInfo* agent, NeighborInfo * other, float T_i) const
 			{
 				float D = _forceDistance;
 				// Right of way-dependent calculations

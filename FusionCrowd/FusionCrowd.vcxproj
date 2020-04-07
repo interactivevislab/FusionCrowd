@@ -23,6 +23,7 @@
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Export\IExternalControlInterface.h" />
     <ClInclude Include="Group\GuidedGroup.h" />
+    <ClInclude Include="Navigation\NeighborInfo.h" />
     <ClInclude Include="TacticComponent\ExternalControl.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
     <ClInclude Include="Export\ComponentId.h" />
@@ -105,6 +106,7 @@
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Group\GuidedGroup.cpp" />
     <ClCompile Include="Group\IGroup.cpp" />
+    <ClCompile Include="Navigation\NeighborInfo.cpp" />
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="Export\Export.cpp" />

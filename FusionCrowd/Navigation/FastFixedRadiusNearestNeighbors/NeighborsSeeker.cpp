@@ -56,7 +56,7 @@ namespace FusionCrowd
 
 		// Total cells             = n^(1/4) * n^(1/4) = n*(1/2)
 		// Avg agents in each cell = n / totalCells    = n^(1/2)
-		// Search complexity using cells = O(n^(1/2) * n^(1/2) * 8) = O(n)
+		// Search complexity using cells = O(n^(1/2) * n^(1/2) * searchR^2) = O(n)
 		// Overall neighbours search complexity = totalCells * searchCmplxInCell = O(n^(1/2) * n) = O(n^3/2)
 		const size_t cellsAlongDimension = sqrt(sqrt(searchRequests.size())) + 1;
 
@@ -90,7 +90,7 @@ namespace FusionCrowd
 					{
 						if(r.neighbourSearchShape->containsPoint(n.pos - r.pos))
 						{
-							result[r.id].push_back(n.id);
+							result[r.id].push_back(NeighborInfo(n));
 						}
 					}
 				}
