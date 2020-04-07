@@ -140,6 +140,7 @@
     <ClInclude Include="Group\GridGroup.h" />
     <ClInclude Include="Group\IGroup.h" />
     <ClInclude Include="Group\GuidedGroup.h" />
+    <ClInclude Include="Util\ctpl_stl.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

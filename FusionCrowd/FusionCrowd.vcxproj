@@ -54,6 +54,7 @@
     <ClInclude Include="TacticComponent\Path\PathRandomization.h" />
     <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
     <ClInclude Include="TacticComponent\NavGraphComponent.h" />
+    <ClInclude Include="Util\ctpl_stl.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
     <ClInclude Include="Export\FCArray.h" />
     <ClInclude Include="Math\Util.h" />
