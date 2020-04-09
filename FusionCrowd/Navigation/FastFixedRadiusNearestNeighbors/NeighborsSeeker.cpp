@@ -6,7 +6,7 @@
 
 namespace FusionCrowd
 {
-	NeighborsSeeker::NeighborsSeeker()
+	NeighborsSeeker::NeighborsSeeker() : _pool(std::thread::hardware_concurrency() - 1)
 	{
 	}
 
@@ -28,6 +28,12 @@ namespace FusionCrowd
 	{
 		return l.x == r.x && l.y == r.y;
 	}
+
+	struct Task
+	{
+		size_t id;
+		std::future<std::vector<NeighborInfo>> result;
+	};
 
 	NeighborsSeeker::SearchResult NeighborsSeeker::FindNeighborsCpu(std::vector<NeighborsSeeker::SearchRequest> searchRequests)
 	{
@@ -73,28 +79,47 @@ namespace FusionCrowd
 			grid[{x, y}].push_back(r);
 		}
 
+		std::vector<Task> tasks;
+
 		for(const auto& r : searchRequests)
 		{
-			const float R = r.neighbourSearchShape->BoundingRadius();
-			int minCellX = (r.pos.x - R) / cellSizeX;
-			int maxCellX = (r.pos.x + R) / cellSizeX + 1;
-
-			int minCellY = (r.pos.y - R) / cellSizeY;
-			int maxCellY = (r.pos.y + R) / cellSizeY + 1;
-
-			for(int x = minCellX; x <= maxCellX; x++)
+			auto lambda = [&grid, r=r, cellSizeX, cellSizeY] (int threadId)
 			{
-				for(int y = minCellY; y <= maxCellY; y++)
+				std::vector<NeighborInfo> result;
+				const float R = r.neighbourSearchShape->BoundingRadius();
+				int minCellX = (r.pos.x - R) / cellSizeX;
+				int maxCellX = (r.pos.x + R) / cellSizeX + 1;
+
+				int minCellY = (r.pos.y - R) / cellSizeY;
+				int maxCellY = (r.pos.y + R) / cellSizeY + 1;
+
+				for(int x = minCellX; x <= maxCellX; x++)
 				{
-					for(auto & n : grid[{x, y}])
+					for(int y = minCellY; y <= maxCellY; y++)
 					{
-						if(r.neighbourSearchShape->containsPoint(n.pos - r.pos))
+						const auto& cell = grid.find({x, y});
+						if(cell == grid.end())
+							continue;
+
+						for(auto & n : cell->second)
 						{
-							result[r.id].push_back(NeighborInfo(n));
+							if(r.neighbourSearchShape->containsPoint(n.pos - r.pos))
+							{
+								result.push_back(NeighborInfo(n));
+							}
 						}
 					}
 				}
-			}
+
+				return result;
+			};
+
+			tasks.push_back({r.id, _pool.push(lambda)});
+		}
+
+		for(auto & t : tasks)
+		{
+			result[t.id] = t.result.get();
 		}
 
 		return result;

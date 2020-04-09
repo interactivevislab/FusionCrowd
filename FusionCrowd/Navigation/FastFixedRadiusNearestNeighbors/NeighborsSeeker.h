@@ -5,6 +5,8 @@
 #include "Navigation/NeighborInfo.h"
 #include "Math/Geometry2D.h"
 
+#include "Util/ctpl_stl.h"
+
 #include <vector>
 #include <unordered_map>
 
@@ -20,5 +22,8 @@ namespace FusionCrowd
 		NeighborsSeeker();
 
 		SearchResult FindNeighborsCpu(std::vector<SearchRequest> searchRequests);
+
+	private:
+		ctpl::thread_pool _pool;
 	};
 }
