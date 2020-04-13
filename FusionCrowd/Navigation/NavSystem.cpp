@@ -170,10 +170,6 @@ namespace FusionCrowd
 				return;
 			}
 
-			agent.orient = agent.vel;
-			agent.orient.Normalize();
-			return;
-
 			if(!agent.inertiaEnabled)
 			{
 				agent.orient = agent.vel;

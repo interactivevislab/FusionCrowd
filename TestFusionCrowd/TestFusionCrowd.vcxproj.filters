@@ -54,10 +54,13 @@
     <ClInclude Include="TestCases\NavGraphTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestCases\GroupMovementTestCase.h">
+    <ClInclude Include="TestCases\ExchangeCircleCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestCases\ExchangeCircleCase.h">
+    <ClInclude Include="TestCases\Groups\GroupMovementTestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases\Groups\GroupPerformanceTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,10 +98,13 @@
     <ClCompile Include="TestCases\NavGraphTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestCases\GroupMovementTestCase.cpp">
+    <ClCompile Include="TestCases\ExchangeCircleCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestCases\ExchangeCircleCase.cpp">
+    <ClCompile Include="TestCases\Groups\GroupMovementTestCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases\Groups\GroupPerformanceTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

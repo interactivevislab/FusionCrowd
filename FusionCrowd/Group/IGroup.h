@@ -25,7 +25,7 @@ namespace FusionCrowd
 		virtual DirectX::SimpleMath::Vector2 GetRelativePos(size_t agentId) const = 0;
 		virtual float GetRadius() const = 0;
 
-		void SetAgentPrefVelocity(AgentSpatialInfo & dummyInfo, AgentSpatialInfo & agentInfo, float timeStep) const;
+		void SetAgentPrefVelocity(const AgentSpatialInfo & dummyInfo, AgentSpatialInfo & agentInfo, float timeStep) const;
 
 		size_t GetDummyId() const;
 		size_t GetId() const;

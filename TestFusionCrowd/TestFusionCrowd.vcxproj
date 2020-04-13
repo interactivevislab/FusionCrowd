@@ -163,7 +163,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="TestCases\ExchangeCircleCase.h" />
-    <ClInclude Include="TestCases\GroupMovementTestCase.h" />
+    <ClInclude Include="TestCases\Groups\GroupMovementTestCase.h" />
+    <ClInclude Include="TestCases\Groups\GroupPerformanceTestCase.h" />
     <ClInclude Include="TestCases\NavGraphTestCase.h" />
     <ClInclude Include="TestCases\StenkaNaStenkuTestCase.h" />
     <ClInclude Include="TestCases\FsmTestCase.h" />
@@ -180,7 +181,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCases\ExchangeCircleCase.cpp" />
-    <ClCompile Include="TestCases\GroupMovementTestCase.cpp" />
+    <ClCompile Include="TestCases\Groups\GroupMovementTestCase.cpp" />
+    <ClCompile Include="TestCases\Groups\GroupPerformanceTestCase.cpp" />
     <ClCompile Include="TestCases\NavGraphTestCase.cpp" />
     <ClCompile Include="TestCases\StenkaNaStenkuTestCase.cpp" />
     <ClCompile Include="TestCases\FsmTestCase.cpp" />
