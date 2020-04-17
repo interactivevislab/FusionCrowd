@@ -137,11 +137,11 @@ class Player:
 
         self.canvas.coords(item, x - rx, y - ry, x + rx, y + ry)
 
-    def line(self, p1, p2, color="white"):
+    def line(self, p1, p2, color="white", **kwargs):
         sp1 = p1[0] * self.scale, p1[1] * self.scale
         sp2 = p2[0] * self.scale, p2[1] * self.scale
 
-        result = self.canvas.create_line(*sp1, *sp2, fill=color)
+        result = self.canvas.create_line(*sp1, *sp2, fill=color, **kwargs)
 
         return result
 
