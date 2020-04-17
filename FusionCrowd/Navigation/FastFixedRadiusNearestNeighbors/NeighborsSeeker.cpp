@@ -81,10 +81,11 @@ namespace FusionCrowd
 
 		std::vector<Task> tasks;
 
-		for(const auto& r : searchRequests)
+		for(size_t i = 0; i < searchRequests.size(); i++)
 		{
-			auto lambda = [&grid, r=r, cellSizeX, cellSizeY] (int threadId)
+			auto lambda = [&grid, &reqs=searchRequests, reqIdx=i, cellSizeX, cellSizeY] (int threadId)
 			{
+				const SearchRequest& r = reqs.at(reqIdx);
 				std::vector<NeighborInfo> result;
 				const float R = r.neighbourSearchShape->BoundingRadius();
 				int minCellX = (r.pos.x - R) / cellSizeX;
@@ -114,7 +115,7 @@ namespace FusionCrowd
 				return result;
 			};
 
-			tasks.push_back({r.id, _pool.push(lambda)});
+			tasks.push_back({searchRequests[i].id, _pool.push(lambda)});
 		}
 
 		for(auto & t : tasks)

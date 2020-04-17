@@ -70,7 +70,7 @@ namespace FusionCrowd
 			info.id = agentId;
 			info.pos = position;
 
-			AddAgent(info);
+			AddAgent(std::move(info));
 		}
 
 		void AddAgent(AgentSpatialInfo spatialInfo)
@@ -80,7 +80,7 @@ namespace FusionCrowd
 			else
 				_numGroups++;
 
-			_agentsInfo[spatialInfo.id] = spatialInfo;
+			_agentsInfo[spatialInfo.id] = std::move(spatialInfo);
 			_agentsNeighbours[spatialInfo.id] = std::vector<NeighborInfo>();
 		}
 
@@ -294,7 +294,7 @@ namespace FusionCrowd
 
 	void NavSystem::AddAgent(AgentSpatialInfo spatialInfo)
 	{
-		pimpl->AddAgent(spatialInfo);
+		pimpl->AddAgent(std::move(spatialInfo));
 	}
 
 	void NavSystem::RemoveAgent(unsigned int id)

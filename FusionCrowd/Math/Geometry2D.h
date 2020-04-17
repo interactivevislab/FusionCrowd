@@ -15,7 +15,6 @@ namespace FusionCrowd
 		{
 		public:
 			Geometry2D() {}
-			virtual ~Geometry2D() {}
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt) const = 0;
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos, float yaw) const = 0;
 			virtual float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const = 0;
@@ -24,6 +23,7 @@ namespace FusionCrowd
 			virtual DirectX::SimpleMath::Vector2 getCentroid() const = 0;
 
 			virtual float BoundingRadius() const = 0;
+			virtual Geometry2D* Clone() const = 0;
 		};
 
 		class PointShape : public Geometry2D
@@ -44,7 +44,9 @@ namespace FusionCrowd
 			virtual DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const;
 			virtual DirectX::SimpleMath::Vector2 getCentroid() const;
 
-			float BoundingRadius() const;
+			float BoundingRadius() const override;
+
+			PointShape* Clone() const override;
 		protected:
 			DirectX::SimpleMath::Vector2 _position;
 		};
@@ -61,7 +63,9 @@ namespace FusionCrowd
 			DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2& q, float r) const override;
 			DirectX::SimpleMath::Vector2 getCentroid() const override;
 
-			float BoundingRadius() const;
+			float BoundingRadius() const override;
+
+			DiskShape* Clone() const override;
 		private:
 			const DirectX::SimpleMath::Vector2 _center;
 			const float _R;
@@ -79,7 +83,9 @@ namespace FusionCrowd
 			virtual DirectX::SimpleMath::Vector2 getTargetPoint(const DirectX::SimpleMath::Vector2 & q, float r) const override;
 			virtual DirectX::SimpleMath::Vector2 getCentroid() const override;
 
-			float BoundingRadius() const;
+			float BoundingRadius() const override;
+
+			ConeShape* Clone() const override;
 		private:
 			float _range;
 			float _angle;

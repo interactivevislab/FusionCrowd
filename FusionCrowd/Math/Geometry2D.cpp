@@ -65,6 +65,11 @@ namespace FusionCrowd
 			return 1e-5;
 		}
 
+		PointShape* PointShape::Clone() const
+		{
+			return new PointShape(*this);
+		}
+
 		/////////////////////////////////////////////////////////////////////
 
 		DiskShape::DiskShape(DirectX::SimpleMath::Vector2 center, float R) : _center(center), _R(R) {}
@@ -116,6 +121,11 @@ namespace FusionCrowd
 			return _R;
 		}
 
+		DiskShape* DiskShape::Clone() const
+		{
+			return new DiskShape(*this);
+		}
+
 		/////////////////////////////////////////////////////////////////////
 		//                   Implementation of ConeShape
 		/////////////////////////////////////////////////////////////////////
@@ -151,6 +161,11 @@ namespace FusionCrowd
 		float ConeShape::BoundingRadius() const
 		{
 			return _range;
+		}
+
+		ConeShape* ConeShape::Clone() const
+		{
+			return new ConeShape(*this);
 		}
 	}
 }

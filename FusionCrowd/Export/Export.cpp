@@ -93,7 +93,7 @@ namespace FusionCrowd
 			//info.maxSpeed = preferedVelocity;
 			info.prefSpeed = preferedVelocity;
 
-			return _sim->AddAgent(info, opId, tacticId, strategyId);
+			return _sim->AddAgent(std::move(info), opId, tacticId, strategyId);
 		}
 
 

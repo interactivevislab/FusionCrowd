@@ -78,7 +78,7 @@ namespace FusionCrowd
 			AgentSpatialInfo info;
 			info.pos = pos;
 
-			return AddAgent(info, ComponentIds::NO_COMPONENT, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+			return AddAgent(std::move(info), ComponentIds::NO_COMPONENT, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
 		}
 
 
@@ -106,7 +106,7 @@ namespace FusionCrowd
 			info.prefSpeed *= dist(_rnd_seed);
 			info.maxSpeed = info.maxSpeed < info.prefSpeed ? info.prefSpeed : info.maxSpeed;
 
-			return AddAgent(info, opId, tacticId, strategyId);
+			return AddAgent(std::move(info), opId, tacticId, strategyId);
 		}
 		OperationStatus RemoveGroup(size_t groupId) {
 
@@ -160,7 +160,7 @@ namespace FusionCrowd
 			ComponentId strategyId
 		)
 		{
-			AgentSpatialInfo info = props;
+			AgentSpatialInfo info = std::move(props);
 			auto agentId = GetNextId();
 			info.id = agentId;
 
@@ -169,11 +169,11 @@ namespace FusionCrowd
 
 			info.useNavMeshObstacles = (tacticId == ComponentIds::NAVMESH_ID);
 			if (tacticId == ComponentIds::NAVGRAPH_ID) {
-				info.neighbourSearchShape = new Math::ConeShape(Vector2(0,0), 10.0f, MathUtil::PI/6.0f);
+				info.neighbourSearchShape = std::make_unique<Math::ConeShape>(Vector2(0,0), 10.0f, MathUtil::PI/6.0f);
 			}
 
 			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.pos);
-			_navSystem->AddAgent(info);
+			_navSystem->AddAgent(std::move(info));
 
 			Agent a(agentId, _goalFactory.CreatePointGoal(goal_pos));
 			_agents.insert({ agentId, a});
@@ -395,9 +395,9 @@ namespace FusionCrowd
 			dummyInfo.type = AgentSpatialInfo::GROUP;
 			dummyInfo.maxAngVel = 50.5f;
 			dummyInfo.inertiaEnabled = false;
-			dummyInfo.neighbourSearchShape = new Math::DiskShape(Vector2(), 50);
+			dummyInfo.neighbourSearchShape = std::make_unique<Math::DiskShape>(Vector2(), 50);
 
-			size_t dummyId = AddAgent(dummyInfo, GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
+			size_t dummyId = AddAgent(std::move(dummyInfo), GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
 
 			_groups[grpId] = std::make_unique<GridGroup>(grpId, dummyId, agentsInRow, interAgentDistance);
 
@@ -419,7 +419,7 @@ namespace FusionCrowd
 			dummyInfo.maxAngVel = 50.5f;
 			dummyInfo.inertiaEnabled = false;
 
-			size_t dummyId = AddAgent(dummyInfo, GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
+			size_t dummyId = AddAgent(std::move(dummyInfo), GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
 
 			_groups[grpId] = std::make_unique<GuidedGroup>(grpId, dummyId, leaderInfo);
 
@@ -658,7 +658,7 @@ namespace FusionCrowd
 	}
 	size_t Simulator::AddAgent(AgentSpatialInfo props, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
 	{
-		return pimpl->AddAgent(props, opId, tacticId, strategyId);
+		return pimpl->AddAgent(std::move(props), opId, tacticId, strategyId);
 	}
 
 	OperationStatus Simulator::RemoveAgent(size_t agentId)
