@@ -103,7 +103,7 @@ namespace FusionCrowd
 
 						for(auto & n : cell->second)
 						{
-							if(r.neighbourSearchShape->containsPoint(n.pos - r.pos))
+							if(r.CanCollide(n) && r.neighbourSearchShape->containsPoint(n.pos - r.pos))
 							{
 								result.push_back(NeighborInfo(n));
 							}

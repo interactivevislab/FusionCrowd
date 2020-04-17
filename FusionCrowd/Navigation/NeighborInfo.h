@@ -18,7 +18,7 @@ namespace FusionCrowd
 		float radius;
 
 		bool inertiaEnabled;
-		AgentSpatialInfo::CollisionLevel collisionsLevel;
+		AgentSpatialInfo::Type collisionsLevel;
 
 		NeighborInfo(const AgentSpatialInfo& agent);
 

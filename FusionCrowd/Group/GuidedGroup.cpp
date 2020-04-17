@@ -30,7 +30,7 @@ namespace FusionCrowd
 
 	size_t GuidedGroup::GetSize() const
 	{
-		return _followers.size();
+		return _followers.size() + 1;
 	}
 
 	bool GuidedGroup::Contains(size_t agentId) const

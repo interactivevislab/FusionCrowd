@@ -391,11 +391,11 @@ namespace FusionCrowd
 
 			AgentSpatialInfo dummyInfo;
 			dummyInfo.pos = origin;
-			dummyInfo.collisionsLevel = AgentSpatialInfo::CollisionLevel::GROUP;
-			dummyInfo.prefSpeed /= 2.0f;
-			dummyInfo.maxSpeed  /= 2.0f;
+			dummyInfo.collisionsLevel = AgentSpatialInfo::GROUP;
+			dummyInfo.type = AgentSpatialInfo::GROUP;
 			dummyInfo.maxAngVel = 50.5f;
 			dummyInfo.inertiaEnabled = false;
+			dummyInfo.neighbourSearchShape = new Math::DiskShape(Vector2(), 50);
 
 			size_t dummyId = AddAgent(dummyInfo, GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
 
@@ -412,7 +412,8 @@ namespace FusionCrowd
 
 			AgentSpatialInfo dummyInfo;
 			dummyInfo.pos = leaderInfo.pos;
-			dummyInfo.collisionsLevel = AgentSpatialInfo::CollisionLevel::GROUP;
+			dummyInfo.collisionsLevel = AgentSpatialInfo::GROUP;
+			dummyInfo.type = AgentSpatialInfo::GROUP;
 			dummyInfo.prefSpeed /= 2.0f;
 			dummyInfo.maxSpeed  /= 2.0f;
 			dummyInfo.maxAngVel = 50.5f;
@@ -449,6 +450,7 @@ namespace FusionCrowd
 			}
 
 			auto & agtInfo = _navSystem->GetSpatialInfo(agentId);
+			agtInfo.collisionsLevel = AgentSpatialInfo::AGENT;
 
 			a->second.SetGroupId(groupId);
 			g->second->AddAgent(agentId, agtInfo);
@@ -466,6 +468,8 @@ namespace FusionCrowd
 				// No such agent or no such group exists
 				return;
 			}
+
+			_navSystem->GetSpatialInfo(agentId).collisionsLevel = AgentSpatialInfo::COLLIDE_ALL;
 
 			a->second.SetGroupId(IGroup::NO_GROUP);
 			g->second->RemoveAgent(agentId);

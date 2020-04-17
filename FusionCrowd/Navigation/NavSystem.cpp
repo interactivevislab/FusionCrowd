@@ -75,7 +75,7 @@ namespace FusionCrowd
 
 		void AddAgent(AgentSpatialInfo spatialInfo)
 		{
-			if(spatialInfo.collisionsLevel == AgentSpatialInfo::AGENT)
+			if(spatialInfo.type == AgentSpatialInfo::AGENT)
 				_numAgents++;
 			else
 				_numGroups++;
@@ -236,25 +236,13 @@ namespace FusionCrowd
 		void UpdateNeighbours()
 		{
 			std::vector<NeighborsSeeker::SearchRequest> agentRequests;
-			std::vector<NeighborsSeeker::SearchRequest> groupRequests;
 
 			for (auto & info : _agentsInfo)
 			{
-				if(info.second.collisionsLevel == AgentSpatialInfo::AGENT)
-				{
-					agentRequests.push_back(info.second);
-				} else
-				{
-					groupRequests.push_back(info.second);
-				}
+				agentRequests.push_back(info.second);
 			}
 
 			for(const auto& p : _neighborsSeeker.FindNeighborsCpu(agentRequests))
-			{
-				_agentsNeighbours[p.first] = p.second;
-			}
-
-			for(const auto& p : _neighborsSeeker.FindNeighborsCpu(groupRequests))
 			{
 				_agentsNeighbours[p.first] = p.second;
 			}
