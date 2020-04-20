@@ -1,6 +1,7 @@
 #include "Obstacle.h"
 
 #include "Math/geomQuery.h"
+#include "Math/consts.h"
 #include "Math/Util.h"
 
 using namespace DirectX::SimpleMath;
@@ -79,7 +80,7 @@ float Obstacle::circleIntersection(const Vector2 & dir, const Vector2 & start, f
 	// Test for collision
 	if (C < 0.f) {
 		// the agent lies on the "wrong" side of the obstacle and can't see it.
-		return FusionCrowd::MathUtil::INFTY;
+		return Math::INFTY;
 	}
 	else if (C < radius) {	// the circle overlaps the line on the visible side
 		float t = D.Dot(-a);	// projection of origin on the line
@@ -122,7 +123,7 @@ float Obstacle::circleIntersection(const Vector2 & dir, const Vector2 & start, f
 		// both end points are on the same side of the line
 		// Note: Both of these are possible if the obstacle is near parallel
 		//	to the forward direction
-		float minT = FusionCrowd::MathUtil::INFTY;
+		float minT = Math::INFTY;
 		float aDist2 = a.y * a.y;
 		if (aDist2 < radSqd) {
 			// collision with a
@@ -158,7 +159,7 @@ float Obstacle::circleIntersection(const Vector2 & dir, const Vector2 & start, f
 		}
 		return minT;
 	}
-	return FusionCrowd::MathUtil::INFTY;
+	return Math::INFTY;
 }
 
 /////////////////////////////////////////////////////////////////////////////

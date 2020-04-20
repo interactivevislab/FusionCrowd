@@ -10,7 +10,7 @@ namespace FusionCrowd
 	class PortalRoute;
 	class PortalPath;
 
-	class FUSION_CROWD_API WayPortal
+	class WayPortal
 	{
 	public:
 		WayPortal(const NavMeshEdge* edge, unsigned int nodeID, bool p0IsLeft);

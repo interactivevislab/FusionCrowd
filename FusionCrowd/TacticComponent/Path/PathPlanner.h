@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Navigation/NavMesh/NavMesh.h"
-#include "Export/Config.h"
 #include "Math/Util.h"
 
 #include <list>
@@ -22,7 +21,7 @@ namespace FusionCrowd
 	typedef PRouteMap::iterator PRouteMapItr;
 	typedef PRouteMap::const_iterator PRouteMapCItr;
 
-	class FUSION_CROWD_API PathPlanner
+	class PathPlanner
 	{
 	public:
 		PathPlanner(std::shared_ptr<NavMesh> ptr);

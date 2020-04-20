@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Export/Config.h"
 #include "Math/Util.h"
 
 namespace FusionCrowd
 {
 	namespace Math
 	{
-		class FUSION_CROWD_API Line
+		class Line
 		{
 		public:
 			Line();

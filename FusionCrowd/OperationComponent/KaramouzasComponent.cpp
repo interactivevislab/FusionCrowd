@@ -24,7 +24,7 @@ namespace FusionCrowd
 		public:
 			KaramouzasComponentImpl(std::shared_ptr<NavSystem> navSystem):
 				_navSystem(navSystem),
-				_orientWeight(0.8f), _cosFOVAngle(cos(100.f * DEG_TO_RAD)), _reactionTime(0.4f), _wallSteepness(2.f),
+				_orientWeight(0.8f), _cosFOVAngle(cos(100.f * Math::DEG_TO_RAD)), _reactionTime(0.4f), _wallSteepness(2.f),
 				_wallDistance(2.f), _collidingCount(5), _dMin(1.f), _dMid(8.f), _dMax(10.f), _agentForce(3.f)
 			{
 			}

@@ -109,7 +109,7 @@ namespace FusionCrowd
 			//				perpDir *= -1;
 			//		}
 			//		// spherical linear interpolation
-			//		float sinTheta = MathUtil::det(perpDir, normal_ij);
+			//		float sinTheta = Math::det(perpDir, normal_ij);
 			//		if (sinTheta < 0.f) {
 			//			sinTheta = -sinTheta;
 			//		}

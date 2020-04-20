@@ -2,6 +2,7 @@
 
 #include <list>
 #include "Math/Util.h"
+#include "Math/consts.h"
 
 namespace FusionCrowd
 {
@@ -42,12 +43,12 @@ namespace FusionCrowd
 #endif
 		inline bool isOnLeft(const DirectX::SimpleMath::Vector2& dir) const
 		{
-			return FusionCrowd::MathUtil::det(_dir, dir) > FusionCrowd::MathUtil::EPS;
+			return Math::det(_dir, dir) > Math::EPS;
 		}
 
 		inline bool isOnRight(const DirectX::SimpleMath::Vector2& dir) const
 		{
-			return FusionCrowd::MathUtil::det(dir, _dir) > FusionCrowd::MathUtil::EPS;
+			return Math::det(dir, _dir) > Math::EPS;
 		}
 
 		inline void set(size_t id, const DirectX::SimpleMath::Vector2& dir)
@@ -73,7 +74,7 @@ namespace FusionCrowd
 	public:
 		FunnelPlanner();
 		~FunnelPlanner();
-		void computeCrossing(float radius, const DirectX::SimpleMath::Vector2& startPos, FusionCrowd::PortalPath* path,
+		void computeCrossing(float radius, const DirectX::SimpleMath::Vector2& startPos, PortalPath* path,
 		                     size_t startPortal = 0);
 #ifndef SIMPLE_FUNNEL
 	protected:

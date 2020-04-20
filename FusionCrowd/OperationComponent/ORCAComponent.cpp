@@ -1,5 +1,7 @@
 #include "ORCAComponent.h"
 
+#include "Math/consts.h"
+
 #include <algorithm>
 #include <cassert>
 #include <limits>
@@ -91,7 +93,7 @@ namespace ORCA
 		for (Obstacle & obst : args.obstacles) {
 			const Vector2 P0 = obst.getP0();
 			const Vector2 P1 = obst.getP1();
-			const bool agtOnRight = FusionCrowd::MathUtil::leftOf(P0, P1, args.info.GetPos()) < 0.f;
+			const bool agtOnRight = FusionCrowd::Math::leftOf(P0, P1, args.info.GetPos()) < 0.f;
 			ObstacleLine(_orcaLines, obst, invTimeHorizonObst, !agtOnRight && obst._doubleSided, args.info);
 		}
 
@@ -132,7 +134,7 @@ namespace ORCA
 					// Project on legs.
 					const float leg = std::sqrt(distSq - combinedRadiusSq);
 
-					if (MathUtil::det(relativePosition, w) > 0.0f) {
+					if (Math::det(relativePosition, w) > 0.0f) {
 						// Project on left leg.
 						line._direction = Vector2(
 							relativePosition.x * leg - relativePosition.y * combinedRadius,
@@ -194,9 +196,9 @@ namespace ORCA
 		for (size_t j = 0; j < _orcaLines.size(); ++j)
 		{
 			auto & line = _orcaLines[j];
-			auto d1 = MathUtil::det(invTau * relativePosition1 - line._point, line._direction) - invTau * agentInfo.radius;
-			auto d2 = MathUtil::det(invTau * relativePosition2 - line._point, line._direction) - invTau * agentInfo.radius;
-			if (d1 >= -FusionCrowd::MathUtil::EPS && d2 >= -FusionCrowd::MathUtil::EPS)
+			auto d1 = Math::det(invTau * relativePosition1 - line._point, line._direction) - invTau * agentInfo.radius;
+			auto d2 = Math::det(invTau * relativePosition2 - line._point, line._direction) - invTau * agentInfo.radius;
+			if (d1 >= -Math::EPS && d2 >= -Math::EPS)
 			{
 				alreadyCovered = true;
 				break;
@@ -229,7 +231,7 @@ namespace ORCA
 		else if (s > LENGTH && distSq2 <= radiusSq) {
 			/* Collision with right vertex. Ignore if non-convex
 			* or if it will be taken care of by neighoring obstace */
-			if ((obst._nextObstacle == 0x0) || (p1Convex && MathUtil::det(relativePosition2, obst._nextObstacle->_unitDir) >= 0))
+			if ((obst._nextObstacle == 0x0) || (p1Convex && Math::det(relativePosition2, obst._nextObstacle->_unitDir) >= 0))
 			{
 				line._point = Vector2(0.f, 0.f);
 				Vector2(-relativePosition2.y, relativePosition2.x).Normalize(line._direction);
@@ -314,7 +316,7 @@ namespace ORCA
 
 		if (!prevIsCurrent) {
 			if (leftNeighbor != 0x0) {
-				if (p0Convex && MathUtil::det(leftLegDirection, -leftNeighbor->_unitDir) >= 0.0f) {
+				if (p0Convex && Math::det(leftLegDirection, -leftNeighbor->_unitDir) >= 0.0f) {
 					/* Left leg points into obstacle. */
 					leftLegDirection = -leftNeighbor->_unitDir;
 					isLeftLegForeign = true;
@@ -324,7 +326,7 @@ namespace ORCA
 
 		if (!nextIsCurrent) {
 			if (rightNeighbor != 0x0) {
-				if (p1Convex && MathUtil::det(rightLegDirection, rightNeighbor->_unitDir) <= 0.0f) {
+				if (p1Convex && Math::det(rightLegDirection, rightNeighbor->_unitDir) <= 0.0f) {
 					/* Right leg points into obstacle. */
 					rightLegDirection = rightNeighbor->_unitDir;
 					isRightLegForeign = true;
@@ -415,10 +417,10 @@ namespace ORCA
 		float tRight = -dotProduct + sqrtDiscriminant;
 
 		for (size_t i = 0; i < lineNo; ++i) {
-			const float denominator = MathUtil::det(lines[lineNo]._direction, lines[i]._direction);
-			const float numerator = MathUtil::det(lines[i]._direction, lines[lineNo]._point - lines[i]._point);
+			const float denominator = Math::det(lines[lineNo]._direction, lines[i]._direction);
+			const float numerator = Math::det(lines[i]._direction, lines[lineNo]._point - lines[i]._point);
 
-			if (std::fabs(denominator) <= FusionCrowd::MathUtil::EPS) {
+			if (std::fabs(denominator) <= Math::EPS) {
 				/* Lines lineNo and i are (almost) parallel. */
 				if (numerator < 0.0f) {
 					return false;
@@ -493,7 +495,7 @@ namespace ORCA
 		}
 
 		for (size_t i = 0; i < lines.size(); ++i) {
-			if (MathUtil::det(lines[i]._direction, lines[i]._point - result) > 0.0f) {
+			if (Math::det(lines[i]._direction, lines[i]._point - result) > 0.0f) {
 				/* Result does not satisfy constraint i. Compute new optimal result. */
 				const Vector2 tempResult = result;
 				if (!LinearProgram1(lines, i, radius, optVelocity, directionOpt, result)) {
@@ -512,16 +514,16 @@ namespace ORCA
 		float distance = 0.0f;
 
 		for (size_t i = beginLine; i < lines.size(); ++i) {
-			if (MathUtil::det(lines[i]._direction, lines[i]._point - result) > distance) {
+			if (Math::det(lines[i]._direction, lines[i]._point - result) > distance) {
 				/* Result does not satisfy constraint of line i. */
-				std::vector<FusionCrowd::Math::Line> projLines(lines.begin(), lines.begin() + numObstLines);
+				std::vector<Math::Line> projLines(lines.begin(), lines.begin() + numObstLines);
 
 				for (size_t j = numObstLines; j < i; ++j) {
-					FusionCrowd::Math::Line line;
+					Math::Line line;
 
-					float determinant = MathUtil::det(lines[i]._direction, lines[j]._direction);
+					float determinant = Math::det(lines[i]._direction, lines[j]._direction);
 
-					if (std::fabs(determinant) <= FusionCrowd::MathUtil::EPS) {
+					if (std::fabs(determinant) <= Math::EPS) {
 						/* Math::Line i and line j are parallel. */
 						if (lines[i]._direction.Dot(lines[j]._direction) > 0.0f) {
 							/* Line i and line j point in the same direction. */
@@ -533,7 +535,7 @@ namespace ORCA
 						}
 					}
 					else {
-						line._point = lines[i]._point + (MathUtil::det(lines[j]._direction,
+						line._point = lines[i]._point + (Math::det(lines[j]._direction,
 							lines[i]._point - lines[j]._point) / determinant) *
 							lines[i]._direction;
 					}
@@ -554,7 +556,7 @@ namespace ORCA
 					result = tempResult;
 				}
 
-				distance = MathUtil::det(lines[i]._direction, lines[i]._point - result);
+				distance = Math::det(lines[i]._direction, lines[i]._point - result);
 			}
 		}
 	}

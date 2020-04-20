@@ -6,14 +6,6 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	const float INFTY = 1e6f;
-	const float PI = (float)(asin(1.0f) * 2.f);
-	const float TWOPI = PI * 2.f;
-	const float HALFPI = PI * 0.5f;
-	const float DEG_TO_RAD = PI / 180.0f;
-	const float RAD_TO_DEG = 180.0f / PI;
-	//const float EPS = 0.00001f;
-
 	namespace Math
 	{
 

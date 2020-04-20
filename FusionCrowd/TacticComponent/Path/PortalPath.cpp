@@ -76,7 +76,7 @@ namespace FusionCrowd
 			//
 			//	The goal is to always provide a goalDir to the portal
 			//	that is well-defined and unit-length.
-			bool bigEnough = dist >= FusionCrowd::EPS;
+			bool bigEnough = dist >= Math::EPS;
 			if (bigEnough)
 			{
 				goalDir /= dist;
@@ -87,7 +87,7 @@ namespace FusionCrowd
 					planner.computeCrossing(agent.radius, agent.GetPos(), this, _currPortal);
 					goalDir = _waypoints[_currPortal] - agent.GetPos();
 					dist = goalDir.Length();
-					if ((bigEnough = (dist >= FusionCrowd::EPS)))
+					if ((bigEnough = (dist >= Math::EPS)))
 					{
 						goalDir /= dist;
 					}

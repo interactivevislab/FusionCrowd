@@ -20,9 +20,9 @@ namespace FusionCrowd
 	{
 		Vector2 pDir = _edge->getDirection();
 		Vector2 p0 = _edge->getP0();
-		float denom = FusionCrowd::MathUtil::det(pDir, dir);
+		float denom = FusionCrowd::Math::det(pDir, dir);
 
-		float num = FusionCrowd::MathUtil::det(dir, p0 - point);
+		float num = FusionCrowd::Math::det(dir, p0 - point);
 		float s = num / denom;
 		return p0 + s * pDir;
 	}

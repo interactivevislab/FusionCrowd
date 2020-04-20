@@ -1,18 +1,16 @@
 #pragma once
 
 #include "GpuHelper.h"
-#include "Export/Config.h"
 
 namespace FusionCrowd
 {
-
-	struct FUSION_CROWD_API InputBufferDesc {
+	struct InputBufferDesc {
 		int elementSize;
 		int elementsCount;
 		void* initDataSource;
 	};
 
-	class FUSION_CROWD_API GpuCalculator
+	class GpuCalculator
 	{
 	private:
 		ID3D11Device*               _device = nullptr;

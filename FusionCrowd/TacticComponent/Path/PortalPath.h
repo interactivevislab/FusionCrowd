@@ -15,7 +15,7 @@ namespace FusionCrowd
 	class NavMeshLocalizer;
 	class PathPlanner;
 
-	class FUSION_CROWD_API PortalPath
+	class PortalPath
 	{
 	public:
 		PortalPath(const DirectX::SimpleMath::Vector2 & startPos, const Goal & goal, const PortalRoute* route, float agentRadius);

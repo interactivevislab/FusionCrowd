@@ -25,7 +25,7 @@ namespace FusionCrowd
 		for (unsigned int o = 0; o < OBST_COUNT; ++o) {
 			NavMeshObstacle & obst = navMesh->GetObstacle(o);
 			if (obst._prevObstacle) {
-				obst._isConvex = MathUtil::leftOf(obst._prevObstacle->getP0(), obst.getP0(), obst.getP1()) >= 0;
+				obst._isConvex = Math::leftOf(obst._prevObstacle->getP0(), obst.getP0(), obst.getP1()) >= 0;
 			}
 			else {
 				obst._isConvex = true;

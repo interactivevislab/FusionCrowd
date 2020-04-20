@@ -1,7 +1,6 @@
 #pragma once
 
 #include "WayPortal.h"
-#include "Export/Config.h"
 
 #include <vector>
 
@@ -11,7 +10,7 @@ namespace FusionCrowd
 	class PathPlanner;
 	class NavMeshEdge;
 
-	class FUSION_CROWD_API PortalRoute
+	class PortalRoute
 	{
 	public:
 		PortalRoute(unsigned int start, unsigned int end, size_t navMeshVersion);

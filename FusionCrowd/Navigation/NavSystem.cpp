@@ -2,6 +2,7 @@
 
 
 #include "Math/Util.h"
+#include "Math/consts.h"
 #include "TacticComponent/NavMeshComponent.h"
 
 #include "Navigation/AgentSpatialInfo.h"
@@ -153,7 +154,7 @@ namespace FusionCrowd
 		void UpdateOrient(const AgentSpatialInfo & agent, float timeStep, Vector2 & newOrient)
 		{
 			float speed = agent.GetVel().Length();
-			if(speed < MathUtil::EPS)
+			if(speed < Math::EPS)
 			{
 				newOrient = Vector2(0, 1);
 				return;
@@ -165,9 +166,9 @@ namespace FusionCrowd
 				return;
 			}
 
-			if (abs(speed) <= MathUtil::EPS)
+			if (abs(speed) <= Math::EPS)
 			{
-				speed = speed < 0 ? -MathUtil::EPS : MathUtil::EPS;
+				speed = speed < 0 ? -Math::EPS : Math::EPS;
 			}
 
 			const float speedThresh = agent.prefSpeed / 3.f;
@@ -197,7 +198,7 @@ namespace FusionCrowd
 			{
 				// changing direction at a rate greater than _maxAngVel
 				float maxSt = sin(MAX_ANGLE_CHANGE);
-				if (MathUtil::det(agent.GetOrient(), newOrient) > 0.f)
+				if (Math::det(agent.GetOrient(), newOrient) > 0.f)
 				{
 					// rotate _orient left
 					newOrient = Vector2(

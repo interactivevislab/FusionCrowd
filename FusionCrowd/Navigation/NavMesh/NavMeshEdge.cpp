@@ -66,7 +66,7 @@ namespace FusionCrowd
 		}
 		else
 		{
-			float dist = FusionCrowd::MathUtil::det(_dir, pt - _point);
+			float dist = FusionCrowd::Math::det(_dir, pt - _point);
 			return dist * dist;
 		}
 	}
@@ -134,10 +134,10 @@ namespace FusionCrowd
 		Vector2 goal(_point + param * _dir);
 		Vector2 dir;
 		(goal - pos).Normalize(dir);
-		float dist = fabs(FusionCrowd::MathUtil::det(dir, _point - pos));
+		float dist = fabs(FusionCrowd::Math::det(dir, _point - pos));
 		if (dist < radius) return false;
 		Vector2 p1 = _point + _width * _dir;
-		dist = fabs(FusionCrowd::MathUtil::det(dir, p1 - pos));
+		dist = fabs(FusionCrowd::Math::det(dir, p1 - pos));
 		if (dist < radius) return false;
 		return true;
 	}
@@ -288,11 +288,11 @@ namespace FusionCrowd
 		const float dirMag2 = dir.LengthSquared();
 		const float threshold = radius * radius * dirMag2;
 		Vector2 p0Delta = _point - pos;
-		float dist = FusionCrowd::MathUtil::det(dir, p0Delta);
+		float dist = FusionCrowd::Math::det(dir, p0Delta);
 		if (dist * dist >= threshold || p0Delta.Dot(dir) < 0.f)
 		{
 			Vector2 p1Delta = _point + _width * _dir - pos;
-			dist = FusionCrowd::MathUtil::det(dir, p1Delta);
+			dist = FusionCrowd::Math::det(dir, p1Delta);
 			if (dist * dist >= threshold || p1Delta.Dot(dir) < 0.f)
 			{
 				Vector2 result;
@@ -306,7 +306,7 @@ namespace FusionCrowd
 		Vector2 p1 = _point + _dir * _width;
 		Vector2 d1 = p1 - pos;
 		Vector2 portalDir(_dir);
-		if (FusionCrowd::MathUtil::det(d1, d0) < 0.f)
+		if (FusionCrowd::Math::det(d1, d0) < 0.f)
 		{
 			// make sure that d0 is on the left and d1 is on the right
 			Vector2 tmp(d0);
@@ -360,7 +360,7 @@ namespace FusionCrowd
 		dy = cosTheta1 * dHat1.y + sinTheta1 * dHat1.x;
 
 		Vector2 rightLimit(dx, dy);
-		if (FusionCrowd::MathUtil::det(rightLimit, leftLimit) < 0)
+		if (FusionCrowd::Math::det(rightLimit, leftLimit) < 0)
 		{
 			// The cone spans no valid directions.
 			// No direct path exists - simply clear the nearer endpoint
@@ -377,7 +377,7 @@ namespace FusionCrowd
 		}
 		else
 		{
-			if (FusionCrowd::MathUtil::det(leftLimit, dir) > 0)
+			if (FusionCrowd::Math::det(leftLimit, dir) > 0)
 			{
 				// The preferred direction lies left of the left extent the cone
 				return leftLimit;
@@ -400,7 +400,7 @@ namespace FusionCrowd
 		Vector2 p1 = _point + _dir * _width;
 		Vector2 d1 = p1 - pos;
 		Vector2 portalDir(_dir);
-		if (FusionCrowd::MathUtil::det(d1, d0) < 0.f)
+		if (FusionCrowd::Math::det(d1, d0) < 0.f)
 		{
 			// make sure that d0 is on the left and d1 is on the right
 			Vector2 tmp(d0);
@@ -443,7 +443,7 @@ namespace FusionCrowd
 		dy = cosTheta1 * d1.y + sinTheta1 * d1.x;
 		Vector2 rightLimit(dx / d2, dy / d2);
 
-		if (FusionCrowd::MathUtil::det(rightLimit, leftLimit) < 0)
+		if (FusionCrowd::Math::det(rightLimit, leftLimit) < 0)
 		{
 			// The cone spans no valid directions.
 			// No direct path exists - simply clear the nearer endpoint
@@ -462,12 +462,12 @@ namespace FusionCrowd
 		{
 			Vector2 prefDir;
 
-			if (FusionCrowd::MathUtil::det(leftLimit, dir) > 0)
+			if (FusionCrowd::Math::det(leftLimit, dir) > 0)
 			{
 				// The preferred direction lies left of the left extent the cone
 				prefDir = leftLimit;
 			}
-			else if (FusionCrowd::MathUtil::det(dir, rightLimit) > 0)
+			else if (FusionCrowd::Math::det(dir, rightLimit) > 0)
 			{
 				// The preferred direction lies right of the right extent the cone
 				prefDir = rightLimit;

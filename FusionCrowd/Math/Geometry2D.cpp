@@ -138,7 +138,7 @@ namespace FusionCrowd
 
 		bool ConeShape::containsPoint(const Vector2 & pt, const Vector2 & pos, float yaw) const {
 			Vector2 local_pt = pt - pos;
-			local_pt = MathUtil::rotate(local_pt, -yaw);
+			local_pt = Math::rotate(local_pt, -yaw);
 			return containsPoint(local_pt);
 		}
 

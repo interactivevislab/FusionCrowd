@@ -1,5 +1,5 @@
 #pragma once
-#include "Export/Config.h"
+
 #include "Math/Util.h"
 
 namespace FusionCrowd
@@ -18,7 +18,7 @@ namespace FusionCrowd
 			*	@param		radius		A float.  The radius of the circle.
 			*	@returns	The expected "time" to collision ("infinity" if there is no collision).
 			*/
-		FUSION_CROWD_API float rayCircleTTC(const DirectX::SimpleMath::Vector2 & dir, const DirectX::SimpleMath::Vector2 & center, float radius);
+		float rayCircleTTC(const DirectX::SimpleMath::Vector2 & dir, const DirectX::SimpleMath::Vector2 & center, float radius);
 
 		/*!
 			*	@brief		Perform spherical linear interpolation between two vectors
@@ -29,6 +29,6 @@ namespace FusionCrowd
 			*	@param		sinTheta	The sine of the angle between the two vectors.
 			*	@returns	The interpolated vector.
 			*/
-		FUSION_CROWD_API DirectX::SimpleMath::Vector2 slerp(float t, const DirectX::SimpleMath::Vector2 & p0, const DirectX::SimpleMath::Vector2 & p1, float sinTheta);
+		DirectX::SimpleMath::Vector2 slerp(float t, const DirectX::SimpleMath::Vector2 & p0, const DirectX::SimpleMath::Vector2 & p1, float sinTheta);
 	}	// namespace Math
 }

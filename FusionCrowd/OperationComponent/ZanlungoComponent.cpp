@@ -2,6 +2,7 @@
 
 #include "Math/geomQuery.h"
 #include "Math/Util.h"
+#include "Math/consts.h"
 #include "Navigation/Obstacle.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NavSystem.h"
@@ -101,7 +102,7 @@ namespace FusionCrowd
 			{
 				const float COS_FOV = -0.8f;  // cos( HALFPI );// cos( PI / 4.f ); //
 				bool interacts = false;
-				T_i = MathUtil::INFTY;
+				T_i = Math::INFTY;
 #define COLLIDE_PRIORITY
 #ifdef COLLIDE_PRIORITY
 				float t_collision = T_i;
@@ -136,7 +137,7 @@ namespace FusionCrowd
 						t_collision = contactT;
 						interacts = true;
 					}
-					else if (t_collision == MathUtil::INFTY) {
+					else if (t_collision == Math::INFTY) {
 #else
 					if (contactT < T_i) {
 						// the ray intersects the circle -- actual collision is possible
@@ -191,7 +192,7 @@ namespace FusionCrowd
 					}
 				}
 #ifdef COLLIDE_PRIORITY
-				if (t_collision < MathUtil::INFTY) T_i = t_collision;
+				if (t_collision < Math::INFTY) T_i = t_collision;
 #endif
 				if (T_i < timeStep) {
 					T_i = timeStep;
@@ -269,7 +270,7 @@ namespace FusionCrowd
 				//	}
 				//	// spherical linear interpolation
 				//	if (interpolate) {
-				//		float sinTheta = MathUtil::det(perpDir, D_ij);
+				//		float sinTheta = Math::det(perpDir, D_ij);
 				//		if (sinTheta < 0.f) {
 				//			sinTheta = -sinTheta;
 				//		}

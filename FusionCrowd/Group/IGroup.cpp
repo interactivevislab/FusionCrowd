@@ -10,7 +10,7 @@ namespace FusionCrowd
 	{
 		const float rot = atan2f(dummyInfo.GetOrient().y, dummyInfo.GetOrient().x);
 		const Vector2 relativePos = GetRelativePos(agentInfo.id);
-		const Vector2 rotRelativePos = MathUtil::rotate(relativePos, rot);
+		const Vector2 rotRelativePos = Math::rotate(relativePos, rot);
 		const Vector2 targetPos = dummyInfo.GetPos() + dummyInfo.GetVel() * timeStep + rotRelativePos;
 		Vector2 dir = targetPos - agentInfo.GetPos();
 

@@ -1,6 +1,6 @@
 #include "NeighborsSeeker.h"
 
-#include "Math/Util.h"
+#include "Math/consts.h"
 
 #include <unordered_map>
 
@@ -44,8 +44,8 @@ namespace FusionCrowd
 		if(searchRequests.size() == 0)
 			return result;
 
-		float minX = MathUtil::INFTY, maxX = -MathUtil::INFTY;
-		float minY = MathUtil::INFTY, maxY = -MathUtil::INFTY;
+		float minX = Math::INFTY, maxX = -Math::INFTY;
+		float minY = Math::INFTY, maxY = -Math::INFTY;
 
 		for(const auto& r : searchRequests)
 		{

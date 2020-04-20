@@ -16,7 +16,7 @@ namespace FusionCrowd
 {
 	NavMeshComponent::NavMeshComponent(std::shared_ptr<Simulator> simulator,
 		std::shared_ptr<NavMeshLocalizer> localizer, std::shared_ptr<NavMeshSpatialQuery> spatial_query) :
-		_simulator(simulator), _localizer(localizer), _navMesh(localizer->getNavMesh()), _headingDevCos(cos(MathUtil::PI)), _spatial_query(spatial_query)
+		_simulator(simulator), _localizer(localizer), _navMesh(localizer->getNavMesh()), _headingDevCos(cos(Math::PI)), _spatial_query(spatial_query)
 	{
 	}
 

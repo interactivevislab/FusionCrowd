@@ -129,7 +129,7 @@ namespace FusionCrowd
 				currentSteeringR = _maxSteeringR;
 			} else
 			{
-				currentSteeringR = agent._length / cos(MathUtil::PI / 2.0f - abs(agent._delta));
+				currentSteeringR = agent._length / cos(Math::PI / 2.0f - abs(agent._delta));
 			}
 
 			float targetSteeringR = CalcTargetSteeringRadius(agent, spatialInfo, spatialInfo.prefVelocity.getTarget());
@@ -138,7 +138,7 @@ namespace FusionCrowd
 			float adjustedPreferredSpeed = GetAdjustedPreferredSpeed(spatialInfo.prefVelocity.getSpeed(), distanceToTarget);
 			float accelerationToPref = adjustedPreferredSpeed - speed;
 
-			bool sameSide = MathUtil::sgn(angleToTarget) == MathUtil::sgn(agent._delta);
+			bool sameSide = Math::sgn(angleToTarget) == Math::sgn(agent._delta);
 			bool noNeedToBrake = abs(currentSteeringR - targetSteeringR) < 0.1f;
 
 			// Catching up to preferred velocity if we can
@@ -146,7 +146,7 @@ namespace FusionCrowd
 
 			if(abs(reqiredAcceleration) > maxAcceleration)
 			{
-				reqiredAcceleration = MathUtil::sgn(reqiredAcceleration) * maxAcceleration;
+				reqiredAcceleration = Math::sgn(reqiredAcceleration) * maxAcceleration;
 			}
 
 			speed += reqiredAcceleration;
@@ -183,7 +183,7 @@ namespace FusionCrowd
 				agent._delta += steer;
 			} else
 			{
-				agent._delta += MathUtil::sgn(steer) * deltaDelta;
+				agent._delta += Math::sgn(steer) * deltaDelta;
 			}
 
 			// rotate virtual bike body

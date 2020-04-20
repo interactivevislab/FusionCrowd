@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Math/Geometry2D.h"
-#include "Export/Config.h"
 #include "Math/Util.h"
 #include "TacticComponent/Path/PrefVelocity.h"
 
@@ -9,7 +8,7 @@
 
 namespace FusionCrowd
 {
-	class FUSION_CROWD_API Goal
+	class Goal
 	{
 	protected:
 		Goal(size_t id, std::shared_ptr<Math::Geometry2D> geometry);

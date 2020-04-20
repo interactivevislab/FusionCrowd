@@ -118,7 +118,7 @@ namespace FusionCrowd
 	{
 		Vector2 oldPos = agentInfo.GetPos() - agentInfo.GetVel() * deltaTime;
 
-		float point_dist = MathUtil::distanceToSegment(oldPos, agentInfo.GetPos(), agentStruct.route.points[agentStruct.pointsComplete]);
+		float point_dist = Math::distanceToSegment(oldPos, agentInfo.GetPos(), agentStruct.route.points[agentStruct.pointsComplete]);
 		if (abs(point_dist) < acceptanceRadius && agentStruct.pointsComplete < agentStruct.route.points.size() - 1) {
 			agentStruct.pointsComplete++;
 		}
