@@ -52,15 +52,15 @@ namespace FusionCrowd
 
 			AgentParamentrs & agent = _agents[spatialInfo.id];
 
-			float distanceToTarget = Vector2::Distance(spatialInfo.prefVelocity.getTarget(), spatialInfo.pos);
+			float distanceToTarget = Vector2::Distance(spatialInfo.prefVelocity.getTarget(), spatialInfo.GetPos());
 			Vector2 prefVel = spatialInfo.prefVelocity.getPreferredVel();
 			Vector2 normalizedPrefVel = spatialInfo.prefVelocity.getPreferredVel();
 			normalizedPrefVel.Normalize();
-			Vector2 orient = spatialInfo.orient;
+			Vector2 orient = spatialInfo.GetOrient();
 
 			if (prefVel.Length() < 1e-6f) return;
 
-			Vector2 vel = spatialInfo.vel;
+			Vector2 vel = spatialInfo.GetVel();
 			// Angle between current direction and target direction
 			float angleToTarget = (float)atan2(orient.x * normalizedPrefVel.y - orient.y * normalizedPrefVel.x, orient.x * normalizedPrefVel.x + orient.y * normalizedPrefVel.y);
 

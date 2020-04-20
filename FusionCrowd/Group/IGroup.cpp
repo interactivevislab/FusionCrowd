@@ -8,11 +8,11 @@ namespace FusionCrowd
 
 	void IGroup::SetAgentPrefVelocity(const AgentSpatialInfo & dummyInfo, AgentSpatialInfo & agentInfo, float timeStep) const
 	{
-		const float rot = atan2f(dummyInfo.orient.y, dummyInfo.orient.x);
+		const float rot = atan2f(dummyInfo.GetOrient().y, dummyInfo.GetOrient().x);
 		const Vector2 relativePos = GetRelativePos(agentInfo.id);
 		const Vector2 rotRelativePos = MathUtil::rotate(relativePos, rot);
-		const Vector2 targetPos = dummyInfo.pos + dummyInfo.vel * timeStep + rotRelativePos;
-		Vector2 dir = targetPos - agentInfo.pos;
+		const Vector2 targetPos = dummyInfo.GetPos() + dummyInfo.GetVel() * timeStep + rotRelativePos;
+		Vector2 dir = targetPos - agentInfo.GetPos();
 
 		agentInfo.prefVelocity.setSpeed(dir.Length() / timeStep);
 

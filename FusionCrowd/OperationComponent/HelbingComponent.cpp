@@ -56,7 +56,7 @@ namespace FusionCrowd
 				force += ObstacleForce(&agent, &obst);
 			}
 			Vector2 acc = force / _agents[agent.id]._mass;
-			agent.velNew = agent.vel + acc * timeStep;
+			agent.velNew = agent.GetVel() + acc * timeStep;
 		}
 
 		Vector2 HelbingComponent::AgentForce(AgentSpatialInfo* agent, NeighborInfo * other) const
@@ -70,7 +70,7 @@ namespace FusionCrowd
 			float rightOfWay = 0.0f;
 
 			const float D = _forceDistance;
-			Vector2 normal_ij = agent->pos - other->pos;
+			Vector2 normal_ij = agent->GetPos() - other->pos;
 			float distance_ij = normal_ij.Length();
 			normal_ij.Normalize();
 
@@ -133,7 +133,7 @@ namespace FusionCrowd
 				Vector2 tangent_ij(normal_ij.y, -normal_ij.x);
 
 				f_pushing = normal_ij * (_bodyForse * (Radii_ij - distance_ij));
-				f_friction = tangent_ij * (_friction * (Radii_ij - distance_ij)) * fabs((other->vel - agent->vel).Dot(tangent_ij));// / distance_ij;
+				f_friction = tangent_ij * (_friction * (Radii_ij - distance_ij)) * fabs((other->vel - agent->GetVel()).Dot(tangent_ij));// / distance_ij;
 				force += f_pushing + f_friction;
 			}
 			return force;
@@ -147,7 +147,7 @@ namespace FusionCrowd
 		Vector2 HelbingComponent::DrivingForce(AgentSpatialInfo* agent)
 		{
 			auto & agentInfo = _navSystem->GetSpatialInfo(agent->id);
-			return (agentInfo.prefVelocity.getPreferredVel() - agent->vel) * (_agents[agent->id]._mass / _reactionTime);
+			return (agentInfo.prefVelocity.getPreferredVel() - agent->GetVel()) * (_agents[agent->id]._mass / _reactionTime);
 		}
 
 		void HelbingComponent::AddAgent(size_t id, float mass)

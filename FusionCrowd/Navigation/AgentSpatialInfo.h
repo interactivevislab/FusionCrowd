@@ -24,10 +24,7 @@ namespace FusionCrowd
 
 	public:
 		size_t id;
-		DirectX::SimpleMath::Vector2 pos;
-		DirectX::SimpleMath::Vector2 vel;
 		DirectX::SimpleMath::Vector2 velNew;
-		DirectX::SimpleMath::Vector2 orient = DirectX::SimpleMath::Vector2(1.f, 0.f);
 
 		float radius    = 0.19f;
 		float maxSpeed  = 2.f;
@@ -46,47 +43,26 @@ namespace FusionCrowd
 
 		bool useNavMeshObstacles = true;
 
-		AgentSpatialInfo() :
-			neighbourSearchShape(std::make_unique<Math::DiskShape>(DirectX::SimpleMath::Vector2(0.f, 0.f), 4.0f))
-		{ }
+	public:
+		AgentSpatialInfo();
 
-		AgentSpatialInfo(const AgentSpatialInfo & other) :
-			id(other.id),
-			pos(other.pos),
-			vel(other.vel),
-			velNew(other.velNew),
-			orient(other.orient),
-			radius(other.radius),
-			maxSpeed(other.maxSpeed),
-			prefSpeed(other.prefSpeed),
-			maxAngVel(other.maxAngVel),
-			inertiaEnabled(other.inertiaEnabled),
-			type(other.type),
-			collisionsLevel(other.collisionsLevel),
-			prefVelocity(other.prefVelocity),
-			neighbourSearchShape(std::unique_ptr<Math::Geometry2D>(other.neighbourSearchShape->Clone())),
-			useNavMeshObstacles(other.useNavMeshObstacles)
-		{ }
+		AgentSpatialInfo(const AgentSpatialInfo & other);
+		AgentSpatialInfo & operator=(const AgentSpatialInfo & other);
 
-		AgentSpatialInfo & operator=(const AgentSpatialInfo & other)
-		{
-			id = other.id;
-			pos = other.pos;
-			vel = other.vel;
-			velNew = other.velNew;
-			orient = other.orient;
-			radius = other.radius;
-			maxSpeed = other.maxSpeed;
-			prefSpeed = other.prefSpeed;
-			maxAngVel = other.maxAngVel;
-			inertiaEnabled = other.inertiaEnabled;
-			type = other.type;
-			collisionsLevel = other.collisionsLevel;
-			prefVelocity = other.prefVelocity;
-			neighbourSearchShape = std::unique_ptr<Math::Geometry2D>(other.neighbourSearchShape->Clone());
-			useNavMeshObstacles = other.useNavMeshObstacles;
+		inline DirectX::SimpleMath::Vector2 GetPos()    const { return pos; }
+		inline DirectX::SimpleMath::Vector2 GetVel()    const { return vel; }
+		inline DirectX::SimpleMath::Vector2 GetOrient() const { return orient; }
 
-			return *this;
-		}
+		void SetPos(DirectX::SimpleMath::Vector2 pos);
+
+		void Update(
+			DirectX::SimpleMath::Vector2 pos,
+			DirectX::SimpleMath::Vector2 vel,
+			DirectX::SimpleMath::Vector2 orient
+		);
+	private:
+		DirectX::SimpleMath::Vector2 pos;
+		DirectX::SimpleMath::Vector2 vel;
+		DirectX::SimpleMath::Vector2 orient = DirectX::SimpleMath::Vector2(1.f, 0.f);
 	};
 }

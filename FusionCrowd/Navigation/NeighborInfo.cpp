@@ -4,9 +4,9 @@ namespace FusionCrowd
 {
 	NeighborInfo::NeighborInfo(const AgentSpatialInfo& agent) :
 			id(agent.id),
-			pos(agent.pos),
-			orient(agent.orient),
-			vel(agent.vel),
+			pos(agent.GetPos()),
+			orient(agent.GetOrient()),
+			vel(agent.GetVel()),
 			radius(agent.radius),
 			inertiaEnabled(agent.inertiaEnabled),
 			collisionsLevel(agent.collisionsLevel),

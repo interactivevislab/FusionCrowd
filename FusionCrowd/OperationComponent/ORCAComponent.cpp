@@ -91,7 +91,7 @@ namespace ORCA
 		for (Obstacle & obst : args.obstacles) {
 			const Vector2 P0 = obst.getP0();
 			const Vector2 P1 = obst.getP1();
-			const bool agtOnRight = FusionCrowd::MathUtil::leftOf(P0, P1, args.info.pos) < 0.f;
+			const bool agtOnRight = FusionCrowd::MathUtil::leftOf(P0, P1, args.info.GetPos()) < 0.f;
 			ObstacleLine(_orcaLines, obst, invTimeHorizonObst, !agtOnRight && obst._doubleSided, args.info);
 		}
 
@@ -102,8 +102,8 @@ namespace ORCA
 		/* Create agent ORCA lines. */
 		for (auto & other : args.neighbors)
 		{
-			const Vector2 relativePosition = other.pos - args.info.pos;
-			const Vector2 relativeVelocity = args.info.vel - other.vel;
+			const Vector2 relativePosition = other.pos - args.info.GetPos();
+			const Vector2 relativeVelocity = args.info.GetVel() - other.vel;
 
 			const float distSq = relativePosition.LengthSquared();
 			const float combinedRadius = args.info.radius + other.radius;
@@ -150,7 +150,7 @@ namespace ORCA
 					u = dotProduct2 * line._direction - relativeVelocity;
 				}
 
-				line._point = args.info.vel + 0.5f * u;
+				line._point = args.info.GetVel() + 0.5f * u;
 			}
 			else {
 				// Collision. Project on cut-off circle of time timeStep.
@@ -165,7 +165,7 @@ namespace ORCA
 				line._direction = Vector2(unitW.y, -unitW.x);
 				u = (combinedRadius * invTimeStep - wLength) * unitW;
 				float coopWeight = 0.5f;
-				line._point = args.info.vel + coopWeight * u;
+				line._point = args.info.GetVel() + coopWeight * u;
 			}
 
 			_orcaLines.push_back(line);
@@ -186,8 +186,8 @@ namespace ORCA
 		const Obstacle* const leftNeighbor  = flip ? obst._nextObstacle : obst._prevObstacle;
 		const Obstacle* const rightNeighbor = flip ? obst._prevObstacle : obst._nextObstacle;
 
-		const Vector2 relativePosition1 = P0 - agentInfo.pos;
-		const Vector2 relativePosition2 = P1 - agentInfo.pos;
+		const Vector2 relativePosition1 = P0 - agentInfo.GetPos();
+		const Vector2 relativePosition2 = P1 - agentInfo.GetPos();
 
 		bool alreadyCovered = false;
 
@@ -341,14 +341,14 @@ namespace ORCA
 
 		/* Project current velocity on velocity obstacle. */
 		/* Check if current velocity is projected on cutoff circles. */
-		const float t = obstaclesSame ? 0.5f : (agentInfo.vel - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared());
-		const float tLeft = (agentInfo.vel - leftCutoff).Dot(leftLegDirection);
-		const float tRight = (agentInfo.vel - rightCutoff).Dot(rightLegDirection);
+		const float t = obstaclesSame ? 0.5f : (agentInfo.GetVel() - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared());
+		const float tLeft = (agentInfo.GetVel() - leftCutoff).Dot(leftLegDirection);
+		const float tRight = (agentInfo.GetVel() - rightCutoff).Dot(rightLegDirection);
 
 		if ((t < 0.0f && tLeft < 0.0f) || (obstaclesSame && tLeft < 0.0f && tRight < 0.0f)) {
 			/* Project on left cut-off circle. */
 			Vector2 unitW;
-			(agentInfo.vel - leftCutoff).Normalize(unitW);
+			(agentInfo.GetVel() - leftCutoff).Normalize(unitW);
 			line._direction = Vector2(unitW.y, -unitW.x);
 			line._point = leftCutoff + agentInfo.radius * invTau * unitW;
 			_orcaLines.push_back(line);
@@ -357,7 +357,7 @@ namespace ORCA
 		else if (t > 1.0f && tRight < 0.0f) {
 			/* Project on right cut-off circle. */
 			Vector2 unitW;
-			(agentInfo.vel - rightCutoff).Normalize(unitW);
+			(agentInfo.GetVel() - rightCutoff).Normalize(unitW);
 			line._direction = Vector2(unitW.y, -unitW.x);
 			line._point = rightCutoff + agentInfo.radius * invTau * unitW;
 			_orcaLines.push_back(line);
@@ -370,9 +370,9 @@ namespace ORCA
 		*/
 		const float INF = std::numeric_limits<float>::infinity();
 
-		const float distSqCutoff = ((t < 0.0f || t > 1.0f || obstaclesSame) ? INF : (agentInfo.vel - (leftCutoff + t * cutoffVec)).LengthSquared());
-		const float distSqLeft  = (( tLeft < 0.0f) ? INF : (agentInfo.vel - (leftCutoff + tLeft * leftLegDirection)).LengthSquared());
-		const float distSqRight = ((tRight < 0.0f) ? INF : (agentInfo.vel - (rightCutoff + tRight * rightLegDirection)).LengthSquared());
+		const float distSqCutoff = ((t < 0.0f || t > 1.0f || obstaclesSame) ? INF : (agentInfo.GetVel() - (leftCutoff + t * cutoffVec)).LengthSquared());
+		const float distSqLeft  = (( tLeft < 0.0f) ? INF : (agentInfo.GetVel() - (leftCutoff + tLeft * leftLegDirection)).LengthSquared());
+		const float distSqRight = ((tRight < 0.0f) ? INF : (agentInfo.GetVel() - (rightCutoff + tRight * rightLegDirection)).LengthSquared());
 
 		if (distSqCutoff <= distSqLeft && distSqCutoff <= distSqRight) {
 			/* Project on cut-off line. */

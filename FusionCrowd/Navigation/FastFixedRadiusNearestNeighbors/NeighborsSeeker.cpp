@@ -4,6 +4,8 @@
 
 #include <unordered_map>
 
+using namespace DirectX::SimpleMath;
+
 namespace FusionCrowd
 {
 	NeighborsSeeker::NeighborsSeeker() : _pool(std::thread::hardware_concurrency() - 1)
@@ -47,17 +49,18 @@ namespace FusionCrowd
 
 		for(const auto& r : searchRequests)
 		{
-			if(r.pos.x < minX)
-				minX = r.pos.x;
+			const Vector2 pos = r.GetPos();
+			if(pos.x < minX)
+				minX = pos.x;
 
-			if(r.pos.x > maxX)
-				maxX = r.pos.x;
+			if(pos.x > maxX)
+				maxX = pos.x;
 
-			if(r.pos.y < minY)
-				minY = r.pos.y;
+			if(pos.y < minY)
+				minY = pos.y;
 
-			if(r.pos.y > maxY)
-				maxY = r.pos.y;
+			if(pos.y > maxY)
+				maxY = pos.y;
 		}
 
 		// Total cells             = n^(1/4) * n^(1/4) = n*(1/2)
@@ -73,8 +76,8 @@ namespace FusionCrowd
 
 		for(const auto& r : searchRequests)
 		{
-			const int x = r.pos.x / cellSizeX;
-			const int y = r.pos.y / cellSizeY;
+			const int x = r.GetPos().x / cellSizeX;
+			const int y = r.GetPos().y / cellSizeY;
 
 			grid[{x, y}].push_back(r);
 		}
@@ -88,11 +91,13 @@ namespace FusionCrowd
 				const SearchRequest& r = reqs.at(reqIdx);
 				std::vector<NeighborInfo> result;
 				const float R = r.neighbourSearchShape->BoundingRadius();
-				int minCellX = (r.pos.x - R) / cellSizeX;
-				int maxCellX = (r.pos.x + R) / cellSizeX + 1;
+				const Vector2 pos = r.GetPos();
 
-				int minCellY = (r.pos.y - R) / cellSizeY;
-				int maxCellY = (r.pos.y + R) / cellSizeY + 1;
+				int minCellX = (pos.x - R) / cellSizeX;
+				int maxCellX = (pos.x + R) / cellSizeX + 1;
+
+				int minCellY = (pos.y - R) / cellSizeY;
+				int maxCellY = (pos.y + R) / cellSizeY + 1;
 
 				for(int x = minCellX; x <= maxCellX; x++)
 				{
@@ -104,7 +109,7 @@ namespace FusionCrowd
 
 						for(auto & n : cell->second)
 						{
-							if(r.CanCollide(n) && r.neighbourSearchShape->containsPoint(n.pos - r.pos))
+							if(r.CanCollide(n) && r.neighbourSearchShape->containsPoint(n.GetPos() - pos))
 							{
 								result.push_back(NeighborInfo(n));
 							}

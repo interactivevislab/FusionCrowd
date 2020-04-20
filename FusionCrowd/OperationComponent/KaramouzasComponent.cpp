@@ -87,7 +87,7 @@ namespace FusionCrowd
 				const float EPSILON = 0.01f; // this eps from Ioannis
 				const float FOV = _cosFOVAngle;
 
-				Vector2 force((agent.prefVelocity.getPreferredVel() - agent.vel) / _reactionTime);
+				Vector2 force((agent.prefVelocity.getPreferredVel() - agent.GetVel()) / _reactionTime);
 				const float SAFE_DIST = _wallDistance + agent.radius;
 				const float SAFE_DIST2 = SAFE_DIST * SAFE_DIST;
 
@@ -98,7 +98,7 @@ namespace FusionCrowd
 					//	I'll have to investigate this.
 					Vector2 nearPt;		// set by distanceSqToPoint
 					float sqDist;		// set by distanceSqToPoint
-					if (obst.distanceSqToPoint(agent.pos, nearPt, sqDist) == Obstacle::LAST) continue;
+					if (obst.distanceSqToPoint(agent.GetPos(), nearPt, sqDist) == Obstacle::LAST) continue;
 					if (SAFE_DIST2 > sqDist) {
 						// A repulsive force is actually possible
 						float dist = sqrtf(sqDist);
@@ -106,13 +106,13 @@ namespace FusionCrowd
 						float distMradius = (dist - agent.radius) < EPSILON ? EPSILON : dist - agent.radius;
 						float denom = powf(distMradius, _wallSteepness);
 						Vector2 dir;
-						(agent.pos - nearPt).Normalize(dir);
+						(agent.GetPos() - nearPt).Normalize(dir);
 						float mag = num / denom;
 						force += dir * mag;
 					}
 				}
 
-				Vector2 desVel = agent.vel + force * timeStep;
+				Vector2 desVel = agent.GetVel() + force * timeStep;
 				float desSpeed = desVel.Length();
 				force = Vector2(0.f, 0.f);
 				//#if 0
@@ -130,7 +130,7 @@ namespace FusionCrowd
 				{
 					float circRadius = _agents[agent.id]._perSpace + other.radius;
 					Vector2 relVel = desVel - other.vel;
-					Vector2 relPos = other.pos - agent.pos;
+					Vector2 relPos = other.pos - agent.GetPos();
 
 					if (relPos.LengthSquared() < circRadius * circRadius) { ///collision!
 						if (!colliding) {
@@ -149,7 +149,7 @@ namespace FusionCrowd
 					//		If relPos is not within the field of view around preferred direction, continue
 					Vector2 relDir;
 					relPos.Normalize(relDir);
-					if (relDir.Dot(agent.orient) < FOV) continue;
+					if (relDir.Dot(agent.GetOrient()) < FOV) continue;
 					float tc = Math::rayCircleTTC(relVel, relPos, circRadius);
 					if (tc < _agents[agent.id]._anticipation && !colliding) {
 						if (VERBOSE) std::cout << "\tAgent " << other.id << " t_c: " << tc << "\n";
@@ -173,7 +173,7 @@ namespace FusionCrowd
 					const auto& other = itr->info;
 					float tc = itr->tc;
 					// future positions
-					Vector2 myPos = agent.pos + desVel * tc;
+					Vector2 myPos = agent.GetPos() + desVel * tc;
 					Vector2 hisPos = other.pos + other.vel * tc;
 					Vector2 forceDir = myPos - hisPos;
 

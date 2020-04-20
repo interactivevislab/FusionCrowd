@@ -76,7 +76,7 @@ namespace FusionCrowd
 		size_t AddAgent(DirectX::SimpleMath::Vector2 pos)
 		{
 			AgentSpatialInfo info;
-			info.pos = pos;
+			info.SetPos(pos);
 
 			return AddAgent(std::move(info), ComponentIds::NO_COMPONENT, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
 		}
@@ -100,7 +100,7 @@ namespace FusionCrowd
 		{
 			// Use default values
 			AgentSpatialInfo info;
-			info.pos = Vector2(x, y);
+			info.SetPos(Vector2(x, y));
 
 			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
 			info.prefSpeed *= dist(_rnd_seed);
@@ -172,7 +172,7 @@ namespace FusionCrowd
 				info.neighbourSearchShape = std::make_unique<Math::ConeShape>(Vector2(0,0), 10.0f, MathUtil::PI/6.0f);
 			}
 
-			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.pos);
+			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.GetPos());
 			_navSystem->AddAgent(std::move(info));
 
 			Agent a(agentId, _goalFactory.CreatePointGoal(goal_pos));
@@ -349,9 +349,9 @@ namespace FusionCrowd
 
 				output[i] = AgentInfo {
 					agent.id,
-					info.pos.x, info.pos.y,
-					info.vel.x, info.vel.y,
-					info.orient.x, info.orient.y,
+					info.GetPos().x, info.GetPos().y,
+					info.GetVel().x, info.GetVel().y,
+					info.GetOrient().x, info.GetOrient().y,
 					info.radius,
 					op, tactic, strat,
 					g.getCentroid().x, g.getCentroid().y
@@ -390,12 +390,12 @@ namespace FusionCrowd
 			size_t grpId = _nextGroupId++;
 
 			AgentSpatialInfo dummyInfo;
-			dummyInfo.pos = origin;
 			dummyInfo.collisionsLevel = AgentSpatialInfo::GROUP;
 			dummyInfo.type = AgentSpatialInfo::GROUP;
 			dummyInfo.maxAngVel = 50.5f;
 			dummyInfo.inertiaEnabled = false;
 			dummyInfo.neighbourSearchShape = std::make_unique<Math::DiskShape>(Vector2(), 50);
+			dummyInfo.SetPos(origin);
 
 			size_t dummyId = AddAgent(std::move(dummyInfo), GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
 
@@ -411,13 +411,13 @@ namespace FusionCrowd
 			auto & leaderInfo = _navSystem->GetSpatialInfo(leaderId);
 
 			AgentSpatialInfo dummyInfo;
-			dummyInfo.pos = leaderInfo.pos;
 			dummyInfo.collisionsLevel = AgentSpatialInfo::GROUP;
 			dummyInfo.type = AgentSpatialInfo::GROUP;
 			dummyInfo.prefSpeed /= 2.0f;
 			dummyInfo.maxSpeed  /= 2.0f;
 			dummyInfo.maxAngVel = 50.5f;
 			dummyInfo.inertiaEnabled = false;
+			dummyInfo.SetPos(leaderInfo.GetPos());
 
 			size_t dummyId = AddAgent(std::move(dummyInfo), GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
 

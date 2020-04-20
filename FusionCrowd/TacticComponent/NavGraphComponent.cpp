@@ -16,7 +16,7 @@ namespace FusionCrowd
 		size_t curNodeId = getNodeId(id);
 		NavGraphPathPlanner pathPlanner(_navGraph);
 
-		Vector2 curPos = _navSystem->GetSpatialInfo(id).pos;
+		Vector2 curPos = _navSystem->GetSpatialInfo(id).GetPos();
 
 		AgentStruct agtStruct;
 		agtStruct.id = id;
@@ -29,7 +29,7 @@ namespace FusionCrowd
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(agentStruct.id);
 
-		agentStruct.route = _pathPlanner.GetRoute(agentInfo.pos, agentGoal.getCentroid());
+		agentStruct.route = _pathPlanner.GetRoute(agentInfo.GetPos(), agentGoal.getCentroid());
 
 		agentStruct.pointsComplete = 0;
 		agentStruct.goalPoint = agentGoal.getCentroid();
@@ -89,7 +89,7 @@ namespace FusionCrowd
 	{
 		Vector2 currentGoal = agentStruct.route.points[agentStruct.pointsComplete];
 
-		float dist = Vector2::Distance(currentGoal, agentInfo.pos);
+		float dist = Vector2::Distance(currentGoal, agentInfo.GetPos());
 
 		if(dist < agentInfo.prefSpeed * timeStep)
 		{
@@ -101,7 +101,7 @@ namespace FusionCrowd
 
 		if (abs(dist) > 1e-6)
 		{
-			agentInfo.prefVelocity.setSingle((currentGoal - agentInfo.pos) / dist);
+			agentInfo.prefVelocity.setSingle((currentGoal - agentInfo.GetPos()) / dist);
 		} else
 		{
 			agentInfo.prefVelocity.setSpeed(0);
@@ -116,9 +116,9 @@ namespace FusionCrowd
 
 	void NavGraphComponent::UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, float deltaTime) const
 	{
-		Vector2 oldPos = agentInfo.pos - agentInfo.vel * deltaTime;
+		Vector2 oldPos = agentInfo.GetPos() - agentInfo.GetVel() * deltaTime;
 
-		float point_dist = MathUtil::distanceToSegment(oldPos, agentInfo.pos, agentStruct.route.points[agentStruct.pointsComplete]);
+		float point_dist = MathUtil::distanceToSegment(oldPos, agentInfo.GetPos(), agentStruct.route.points[agentStruct.pointsComplete]);
 		if (abs(point_dist) < acceptanceRadius && agentStruct.pointsComplete < agentStruct.route.points.size() - 1) {
 			agentStruct.pointsComplete++;
 		}
@@ -132,6 +132,6 @@ namespace FusionCrowd
 	size_t NavGraphComponent::getNodeId(size_t agentId) const
 	{
 		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(agentId);
-		return _navGraph->GetClosestNodeIdByPosition(agentInfo.pos, _navGraph->GetAllNodes());
+		return _navGraph->GetClosestNodeIdByPosition(agentInfo.GetPos(), _navGraph->GetAllNodes());
 	}
 }

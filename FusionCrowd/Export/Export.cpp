@@ -88,10 +88,10 @@ namespace FusionCrowd
 		)
 		{
 			AgentSpatialInfo info;
-			info.pos = Vector2(x, y);
 			info.radius = radius;
 			//info.maxSpeed = preferedVelocity;
 			info.prefSpeed = preferedVelocity;
+			info.SetPos(Vector2(x, y));
 
 			return _sim->AddAgent(std::move(info), opId, tacticId, strategyId);
 		}

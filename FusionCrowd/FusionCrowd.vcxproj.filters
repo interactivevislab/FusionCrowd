@@ -59,6 +59,7 @@
     <ClCompile Include="Group\GridGroup.cpp" />
     <ClCompile Include="Group\GuidedGroup.cpp" />
     <ClCompile Include="Navigation\NeighborInfo.cpp" />
+    <ClCompile Include="Navigation\AgentSpatialInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />

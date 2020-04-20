@@ -107,7 +107,7 @@ namespace FusionCrowd
 				// Not the speed-dependent stride length, but rather the mid-point of the
 				float strideLen = 1.f;
 				// elliptical personal space.
-				Vector2 critPt = agentInfo.pos + strideLen * prefDir;
+				Vector2 critPt = agentInfo.GetPos() + strideLen * prefDir;
 				float density = 0.f;
 				// For now, assume some constants
 				const float area = 1.5f;
@@ -137,7 +137,7 @@ namespace FusionCrowd
 					if (obst.distanceSqToPoint(critPt, nearPt, distSq) == Obstacle::LAST)
 						continue;
 
-					if ( prefDir.Dot(nearPt - agentInfo.pos) < 0.f) continue;
+					if ( prefDir.Dot(nearPt - agentInfo.GetPos()) < 0.f) continue;
 					density += OBST_SCALE * expf(-distSq * OBST_AREA_SQ_INV);
 				}
 
@@ -167,7 +167,7 @@ namespace FusionCrowd
 			{
 				const Vector2 P0 = obst.getP0();
 				const Vector2 P1 = obst.getP1();
-				const bool agtOnRight = MathUtil::leftOf(P0, P1, agentInfo.pos) < 0.f;
+				const bool agtOnRight = MathUtil::leftOf(P0, P1, agentInfo.GetPos()) < 0.f;
 
 				ObstacleLine(agentParams, agentInfo, obst, invTimeHorizonObst, !agtOnRight && obst._doubleSided);
 			}
@@ -178,7 +178,7 @@ namespace FusionCrowd
 			/* Create agent ORCA lines. */
 			for (auto & other : _navSystem->GetNeighbours(agentInfo.id))
 			{
-				const Vector2 relativePosition = other.pos - agentInfo.pos;
+				const Vector2 relativePosition = other.pos - agentInfo.GetPos();
 
 				// TODO: priorities
 				//float rightOfWay = fabs(agentInfo.priority - other->_priority);
@@ -188,7 +188,7 @@ namespace FusionCrowd
 				float rightOfWay = rand();
 
 				// Right of way-dependent calculations
-				Vector2 myVel = agentInfo.vel;
+				Vector2 myVel = agentInfo.GetVel();
 				Vector2 hisVel = other.vel;
 				// this is my fraction of effort
 				float weight = 0.5f;
@@ -213,10 +213,10 @@ namespace FusionCrowd
 				{
 					// my advantage
 					weight -= 0.5f * rightOfWay;
-					myVel = agentInfo.prefVelocity.getPreferredVel() * rightOfWay + (1.f - rightOfWay) * agentInfo.vel;
-					if ((myVel - agentInfo.vel).LengthSquared() > MAX_DEV_SQD) {
-						(agentInfo.prefVelocity.getPreferredVel() - agentInfo.vel).Normalize(myVel);
-						myVel = myVel * MAX_DEV + agentInfo.vel;
+					myVel = agentInfo.prefVelocity.getPreferredVel() * rightOfWay + (1.f - rightOfWay) * agentInfo.GetVel();
+					if ((myVel - agentInfo.GetVel()).LengthSquared() > MAX_DEV_SQD) {
+						(agentInfo.prefVelocity.getPreferredVel() - agentInfo.GetVel()).Normalize(myVel);
+						myVel = myVel * MAX_DEV + agentInfo.GetVel();
 					}
 				}
 
@@ -322,7 +322,7 @@ namespace FusionCrowd
 								// intersection, the whole circle must be infeasible. don't bother
 								// perturbing.
 								const float sqrtDiscriminant = std::sqrt(discriminant);
-								if (agentInfo.vel.Dot(_orcaLines[i]._direction) > 0.f) {
+								if (agentInfo.GetVel().Dot(_orcaLines[i]._direction) > 0.f) {
 									float t = -dotProduct + sqrtDiscriminant;
 									// new line point
 									Vector2 p = _orcaLines[i]._point + t * _orcaLines[i]._direction;
@@ -381,8 +381,8 @@ namespace FusionCrowd
 			const Obstacle* const leftNeighbor = flip ? obst._nextObstacle : obst._prevObstacle;
 			const Obstacle* const rightNeighbor = flip ? obst._prevObstacle : obst._nextObstacle;
 
-			const Vector2 relativePosition1 = P0 - agentInfo.pos;
-			const Vector2 relativePosition2 = P1 - agentInfo.pos;
+			const Vector2 relativePosition1 = P0 - agentInfo.GetPos();
+			const Vector2 relativePosition2 = P1 - agentInfo.GetPos();
 
 			/*
 			 * Check if velocity obstacle of obstacle is already taken care of by
@@ -563,14 +563,14 @@ namespace FusionCrowd
 
 			/* Project current velocity on velocity obstacle. */
 			/* Check if current velocity is projected on cutoff circles. */
-			const float t = obstaclesSame ? 0.5f : ((agentInfo.vel - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared()));
-			const float tLeft = (agentInfo.vel - leftCutoff).Dot(leftLegDirection);
-			const float tRight = (agentInfo.vel - rightCutoff).Dot(rightLegDirection);
+			const float t = obstaclesSame ? 0.5f : ((agentInfo.GetVel() - leftCutoff).Dot(cutoffVec / cutoffVec.LengthSquared()));
+			const float tLeft  = (agentInfo.GetVel() - leftCutoff).Dot(leftLegDirection);
+			const float tRight = (agentInfo.GetVel() - rightCutoff).Dot(rightLegDirection);
 
 			if ((t < 0.0f && tLeft < 0.0f) || (obstaclesSame && tLeft < 0.0f && tRight < 0.0f)) {
 				/* Project on left cut-off circle. */
 				Vector2 unitW;
-				(agentInfo.vel - leftCutoff).Normalize(unitW);
+				(agentInfo.GetVel() - leftCutoff).Normalize(unitW);
 				line._direction = Vector2(unitW.y, -unitW.x);
 				line._point = leftCutoff + agentInfo.radius * invTau * unitW;
 				_orcaLines.push_back(line);
@@ -579,7 +579,7 @@ namespace FusionCrowd
 			else if (t > 1.0f && tRight < 0.0f) {
 				/* Project on right cut-off circle. */
 				Vector2 unitW;
-				(agentInfo.vel - rightCutoff).Normalize(unitW);
+				(agentInfo.GetVel() - rightCutoff).Normalize(unitW);
 				line._direction = Vector2(unitW.y, -unitW.x);
 				line._point = rightCutoff + agentInfo.radius * invTau * unitW;
 				_orcaLines.push_back(line);
@@ -592,12 +592,12 @@ namespace FusionCrowd
 			 */
 			const float distSqCutoff =
 				((t < 0.0f || t > 1.0f || obstaclesSame) ? std::numeric_limits<float>::infinity()
-					:(agentInfo.vel - (leftCutoff + t * cutoffVec)).LengthSquared());
+					:(agentInfo.GetVel() - (leftCutoff + t * cutoffVec)).LengthSquared());
 			const float distSqLeft = ((tLeft < 0.0f) ? std::numeric_limits<float>::infinity()
-				: (agentInfo.vel - (leftCutoff + tLeft * leftLegDirection)).LengthSquared());
+				: (agentInfo.GetVel() - (leftCutoff + tLeft * leftLegDirection)).LengthSquared());
 			const float distSqRight =
 				((tRight < 0.0f) ? std::numeric_limits<float>::infinity()
-					: (agentInfo.vel - (rightCutoff + tRight * rightLegDirection)).LengthSquared());
+					: (agentInfo.GetVel() - (rightCutoff + tRight * rightLegDirection)).LengthSquared());
 
 			if (distSqCutoff <= distSqLeft && distSqCutoff <= distSqRight) {
 				/* Project on cut-off line. */

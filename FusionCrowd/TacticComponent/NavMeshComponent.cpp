@@ -39,11 +39,11 @@ namespace FusionCrowd
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(id);
 		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(id);
-		agentInfo.pos = GetClosestAvailablePoint(agentInfo.pos);
+		agentInfo.SetPos(GetClosestAvailablePoint(agentInfo.GetPos()));
 
 		AgentStruct agtStruct;
 		agtStruct.id = id;
-		agtStruct.location = Replan(agentInfo.pos, agentGoal, agentInfo.radius);
+		agtStruct.location = Replan(agentInfo.GetPos(), agentGoal, agentInfo.radius);
 
 		_agents.push_back(agtStruct);
 	}
@@ -84,7 +84,7 @@ namespace FusionCrowd
 			if(IsReplanNeeded(info, agtStruct))
 			{
 				auto & curGoal = agtStruct.location.getPath()->getGoal();
-				agtStruct.location = Replan(info.pos, curGoal, info.radius);
+				agtStruct.location = Replan(info.GetPos(), curGoal, info.radius);
 			}
 
 			UpdateLocation(info, agtStruct, false);
@@ -165,7 +165,7 @@ namespace FusionCrowd
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
 		//TODO: replace with correct disk goal
-		if ((agentGoal.getCentroid() - agentInfo.pos).Length() < 1.5f) {
+		if ((agentGoal.getCentroid() - agentInfo.GetPos()).Length() < 1.5f) {
 			agentInfo.prefVelocity.setSpeed(0);
 			return;
 		}
@@ -173,7 +173,7 @@ namespace FusionCrowd
 		{
 			Vector2 goalPoint = agentGoal.getCentroid();
 			unsigned int goalNode = _localizer->getNodeId(goalPoint);
-			unsigned int agentNode = _localizer->getNodeId(agentInfo.pos);
+			unsigned int agentNode = _localizer->getNodeId(agentInfo.GetPos());
 			if (goalNode == NavMeshLocation::NO_NODE) {
 				goalPoint = GetClosestAvailablePoint(agentGoal.getCentroid());
 				_simulator->SetAgentGoal(agentInfo.id, goalPoint);
@@ -189,12 +189,12 @@ namespace FusionCrowd
 
 			PortalRoute* route = _localizer->getPlanner()->getRoute(agtNode, goalNode, agentInfo.radius * 2.f);
 
-			auto newPath = std::make_shared<PortalPath>(agentInfo.pos, agentGoal, route, agentInfo.radius);
+			auto newPath = std::make_shared<PortalPath>(agentInfo.GetPos(), agentGoal, route, agentInfo.radius);
 			// assign it to the localizer
 			agentStruct.location.setPath(newPath);
 		}
 
-		float dist = Vector2::Distance(agentGoal.getCentroid(), agentInfo.pos);
+		float dist = Vector2::Distance(agentGoal.getCentroid(), agentInfo.GetPos());
 
 		if(dist < agentInfo.prefSpeed * timeStep)
 		{
@@ -223,7 +223,7 @@ namespace FusionCrowd
 		else
 		{
 			//if ( _trackAll || force ) {
-			const Vector2 & p = agentInfo.pos;
+			const Vector2 & p = agentInfo.GetPos();
 			unsigned int oldNode = (unsigned int)loc._nodeID;
 			if (loc._nodeID == NavMeshLocation::NO_NODE)
 			{

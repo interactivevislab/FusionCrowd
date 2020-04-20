@@ -106,6 +106,7 @@
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Group\GuidedGroup.cpp" />
     <ClCompile Include="Group\IGroup.cpp" />
+    <ClCompile Include="Navigation\AgentSpatialInfo.cpp" />
     <ClCompile Include="Navigation\NeighborInfo.cpp" />
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />

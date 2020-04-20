@@ -68,7 +68,7 @@ namespace FusionCrowd
 		{
 			AgentSpatialInfo info;
 			info.id = agentId;
-			info.pos = position;
+			info.SetPos(position);
 
 			AddAgent(std::move(info));
 		}
@@ -118,11 +118,11 @@ namespace FusionCrowd
 
 			if ((agent.useNavMeshObstacles) && (_navMesh != NULL))
 			{
-				size_t nodeId = _localizer->getNodeId(agent.pos);
+				size_t nodeId = _localizer->getNodeId(agent.GetPos());
 				if (nodeId == NavMeshLocation::NO_NODE)
 					return result;
 
-				for (size_t obstId : _navMeshQuery->ObstacleQuery(agent.pos))
+				for (size_t obstId : _navMeshQuery->ObstacleQuery(agent.GetPos()))
 				{
 					result.push_back(_navMesh->GetObstacle(obstId));
 				}
@@ -136,56 +136,64 @@ namespace FusionCrowd
 			{
 				AgentSpatialInfo & currentInfo = info.second;
 
-				UpdatePos(currentInfo, timeStep);
-				UpdateOrient(currentInfo, timeStep);
+				Vector2 newPos, newVel, newOrient;
+				UpdatePos(currentInfo, timeStep, newPos, newVel);
+				UpdateOrient(currentInfo, timeStep, newOrient);
+
+				currentInfo.Update(newPos, newVel, newOrient);
 			}
 
 			UpdateNeighbours();
 		}
 
-		void UpdatePos(AgentSpatialInfo & agent, float timeStep)
+		void UpdatePos(AgentSpatialInfo & agent, float timeStep, Vector2 & updatedPos, Vector2 & updatedVel)
 		{
-			float delV = (agent.vel - agent.velNew).Length();
-			if (isnan(delV)) {
-				agent.velNew = agent.vel;
-				delV = 0;
+			const float delV = (agent.GetVel() - agent.velNew).Length();
+
+			if (isnan(delV))
+			{
+				updatedVel = agent.GetVel();
+				updatedPos = agent.GetPos();
+
+				return;
 			}
 
-			if (agent.inertiaEnabled && delV > agent.maxAccel * timeStep) {
-				float w = agent.maxAccel * timeStep / delV;
-				agent.vel = (1.f - w) * agent.vel + w * agent.velNew;
+			if (agent.inertiaEnabled && delV > agent.maxAccel * timeStep)
+			{
+				const float w = agent.maxAccel * timeStep / delV;
+				updatedVel = (1.f - w) * agent.GetVel() + w * agent.velNew;
 			}
-			else {
-				agent.vel = agent.velNew;
+			else
+			{
+				updatedVel = agent.velNew;
 			}
 
-			agent.pos += agent.vel * timeStep;
+			updatedPos = agent.GetPos() + agent.GetVel() * timeStep;
 		}
 
-		void UpdateOrient(AgentSpatialInfo & agent, float timeStep)
+		void UpdateOrient(const AgentSpatialInfo & agent, float timeStep, Vector2 & newOrient)
 		{
-			if(agent.vel.Length() < MathUtil::EPS)
+			float speed = agent.GetVel().Length();
+			if(speed < MathUtil::EPS)
 			{
-				agent.orient = Vector2(0, 1);
+				newOrient = Vector2(0, 1);
 				return;
 			}
 
 			if(!agent.inertiaEnabled)
 			{
-				agent.orient = agent.vel;
-				agent.orient.Normalize();
+				agent.GetVel().Normalize(newOrient);
 				return;
 			}
 
-			float speed = agent.vel.Length();
 			if (abs(speed) <= MathUtil::EPS)
 			{
 				speed = speed < 0 ? -MathUtil::EPS : MathUtil::EPS;
 			}
 
 			const float speedThresh = agent.prefSpeed / 3.f;
-			Vector2 newOrient(agent.orient); // by default new is old
-			Vector2 moveDir = agent.vel / speed;
+
+			Vector2 moveDir = agent.GetVel() / speed;
 			if (speed >= speedThresh)
 			{
 				newOrient = moveDir;
@@ -205,31 +213,27 @@ namespace FusionCrowd
 			// Now limit angular velocity.
 			const float MAX_ANGLE_CHANGE = timeStep * agent.maxAngVel;
 			float maxCt = cos(MAX_ANGLE_CHANGE);
-			float ct = newOrient.Dot(agent.orient);
+			float ct = newOrient.Dot(agent.GetOrient());
 			if (ct < maxCt)
 			{
 				// changing direction at a rate greater than _maxAngVel
 				float maxSt = sin(MAX_ANGLE_CHANGE);
-				if (MathUtil::det(agent.orient, newOrient) > 0.f)
+				if (MathUtil::det(agent.GetOrient(), newOrient) > 0.f)
 				{
 					// rotate _orient left
-					agent.orient = Vector2(
-						maxCt * agent.orient.x - maxSt * agent.orient.y,
-						maxSt * agent.orient.x + maxCt * agent.orient.y
+					newOrient = Vector2(
+						maxCt * agent.GetOrient().x - maxSt * agent.GetOrient().y,
+						maxSt * agent.GetOrient().x + maxCt * agent.GetOrient().y
 					);
 				}
 				else
 				{
 					// rotate _orient right
-					agent.orient = Vector2(
-						maxCt * agent.orient.x + maxSt * agent.orient.y,
-						-maxSt * agent.orient.x + maxCt * agent.orient.y
+					newOrient = Vector2(
+						maxCt * agent.GetOrient().x + maxSt * agent.GetOrient().y,
+						-maxSt * agent.GetOrient().x + maxCt * agent.GetOrient().y
 					);
 				}
-			}
-			else
-			{
-				agent.orient = newOrient;
 			}
 		}
 

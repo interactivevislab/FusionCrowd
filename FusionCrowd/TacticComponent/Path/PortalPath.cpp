@@ -39,11 +39,11 @@ namespace FusionCrowd
 		{
 			// assume that the path is clear
 			// TODO: See GoalVC
-			_goal.setDirections(agent.pos, agent.radius, agent.prefVelocity);
+			_goal.setDirections(agent.GetPos(), agent.radius, agent.prefVelocity);
 
 			// speed
 			Vector2 goalPoint = agent.prefVelocity.getTarget();
-			Vector2 disp = goalPoint - agent.pos;
+			Vector2 disp = goalPoint - agent.GetPos();
 			const float distSq = disp.LengthSquared();
 			float speed = agent.prefSpeed;
 
@@ -68,7 +68,7 @@ namespace FusionCrowd
 		else
 		{
 			const WayPortal* portal = _route->getPortal(_currPortal);
-			Vector2 goalDir(_waypoints[_currPortal] - agent.pos);
+			Vector2 goalDir(_waypoints[_currPortal] - agent.GetPos());
 			float dist = goalDir.Length();
 			// If the displacement to the next way point is large enough
 			//	(i.e., not essentially zero), use it, otherwise, peek
@@ -84,8 +84,8 @@ namespace FusionCrowd
 				{
 					// Heading has deviated too far recompute crossing
 					FunnelPlanner planner;
-					planner.computeCrossing(agent.radius, agent.pos, this, _currPortal);
-					goalDir = _waypoints[_currPortal] - agent.pos;
+					planner.computeCrossing(agent.radius, agent.GetPos(), this, _currPortal);
+					goalDir = _waypoints[_currPortal] - agent.GetPos();
 					dist = goalDir.Length();
 					if ((bigEnough = (dist >= FusionCrowd::EPS)))
 					{
@@ -100,19 +100,19 @@ namespace FusionCrowd
 				if (_currPortal + 1 < getPortalCount())
 				{
 					// calculate w.r.t. next waypoint
-					(_waypoints[_currPortal + 1] - agent.pos).Normalize(goalDir);
+					(_waypoints[_currPortal + 1] - agent.GetPos()).Normalize(goalDir);
 				}
 				else
 				{
 					// calculate w.r.t. goal
 					Vector2 gp;
 					_goal.getTargetPoint(gp, agent.radius);
-					(gp - agent.pos).Normalize(goalDir);
+					(gp - agent.GetPos()).Normalize(goalDir);
 				}
 			}
 
 			agent.prefVelocity.setTarget(_waypoints[_currPortal]);
-			portal->setPreferredDirection(agent.pos, agent.radius, goalDir, agent.prefVelocity);
+			portal->setPreferredDirection(agent.GetPos(), agent.radius, goalDir, agent.prefVelocity);
 		}
 	}
 
@@ -127,7 +127,7 @@ namespace FusionCrowd
 		unsigned int currNodeID = getNode();
 		const NavMeshNode* currNode = &(navMesh->GetNodeByPos(currNodeID));
 		// test current location
-		const Vector2& p = agent.pos;
+		const Vector2& p = agent.GetPos();
 
 		const unsigned int PORTAL_COUNT = static_cast<unsigned int>(_route->getPortalCount());
 		if (!currNode->containsPoint(p))

@@ -121,7 +121,7 @@ namespace FusionCrowd
 			{
 				for (auto & desc : _closeToEvents[fsmId])
 				{
-					if((desc.target - agentInfo.pos).LengthSquared() >= desc.radiusSqr)
+					if((desc.target - agentInfo.GetPos()).LengthSquared() >= desc.radiusSqr)
 					{
 						continue;
 					}

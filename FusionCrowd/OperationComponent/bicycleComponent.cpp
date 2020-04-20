@@ -45,23 +45,23 @@ namespace FusionCrowd
 		void dump(AgentSpatialInfo & agent)
 		{
 			std::cout << step<<"\n";
-			std::cout << "orient" << agent.orient.x << ',' << agent.orient.y<<"\n";
+			std::cout << "orient" << agent.GetOrient().x << ',' << agent.GetOrient().y<<"\n";
 			std::cout << "prefSpeed" << agent.prefSpeed<<"\n";
 			std::cout << "prefVel" << agent.prefVelocity.getPreferredVel().x << ',' << agent.prefVelocity.getPreferredVel().y << "\n";
-			std::cout << "Vel" << agent.vel.x << ',' << agent.vel.y << "\n";
+			std::cout << "Vel" << agent.GetVel().x << ',' << agent.GetVel().y << "\n";
 			std::cout << "NewVel" << agent.velNew.x << ',' << agent.velNew.y << "\n";
 		}
 
 		float BicycleComponent::CalcTargetSteeringRadius(const AgentParamentrs & agent, const AgentSpatialInfo & spatialInfo, Vector2 targetPoint)
 		{
-			Vector2 wheelPos = spatialInfo.pos + (agent._length / 2.0f) * spatialInfo.orient;
+			Vector2 wheelPos = spatialInfo.GetPos() + (agent._length / 2.0f) * spatialInfo.GetOrient();
 			Vector2 delta = targetPoint - wheelPos;
 
 			Vector2 middleLinePoint = wheelPos + delta * .5f;
 			Vector2 middleLineDir(delta.y, -delta.x); middleLineDir.Normalize();
 
-			Vector2 backWheelLinePoint = spatialInfo.pos - (agent._length / 2.0f) * spatialInfo.orient;
-			Vector2 backWheelLineDir(spatialInfo.orient.y, -spatialInfo.orient.x);
+			Vector2 backWheelLinePoint = spatialInfo.GetPos() - (agent._length / 2.0f) * spatialInfo.GetOrient();
+			Vector2 backWheelLineDir(spatialInfo.GetOrient().y, -spatialInfo.GetOrient().x);
 
 			// https://math.stackexchange.com/questions/406864/intersection-of-two-lines-in-vector-form
 			float u1 = middleLineDir.x;
@@ -109,17 +109,17 @@ namespace FusionCrowd
 
 			//Update our length if it was changed for some reason
 			agent._length = spatialInfo.radius * 2.0f;
-			agent._theta  = atan2(spatialInfo.orient.y, spatialInfo.orient.x);
+			agent._theta  = atan2(spatialInfo.GetOrient().y, spatialInfo.GetOrient().x);
 
-			float distanceToTarget = Vector2::Distance(spatialInfo.prefVelocity.getTarget(), spatialInfo.pos);
+			float distanceToTarget = Vector2::Distance(spatialInfo.prefVelocity.getTarget(), spatialInfo.GetPos());
 			Vector2 prefVel = spatialInfo.prefVelocity.getPreferredVel();
 			Vector2 normalizedPrefVel; prefVel.Normalize(normalizedPrefVel);
-			Vector2 orient = spatialInfo.orient;
+			Vector2 orient = spatialInfo.GetOrient();
 
 			if(prefVel.Length() < 1e-6f)
 				return;
 
-			Vector2 vel = spatialInfo.vel;
+			Vector2 vel = spatialInfo.GetVel();
 			// Angle between current direction and target direction
 			float angleToTarget = (float) atan2(orient.x * normalizedPrefVel.y - orient.y * normalizedPrefVel.x, orient.x * normalizedPrefVel.x + orient.y * normalizedPrefVel.y);
 
