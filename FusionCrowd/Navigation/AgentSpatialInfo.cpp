@@ -46,6 +46,45 @@ namespace FusionCrowd
 		return *this;
 	}
 
+	AgentSpatialInfo::AgentSpatialInfo(AgentSpatialInfo && other):
+		id(other.id),
+		pos(other.pos),
+		vel(other.vel),
+		velNew(other.velNew),
+		orient(other.orient),
+		radius(other.radius),
+		maxSpeed(other.maxSpeed),
+		prefSpeed(other.prefSpeed),
+		maxAngVel(other.maxAngVel),
+		inertiaEnabled(other.inertiaEnabled),
+		type(other.type),
+		collisionsLevel(other.collisionsLevel),
+		prefVelocity(other.prefVelocity),
+		neighbourSearchShape(std::move(other.neighbourSearchShape)),
+		useNavMeshObstacles(other.useNavMeshObstacles)
+	{ }
+
+	AgentSpatialInfo & AgentSpatialInfo::operator=(AgentSpatialInfo && other)
+	{
+		id  = other.id;
+		pos = other.pos;
+		vel = other.vel;
+		velNew = other.velNew;
+		orient = other.orient;
+		radius = other.radius;
+		maxSpeed  = other.maxSpeed;
+		prefSpeed = other.prefSpeed;
+		maxAngVel = other.maxAngVel;
+		inertiaEnabled = other.inertiaEnabled;
+		type = other.type;
+		collisionsLevel = other.collisionsLevel;
+		prefVelocity = other.prefVelocity;
+		neighbourSearchShape = std::move(other.neighbourSearchShape);
+		useNavMeshObstacles = other.useNavMeshObstacles;
+
+		return *this;
+	}
+
 	void AgentSpatialInfo::SetPos(Vector2 pos)
 	{
 		this->pos = pos;

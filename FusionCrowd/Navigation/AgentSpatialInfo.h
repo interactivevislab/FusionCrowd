@@ -49,6 +49,9 @@ namespace FusionCrowd
 		AgentSpatialInfo(const AgentSpatialInfo & other);
 		AgentSpatialInfo & operator=(const AgentSpatialInfo & other);
 
+		AgentSpatialInfo(AgentSpatialInfo && other);
+		AgentSpatialInfo & operator=(AgentSpatialInfo && other);
+
 		inline DirectX::SimpleMath::Vector2 GetPos()    const { return pos; }
 		inline DirectX::SimpleMath::Vector2 GetVel()    const { return vel; }
 		inline DirectX::SimpleMath::Vector2 GetOrient() const { return orient; }
