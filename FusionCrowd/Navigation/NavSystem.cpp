@@ -28,8 +28,6 @@ namespace FusionCrowd
 	public:
 		NavSystemImpl() { }
 
-		~NavSystemImpl() { }
-
 		void SetNavMesh(std::shared_ptr<NavMeshLocalizer> localizer)
 		{
 			_localizer = localizer;
@@ -46,35 +44,17 @@ namespace FusionCrowd
 		{
 			return _navGraph.get();
 		}
-		//TEST METHOD, MUST BE DELETED
-		int CountNeighbors(size_t agentId) const
-		{
-			auto neighbors = _agentsNeighbours.find(agentId);
-			if (neighbors != _agentsNeighbours.end()) {
-				return neighbors->second.size();
-			}
-			else
-			{
-				return 0;
-			}
-		}
 
 		void SetAgentsSensitivityRadius(float radius)
 		{
 			_agentsSensitivityRadius = radius;
 		}
 
-		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position)
-		{
-			AgentSpatialInfo info;
-			info.id = agentId;
-			info.SetPos(position);
-
-			AddAgent(std::move(info));
-		}
-
 		void AddAgent(AgentSpatialInfo spatialInfo)
 		{
+			if(_agentsInfo.find(spatialInfo.id) == _agentsInfo.end())
+				return;
+
 			if(spatialInfo.type == AgentSpatialInfo::AGENT)
 				_numAgents++;
 			else
@@ -84,21 +64,20 @@ namespace FusionCrowd
 			_agentsNeighbours[spatialInfo.id] = std::vector<NeighborInfo>();
 		}
 
-		void RemoveAgent(unsigned int id) {
-			if (_agentsInfo[id].collisionsLevel == AgentSpatialInfo::AGENT)
-				_numAgents--;
-			else
-				_numGroups--;
-			_agentsInfo.erase(id);
+		void RemoveAgent(size_t id)
+		{
+			if(_agentsInfo.erase(id))
+			{
+				if (_agentsInfo[id].type == AgentSpatialInfo::AGENT)
+					_numAgents--;
+				else
+					_numGroups--;
+			}
 		}
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId)
 		{
 			return _agentsInfo.at(agentId);
-		}
-
-		std::map<size_t, AgentSpatialInfo> GetAgentsSpatialInfos() {
-			return _agentsInfo;
 		}
 
 		std::vector<NeighborInfo> GetNeighbours(size_t agentId) const
@@ -291,17 +270,12 @@ namespace FusionCrowd
 	{
 	}
 
-	void NavSystem::AddAgent(size_t agentId, Vector2 position)
-	{
-		pimpl->AddAgent(agentId, position);
-	}
-
 	void NavSystem::AddAgent(AgentSpatialInfo spatialInfo)
 	{
 		pimpl->AddAgent(std::move(spatialInfo));
 	}
 
-	void NavSystem::RemoveAgent(unsigned int id)
+	void NavSystem::RemoveAgent(size_t id)
 	{
 		pimpl->RemoveAgent(id);
 	}
@@ -311,18 +285,9 @@ namespace FusionCrowd
 		return pimpl->GetSpatialInfo(agentId);
 	}
 
-	std::map<size_t, AgentSpatialInfo> NavSystem::GetAgentsSpatialInfos() {
-		return pimpl->GetAgentsSpatialInfos();
-	}
-
 	std::vector<NeighborInfo> NavSystem::GetNeighbours(size_t agentId) const
 	{
 		return pimpl->GetNeighbours(agentId);
-	}
-
-	//TEST METHOD, MUST BE DELETED
-	int NavSystem::CountNeighbors(size_t agentId) const {
-		return pimpl->CountNeighbors(agentId);
 	}
 
 	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId)
@@ -335,14 +300,9 @@ namespace FusionCrowd
 		pimpl->Update(timeStep);
 	}
 
-	void NavSystem::SetAgentsSensitivityRadius(float radius) {
-		pimpl->SetAgentsSensitivityRadius(radius);
-	}
-
 	void NavSystem::Init() {
 		pimpl->Init();
 	}
-
 
 	INavMeshPublic* NavSystem::GetPublicNavMesh() const
 	{

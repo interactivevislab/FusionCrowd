@@ -2,21 +2,22 @@
 
 #include <memory>
 #include <vector>
-#include <functional>
 
-#include "Math/Util.h"
 #include "Export/Export.h"
 #include "Export/IRecording.h"
 #include "Export/INavSystemPublic.h"
-#include "Util/spimpl.h"
+
+#include "Math/Util.h"
+
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 #include "Navigation/NavGraph/NavGraph.h"
 #include "Navigation/NeighborInfo.h"
 #include "Navigation/AgentSpatialInfo.h"
 
+#include "Util/spimpl.h"
+
 namespace FusionCrowd
 {
-	class NavMeshComponent;
 	class Obstacle;
 
 	class NavSystem : public INavSystemPublic
@@ -31,19 +32,11 @@ namespace FusionCrowd
 		// Why do we need it?
 		void Init();
 
-		int CountNeighbors(size_t agentId) const; //TEST METHOD, MUST BE DELETED
-
-		// Those looks very specific, are we sure they should be in public api?
-		void SetAgentsSensitivityRadius(float radius);
-
-		// Very confusing methods pair
-		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
 		void AddAgent(AgentSpatialInfo spatialInfo);
 
-		void RemoveAgent(unsigned int id);
+		void RemoveAgent(size_t id);
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
-		std::map<size_t, AgentSpatialInfo> GetAgentsSpatialInfos();
 
 		std::vector<NeighborInfo> GetNeighbours(size_t agentId) const;
 		std::vector<Obstacle> GetClosestObstacles(size_t agentId);
@@ -54,6 +47,7 @@ namespace FusionCrowd
 		// INavSystemPublic
 		INavMeshPublic* GetPublicNavMesh() const;
 
+		// Do we really need this method here?
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
 	private:
 		class NavSystemImpl;
