@@ -216,7 +216,7 @@ namespace FusionCrowd
 			if (auto tactic = agent.tacticComponent.lock())
 			{
 				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goalPos);
-				agent.currentGoal = _goalFactory.CreateDiscGoal(point, 1.5f);
+				agent.currentGoal = _goalFactory.CreateDiscGoal(point, 0.5f);
 			}
 		}
 

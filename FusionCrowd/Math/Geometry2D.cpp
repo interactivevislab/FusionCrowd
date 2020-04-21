@@ -1,5 +1,5 @@
 #include "Geometry2D.h"
-#include "TacticComponent/Path/PrefVelocity.h"
+#include "TacticComponent/PrefVelocity.h"
 #include <iostream>
 #include "Math/Util.h"
 

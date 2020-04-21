@@ -4,6 +4,20 @@
 
 namespace FusionCrowd
 {
+	Goal::Goal(const Goal& other)
+	{
+		_geometry = std::unique_ptr<Math::Geometry2D>(other.getGeometry()->Clone());
+		_id = other.getID();
+	}
+
+	Goal& Goal::operator=(const Goal& other)
+	{
+		_geometry = std::unique_ptr<Math::Geometry2D>(other.getGeometry()->Clone());
+		_id = other.getID();
+
+		return *this;
+	}
+
 	Goal::Goal(size_t id, std::unique_ptr<Math::Geometry2D> geometry) : _id(id), _geometry(std::move(geometry)) { }
 
 	float Goal::squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const

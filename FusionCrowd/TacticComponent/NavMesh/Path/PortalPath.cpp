@@ -26,41 +26,33 @@ namespace FusionCrowd
 		return _route->IsValid(navMeshVersion);
 	}
 
-	void PortalPath::setPreferredDirection(AgentSpatialInfo & agent, float headingCos)
+	void PortalPath::setPrefVelocity(AgentSpatialInfo & agent, float headingCos, float timeStep)
 	{
 		const size_t PORTAL_COUNT = _route->getPortalCount();
-		//todo remove
-		/*if (PORTAL_COUNT == 0) {
-			agent.prefVelocity.setSpeed(0);
-			agent.prefVelocity.setTarget(agent.pos);
-		}*/
 		Vector2 dir;
 		if (_currPortal >= PORTAL_COUNT)
 		{
 			// assume that the path is clear
-			// TODO: See GoalVC
 			_goal.setDirections(agent.GetPos(), agent.radius, agent.prefVelocity);
 
-			// speed
-			Vector2 goalPoint = agent.prefVelocity.getTarget();
-			Vector2 disp = goalPoint - agent.GetPos();
-			const float distSq = disp.LengthSquared();
 			float speed = agent.prefSpeed;
 
-			if (distSq <= 0.0001f)
+			if (_goal.getGeometry()->containsPoint(agent.GetPos()))
 			{
-				// I've basically arrived -- speed should be zero.
+				// Arrived
 				speed = 0.f;
 			}
 			else
 			{
+				Vector2 goalPoint = _goal.getGeometry()->getTargetPoint(agent.GetPos(), agent.radius);
+				const float distSq = (goalPoint - agent.GetPos()).LengthSquared();
+
 				const float speedSq = speed * speed;
-				float SIM_TIME_STEP = 0.01f;
-				const float TS_SQD = SIM_TIME_STEP * SIM_TIME_STEP;
+				const float TS_SQD = timeStep * timeStep;
 				if (distSq / speedSq < TS_SQD)
 				{
 					// The distance is less than I would travel in a single time step.
-					speed = sqrtf(distSq) / SIM_TIME_STEP;
+					speed = sqrtf(distSq) / timeStep;
 				}
 			}
 			agent.prefVelocity.setSpeed(speed);
@@ -130,6 +122,11 @@ namespace FusionCrowd
 		const Vector2& p = agent.GetPos();
 
 		const unsigned int PORTAL_COUNT = static_cast<unsigned int>(_route->getPortalCount());
+		if(PORTAL_COUNT == 0)
+		{
+			return currNodeID;
+		}
+
 		if (!currNode->containsPoint(p))
 		{
 			// test to see if I've progressed to the next

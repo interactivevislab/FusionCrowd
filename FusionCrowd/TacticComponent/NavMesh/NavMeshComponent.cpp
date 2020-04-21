@@ -84,7 +84,7 @@ namespace FusionCrowd
 
 			if(IsReplanNeeded(info, agtStruct))
 			{
-				auto & curGoal = agtStruct.location.getPath()->getGoal();
+				auto & curGoal = _simulator->GetAgentGoal(info.id);
 				agtStruct.location = Replan(info.GetPos(), curGoal, info.radius);
 			}
 
@@ -177,87 +177,44 @@ namespace FusionCrowd
 			return;
 		}
 
-		if (path == nullptr || path->getGoal().getID() != agentGoal.getID())
-		{
-			Vector2 goalPoint = agentGoal.getCentroid();
-			unsigned int goalNode = _localizer->getNodeId(goalPoint);
-			unsigned int agentNode = _localizer->getNodeId(agentInfo.GetPos());
-			if (goalNode == NavMeshLocation::NO_NODE) {
-				goalPoint = GetClosestAvailablePoint(agentGoal.getCentroid());
-				_simulator->SetAgentGoal(agentInfo.id, goalPoint);
-				goalNode = _localizer->getNodeId(goalPoint);
-			}
-			if (goalNode == NavMeshLocation::NO_NODE || agentNode == NavMeshLocation::NO_NODE)
-			{
-				agentInfo.prefVelocity.setSpeed(0);
-				return;
-			}
-			agentStruct.location.setNode(agentNode);
-			unsigned int agtNode = agentStruct.location.getNode();
-
-			PortalRoute* route = _localizer->getPlanner()->getRoute(agtNode, goalNode, agentInfo.radius * 2.f);
-
-			auto newPath = std::make_shared<PortalPath>(agentInfo.GetPos(), agentGoal, route, agentInfo.radius);
-			// assign it to the localizer
-			agentStruct.location.setPath(newPath);
-		}
-
-		float dist = Vector2::Distance(agentGoal.getCentroid(), agentInfo.GetPos());
-
-		if(dist < agentInfo.prefSpeed * timeStep)
-		{
-			agentInfo.prefVelocity.setSpeed(dist);
-		} else
-		{
-			agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
-		}
-
-		agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
-		path->setPreferredDirection(agentInfo, _headingDevCos);
+		path->setPrefVelocity(agentInfo, _headingDevCos, timeStep);
 	}
 
 	unsigned int NavMeshComponent::UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const
 	{
-		// NOTE: This will create a default location instance if the agent didn't already
-		//	have one
 		NavMeshLocation & loc = agentStruct.location;
+		if (loc._hasPath)
+		{
+			return loc._path->updateLocation(agentInfo, _navMesh, _localizer, _localizer->getPlanner());
+		}
 
 		unsigned int oldLoc = loc.getNode();
 		unsigned int newLoc = oldLoc;
-		if (loc._hasPath)
+
+		const Vector2 & p = agentInfo.GetPos();
+		unsigned int oldNode = (unsigned int)loc._nodeID;
+		if (loc._nodeID == NavMeshLocation::NO_NODE)
 		{
-			newLoc = loc._path->updateLocation(agentInfo, _navMesh, _localizer, _localizer->getPlanner());
+			loc._nodeID = _localizer->findNodeBlind(p);
 		}
 		else
 		{
-			//if ( _trackAll || force ) {
-			const Vector2 & p = agentInfo.GetPos();
-			unsigned int oldNode = (unsigned int)loc._nodeID;
-			if (loc._nodeID == NavMeshLocation::NO_NODE)
+			const NavMeshNode& node = _navMesh->GetNodeByPos((unsigned int)loc._nodeID);
+			if (!node.containsPoint(p))
 			{
-				loc._nodeID = _localizer->findNodeBlind(p);
-			}
-			else
-			{
-				const NavMeshNode& node = _navMesh->GetNodeByPos((unsigned int)loc._nodeID);
-				if (!node.containsPoint(p))
+				// not in current node
+				loc._nodeID = _localizer->testNeighbors(node, p);
+				if (loc._nodeID == NavMeshLocation::NO_NODE)
 				{
-					// not in current node
-					loc._nodeID = _localizer->testNeighbors(node, p);
-					if (loc._nodeID == NavMeshLocation::NO_NODE)
-					{
-						loc._nodeID = _localizer->findNodeBlind(p);
-					}
+					loc._nodeID = _localizer->findNodeBlind(p);
 				}
 			}
-			if (loc._nodeID == NavMeshLocation::NO_NODE)
-			{
-				loc._nodeID = oldNode;
-			}
-			newLoc = (unsigned int)loc._nodeID;
 		}
-
-		_localizer->updateAgentPosition(agentInfo.id, oldLoc, newLoc);
+		if (loc._nodeID == NavMeshLocation::NO_NODE)
+		{
+			loc._nodeID = oldNode;
+		}
+		newLoc = (unsigned int)loc._nodeID;
 
 		return newLoc;
 	}

@@ -61,25 +61,6 @@ namespace FusionCrowd
 			return nullptr;
 	}
 
-	//
-	//
-
-	void NavMeshLocalizer::updateAgentPosition(size_t agentId, const unsigned int oldLoc, unsigned int newLoc)
-	{
-		if (newLoc != oldLoc)
-		{
-			if (newLoc == NavMeshLocation::NO_NODE)
-			{
-				newLoc = static_cast<unsigned int>(_navMesh->getNodeCount());
-			}
-
-			// remove the agent from the set for oldLoc and place it in newLoc
-#pragma omp critical( NAV_MESH_LOCALIZER_MOVE_AGENT )
-			{
-			}
-		}
-	}
-
 	NavMeshLocalizer::NavMeshLocalizer(const std::string& name, bool usePlanner) : _navMesh(0x0), _trackAll(false), _planner(0x0)
 	{
 		std::ifstream f;

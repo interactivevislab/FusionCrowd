@@ -53,7 +53,7 @@ namespace FusionCrowd
 
 		void AddAgent(AgentSpatialInfo spatialInfo)
 		{
-			if(_agentsInfo.find(spatialInfo.id) == _agentsInfo.end())
+			if(_agentsInfo.find(spatialInfo.id) != _agentsInfo.end())
 				return;
 
 			if(spatialInfo.type == AgentSpatialInfo::AGENT)

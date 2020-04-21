@@ -10,6 +10,10 @@ namespace FusionCrowd
 {
 	class Goal
 	{
+	public:
+		Goal(const Goal & other);
+		Goal& operator=(const Goal & other);
+
 	protected:
 		Goal(size_t id, std::unique_ptr<Math::Geometry2D> geometry);
 

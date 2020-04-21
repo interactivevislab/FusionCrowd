@@ -64,7 +64,6 @@ namespace FusionCrowd
 		unsigned int getNodeId(const DirectX::SimpleMath::Vector2& p) const;
 
 		void setTrackAll() { _trackAll = true; }
-		void updateAgentPosition(size_t agentId, const unsigned int oldLoc, unsigned int newLoc);
 
 		std::shared_ptr<PathPlanner> getPlanner() { return _planner; }
 		void setPlanner(std::shared_ptr<PathPlanner> planner) { _planner = planner; }

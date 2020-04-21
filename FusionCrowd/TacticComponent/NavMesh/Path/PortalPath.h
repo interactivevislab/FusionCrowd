@@ -20,7 +20,7 @@ namespace FusionCrowd
 	public:
 		PortalPath(const DirectX::SimpleMath::Vector2 & startPos, const Goal & goal, const PortalRoute* route, float agentRadius);
 		~PortalPath();
-		void setPreferredDirection(AgentSpatialInfo & agent, float headingCos);
+		void setPrefVelocity(AgentSpatialInfo & agent, float headingCos, float timeStep);
 		unsigned int updateLocation(const AgentSpatialInfo & agent, const std::shared_ptr<NavMesh> navMesh,
 		                            const std::shared_ptr<NavMeshLocalizer> localizer, const std::shared_ptr<PathPlanner> planner);
 		unsigned int getNode() const;
@@ -41,7 +41,7 @@ namespace FusionCrowd
 		std::vector<DirectX::SimpleMath::Vector2> _headings;
 	protected:
 		const PortalRoute* _route;
-		const Goal & _goal;
+		const Goal _goal;
 		size_t _currPortal;
 
 		void computeCrossing(const DirectX::SimpleMath::Vector2& startPos, float agentRadius);
