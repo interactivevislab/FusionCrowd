@@ -6,8 +6,9 @@
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NavSystem.h"
 #include "StrategyComponent/Goal/Goal.h"
-#include "TacticComponent/Path/PrefVelocity.h"
+#include "TacticComponent/PrefVelocity.h"
 #include "Math/consts.h"
+
 #include <iostream>
 
 using namespace DirectX::SimpleMath;
@@ -22,8 +23,8 @@ namespace FusionCrowd
 
 	NavMeshLocation NavMeshComponent::Replan(Vector2 fromPoint, const Goal & target, float agentRadius)
 	{
-		unsigned int from = GetClosestAvailableNode(fromPoint);
-		unsigned int to = GetClosestAvailableNode(target.getCentroid());
+		size_t from = GetClosestAvailableNode(fromPoint);
+		size_t to = GetClosestAvailableNode(target.getCentroid());
 
 		auto planner = _localizer->getPlanner();
 		auto* route = planner->getRoute(from, to, agentRadius);
@@ -101,11 +102,14 @@ namespace FusionCrowd
 
 		float min_dist = INFINITY;
 		Vector2 res;
-		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--)
+
+		auto navMesh = _localizer->getNavMesh();
+		for (int i = navMesh->getNodeCount() - 1; i >= 0; i--)
 		{
-			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted)
+			const auto & node = navMesh->GetNodeByPos(i);
+			if (!node.deleted)
 			{
-				Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
+				Vector2 center = node.getCenter();
 				if ((p - center).LengthSquared() < min_dist)
 				{
 					min_dist = (p - center).LengthSquared();
@@ -130,11 +134,13 @@ namespace FusionCrowd
 
 		float min_dist = INFINITY;
 		size_t res;
-		for (int i = _localizer->getNavMesh()->getNodeCount() - 1; i >= 0; i--)
+		auto navMesh = _localizer->getNavMesh();
+		for (size_t i = navMesh->getNodeCount() - 1; i >= 0; i--)
 		{
-			if (!_localizer->getNavMesh()->GetNodeByPos(i).deleted)
+			const auto & node = navMesh->GetNodeByPos(i);
+			if (!node.deleted)
 			{
-				Vector2 center = _localizer->getNavMesh()->GetNodeByPos(i).getCenter();
+				Vector2 center = node.getCenter();
 				if ((p - center).LengthSquared() < min_dist)
 				{
 					min_dist = (p - center).LengthSquared();
@@ -164,11 +170,13 @@ namespace FusionCrowd
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
-		//TODO: replace with correct disk goal
-		if ((agentGoal.getCentroid() - agentInfo.GetPos()).Length() < 1.5f) {
+
+		if (agentGoal.getGeometry()->containsPoint(agentInfo.GetPos()))
+		{
 			agentInfo.prefVelocity.setSpeed(0);
 			return;
 		}
+
 		if (path == nullptr || path->getGoal().getID() != agentGoal.getID())
 		{
 			Vector2 goalPoint = agentGoal.getCentroid();
@@ -254,24 +262,10 @@ namespace FusionCrowd
 		return newLoc;
 	}
 
-	unsigned int NavMeshComponent::getNodeId(size_t agentId) const
+	size_t NavMeshComponent::getNodeId(size_t agentId) const
 	{
 		unsigned int node = NavMeshLocation::NO_NODE;
 		return _agents[agentId].location.getNode();
-	}
-
-	unsigned int NavMeshComponent::getNodeId(size_t agentId, const std::string& grpName, bool searchAll)
-	{
-		unsigned int nodeId = getNodeId(agentId);
-		if (nodeId == NavMeshLocation::NO_NODE)
-		{
-			//node = findNodeInGroup(agent->_pos, grpName, searchAll);
-			if (nodeId != NavMeshLocation::NO_NODE)
-			{
-				_agents[agentId].location.setNode(nodeId);
-			}
-		}
-		return nodeId;
 	}
 
 	std::shared_ptr<NavMeshLocalizer> NavMeshComponent::GetLocalizer() const

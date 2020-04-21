@@ -2,7 +2,7 @@
 
 #include "Math/Geometry2D.h"
 #include "Math/Util.h"
-#include "TacticComponent/Path/PrefVelocity.h"
+#include "TacticComponent/PrefVelocity.h"
 
 #include <memory>
 

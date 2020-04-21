@@ -1,6 +1,6 @@
 #include "Goal.h"
 
-#include "TacticComponent/Path/PrefVelocity.h"
+#include "TacticComponent/PrefVelocity.h"
 
 namespace FusionCrowd
 {

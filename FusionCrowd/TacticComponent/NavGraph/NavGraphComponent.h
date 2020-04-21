@@ -1,12 +1,10 @@
 #pragma once
 
-#include "ITacticComponent.h"
 #include "Simulator.h"
 #include "Navigation/NavGraph/NavGraph.h"
 #include "Navigation/NavSystem.h"
-#include "Navigation/NavGraph/NavGraphPathPlanner.h"
-
-
+#include "TacticComponent/ITacticComponent.h"
+#include "TacticComponent/NavGraph/NavGraphPathPlanner.h"
 
 namespace FusionCrowd
 {

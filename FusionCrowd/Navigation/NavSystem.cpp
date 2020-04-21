@@ -3,7 +3,7 @@
 
 #include "Math/Util.h"
 #include "Math/consts.h"
-#include "TacticComponent/NavMeshComponent.h"
+#include "TacticComponent/NavMesh/NavMeshComponent.h"
 
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/Obstacle.h"

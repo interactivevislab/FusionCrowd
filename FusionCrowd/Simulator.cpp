@@ -4,7 +4,7 @@
 
 #include "Navigation/NavSystem.h"
 #include "Navigation/AgentSpatialInfo.h"
-#include "TacticComponent/NavMeshComponent.h"
+#include "TacticComponent/NavMesh/NavMeshComponent.h"
 #include "StrategyComponent/Goal/Goal.h"
 #include "Navigation/OnlineRecording/OnlineRecording.h"
 #include "Group/GridGroup.h"

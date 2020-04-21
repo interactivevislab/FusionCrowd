@@ -8,17 +8,8 @@
     <ClCompile Include="Math\Line.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />
     <ClCompile Include="StrategyComponent\Goal\Goal.cpp" />
-    <ClCompile Include="TacticComponent\Path\Funnel.cpp" />
-    <ClCompile Include="TacticComponent\Path\MinHeap.cpp" />
-    <ClCompile Include="TacticComponent\Path\PathPlanner.cpp" />
-    <ClCompile Include="TacticComponent\Path\PortalPath.cpp" />
-    <ClCompile Include="TacticComponent\Path\PrefVelocity.cpp" />
-    <ClCompile Include="TacticComponent\Path\Route.cpp" />
-    <ClCompile Include="TacticComponent\Path\WayPortal.cpp" />
-    <ClCompile Include="TacticComponent\NavMeshComponent.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMesh.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshEdge.cpp" />
-    <ClCompile Include="Navigation\NavMesh\NavMeshLocalizer.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshNode.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshObstacle.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshPoly.cpp" />
@@ -47,11 +38,8 @@
     <ClCompile Include="Navigation\NavMesh\Modification\NavMeshModification.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationProcessor.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
-    <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
-    <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
     <ClCompile Include="OperationComponent\BicycleComponent.cpp" />
-    <ClCompile Include="TacticComponent\Path\PathRandomization.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="OperationComponent\StrictComponent.cpp" />
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
@@ -60,6 +48,18 @@
     <ClCompile Include="Group\GuidedGroup.cpp" />
     <ClCompile Include="Navigation\NeighborInfo.cpp" />
     <ClCompile Include="Navigation\AgentSpatialInfo.cpp" />
+    <ClCompile Include="TacticComponent\NavGraph\NavGraphComponent.cpp" />
+    <ClCompile Include="TacticComponent\NavGraph\NavGraphPathPlanner.cpp" />
+    <ClCompile Include="TacticComponent\NavMesh\NavMeshComponent.cpp" />
+    <ClCompile Include="TacticComponent\NavMesh\Path\Funnel.cpp" />
+    <ClCompile Include="TacticComponent\NavMesh\Path\MinHeap.cpp" />
+    <ClCompile Include="TacticComponent\NavMesh\Path\PathPlanner.cpp" />
+    <ClCompile Include="TacticComponent\NavMesh\Path\PathRandomization.cpp" />
+    <ClCompile Include="TacticComponent\NavMesh\Path\PortalPath.cpp" />
+    <ClCompile Include="TacticComponent\NavMesh\Path\Route.cpp" />
+    <ClCompile Include="TacticComponent\NavMesh\Path\WayPortal.cpp" />
+    <ClCompile Include="Navigation\NavMesh\NavMeshLocalizer.cpp" />
+    <ClCompile Include="TacticComponent\PrefVelocity.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -72,18 +72,9 @@
     <ClInclude Include="OperationComponent\KaramouzasComponent.h" />
     <ClInclude Include="OperationComponent\IOperationComponent.h" />
     <ClInclude Include="StrategyComponent\Goal\Goal.h" />
-    <ClInclude Include="TacticComponent\Path\Funnel.h" />
-    <ClInclude Include="TacticComponent\Path\MinHeap.h" />
-    <ClInclude Include="TacticComponent\Path\PathPlanner.h" />
-    <ClInclude Include="TacticComponent\Path\PortalPath.h" />
-    <ClInclude Include="TacticComponent\Path\PrefVelocity.h" />
-    <ClInclude Include="TacticComponent\Path\Route.h" />
-    <ClInclude Include="TacticComponent\Path\WayPortal.h" />
-    <ClInclude Include="TacticComponent\NavMeshComponent.h" />
     <ClInclude Include="TacticComponent\ITacticComponent.h" />
     <ClInclude Include="Navigation\NavMesh\NavMesh.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshEdge.h" />
-    <ClInclude Include="Navigation\NavMesh\NavMeshLocalizer.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshNode.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshObstacle.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshPoly.h" />
@@ -126,15 +117,12 @@
     <ClInclude Include="Navigation\NavMesh\Modification\NavMeshModification.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\ModificationProcessor.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
-    <ClInclude Include="Navigation\NavGraph\NavGraphPathPlanner.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Export\INavMeshPublic.h" />
-    <ClInclude Include="TacticComponent\NavGraphComponent.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="Export\NavGraph.h" />
     <ClInclude Include="OperationComponent\BicycleComponent.h" />
-    <ClInclude Include="TacticComponent\Path\PathRandomization.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
     <ClInclude Include="OperationComponent\StrictComponent.h" />
     <ClInclude Include="TacticComponent\ExternalControl.h" />
@@ -144,6 +132,18 @@
     <ClInclude Include="Group\GuidedGroup.h" />
     <ClInclude Include="Util\ctpl_stl.h" />
     <ClInclude Include="Navigation\NeighborInfo.h" />
+    <ClInclude Include="TacticComponent\NavGraph\NavGraphComponent.h" />
+    <ClInclude Include="TacticComponent\NavGraph\NavGraphPathPlanner.h" />
+    <ClInclude Include="TacticComponent\NavMesh\NavMeshComponent.h" />
+    <ClInclude Include="TacticComponent\NavMesh\Path\Funnel.h" />
+    <ClInclude Include="TacticComponent\NavMesh\Path\MinHeap.h" />
+    <ClInclude Include="TacticComponent\NavMesh\Path\PathPlanner.h" />
+    <ClInclude Include="TacticComponent\NavMesh\Path\PathRandomization.h" />
+    <ClInclude Include="TacticComponent\NavMesh\Path\PortalPath.h" />
+    <ClInclude Include="TacticComponent\NavMesh\Path\Route.h" />
+    <ClInclude Include="TacticComponent\NavMesh\Path\WayPortal.h" />
+    <ClInclude Include="Navigation\NavMesh\NavMeshLocalizer.h" />
+    <ClInclude Include="TacticComponent\PrefVelocity.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

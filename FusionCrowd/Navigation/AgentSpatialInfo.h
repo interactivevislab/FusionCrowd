@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Math/Geometry2D.h"
-#include "TacticComponent/Path/PrefVelocity.h"
+#include "TacticComponent/PrefVelocity.h"
 #include "Export/IRecording.h"
 #include "Export/Export.h"
 

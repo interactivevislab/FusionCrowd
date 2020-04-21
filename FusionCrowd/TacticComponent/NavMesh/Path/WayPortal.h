@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TacticComponent/Path/PrefVelocity.h"
+#include "TacticComponent/PrefVelocity.h"
 #include "Navigation/NavMesh/NavMeshEdge.h"
 #include "Export/Config.h"
 #include "Math/Util.h"

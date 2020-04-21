@@ -2,7 +2,7 @@
 
 #include <istream>
 
-#include "TacticComponent/Path/PrefVelocity.h"
+#include "TacticComponent/PrefVelocity.h"
 #include "NavMeshNode.h"
 #include "Math/Util.h"
 

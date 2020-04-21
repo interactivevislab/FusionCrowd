@@ -4,7 +4,7 @@
 #include "Simulator.h"
 #include "Navigation/NavGraph/NavGraph.h"
 #include "Navigation/NavSystem.h"
-#include "Navigation/NavGraph/NavGraphPathPlanner.h"
+#include "TacticComponent/NavGraph/NavGraphPathPlanner.h"
 #include "Export/IExternalControlInterface.h"
 
 

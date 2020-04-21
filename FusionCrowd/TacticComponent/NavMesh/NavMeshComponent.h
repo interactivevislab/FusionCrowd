@@ -3,7 +3,7 @@
 #include <string>
 
 #include "Export/ComponentId.h"
-#include "ITacticComponent.h"
+#include "TacticComponent/ITacticComponent.h"
 
 #include "Navigation/NavMesh/NavMesh.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
@@ -33,8 +33,7 @@ namespace FusionCrowd
 		void Update(float timeStep) override;
 		DirectX::SimpleMath::Vector2 GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) override;
 		size_t GetClosestAvailableNode(DirectX::SimpleMath::Vector2 p);
-		unsigned int getNodeId(size_t agentId) const;
-		unsigned int getNodeId(size_t agentId, const std::string& grpName, bool searchAll = false);
+		size_t getNodeId(size_t agentId) const;
 
 		ComponentId GetId() override { return ComponentIds::NAVMESH_ID; }
 

@@ -8,8 +8,8 @@
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 #include "Navigation/NavSystem.h"
 
-#include "TacticComponent/NavMeshComponent.h"
-#include "TacticComponent/NavGraphComponent.h"
+#include "TacticComponent/NavMesh/NavMeshComponent.h"
+#include "TacticComponent/NavGraph/NavGraphComponent.h"
 #include "TacticComponent/ExternalControl.h"
 
 #include "OperationComponent/KaramouzasComponent.h"
