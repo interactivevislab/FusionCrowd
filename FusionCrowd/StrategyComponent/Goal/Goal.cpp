@@ -4,7 +4,7 @@
 
 namespace FusionCrowd
 {
-	Goal::Goal(size_t id, std::shared_ptr<Math::Geometry2D> geometry) : _id(id), _geometry(std::move(geometry)) { }
+	Goal::Goal(size_t id, std::unique_ptr<Math::Geometry2D> geometry) : _id(id), _geometry(std::move(geometry)) { }
 
 	float Goal::squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const
 	{
@@ -33,6 +33,8 @@ namespace FusionCrowd
 		return _id;
 	}
 
+	GoalFactory::GoalFactory() { }
+
 	Goal GoalFactory::CreatePointGoal(const DirectX::SimpleMath::Vector2& p)
 	{
 		auto geometry = std::make_unique<FusionCrowd::Math::PointShape>(p);
@@ -43,12 +45,12 @@ namespace FusionCrowd
 	Goal GoalFactory::CreateDiscGoal(const DirectX::SimpleMath::Vector2& p, float R)
 	{
 		auto geometry = std::make_unique < FusionCrowd::Math::DiskShape>(p, R);
-		//auto geometry = std::make_unique<FusionCrowd::Math::PointShape>(p);
+
 		return Goal(goalId++, std::move(geometry));
 	}
 
-	Goal GoalFactory::CreateGeometryGoal(std::shared_ptr<Math::Geometry2D> geometry)
+	Goal GoalFactory::CreateGeometryGoal(std::unique_ptr<Math::Geometry2D> geometry)
 	{
-		return Goal(goalId++, geometry);
+		return Goal(goalId++, std::move(geometry));
 	}
 }

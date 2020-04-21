@@ -11,7 +11,7 @@ namespace FusionCrowd
 	class Goal
 	{
 	protected:
-		Goal(size_t id, std::shared_ptr<Math::Geometry2D> geometry);
+		Goal(size_t id, std::unique_ptr<Math::Geometry2D> geometry);
 
 		friend class GoalFactory;
 
@@ -28,7 +28,7 @@ namespace FusionCrowd
 
 	protected:
 		size_t _id;
-		std::shared_ptr<Math::Geometry2D> _geometry;
+		std::unique_ptr<Math::Geometry2D> _geometry;
 	};
 
 	class GoalFactory
@@ -36,7 +36,12 @@ namespace FusionCrowd
 	public:
 		Goal CreatePointGoal(const DirectX::SimpleMath::Vector2 & p);
 		Goal CreateDiscGoal(const DirectX::SimpleMath::Vector2 & center, float R);
-		Goal CreateGeometryGoal(std::shared_ptr<Math::Geometry2D> geometry);
+		Goal CreateGeometryGoal(std::unique_ptr<Math::Geometry2D> geometry);
+
+	private:
+		friend class Simulator;
+		GoalFactory();
+
 	private:
 		size_t goalId = 0;
 	};

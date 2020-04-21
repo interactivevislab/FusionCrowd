@@ -74,7 +74,7 @@ namespace FusionCrowd
 			return _agents.find(agentId)->second.currentGoal;
 		}
 
-		size_t AddAgent(DirectX::SimpleMath::Vector2 pos)
+		size_t AddAgent(Vector2 pos)
 		{
 			AgentSpatialInfo info;
 			info.SetPos(pos);
@@ -82,8 +82,72 @@ namespace FusionCrowd
 			return AddAgent(std::move(info), ComponentIds::NO_COMPONENT, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
 		}
 
+		size_t AddAgent(Vector2 pos, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
+		{
+			// Use default values
+			AgentSpatialInfo info;
+			info.SetPos(pos);
 
-		bool UpdateAgent(AgentParams params) {
+			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
+			info.prefSpeed *= dist(_rnd_seed);
+			info.maxSpeed = info.maxSpeed < info.prefSpeed ? info.prefSpeed : info.maxSpeed;
+
+			return AddAgent(std::move(info), opId, tacticId, strategyId);
+		}
+
+		size_t AddAgent(
+			AgentSpatialInfo props,
+			ComponentId opId,
+			ComponentId tacticId,
+			ComponentId strategyId
+		)
+		{
+			AgentSpatialInfo info = std::move(props);
+			auto agentId = GetNextId();
+			info.id = agentId;
+
+			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
+			info.prefSpeed *= dist(_rnd_seed);
+
+			info.useNavMeshObstacles = (tacticId == ComponentIds::NAVMESH_ID);
+			if (tacticId == ComponentIds::NAVGRAPH_ID) {
+				info.neighbourSearchShape = std::make_unique<Math::ConeShape>(Vector2(0,0), 10.0f, Math::PI/6.0f);
+			}
+
+			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.GetPos());
+			_navSystem->AddAgent(std::move(info));
+
+			Agent a(agentId, _goalFactory.CreatePointGoal(goal_pos));
+			_agents.insert({ agentId, std::move(a)});
+
+			auto & agent = _agents.find(agentId)->second;
+
+			auto op = _operComponents.find(opId);
+			if(op != _operComponents.end())
+			{
+				op->second->AddAgent(agentId);
+				agent.opComponent = op->second;
+			}
+
+			auto tactic = _tacticComponents.find(tacticId);
+			if(tactic != _tacticComponents.end())
+			{
+				tactic->second->AddAgent(agentId);
+				agent.tacticComponent = tactic->second;
+			}
+
+			auto strat = _strategyComponents.find(strategyId);
+			if(strat != _strategyComponents.end())
+			{
+				strat->second->AddAgent(agentId);
+				agent.stratComponent = strat->second;
+			}
+
+			return agentId;
+		}
+
+		bool UpdateAgent(AgentParams params)
+		{
 			SetOperationComponent(params.id, params.opCompId);
 			SetTacticComponent(params.id, params.tacticCompId);
 			auto& si = _navSystem->GetSpatialInfo(params.id);
@@ -97,18 +161,6 @@ namespace FusionCrowd
 			return true;
 		}
 
-		size_t AddAgent(float x, float y, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
-		{
-			// Use default values
-			AgentSpatialInfo info;
-			info.SetPos(Vector2(x, y));
-
-			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
-			info.prefSpeed *= dist(_rnd_seed);
-			info.maxSpeed = info.maxSpeed < info.prefSpeed ? info.prefSpeed : info.maxSpeed;
-
-			return AddAgent(std::move(info), opId, tacticId, strategyId);
-		}
 		OperationStatus RemoveGroup(size_t groupId) {
 
 			if (_groups.find(groupId) == _groups.end())
@@ -154,72 +206,18 @@ namespace FusionCrowd
 			return OperationStatus::OK;
 		}
 
-		size_t AddAgent(
-			AgentSpatialInfo props,
-			ComponentId opId,
-			ComponentId tacticId,
-			ComponentId strategyId
-		)
+		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
 		{
-			AgentSpatialInfo info = std::move(props);
-			auto agentId = GetNextId();
-			info.id = agentId;
+			const auto & agentIt = _agents.find(agentId);
+			if (agentIt == _agents.end()) return;
 
-			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
-			info.prefSpeed *= dist(_rnd_seed);
-
-			info.useNavMeshObstacles = (tacticId == ComponentIds::NAVMESH_ID);
-			if (tacticId == ComponentIds::NAVGRAPH_ID) {
-				info.neighbourSearchShape = std::make_unique<Math::ConeShape>(Vector2(0,0), 10.0f, Math::PI/6.0f);
-			}
-
-			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.GetPos());
-			_navSystem->AddAgent(std::move(info));
-
-			Agent a(agentId, _goalFactory.CreatePointGoal(goal_pos));
-			_agents.insert({ agentId, a});
-
-			auto & agent = _agents.find(agentId)->second;
-
-			auto op = _operComponents.find(opId);
-			if(op != _operComponents.end())
-			{
-				op->second->AddAgent(agentId);
-				agent.opComponent = op->second;
-			}
-
-			auto tactic = _tacticComponents.find(tacticId);
-			if(tactic != _tacticComponents.end())
-			{
-				tactic->second->AddAgent(agentId);
-				agent.tacticComponent = tactic->second;
-			}
-
-			auto strat = _strategyComponents.find(strategyId);
-			if(strat != _strategyComponents.end())
-			{
-				strat->second->AddAgent(agentId);
-				agent.stratComponent = strat->second;
-			}
-
-			return agentId;
-		}
-
-		void SetAgentGoal(Agent & agent, DirectX::SimpleMath::Vector2 goalPos)
-		{
+			Agent & agent = agentIt->second;
 			if (agent.tacticComponent.expired()) return;
 			if (auto tactic = agent.tacticComponent.lock())
 			{
 				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goalPos);
-				auto goal = _goalFactory.CreateDiscGoal(point, 1.5f);
-				agent.currentGoal = goal;
+				agent.currentGoal = _goalFactory.CreateDiscGoal(point, 1.5f);
 			}
-		}
-
-		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
-		{
-			if (_agents.find(agentId) == _agents.end()) return;
-			SetAgentGoal(_agents.find(agentId)->second, goalPos);
 		}
 
 		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
@@ -288,9 +286,6 @@ namespace FusionCrowd
 		void AddStrategyComponent(std::shared_ptr<IStrategyComponent> strategyComponent)
 		{
 			_strategyComponents[strategyComponent->GetId()] = strategyComponent;
-		}
-
-		void InitSimulator() {
 		}
 
 		float GetElapsedTime()
@@ -380,7 +375,7 @@ namespace FusionCrowd
 
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 			float res = _navSystem->CutPolygonFromMesh(polygon);
-			for (auto pair : _agents) {
+			for (auto & pair : _agents) {
 				SetAgentGoal(pair.first, pair.second.currentGoal.getCentroid());
 			}
 			return res;
@@ -601,11 +596,6 @@ namespace FusionCrowd
 		return pimpl->SetStrategyComponent(agentId, newStrategyComponent);
 	}
 
-	void Simulator::SetNavSystem(std::shared_ptr<NavSystem> navSystem)
-	{
-		pimpl->SetNavSystem(navSystem);
-	}
-
 	Simulator & Simulator::AddOpModel(std::shared_ptr<IOperationComponent> component)
 	{
 		pimpl->AddOperComponent(component);
@@ -641,12 +631,12 @@ namespace FusionCrowd
 	}
 
 	size_t Simulator::AddAgent(
-		float x, float y,
+		Vector2 pos,
 		ComponentId opId,
 		ComponentId tacticId,
 		ComponentId strategyId
 	) {
-		return pimpl->AddAgent(x, y, opId, tacticId, strategyId);
+		return pimpl->AddAgent(pos, opId, tacticId, strategyId);
 	}
 
 	size_t Simulator::AddAgent(DirectX::SimpleMath::Vector2 pos)

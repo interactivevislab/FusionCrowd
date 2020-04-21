@@ -41,7 +41,7 @@ namespace FusionCrowd
 		std::vector<DirectX::SimpleMath::Vector2> _headings;
 	protected:
 		const PortalRoute* _route;
-		const Goal _goal;
+		const Goal & _goal;
 		size_t _currPortal;
 
 		void computeCrossing(const DirectX::SimpleMath::Vector2& startPos, float agentRadius);

@@ -36,8 +36,6 @@ namespace FusionCrowd
 		Simulator & AddStrategy(std::shared_ptr<IStrategyComponent> strategyComponent);
 		Simulator & UseNavSystem(std::shared_ptr<NavSystem> system);
 
-		void SetNavSystem(std::shared_ptr<NavSystem> navSystem);
-
 		bool DoStep(float timeStep);
 
 		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent);
@@ -66,7 +64,7 @@ namespace FusionCrowd
 		size_t AddAgent(DirectX::SimpleMath::Vector2 pos);
 
 		size_t AddAgent(
-			float x, float y,
+			DirectX::SimpleMath::Vector2 pos,
 			ComponentId opId,
 			ComponentId strategyId,
 			ComponentId tacticId

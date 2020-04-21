@@ -77,7 +77,7 @@ namespace FusionCrowd
 			ComponentId strategyId
 		)
 		{
-			return _sim->AddAgent(x, y, opId, tacticId, strategyId);
+			return _sim->AddAgent(Vector2(x, y), opId, tacticId, strategyId);
 		}
 
 		size_t AddAgent(
@@ -89,7 +89,7 @@ namespace FusionCrowd
 		{
 			AgentSpatialInfo info;
 			info.radius = radius;
-			//info.maxSpeed = preferedVelocity;
+			info.maxSpeed = preferedVelocity * 1.5f;
 			info.prefSpeed = preferedVelocity;
 			info.SetPos(Vector2(x, y));
 
