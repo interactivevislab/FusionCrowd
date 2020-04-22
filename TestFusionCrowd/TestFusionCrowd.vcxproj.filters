@@ -21,9 +21,6 @@
     <ClInclude Include="TestCases\NeighbourSearchBenchCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestCases\ZanlungoCase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ThirdParty\date.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -34,9 +31,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestCases\TshapedFancyTestCase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestCases\FsmTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestCases\ITestCase.h">
@@ -51,9 +45,6 @@
     <ClInclude Include="TestCases\TradeshowTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestCases\NavGraphTestCase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestCases\ExchangeCircleCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -61,6 +52,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestCases\Groups\GroupPerformanceTestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases\Components\FsmTestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases\Components\NavGraphTestCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases\Components\ZanlungoCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases\Components\GoalShapeTestCase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,9 +77,6 @@
     <ClCompile Include="TestCases\NeighbourSearchBenchCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestCases\ZanlungoCase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestCases\CrossingTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -86,16 +86,10 @@
     <ClCompile Include="TestCases\TshapedFancyTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestCases\FsmTestCase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestCases\StenkaNaStenkuTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestCases\TradeshowTestCase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestCases\NavGraphTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestCases\ExchangeCircleCase.cpp">
@@ -105,6 +99,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestCases\Groups\GroupPerformanceTestCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases\Components\FsmTestCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases\Components\NavGraphTestCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases\Components\ZanlungoCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases\Components\GoalShapeTestCase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

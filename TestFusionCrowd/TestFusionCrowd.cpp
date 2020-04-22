@@ -6,17 +6,21 @@
 #include <iterator>
 #include <direct.h>
 
+#include "TestCases/ITestCase.h"
+
 #include "TestCases/TradeshowTestCase.h"
 #include "TestCases/NeighbourSearchBenchCase.h"
-#include "TestCases/ZanlungoCase.h"
 #include "TestCases/CrossingTestCase.h"
 #include "TestCases/PinholeTestCase.h"
 #include "TestCases/TshapedFancyTestCase.h"
-#include "TestCases/FsmTestCase.h"
-#include "TestCases/StenkaNaStenkuTestCase.h"
-#include "TestCases/ITestCase.h"
-#include "TestCases/NavGraphTestCase.h"
 #include "TestCases/ExchangeCircleCase.h"
+#include "TestCases/StenkaNaStenkuTestCase.h"
+
+#include "TestCases/Components/ZanlungoCase.h"
+#include "TestCases/Components/NavGraphTestCase.h"
+#include "TestCases/Components/FsmTestCase.h"
+#include "TestCases/Components/GoalShapeTestCase.h"
+
 #include "TestCases/Groups/GroupMovementTestCase.h"
 #include "TestCases/Groups/GroupPerformanceTestCase.h"
 
@@ -108,7 +112,7 @@ int main()
 	std::vector<std::shared_ptr<ITestCase>> cases =
 	{
 		// std::shared_ptr<ITestCase>((ITestCase*) new FsmTestCase(FusionCrowd::ComponentIds::BICYCLE, 50, 2000, true)),
-		std::shared_ptr<ITestCase>((ITestCase*) new TradeshowTestCase(1025, 1000, true)),
+		// std::shared_ptr<ITestCase>((ITestCase*) new TradeshowTestCase(1025, 1000, true)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new ZanlungoCase()),
 		// std::shared_ptr<ITestCase>((ITestCase*) new CrossingTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 30, 1000, false)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new PinholeTestCase(FusionCrowd::ComponentIds::KARAMOUZAS_ID, 2, 100)),
@@ -117,7 +121,8 @@ int main()
 		// std::shared_ptr<ITestCase>((ITestCase*) new StenkaNaStenkuTestCase(500, 1000, true)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new GroupMovementTestCase(1000, true)),
 		// std::shared_ptr<ITestCase>((ITestCase*) new ExchangeCircleCase(7500, 1000, FusionCrowd::ComponentIds::ORCA_ID, false)),
-		// std::shared_ptr<ITestCase>((ITestCase*) new GroupPerformanceTestCase())
+		// std::shared_ptr<ITestCase>((ITestCase*) new GroupPerformanceTestCase()),
+		std::shared_ptr<ITestCase>((ITestCase*) new GoalShapeTestCase())
 	};
 
 	std::vector<long long> measurements;
