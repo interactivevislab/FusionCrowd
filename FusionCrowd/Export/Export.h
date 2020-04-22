@@ -9,6 +9,7 @@
 #include "Export/ComponentId.h"
 #include "Export/ModelAgentParams.h"
 #include "Export/NavGraph.h"
+#include "Export/Math/Shapes.h"
 
 namespace FusionCrowd
 {
@@ -63,7 +64,9 @@ namespace FusionCrowd
 			virtual OperationStatus SetAgentTactic(size_t agentId, ComponentId tacticID) = 0;
 			virtual OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId) = 0;
 			virtual void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params) = 0;
-			virtual OperationStatus SetAgentGoal(size_t agentId, float x, float y) = 0;
+
+			virtual OperationStatus SetAgentGoal(size_t agentId, Point p) = 0;
+			virtual OperationStatus SetAgentGoal(size_t agentId, Disk d) = 0;
 
 			virtual size_t GetAgentCount() = 0;
 

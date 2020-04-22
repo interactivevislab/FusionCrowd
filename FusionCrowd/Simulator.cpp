@@ -206,7 +206,7 @@ namespace FusionCrowd
 			return OperationStatus::OK;
 		}
 
-		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
+		void SetAgentGoal(size_t agentId, Goal && goal)
 		{
 			const auto & agentIt = _agents.find(agentId);
 			if (agentIt == _agents.end()) return;
@@ -215,8 +215,8 @@ namespace FusionCrowd
 			if (agent.tacticComponent.expired()) return;
 			if (auto tactic = agent.tacticComponent.lock())
 			{
-				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goalPos);
-				agent.currentGoal = _goalFactory.CreateDiscGoal(point, 0.5f);
+				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goal.getCentroid());
+				agent.currentGoal = std::move(goal);
 			}
 		}
 
@@ -376,7 +376,7 @@ namespace FusionCrowd
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon) {
 			float res = _navSystem->CutPolygonFromMesh(polygon);
 			for (auto & pair : _agents) {
-				SetAgentGoal(pair.first, pair.second.currentGoal.getCentroid());
+				SetAgentGoal(pair.first, Goal(pair.second.currentGoal));
 			}
 			return res;
 		}
@@ -432,7 +432,7 @@ namespace FusionCrowd
 			}
 
 			size_t dummyId = _groups[groupId]->GetDummyId();
-			SetAgentGoal(dummyId, goalPos);
+			SetAgentGoal(dummyId, _goalFactory.CreatePointGoal(goalPos));
 		}
 
 		void AddAgentToGroup(size_t agentId, size_t groupId)
@@ -474,6 +474,11 @@ namespace FusionCrowd
 		IGroup* GetGroup(size_t groupId)
 		{
 			return _groups[groupId].get();
+		}
+
+		GoalFactory & GetGoalFactory()
+		{
+			return _goalFactory;
 		}
 
 	private:
@@ -660,9 +665,9 @@ namespace FusionCrowd
 		return pimpl->RemoveGroup(groupId);
 	}
 
-	void Simulator::SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
+	void Simulator::SetAgentGoal(size_t agentId, Goal && goal)
 	{
-		pimpl->SetAgentGoal(agentId, goalPos);
+		pimpl->SetAgentGoal(agentId, std::move(goal));
 	}
 
 	FCArray<AgentInfo> Simulator::GetAgentsInfo()
@@ -719,6 +724,11 @@ namespace FusionCrowd
 	IGroup* Simulator::GetGroup(size_t groupId)
 	{
 		return pimpl->GetGroup(groupId);
+	}
+
+	GoalFactory & Simulator::GetGoalFactory()
+	{
+		return pimpl->GetGoalFactory();
 	}
 #pragma endregion
 }

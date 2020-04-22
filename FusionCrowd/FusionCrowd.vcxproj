@@ -22,6 +22,7 @@
     <ClInclude Include="Agent.h" />
     <ClInclude Include="AgentShape\Ellipse.h" />
     <ClInclude Include="Export\IExternalControlInterface.h" />
+    <ClInclude Include="Export\Math\Shapes.h" />
     <ClInclude Include="Group\GuidedGroup.h" />
     <ClInclude Include="Navigation\NeighborInfo.h" />
     <ClInclude Include="TacticComponent\ExternalControl.h" />

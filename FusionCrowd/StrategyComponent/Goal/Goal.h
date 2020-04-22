@@ -39,7 +39,11 @@ namespace FusionCrowd
 	{
 	public:
 		Goal CreatePointGoal(const DirectX::SimpleMath::Vector2 & p);
+		Goal CreatePointGoal(const Point & p);
+
 		Goal CreateDiscGoal(const DirectX::SimpleMath::Vector2 & center, float R);
+		Goal CreateDiscGoal(const Disk & d);
+
 		Goal CreateGeometryGoal(std::unique_ptr<Math::Geometry2D> geometry);
 
 	private:

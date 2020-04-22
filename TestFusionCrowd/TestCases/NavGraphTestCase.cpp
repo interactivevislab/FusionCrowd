@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include "Export/Fsm/IStrategyConfigurator.h"
+#include "Export/Math/Shapes.h"
 
 using namespace FusionCrowd;
 
@@ -41,8 +42,7 @@ namespace TestFusionCrowd
 			{
 				id = _sim->AddAgent(x, y, _opComponent, ComponentIds::NAVMESH_ID, -1);
 			}
-			_sim->SetAgentGoal(id, goalX, goalY);
+			_sim->SetAgentGoal(id, Point {goalX, goalY});
 		}
-
 	}
 }

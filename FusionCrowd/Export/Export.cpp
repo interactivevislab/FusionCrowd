@@ -58,9 +58,16 @@ namespace FusionCrowd
 			return OperationStatus::OK;
 		}
 
-		OperationStatus SetAgentGoal(size_t agentId, float x, float y)
+		OperationStatus SetAgentGoal(size_t agentId, Point p)
 		{
-			_sim->SetAgentGoal(agentId, Vector2(x, y));
+			_sim->SetAgentGoal(agentId, _sim->GetGoalFactory().CreatePointGoal(p));
+
+			return OperationStatus::OK;
+		}
+
+		OperationStatus SetAgentGoal(size_t agentId, Disk d)
+		{
+			_sim->SetAgentGoal(agentId, _sim->GetGoalFactory().CreateDiscGoal(d));
 
 			return OperationStatus::OK;
 		}

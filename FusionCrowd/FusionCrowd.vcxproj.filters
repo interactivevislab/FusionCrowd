@@ -144,6 +144,7 @@
     <ClInclude Include="TacticComponent\NavMesh\Path\WayPortal.h" />
     <ClInclude Include="Navigation\NavMesh\NavMeshLocalizer.h" />
     <ClInclude Include="TacticComponent\PrefVelocity.h" />
+    <ClInclude Include="Export\Math\Shapes.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -38,17 +38,17 @@ namespace TestFusionCrowd
 
 		// Just agents
 		size_t a5 = _sim->AddAgent(-5.f, -2.5f, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
-		_sim->SetAgentGoal(a5, 5.f, -2.5f);
+		_sim->SetAgentGoal(a5, Point { 5.f, -2.5f });
 
 		size_t a6 = _sim->AddAgent(-5.f,  -3.f, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
-		_sim->SetAgentGoal(a6, 5.f, -3.f);
+		_sim->SetAgentGoal(a6, Point { 5.f, -3.f });
 
 
 		size_t a7 = _sim->AddAgent(5.f, -2.75f, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
-		_sim->SetAgentGoal(a7, -5.f, -2.75f);
+		_sim->SetAgentGoal(a7, Point { -5.f, -2.75f });
 
 		size_t a8 = _sim->AddAgent(5.f,  -2.5f, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
-		_sim->SetAgentGoal(a8, -5.f, -2.5f);
+		_sim->SetAgentGoal(a8, Point { -5.f, -2.5f });
 
 		// Leader groups
 		size_t a9  = _sim->AddAgent(-5.f, -0.5f, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);

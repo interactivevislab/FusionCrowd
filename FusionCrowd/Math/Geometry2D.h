@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Util.h"
+#include "Export/Math/Shapes.h"
 
 namespace FusionCrowd
 {
@@ -14,7 +15,6 @@ namespace FusionCrowd
 		class Geometry2D
 		{
 		public:
-			Geometry2D() {}
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt) const = 0;
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos, float yaw) const = 0;
 			virtual float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const = 0;
@@ -24,18 +24,23 @@ namespace FusionCrowd
 
 			virtual float BoundingRadius() const = 0;
 			virtual Geometry2D* Clone() const = 0;
+
+			virtual ~Geometry2D();
 		};
 
 		class PointShape : public Geometry2D
 		{
 		public:
-			PointShape() : _position(0.f, 0.f) {}
-			PointShape(const DirectX::SimpleMath::Vector2 & pos) : Geometry2D(), _position(pos) {}
+			PointShape();
+			PointShape(const DirectX::SimpleMath::Vector2 & pos);
+			PointShape(const Point & point);
+
 			PointShape(const PointShape & shape);
 			PointShape(const PointShape & shape, const DirectX::SimpleMath::Vector2 & offset);
 			PointShape operator+(const DirectX::SimpleMath::Vector2 & pt);
-			void setPosition(const DirectX::SimpleMath::Vector2 & pos) { _position = pos; }
-			const DirectX::SimpleMath::Vector2 & getPosition() const { return _position; }
+
+			void setPosition(const DirectX::SimpleMath::Vector2 & pos);
+			const DirectX::SimpleMath::Vector2 & getPosition() const;
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt) const;
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos, float yaw) const;
 			virtual float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const;
@@ -55,6 +60,7 @@ namespace FusionCrowd
 		{
 		public:
 			DiskShape(DirectX::SimpleMath::Vector2 center, float size);
+			DiskShape(const Disk & disk);
 
 			bool containsPoint(const DirectX::SimpleMath::Vector2& pt) const override;
 			bool containsPoint(const DirectX::SimpleMath::Vector2& pt, const DirectX::SimpleMath::Vector2& pos, float yaw) const override;
@@ -75,7 +81,7 @@ namespace FusionCrowd
 		{
 		public:
 			ConeShape(DirectX::SimpleMath::Vector2 point, float range, float angle_rad) : _point(point), _range(range), _angle(angle_rad){}
-			virtual ~ConeShape() {}
+
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt) const override;
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt, const DirectX::SimpleMath::Vector2 & pos, float yaw) const override;
 			virtual float squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const;

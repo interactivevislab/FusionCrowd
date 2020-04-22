@@ -9,17 +9,37 @@ namespace FusionCrowd
 {
 	namespace Math
 	{
+		Geometry2D::~Geometry2D()
+		{ }
+
+		PointShape::PointShape()
+			: _position(0.f, 0.f)
+		{ }
+
+		PointShape::PointShape(const Point & point)
+			: _position(point.x, point.y)
+		{ }
+
 		PointShape::PointShape(const PointShape & shape)
+			: _position(shape._position)
+		{ }
+
+		PointShape::PointShape(const PointShape & shape, const Vector2 & offset)
+			: _position(shape._position + offset)
+		{ }
+
+		PointShape::PointShape(const DirectX::SimpleMath::Vector2& pos)
+			: Geometry2D(), _position(pos)
+		{ }
+
+		PointShape PointShape::operator+(const Vector2 & pt)
 		{
-			_position = shape._position;
-		}
-
-		PointShape::PointShape(const PointShape & shape, const Vector2 & offset) {
-			_position = shape._position + offset;
-		}
-
-		PointShape PointShape::operator+(const Vector2 & pt) {
 			return PointShape(*this, pt);
+		}
+
+		const DirectX::SimpleMath::Vector2& PointShape::getPosition() const
+		{
+			 return _position;
 		}
 
 		bool PointShape::containsPoint(const Vector2 & pt) const {
@@ -70,9 +90,20 @@ namespace FusionCrowd
 			return new PointShape(*this);
 		}
 
+		void PointShape::setPosition(const DirectX::SimpleMath::Vector2& pos)
+		{
+			_position = pos;
+		}
+
 		/////////////////////////////////////////////////////////////////////
 
-		DiskShape::DiskShape(DirectX::SimpleMath::Vector2 center, float R) : _center(center), _R(R) {}
+		DiskShape::DiskShape(DirectX::SimpleMath::Vector2 center, float R)
+			: _center(center), _R(R)
+		{ }
+
+		DiskShape::DiskShape(const Disk & disk)
+			: _center(Vector2(disk.x, disk.y)), _R(disk.r)
+		{ }
 
 		bool DiskShape::containsPoint(const DirectX::SimpleMath::Vector2& pt) const
 		{

@@ -24,7 +24,7 @@ namespace TestFusionCrowd
 		for (int i = 0; i < _agentsNum; i++)
 		{
 			size_t id = _sim->AddAgent(RandFloat(2.0f, 5.0f), RandFloat(2.0f, 10.0f), _opComponent, ComponentIds::NAVMESH_ID, -1);
-			_sim->SetAgentGoal(id, RandFloat(35.0f, 37.0f), RandFloat(5.0f, 7.0f));
+			_sim->SetAgentGoal(id, Point { RandFloat(35.0f, 37.0f), RandFloat(5.0f, 7.0f) });
 		}
 	}
 }

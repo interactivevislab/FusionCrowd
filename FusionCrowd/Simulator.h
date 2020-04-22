@@ -77,7 +77,7 @@ namespace FusionCrowd
 			ComponentId strategyId
 		);
 
-		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos);
+		void SetAgentGoal(size_t agentId, Goal && goal);
 		Agent & GetAgent(size_t id);
 
 		size_t AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance);
@@ -96,6 +96,7 @@ namespace FusionCrowd
 		bool GetAgentsInfo(FCArray<AgentInfo> & output);
 
 		NavSystem* GetNavSystem() const;
+		GoalFactory & GetGoalFactory();
 	private:
 		class SimulatorImpl;
 
