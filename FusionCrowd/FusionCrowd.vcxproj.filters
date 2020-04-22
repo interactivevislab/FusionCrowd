@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />
-    <ClCompile Include="Math\Geometry2D.cpp" />
     <ClCompile Include="Math\geomQuery.cpp" />
     <ClCompile Include="Math\Line.cpp" />
     <ClCompile Include="AgentShape\Ellipse.cpp" />
@@ -60,11 +59,15 @@
     <ClCompile Include="TacticComponent\NavMesh\Path\WayPortal.cpp" />
     <ClCompile Include="Navigation\NavMesh\NavMeshLocalizer.cpp" />
     <ClCompile Include="TacticComponent\PrefVelocity.cpp" />
+    <ClCompile Include="Math\Shapes\Geometry2D.cpp" />
+    <ClCompile Include="Math\Shapes\PointShape.cpp" />
+    <ClCompile Include="Math\Shapes\DiskShape.cpp" />
+    <ClCompile Include="Math\Shapes\ConeShape.cpp" />
+    <ClCompile Include="Math\Shapes\RectShape.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
     <ClInclude Include="Simulator.h" />
-    <ClInclude Include="Math\Geometry2D.h" />
     <ClInclude Include="Math\consts.h" />
     <ClInclude Include="Math\geomQuery.h" />
     <ClInclude Include="Math\Util.h" />
@@ -145,6 +148,11 @@
     <ClInclude Include="Navigation\NavMesh\NavMeshLocalizer.h" />
     <ClInclude Include="TacticComponent\PrefVelocity.h" />
     <ClInclude Include="Export\Math\Shapes.h" />
+    <ClInclude Include="Math\Shapes\Geometry2D.h" />
+    <ClInclude Include="Math\Shapes\PointShape.h" />
+    <ClInclude Include="Math\Shapes\DiskShape.h" />
+    <ClInclude Include="Math\Shapes\ConeShape.h" />
+    <ClInclude Include="Math\Shapes\RectShape.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

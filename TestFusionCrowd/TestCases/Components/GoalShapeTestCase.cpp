@@ -11,7 +11,7 @@ using namespace FusionCrowd;
 namespace TestFusionCrowd
 {
 	GoalShapeTestCase::GoalShapeTestCase()
-		: ITestCase(8, 500, true)
+		: ITestCase(16, 500, true)
 	{ }
 
 	void GoalShapeTestCase::Pre()
@@ -25,6 +25,7 @@ namespace TestFusionCrowd
 
 		SetupPointShape();
 		SetupDiskShape();
+		SetupRectShape();
 	}
 
 	void GoalShapeTestCase::SetupPointShape()
@@ -59,4 +60,28 @@ namespace TestFusionCrowd
 		_sim->SetAgentGoal(a4, goal);
 	}
 
+	void GoalShapeTestCase::SetupRectShape()
+	{
+		size_t a1 = _sim->AddAgent(-5, -25, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		size_t a2 = _sim->AddAgent( 5, -15, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		size_t a3 = _sim->AddAgent(-5, -15, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		size_t a4 = _sim->AddAgent( 5, -25, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+
+		size_t a5 = _sim->AddAgent(0, -25, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		size_t a6 = _sim->AddAgent(0, -15, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		size_t a7 = _sim->AddAgent(-5, -20, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		size_t a8 = _sim->AddAgent( 5, -20, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+
+		Rect goal { -3, -23, 3, -17 };
+
+		_sim->SetAgentGoal(a1, goal);
+		_sim->SetAgentGoal(a2, goal);
+		_sim->SetAgentGoal(a3, goal);
+		_sim->SetAgentGoal(a4, goal);
+
+		_sim->SetAgentGoal(a5, goal);
+		_sim->SetAgentGoal(a6, goal);
+		_sim->SetAgentGoal(a7, goal);
+		_sim->SetAgentGoal(a8, goal);
+	}
 }

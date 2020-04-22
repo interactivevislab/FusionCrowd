@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Geometry2D.h"
+#include "Math/Shapes/Geometry2D.h"
 #include "TacticComponent/PrefVelocity.h"
 #include "Export/IRecording.h"
 #include "Export/Export.h"

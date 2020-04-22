@@ -15,5 +15,6 @@ namespace TestFusionCrowd
 	private:
 		void SetupPointShape();
 		void SetupDiskShape();
+		void SetupRectShape();
 	};
 }

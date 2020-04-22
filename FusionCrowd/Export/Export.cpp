@@ -72,6 +72,13 @@ namespace FusionCrowd
 			return OperationStatus::OK;
 		}
 
+		OperationStatus SetAgentGoal(size_t agentId, Rect r)
+		{
+			_sim->SetAgentGoal(agentId, _sim->GetGoalFactory().CreateRectGoal(r));
+
+			return OperationStatus::OK;
+		}
+
 		bool GetAgents(FCArray<AgentInfo> & output)
 		{
 			return _sim->GetAgentsInfo(output);

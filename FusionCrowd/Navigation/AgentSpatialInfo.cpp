@@ -1,5 +1,7 @@
 #include "AgentSpatialInfo.h"
 
+#include "Math/Shapes/DiskShape.h"
+
 using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd

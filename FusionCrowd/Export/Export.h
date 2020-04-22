@@ -67,6 +67,7 @@ namespace FusionCrowd
 
 			virtual OperationStatus SetAgentGoal(size_t agentId, Point p) = 0;
 			virtual OperationStatus SetAgentGoal(size_t agentId, Disk d) = 0;
+			virtual OperationStatus SetAgentGoal(size_t agentId, Rect r) = 0;
 
 			virtual size_t GetAgentCount() = 0;
 

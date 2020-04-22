@@ -1,8 +1,10 @@
 #pragma once
 
-#include "Math/Geometry2D.h"
+#include "Math/Shapes/Geometry2D.h"
 #include "Math/Util.h"
 #include "TacticComponent/PrefVelocity.h"
+
+#include "Export/Math/Shapes.h"
 
 #include <memory>
 
@@ -43,6 +45,8 @@ namespace FusionCrowd
 
 		Goal CreateDiscGoal(const DirectX::SimpleMath::Vector2 & center, float R);
 		Goal CreateDiscGoal(const Disk & d);
+
+		Goal CreateRectGoal(const Rect & t);
 
 		Goal CreateGeometryGoal(std::unique_ptr<Math::Geometry2D> geometry);
 

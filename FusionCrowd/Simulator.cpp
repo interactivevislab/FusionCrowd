@@ -9,7 +9,8 @@
 #include "Navigation/OnlineRecording/OnlineRecording.h"
 #include "Group/GridGroup.h"
 #include "Group/GuidedGroup.h"
-#include "Math/Geometry2D.h"
+#include "Math/Shapes/ConeShape.h"
+#include "Math/Shapes/DiskShape.h"
 #include "Math/consts.h"
 
 #include <random>

@@ -3,7 +3,6 @@
 #include "GpuCalculator.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NeighborInfo.h"
-#include "Math/Geometry2D.h"
 
 #include "Util/ctpl_stl.h"
 

@@ -2,6 +2,10 @@
 
 #include "TacticComponent/PrefVelocity.h"
 
+#include "Math/Shapes/RectShape.h"
+#include "Math/Shapes/PointShape.h"
+#include "Math/Shapes/DiskShape.h"
+
 namespace FusionCrowd
 {
 	Goal::Goal(const Goal& other)
@@ -51,29 +55,35 @@ namespace FusionCrowd
 
 	Goal GoalFactory::CreatePointGoal(const DirectX::SimpleMath::Vector2& p)
 	{
-		auto geometry = std::make_unique<FusionCrowd::Math::PointShape>(p);
+		auto geometry = std::make_unique<Math::PointShape>(p);
 
 		return Goal(goalId++, std::move(geometry));
 	}
 
 	Goal GoalFactory::CreatePointGoal(const Point& p)
 	{
-		auto geometry = std::make_unique<FusionCrowd::Math::PointShape>(p);
+		auto geometry = std::make_unique<Math::PointShape>(p);
 
 		return Goal(goalId++, std::move(geometry));
 	}
 
-
 	Goal GoalFactory::CreateDiscGoal(const Disk& d)
 	{
-		auto geometry = std::make_unique<FusionCrowd::Math::DiskShape>(d);
+		auto geometry = std::make_unique<Math::DiskShape>(d);
 
 		return Goal(goalId++, std::move(geometry));
 	}
 
 	Goal GoalFactory::CreateDiscGoal(const DirectX::SimpleMath::Vector2& p, float R)
 	{
-		auto geometry = std::make_unique <FusionCrowd::Math::DiskShape>(p, R);
+		auto geometry = std::make_unique <Math::DiskShape>(p, R);
+
+		return Goal(goalId++, std::move(geometry));
+	}
+
+	Goal GoalFactory::CreateRectGoal(const Rect& r)
+	{
+		auto geometry = std::make_unique <Math::RectShape>(r);
 
 		return Goal(goalId++, std::move(geometry));
 	}
