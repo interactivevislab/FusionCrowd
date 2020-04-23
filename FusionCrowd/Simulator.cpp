@@ -80,7 +80,7 @@ namespace FusionCrowd
 			AgentSpatialInfo info;
 			info.SetPos(pos);
 
-			return AddAgent(std::move(info), ComponentIds::NO_COMPONENT, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+			return AddAgent(std::move(info), GetAnyOperational(), GetAnyTactic(), ComponentIds::NO_COMPONENT);
 		}
 
 		size_t AddAgent(Vector2 pos, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
