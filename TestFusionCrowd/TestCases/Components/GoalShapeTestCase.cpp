@@ -52,7 +52,7 @@ namespace TestFusionCrowd
 		size_t a3 = _sim->AddAgent( 0, -5, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
 		size_t a4 = _sim->AddAgent( 0,  5, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
 
-		Disk goal { 0, 0, 3 };
+		Disk goal(0, 0, 3);
 
 		_sim->SetAgentGoal(a1, goal);
 		_sim->SetAgentGoal(a2, goal);

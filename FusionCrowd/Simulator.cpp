@@ -111,9 +111,6 @@ namespace FusionCrowd
 			info.prefSpeed *= dist(_rnd_seed);
 
 			info.useNavMeshObstacles = (tacticId == ComponentIds::NAVMESH_ID);
-			if (tacticId == ComponentIds::NAVGRAPH_ID) {
-				info.neighbourSearchShape = std::make_unique<Math::ConeShape>(Vector2(0,0), 10.0f, Math::PI/6.0f);
-			}
 
 			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.GetPos());
 			_navSystem->AddAgent(std::move(info));
@@ -147,7 +144,7 @@ namespace FusionCrowd
 			return agentId;
 		}
 
-		bool UpdateAgent(AgentParams params)
+		bool UpdateAgentParams(AgentParams params)
 		{
 			SetOperationComponent(params.id, params.opCompId);
 			SetTacticComponent(params.id, params.tacticCompId);
@@ -159,6 +156,29 @@ namespace FusionCrowd
 			si.maxAngVel = params.maxAngVel;
 			si.inertiaEnabled = params.inertiaEnabled;
 			si.useNavMeshObstacles = params.useNavMeshObstacles;
+
+			return true;
+		}
+
+		bool UpdateNeighbourSearchShape(size_t agentId, Cone cone)
+		{
+			if(_agents.find(agentId) == _agents.end())
+				return false;
+
+			auto & agt = _navSystem->GetSpatialInfo(agentId);
+			agt.neighbourSearchShape = std::make_unique<Math::ConeShape>(Vector2(), 0, 0);
+
+			return true;
+		}
+
+		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk)
+		{
+			if(_agents.find(agentId) == _agents.end())
+				return false;
+
+			auto & agt = _navSystem->GetSpatialInfo(agentId);
+			agt.neighbourSearchShape = std::make_unique<Math::DiskShape>(disk);
+
 			return true;
 		}
 
@@ -650,9 +670,20 @@ namespace FusionCrowd
 		return pimpl->AddAgent(pos);
 	}
 
-	bool Simulator::UpdateAgent(AgentParams params) {
-		return pimpl->UpdateAgent(params);
+	bool Simulator::UpdateAgentParams(AgentParams params) {
+		return pimpl->UpdateAgentParams(params);
 	}
+
+	bool Simulator::UpdateNeighbourSearchShape(size_t agentId, Cone cone)
+	{
+		return pimpl->UpdateNeighbourSearchShape(agentId, cone);
+	}
+
+	bool Simulator::UpdateNeighbourSearchShape(size_t agentId, Disk disk)
+	{
+		return pimpl->UpdateNeighbourSearchShape(agentId, disk);
+	}
+
 	size_t Simulator::AddAgent(AgentSpatialInfo props, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
 	{
 		return pimpl->AddAgent(std::move(props), opId, tacticId, strategyId);

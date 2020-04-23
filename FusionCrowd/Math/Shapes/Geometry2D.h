@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Math/Util.h"
+#include "Export/Math/Shapes.h"
 
 namespace FusionCrowd
 {

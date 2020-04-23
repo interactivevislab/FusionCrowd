@@ -88,6 +88,8 @@ namespace FusionCrowd
 			) = 0;
 
 			virtual bool UpdateAgent(AgentParams params) = 0;
+			virtual bool UpdateNeighbourSearchShape(size_t agentId, Disk disk) = 0;
+			virtual bool UpdateNeighbourSearchShape(size_t agentId, Cone cone) = 0;
 
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
 			virtual OperationStatus RemoveGroup(size_t groupId) = 0;

@@ -7,6 +7,10 @@ namespace FusionCrowd
 {
 	namespace Math
 	{
+		ConeShape::ConeShape(const Cone& cone)
+			: _point(Vector2(cone.x, cone.y)), _range(cone.range), _angle(cone.angleRad)
+		{ }
+
 		ConeShape::ConeShape(DirectX::SimpleMath::Vector2 point, float range, float angle_rad)
 			: _point(point), _range(range), _angle(angle_rad)
 		{ }

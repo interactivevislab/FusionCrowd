@@ -112,14 +112,23 @@ namespace FusionCrowd
 
 
 		bool UpdateAgent(AgentParams params) {
-			return _sim->UpdateAgent(params);
+			return _sim->UpdateAgentParams(params);
+		}
+
+		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk)
+		{
+			return _sim->UpdateNeighbourSearchShape(agentId, disk);
+		}
+
+		bool UpdateNeighbourSearchShape(size_t agentId, Cone cone)
+		{
+			return _sim->UpdateNeighbourSearchShape(agentId, cone);
 		}
 
 		OperationStatus RemoveAgent(size_t agentId)
 		{
 			return _sim->RemoveAgent(agentId);
 		}
-
 
 		OperationStatus RemoveGroup(size_t groupId)
 		{

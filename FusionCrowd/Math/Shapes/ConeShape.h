@@ -12,6 +12,7 @@ namespace FusionCrowd
 		class ConeShape : public Geometry2D
 		{
 		public:
+			ConeShape(const Cone & cone);
 			ConeShape(DirectX::SimpleMath::Vector2 point, float range, float angle_rad);
 
 			virtual bool containsPoint(const DirectX::SimpleMath::Vector2 & pt) const override;

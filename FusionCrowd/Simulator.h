@@ -55,7 +55,9 @@ namespace FusionCrowd
 		size_t GetAgentCount() const;
 		const Goal & GetAgentGoal(size_t agentId) const;
 
-		bool UpdateAgent(AgentParams params);
+		bool UpdateAgentParams(AgentParams params);
+		bool UpdateNeighbourSearchShape(size_t agentId, Cone cone);
+		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk);
 
 		OperationStatus RemoveAgent(size_t agentId);
 
