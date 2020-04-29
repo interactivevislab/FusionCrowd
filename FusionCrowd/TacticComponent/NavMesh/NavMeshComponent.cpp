@@ -104,16 +104,26 @@ namespace FusionCrowd
 		Vector2 res;
 
 		auto navMesh = _localizer->getNavMesh();
+		auto* vertices = navMesh->GetVertices();
 		for (int i = navMesh->getNodeCount() - 1; i >= 0; i--)
 		{
 			const auto & node = navMesh->GetNodeByPos(i);
-			if (!node.deleted)
+			if(node.deleted)
+				continue;
+
+			const size_t vCount = node.getVertexCount();
+			for(size_t v = 0; v < vCount; v++)
 			{
-				Vector2 center = node.getCenter();
-				if ((p - center).LengthSquared() < min_dist)
+				Vector2 vertex1 = vertices[node.getVertexID(v)];
+				Vector2 vertex2 = vertices[(node.getVertexID(v) + 1) % vCount];
+
+				auto projection = Math::projectOnSegment(vertex1, vertex2, p);
+
+				const float d = Vector2::DistanceSquared(p, projection);
+				if(d < min_dist)
 				{
-					min_dist = (p - center).LengthSquared();
-					res = center;
+					min_dist = d;
+					res = projection;
 				}
 			}
 		}
@@ -121,6 +131,7 @@ namespace FusionCrowd
 		{
 			throw 1;
 		}
+
 		return res;
 	}
 
@@ -135,7 +146,7 @@ namespace FusionCrowd
 		float min_dist = INFINITY;
 		size_t res;
 		auto navMesh = _localizer->getNavMesh();
-		for (size_t i = navMesh->getNodeCount() - 1; i >= 0; i--)
+		for (size_t i = 0; i < navMesh->getNodeCount(); i++)
 		{
 			const auto & node = navMesh->GetNodeByPos(i);
 			if (!node.deleted)

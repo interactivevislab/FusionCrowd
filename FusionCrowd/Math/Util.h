@@ -43,16 +43,24 @@ namespace FusionCrowd
 			return val;
 		}
 
+		inline DirectX::SimpleMath::Vector2 projectOnSegment(DirectX::SimpleMath::Vector2 s1, DirectX::SimpleMath::Vector2 s2, DirectX::SimpleMath::Vector2 p)
+		{
+			const float l2 = (s2 - s1).LengthSquared();
+
+			if (l2 == 0.0)
+				return s1;
+
+			const float t = clamp((p - s1).Dot(s2 - s1) / l2, 0, 1);
+			const DirectX::SimpleMath::Vector2 projection = s1 + t * (s2 - s1);  // Projection falls on the segment
+
+			return projection;
+		}
+
 		inline float distanceToSegment(DirectX::SimpleMath::Vector2 s1, DirectX::SimpleMath::Vector2 s2, DirectX::SimpleMath::Vector2 p)
 		{
-			  const float l2 = (s2 - s1).LengthSquared();
+			const DirectX::SimpleMath::Vector2 projection = projectOnSegment(s1, s2, p);
 
-			  if (l2 == 0.0)
-				  return DirectX::SimpleMath::Vector2::Distance(p, s2);
-
-			  const float t = clamp((p - s1).Dot(s2 - s1) / l2, 0, 1);
-			  const DirectX::SimpleMath::Vector2 projection = s1 + t * (s2 - s1);  // Projection falls on the segment
-			  return DirectX::SimpleMath::Vector2::Distance(p, projection);
+			return DirectX::SimpleMath::Vector2::Distance(p, projection);
 		}
 	}
 }

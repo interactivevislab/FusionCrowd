@@ -26,6 +26,8 @@ namespace TestFusionCrowd
 		SetupPointShape();
 		SetupDiskShape();
 		SetupRectShape();
+
+		SetupOutOfBoundsPoint();
 	}
 
 	void GoalShapeTestCase::SetupPointShape()
@@ -42,6 +44,20 @@ namespace TestFusionCrowd
 		_sim->SetAgentGoal(a2, goal);
 		_sim->SetAgentGoal(a3, goal);
 		_sim->SetAgentGoal(a4, goal);
+	}
+
+	void GoalShapeTestCase::SetupOutOfBoundsPoint()
+	{
+		// Agents should come as close as possible from all directions
+		size_t a1 = _sim->AddAgent(-995, 0, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		size_t a2 = _sim->AddAgent( 995, 0, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		size_t a3 = _sim->AddAgent( 0, 995, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+		size_t a4 = _sim->AddAgent( 0, -995, ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+
+		_sim->SetAgentGoal(a1, Point { -1005, 0 });
+		_sim->SetAgentGoal(a2, Point {  1005, 0 });
+		_sim->SetAgentGoal(a3, Point { 0,  1005 });
+		_sim->SetAgentGoal(a4, Point { 0, -1005 });
 	}
 
 	void GoalShapeTestCase::SetupDiskShape()

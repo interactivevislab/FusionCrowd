@@ -13,6 +13,7 @@ namespace TestFusionCrowd
 		std::string GetName() const override { return "GoalShapeTestCase"; };
 
 	private:
+		void SetupOutOfBoundsPoint();
 		void SetupPointShape();
 		void SetupDiskShape();
 		void SetupRectShape();
