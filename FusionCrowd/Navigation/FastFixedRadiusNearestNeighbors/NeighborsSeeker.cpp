@@ -34,12 +34,12 @@ namespace FusionCrowd
 	struct Task
 	{
 		size_t id;
-		std::future<std::vector<NeighborInfo>> result;
+		std::future<NeighborsSeeker::SearchResult> result;
 	};
 
-	NeighborsSeeker::SearchResult NeighborsSeeker::FindNeighborsCpu(std::vector<NeighborsSeeker::SearchRequest> searchRequests)
+	std::vector<NeighborsSeeker::SearchResult> NeighborsSeeker::FindNeighborsCpu(std::vector<NeighborsSeeker::SearchRequest> searchRequests)
 	{
-		NeighborsSeeker::SearchResult result;
+		std::vector<NeighborsSeeker::SearchResult> result;
 
 		if(searchRequests.size() == 0)
 			return result;
@@ -89,7 +89,9 @@ namespace FusionCrowd
 			auto lambda = [&grid, &reqs=searchRequests, reqIdx=i, cellSizeX, cellSizeY] (int threadId)
 			{
 				const SearchRequest& r = reqs.at(reqIdx);
-				std::vector<NeighborInfo> result;
+				SearchResult result;
+				result.agentId = r.id;
+
 				const float R = r.neighbourSearchShape->BoundingRadius();
 				const Vector2 pos = r.GetPos();
 
@@ -111,8 +113,10 @@ namespace FusionCrowd
 						{
 							if(r.CanCollide(n) && r.neighbourSearchShape->containsPoint(n.GetPos() - pos))
 							{
-								result.push_back(NeighborInfo(n));
+								result.neighbors.push_back(NeighborInfo(n));
 							}
+
+							result.isOverlapped = result.isOverlapped || (Vector2::Distance(r.GetPos(), n.GetPos()) < (r.radius + n.radius));
 						}
 					}
 				}
@@ -125,7 +129,7 @@ namespace FusionCrowd
 
 		for(auto & t : tasks)
 		{
-			result[t.id] = t.result.get();
+			result.push_back(t.result.get());
 		}
 
 		return result;

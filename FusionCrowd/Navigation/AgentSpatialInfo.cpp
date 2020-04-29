@@ -92,6 +92,11 @@ namespace FusionCrowd
 		this->pos = pos;
 	}
 
+	void AgentSpatialInfo::setOverlaping(bool newVal)
+	{
+		_isOverlaping = newVal;
+	}
+
 	void AgentSpatialInfo::Update(Vector2 pos, Vector2 vel, Vector2 orient)
 	{
 		this->pos    = pos;

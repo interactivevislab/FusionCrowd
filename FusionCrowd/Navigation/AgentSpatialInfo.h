@@ -63,7 +63,12 @@ namespace FusionCrowd
 			DirectX::SimpleMath::Vector2 vel,
 			DirectX::SimpleMath::Vector2 orient
 		);
+
+		inline bool isOverlaping() const { return _isOverlaping; };
+		void setOverlaping(bool newVal);
+
 	private:
+		bool _isOverlaping = false;
 		DirectX::SimpleMath::Vector2 pos;
 		DirectX::SimpleMath::Vector2 vel;
 		DirectX::SimpleMath::Vector2 orient = DirectX::SimpleMath::Vector2(1.f, 0.f);

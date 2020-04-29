@@ -7,7 +7,6 @@
 #include "Util/ctpl_stl.h"
 
 #include <vector>
-#include <unordered_map>
 
 namespace FusionCrowd
 {
@@ -15,12 +14,18 @@ namespace FusionCrowd
 	{
 	public:
 		using SearchRequest = AgentSpatialInfo;
-		using SearchResult = std::unordered_map<size_t, std::vector<NeighborInfo>>;
+
+		struct SearchResult
+		{
+			size_t agentId;
+			std::vector<NeighborInfo> neighbors;
+			bool isOverlapped;
+		};
 
 	public:
 		NeighborsSeeker();
 
-		SearchResult FindNeighborsCpu(std::vector<SearchRequest> searchRequests);
+		std::vector<SearchResult> FindNeighborsCpu(std::vector<SearchRequest> searchRequests);
 
 	private:
 		ctpl::thread_pool _pool;

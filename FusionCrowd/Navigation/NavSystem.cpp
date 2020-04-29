@@ -228,7 +228,8 @@ namespace FusionCrowd
 
 			for(const auto& p : _neighborsSeeker.FindNeighborsCpu(agentRequests))
 			{
-				_agentsNeighbours[p.first] = p.second;
+				_agentsNeighbours[p.agentId] = p.neighbors;
+				_agentsInfo[p.agentId].setOverlaping(p.isOverlapped);
 			}
 		}
 
