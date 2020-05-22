@@ -1,9 +1,10 @@
 #pragma once
 
 
-namespace FusionCrowdWeb {
-
-	enum RequestCode : unsigned char {
+namespace FusionCrowdWeb
+{
+	enum RequestCode : unsigned char
+	{
 		StartWithNavMesh,	// void InitBuilderByNavMeshName(const char* navMeshName) + void StartSimulation()
 		DoStep,				// void DoStep(float timeStep = 0.1f)
 		SetAgentOp,			// OperationStatus SetAgentOp(size_t agentId, ComponentId opId)
@@ -15,7 +16,8 @@ namespace FusionCrowdWeb {
 		RemoveAgent			// OperationStatus RemoveAgent(size_t agentId)
 	};
 
-	enum ResponseCode : unsigned char {
+	enum ResponseCode : unsigned char
+	{
 		Success,
 		NeedRunSimulation,
 		UnknowsRequestCode,

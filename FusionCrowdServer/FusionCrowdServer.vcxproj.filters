@@ -18,10 +18,10 @@
     <ClCompile Include="FCServerCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ServerMain.cpp">
+    <ClCompile Include="FusionCrowdServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FusionCrowdServer.cpp">
+    <ClCompile Include="WsException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -39,6 +39,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RequestProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FcServerApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FcServerApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

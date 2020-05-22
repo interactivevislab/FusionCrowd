@@ -1,8 +1,9 @@
-#include <iostream>
 #include "FCClientCore.h"
-#include "WsException.h"
-#include <string.h>
 #include "MessageCodes.h"
+#include "WsException.h"
+
+#include <string.h>
+#include <iostream>
 
 
 int main()
@@ -10,28 +11,35 @@ int main()
 	using namespace std;
 	using namespace FusionCrowdWeb;
 
-    cout << "---Fusion Crowd Client---" << endl;
+	cout << "---Fusion Crowd Client---" << endl;
 
-	try {
+	try
+	{
 		FCClientCore client;
 		cout << "Starting..." << endl;
 		client.Start();
 
 		cout << "Trying to connect to server...";
 		bool connected = false;
-		while (!connected) {
-			try {
+		while (!connected)
+		{
+			try
+			{
 				client.Connect("127.0.0.1", 8000);
 				connected = true;
 				cout << " success" << endl;
 			}
-			catch (...) {}
+			catch (...)
+			{
+				//
+			}
 		}
 
 		cout << endl << "Session started" << endl << endl;
 
 		char request[100];
-		while (strcmp(request, "exit")) {
+		while (strcmp(request, "exit"))
+		{
 			request[0] = StartWithNavMesh;
 			cin >> request + sizeof(RequestCode);
 
@@ -40,6 +48,8 @@ int main()
 			client.Send(request, requestSize);
 
 			auto response = client.Receive(1);
+			ResponseCode messageCode = (ResponseCode)response[0];
+			response += sizeof(ResponseCode);
 			cout << "Received: " << response << endl << endl;
 		}
 
@@ -48,10 +58,12 @@ int main()
 		cout << "Shutting down..." << endl;
 		client.Shutdown();
 	}
-	catch (WsException e) {
-		cout << e.what() << " | Error code: " << e.GetWSErrorCode() << endl;
+	catch (WsException e)
+	{
+		cout << e.What() << " | Error code: " << e.GetWsErrorCode() << endl;
 	}
-	catch (...) {
+	catch (...)
+	{
 		cout << "Unknown exception" << endl;
 	}
 

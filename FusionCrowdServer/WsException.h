@@ -1,26 +1,37 @@
 #pragma once
 
+#include "FcServerApi.h"
 #include <stdexcept>
-#include<WinSock2.h>
-#include <cstring>
 #include <string.h>
 
 
-namespace FusionCrowdWeb {
-
-	struct WsException : std::runtime_error
+namespace FusionCrowdWeb
+{
+	class FC_SERVER_API FcWebException
 	{
-	private:
-		int _errorCode;
-
 	public:
-		WsException(const char* message) : std::runtime_error(message) {
-			_errorCode = WSAGetLastError();
-		}
 
-		int GetWSErrorCode() {
-			return _errorCode;
-		}
+		FcWebException() noexcept;
+		FcWebException(char const* const _Message) noexcept;
+		FcWebException(FcWebException const& _Other) noexcept;
+
+		virtual ~FcWebException() noexcept;
+
+		FcWebException& operator=(FcWebException const& _Other) noexcept;
+
+		virtual char const* What() const;
+
+	private:
+		char* _message = nullptr;
 	};
 
+	class FC_SERVER_API WsException : public FcWebException
+	{
+	public:
+		WsException(const char* inMessage);
+		int GetWsErrorCode() const;
+
+	private:
+		int _errorCode;
+	};
 }
