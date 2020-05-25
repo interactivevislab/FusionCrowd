@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FusionCrowdWebApi.h" />
-    <ClInclude Include="MessageCodes.h" />
+    <ClInclude Include="WebMessage.h" />
     <ClInclude Include="WebCore.h" />
     <ClInclude Include="WsException.h" />
   </ItemGroup>

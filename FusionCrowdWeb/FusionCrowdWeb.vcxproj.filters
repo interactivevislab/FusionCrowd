@@ -18,13 +18,13 @@
     <ClInclude Include="FusionCrowdWebApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MessageCodes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WebCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WsException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WebMessage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

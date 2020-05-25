@@ -4,7 +4,7 @@
 
 #include "Export/ComponentId.h"
 #include "WsException.h"
-#include "MessageCodes.h"
+#include "WebMessage.h"
 
 
 namespace FusionCrowdWeb

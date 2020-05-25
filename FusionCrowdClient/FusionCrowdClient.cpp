@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "WsException.h"
-#include "MessageCodes.h"
+#include "WebMessage.h"
 
 
 namespace FusionCrowdWeb

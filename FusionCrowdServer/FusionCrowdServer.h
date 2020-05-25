@@ -4,7 +4,7 @@
 #include "Export/Export.h"
 #include "WebServerCore.h"
 #include "RequestProcessor.h"
-#include "MessageCodes.h"
+#include "WebMessage.h"
 
 #include <memory>
 #include <map>

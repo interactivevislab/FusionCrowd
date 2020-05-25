@@ -25,4 +25,14 @@ namespace FusionCrowdWeb
 		UnknowsRequestCode,
 		InnerFusionCrowdError
 	};
+
+	struct FC_WEB_API WebMessageHead
+	{
+		union WebCode
+		{
+			RequestCode RequestCode;
+			ResponseCode ResponseCode;
+		} WebCode;
+		size_t MessageLenght;
+	};
 }
