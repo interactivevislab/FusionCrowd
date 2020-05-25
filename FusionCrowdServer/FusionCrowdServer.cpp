@@ -10,9 +10,42 @@
 
 namespace FusionCrowdWeb
 {
-
 	FusionCrowdServer::FusionCrowdServer()
 	{
+		_requestProcessors = {
+			{
+				DoStep,
+				new RequestProcessor<void, float>(&ISimulatorFacade::DoStep)
+			},
+			{
+				SetAgentOp,
+				new RequestProcessor<OperationStatus, size_t, ComponentId>(&ISimulatorFacade::SetAgentOp)
+			},
+			{
+				SetAgentStrategy,
+				new RequestProcessor<OperationStatus, size_t, ComponentId>(&ISimulatorFacade::SetAgentStrategy)
+			},
+			{
+				SetAgentGoal,
+				new RequestProcessor<OperationStatus, size_t, Point>(&ISimulatorFacade::SetAgentGoal)
+			},
+			{
+				GetAgentCount,
+				new RequestProcessor<size_t>(&ISimulatorFacade::GetAgentCount)
+			},
+			//{
+			//	GetAgents,
+			//	new RequestProcessor<>(&ISimulatorFacade::GetAgents)
+			//},
+			{
+				AddAgent,
+				new RequestProcessor<size_t, float, float, ComponentId, ComponentId, ComponentId>(&ISimulatorFacade::AddAgent)
+			},
+			{
+				RemoveAgent,
+				new RequestProcessor<OperationStatus, size_t>(&ISimulatorFacade::RemoveAgent)
+			}
+		};
 	}
 
 

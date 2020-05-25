@@ -131,6 +131,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -153,11 +154,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FCClientCore.cpp" />
+    <ClCompile Include="WebClientCore.cpp" />
+    <ClCompile Include="FusionCrowdClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FcClientApi.h" />
-    <ClInclude Include="FCClientCore.h" />
+    <ClInclude Include="WebClientCore.h" />
+    <ClInclude Include="FusionCrowdClient.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FusionCrowdServer\FusionCrowdServer.vcxproj">

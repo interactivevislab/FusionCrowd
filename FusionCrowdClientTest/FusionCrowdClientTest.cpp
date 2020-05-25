@@ -1,4 +1,4 @@
-#include "FCClientCore.h"
+#include "WebClientCore.h"
 #include "MessageCodes.h"
 #include "WsException.h"
 
@@ -15,7 +15,7 @@ int main()
 
 	try
 	{
-		FCClientCore client;
+		WebClientCore client;
 		cout << "Starting..." << endl;
 		client.Start();
 

@@ -25,6 +25,7 @@ namespace FusionCrowdWeb
 		char* _message = nullptr;
 	};
 
+
 	class FC_SERVER_API WsException : public FcWebException
 	{
 	public:
