@@ -44,8 +44,5 @@
     <ClInclude Include="FcServerApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FcServerApi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
