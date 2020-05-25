@@ -126,7 +126,7 @@
       <PreprocessorDefinitions>FC_SERVER_EXPORTS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowdWeb;$(SolutionDir)FusionCrowd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,21 +154,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="WebCore.cpp" />
     <ClCompile Include="WebServerCore.cpp" />
     <ClCompile Include="FusionCrowdServer.cpp" />
-    <ClCompile Include="WsException.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FcServerApi.h" />
-    <ClInclude Include="WebCore.h" />
     <ClInclude Include="WebServerCore.h" />
     <ClInclude Include="FusionCrowdServer.h" />
-    <ClInclude Include="MessageCodes.h" />
     <ClInclude Include="RequestProcessor.h" />
-    <ClInclude Include="WsException.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FusionCrowdWeb\FusionCrowdWeb.vcxproj">
+      <Project>{2e1b78b0-db71-44c1-912e-7bebb8d02542}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\FusionCrowd\FusionCrowd.vcxproj">
       <Project>{123e7db0-e9bc-4064-9f4b-c5f7c268731e}</Project>
     </ProjectReference>

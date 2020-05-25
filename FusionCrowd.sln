@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdClientTest", "Fu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdServerTest", "FusionCrowdServerTest\FusionCrowdServerTest.vcxproj", "{66E66F7C-6F1B-4BAC-A8EC-C76E4022B0C8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdWeb", "FusionCrowdWeb\FusionCrowdWeb.vcxproj", "{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -79,6 +81,14 @@ Global
 		{66E66F7C-6F1B-4BAC-A8EC-C76E4022B0C8}.Release|x64.Build.0 = Release|x64
 		{66E66F7C-6F1B-4BAC-A8EC-C76E4022B0C8}.Release|x86.ActiveCfg = Release|Win32
 		{66E66F7C-6F1B-4BAC-A8EC-C76E4022B0C8}.Release|x86.Build.0 = Release|Win32
+		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Debug|x64.ActiveCfg = Debug|x64
+		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Debug|x64.Build.0 = Debug|x64
+		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Debug|x86.ActiveCfg = Debug|Win32
+		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Debug|x86.Build.0 = Debug|Win32
+		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Release|x64.ActiveCfg = Release|x64
+		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Release|x64.Build.0 = Release|x64
+		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Release|x86.ActiveCfg = Release|Win32
+		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

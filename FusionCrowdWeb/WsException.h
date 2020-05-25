@@ -1,13 +1,14 @@
 #pragma once
 
-#include "FcServerApi.h"
+#include "FusionCrowdWebApi.h"
+
 #include <stdexcept>
 #include <string.h>
 
 
 namespace FusionCrowdWeb
 {
-	class FC_SERVER_API FcWebException
+	class FC_WEB_API FcWebException
 	{
 	public:
 
@@ -26,7 +27,7 @@ namespace FusionCrowdWeb
 	};
 
 
-	class FC_SERVER_API WsException : public FcWebException
+	class FC_WEB_API WsException : public FcWebException
 	{
 	public:
 		WsException(const char* inMessage);

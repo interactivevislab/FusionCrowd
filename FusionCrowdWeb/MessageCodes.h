@@ -1,9 +1,11 @@
 #pragma once
 
+#include "FusionCrowdWebApi.h"
+
 
 namespace FusionCrowdWeb
 {
-	enum RequestCode : unsigned char
+	enum FC_WEB_API RequestCode : unsigned char
 	{
 		StartWithNavMesh,	// void InitBuilderByNavMeshName(const char* navMeshName) + void StartSimulation()
 		DoStep,				// void DoStep(float timeStep = 0.1f)
@@ -16,7 +18,7 @@ namespace FusionCrowdWeb
 		RemoveAgent			// OperationStatus RemoveAgent(size_t agentId)
 	};
 
-	enum ResponseCode : unsigned char
+	enum FC_WEB_API ResponseCode : unsigned char
 	{
 		Success,
 		NeedRunSimulation,

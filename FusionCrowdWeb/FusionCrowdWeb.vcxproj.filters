@@ -15,25 +15,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FusionCrowdServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WebServerCore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="FusionCrowdWebApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WebCore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WsException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FusionCrowdServer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RequestProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FcServerApi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WebServerCore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="WebCore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WsException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

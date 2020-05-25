@@ -22,10 +22,7 @@ namespace FusionCrowdWeb
 		}
 
 		OwnSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (OwnSocket == INVALID_SOCKET)
-		{
-			throw WsException("TCP socket creation failed");
-		}
+		CheckSocket(OwnSocket, "TCP socket creation failed");
 	}
 
 
@@ -34,16 +31,10 @@ namespace FusionCrowdWeb
 		delete[] _receiveBuffer;
 
 		auto result = closesocket(OwnSocket);
-		if (result == SOCKET_ERROR)
-		{
-			throw WsException("Closing socket failed");
-		}
+		CheckWsResult(result, "Closing socket failed");
 
 		result = WSACleanup();
-		if (result == SOCKET_ERROR)
-		{
-			throw WsException("WSACleanup failed");
-		}
+		CheckWsResult(result, "WSACleanup failed");
 	}
 
 
@@ -61,10 +52,7 @@ namespace FusionCrowdWeb
 	void WebCore::Disconnect()
 	{
 		auto result = closesocket(_dataSocket);
-		if (result == SOCKET_ERROR)
-		{
-			throw WsException("Disconnect failed");
-		}
+		CheckWsResult(result, "Disconnect failed");
 	}
 
 
@@ -76,10 +64,7 @@ namespace FusionCrowdWeb
 		while (totalBytesSended < inDataSize)
 		{
 			auto bytesSended = send(_dataSocket, inData + totalBytesSended, bytesleft, 0);
-			if (bytesSended == SOCKET_ERROR)
-			{
-				throw WsException("Sending failed");
-			}
+			CheckWsResult(bytesSended, "Sending failed");
 			totalBytesSended += bytesSended;
 			bytesleft -= bytesSended;
 		}
@@ -90,10 +75,7 @@ namespace FusionCrowdWeb
 	{
 		int dataSize = static_cast<int>(strlen(inData)) + 1;
 		auto result = send(_dataSocket, inData, dataSize, 0);
-		if (result == SOCKET_ERROR)
-		{
-			throw WsException("Sending failed");
-		}
+		CheckWsResult(result, "Sending failed");
 	}
 
 
@@ -113,10 +95,7 @@ namespace FusionCrowdWeb
 		while (totalBytesRecieved < inDataSize)
 		{
 			auto bytesRecieved = recv(_dataSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
-			if (bytesRecieved == SOCKET_ERROR)
-			{
-				throw WsException("Receive data failed");
-			}
+			CheckWsResult(bytesRecieved, "Receive data failed");
 			totalBytesRecieved += bytesRecieved;
 			bytesleft -= bytesRecieved;
 		}
@@ -127,10 +106,25 @@ namespace FusionCrowdWeb
 	const char* WebCore::ReceiveString()
 	{
 		auto result = recv(_dataSocket, _receiveBuffer, static_cast<int>(_bufferSize), 0);
-		if (result == SOCKET_ERROR)
-		{
-			throw WsException("Receive data failed");
-		}
+		CheckWsResult(result, "Receive data failed");
 		return _receiveBuffer;
+	}
+
+
+	void WebCore::CheckSocket(SOCKET inSocket, const char* inErrorMessage)
+	{
+		if (inSocket == INVALID_SOCKET)
+		{
+			throw WsException(inErrorMessage);
+		}
+	}
+
+
+	void WebCore::CheckWsResult(int inResult, const char* inErrorMessage)
+	{
+		if (inResult == SOCKET_ERROR)
+		{
+			throw WsException(inErrorMessage);
+		}
 	}
 }

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "FcServerApi.h"
+#include "FusionCrowdWebApi.h"
 
 #include <WinSock2.h>
 
 
 namespace FusionCrowdWeb
 {
-	class FC_SERVER_API WebCore
+	class FC_WEB_API WebCore
 	{
 	public:
 		WebCore(bool inIsServer);
@@ -22,6 +22,9 @@ namespace FusionCrowdWeb
 
 		const char* Receive(size_t inDataSize);
 		const char* ReceiveString();
+
+		static void CheckSocket(SOCKET inSocket, const char* inErrorMessage);
+		static void CheckWsResult(int inResult, const char* inErrorMessage);
 
 	protected:
 		SOCKET OwnSocket;

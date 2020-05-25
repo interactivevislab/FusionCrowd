@@ -14,20 +14,14 @@ namespace FusionCrowdWeb
 	{
 		auto address = GetSocketAddress(inIpAdress, inPort);
 		auto result = bind(OwnSocket, (SOCKADDR*)&address, sizeof(address));
-		if (result == SOCKET_ERROR)
-		{
-			throw WsException("Binding Failed");
-		}
+		CheckWsResult(result, "Binding failed");
 	}
 
 
 	void WebServerCore::Listen()
 	{
 		auto result = listen(OwnSocket, 1);
-		if (result == SOCKET_ERROR)
-		{
-			throw WsException("Listen Fun Failed");
-		}
+		CheckWsResult(result, "Listening failed");
 	}
 
 
@@ -36,9 +30,6 @@ namespace FusionCrowdWeb
 		sockaddr_in address;
 		int addressSize = sizeof(address);
 		AnotherSocket = accept(OwnSocket, (SOCKADDR*)&address, &addressSize);
-		if (AnotherSocket == INVALID_SOCKET)
-		{
-			throw WsException("Accept Failed");
-		}
+		CheckSocket(AnotherSocket, "Accept failed");
 	}
 }
