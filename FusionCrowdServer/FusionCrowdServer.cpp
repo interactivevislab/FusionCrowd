@@ -1,6 +1,5 @@
 #include "FusionCrowdServer.h"
 
-#include <string.h> 
 #include <iostream>
 
 #include "Export/ComponentId.h"
@@ -136,8 +135,8 @@ namespace FusionCrowdWeb
 
 	void FusionCrowdServer::ProcessRequest()
 	{
-		std::cout << "Request received" << std::endl;
 		const char* requestCodeAsData = _serverCore.Receive(sizeof(RequestCode));
+		std::cout << "Request received" << std::endl;
 
 		RequestCode requestType;
 		memcpy(&requestType, requestCodeAsData, sizeof(RequestCode));

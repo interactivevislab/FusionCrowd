@@ -7,7 +7,7 @@
 
 namespace FusionCrowdWeb
 {
-	class FC_CLIENT_API WebClientCore : public WebCore
+	class WebClientCore : public WebCore
 	{
 	public:
 		WebClientCore();
