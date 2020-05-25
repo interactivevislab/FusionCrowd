@@ -159,7 +159,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FcServerApi.h" />
-    <ClInclude Include="FcServerApi.h" />
     <ClInclude Include="FCServerCore.h" />
     <ClInclude Include="FusionCrowdServer.h" />
     <ClInclude Include="MessageCodes.h" />
