@@ -2,6 +2,9 @@
 
 #include "FusionCrowdWebApi.h"
 
+#include "WebMessage.h"
+
+#include <utility>
 #include <WinSock2.h>
 
 
@@ -17,11 +20,8 @@ namespace FusionCrowdWeb
 
 		void Disconnect();
 
-		void Send(const char* inData, size_t inDataSize);
-		void SendString(const char* inData);
-
-		const char* Receive(size_t inDataSize);
-		const char* ReceiveString();
+		void Send(WebCode inWebCode, const char* inData, size_t inDataSize);
+		std::pair <WebCode, const char*> Receive();
 
 		static void CheckSocket(SOCKET inSocket, const char* inErrorMessage);
 		static void CheckWsResult(int inResult, const char* inErrorMessage);
