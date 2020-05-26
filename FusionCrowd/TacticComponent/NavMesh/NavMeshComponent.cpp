@@ -95,44 +95,7 @@ namespace FusionCrowd
 
 	Vector2 NavMeshComponent::GetClosestAvailablePoint(Vector2 p)
 	{
-		if (_localizer->findNodeBlind(p) != NavMeshLocation::NO_NODE)
-		{
-			return p;
-		}
-
-		float min_dist = INFINITY;
-		Vector2 res;
-
-		auto navMesh = _localizer->getNavMesh();
-		auto* vertices = navMesh->GetVertices();
-		for (int i = navMesh->getNodeCount() - 1; i >= 0; i--)
-		{
-			const auto & node = navMesh->GetNodeByPos(i);
-			if(node.deleted)
-				continue;
-
-			const size_t vCount = node.getVertexCount();
-			for(size_t v = 0; v < vCount; v++)
-			{
-				Vector2 vertex1 = vertices[node.getVertexID(v)];
-				Vector2 vertex2 = vertices[(node.getVertexID(v) + 1) % vCount];
-
-				auto projection = Math::projectOnSegment(vertex1, vertex2, p);
-
-				const float d = Vector2::DistanceSquared(p, projection);
-				if(d < min_dist)
-				{
-					min_dist = d;
-					res = projection;
-				}
-			}
-		}
-		if (min_dist == INFINITY)
-		{
-			throw 1;
-		}
-
-		return res;
+		return _localizer->GetClosestAvailablePoint(p);
 	}
 
 	size_t NavMeshComponent::GetClosestAvailableNode(Vector2 p)
