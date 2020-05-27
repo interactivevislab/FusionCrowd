@@ -283,7 +283,7 @@ namespace FusionCrowd
 		modyfied = modyfied || cut_poly.size() == 2;
 		if (!modyfied) return cut_poly.size() > 2;
 		NodeModificator* cur_mod = nullptr;
-		if (vert2edges[0].size() == 0) throw 1;
+		if (vert2edges[0].size() == 0) return false;
 		for (int i = 0; i < cut_poly.size()-1; i++) {
 			if (vert2edges[i].size() > 0) {
 				if (cur_mod != nullptr &&

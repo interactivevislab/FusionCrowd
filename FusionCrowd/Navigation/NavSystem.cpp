@@ -149,6 +149,7 @@ namespace FusionCrowd
 			}
 
 			updatedPos = agent.GetPos() + agent.GetVel() * timeStep;
+			updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
 		}
 
 		void UpdateOrient(const AgentSpatialInfo & agent, float timeStep, Vector2 & newOrient)

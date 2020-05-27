@@ -30,12 +30,12 @@ namespace FusionCrowd
 	{
 		const size_t PORTAL_COUNT = _route->getPortalCount();
 		Vector2 dir;
+		float speed = agent.prefSpeed;
 		if (_currPortal >= PORTAL_COUNT)
 		{
 			// assume that the path is clear
 			_goal.setDirections(agent.GetPos(), agent.radius, agent.prefVelocity);
 
-			float speed = agent.prefSpeed;
 
 			if (_goal.getGeometry()->containsPoint(agent.GetPos()))
 			{
@@ -103,6 +103,7 @@ namespace FusionCrowd
 				}
 			}
 
+			agent.prefVelocity.setSpeed(speed);
 			agent.prefVelocity.setTarget(_waypoints[_currPortal]);
 			portal->setPreferredDirection(agent.GetPos(), agent.radius, goalDir, agent.prefVelocity);
 		}
