@@ -103,15 +103,14 @@ namespace FusionCrowdWeb
 
 	void FusionCrowdServer::StartOn(const char* inIpAdress, short inPort)
 	{
-		_serverCore.Start();
-		_serverCore.Bind(inIpAdress, inPort);
-		_serverCore.Listen();
+		_serverCore.Initialize();
+		_serverCore.Start(inIpAdress, inPort);
 
 		std::cout << "Successfully started on " << inIpAdress << ':' << inPort << std::endl << std::endl;
 
 		while (true)
 		{
-			_serverCore.Accept();
+			auto clientId = _serverCore.Accept();
 			std::cout << "Client connected" << std::endl << std::endl;
 
 			while (true)
@@ -119,12 +118,12 @@ namespace FusionCrowdWeb
 				try
 				{
 					std::cout << "Waiting for request..." << std::endl;
-					ProcessRequest();
+					ProcessRequest(clientId);
 				}
 				catch (WsException e)
 				{
 					std::cout << "Client disconnected" << std::endl << std::endl;
-					_serverCore.Disconnect();
+					_serverCore.Disconnect(clientId);
 					break;
 				}			
 			}
@@ -135,9 +134,9 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FusionCrowdServer::ProcessRequest()
+	void FusionCrowdServer::ProcessRequest(int inClientId)
 	{
-		auto request = _serverCore.Receive();
+		auto request = _serverCore.Receive(inClientId);
 		auto requestCode = request.first.AsRequestCode;
 		auto requestData = request.second;
 		std::cout << "Request received" << std::endl;
@@ -150,11 +149,11 @@ namespace FusionCrowdWeb
 				{
 					InitBuilderByNavMeshName(requestData);
 					StartSimulation();
-					SendResponce(Success);
+					SendResponce(inClientId, Success);
 				}
 				catch (...)
 				{
-					SendResponce(InnerFusionCrowdError);
+					SendResponce(inClientId, InnerFusionCrowdError);
 				}
 
 				break;
@@ -164,14 +163,14 @@ namespace FusionCrowdWeb
 			{
 				if (!_isSimulationStarted)
 				{
-					SendResponce(NeedRunSimulation);
+					SendResponce(inClientId, NeedRunSimulation);
 					return;
 				}
 
 				auto iter = _requestProcessors.find(requestCode);
 				if (iter == _requestProcessors.end())
 				{
-					SendResponce(UnknowsRequestCode);
+					SendResponce(inClientId, UnknowsRequestCode);
 					return;
 				}
 
@@ -181,11 +180,11 @@ namespace FusionCrowdWeb
 				try
 				{
 					processor->Process(_simulator, requestData, result);
-					SendResponce(Success, result, processor->GetOutputSize());
+					SendResponce(inClientId, Success, result, processor->GetOutputSize());
 				}
 				catch (...)
 				{
-					SendResponce(InnerFusionCrowdError);
+					SendResponce(inClientId, InnerFusionCrowdError);
 				}
 
 				delete[] result;
@@ -196,22 +195,22 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FusionCrowdServer::SendResponce(ResponseCode inResponseCode)
+	void FusionCrowdServer::SendResponce(int inClientId, ResponseCode inResponseCode)
 	{
-		_serverCore.Send(inResponseCode, nullptr, 0);
+		_serverCore.Send(inClientId, inResponseCode, nullptr, 0);
 		std::cout << "Responce sent" << std::endl << std::endl;
 	}
 
 
-	void FusionCrowdServer::SendResponce(ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize)
+	void FusionCrowdServer::SendResponce(int inClientId, ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize)
 	{
-		_serverCore.Send(inResponseCode, inResponseData, inDataSize);
+		_serverCore.Send(inClientId, inResponseCode, inResponseData, inDataSize);
 		std::cout << "Responce sent" << std::endl << std::endl;
 	}
 
 
 	void FusionCrowdServer::Shutdown()
 	{
-		_serverCore.Shutdown();
+		_serverCore.Finalize();
 	}
 }

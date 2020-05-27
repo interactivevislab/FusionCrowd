@@ -13,28 +13,24 @@ namespace FusionCrowdWeb
 	class FC_WEB_API WebCore
 	{
 	public:
-		WebCore(bool inIsServer);
+		void Initialize();
+		void Finalize();
 
-		void Start();
-		void Shutdown();
+		static void GlobalStartup();
+		static void GlobalCleanup();
 
-		void Disconnect();
+	protected:
+		SOCKET OwnSocket;
 
-		void Send(WebCode inWebCode, const char* inData, size_t inDataSize);
-		std::pair <WebCode, const char*> Receive();
+		static sockaddr_in GetSocketAddress(const char* inIpAdress, short inPort);
+
+		void Send(SOCKET inDestSocket, WebCode inWebCode, const char* inData, size_t inDataSize);
+		std::pair<WebCode, const char*> Receive(SOCKET inSrcSocket);
 
 		static void CheckSocket(SOCKET inSocket, const char* inErrorMessage);
 		static void CheckWsResult(int inResult, const char* inErrorMessage);
 
-	protected:
-		SOCKET OwnSocket;
-		SOCKET AnotherSocket;
-
-		sockaddr_in GetSocketAddress(const char* inIpAdress, short inPort);
-
 	private:
-		SOCKET& _dataSocket;
-
 		size_t _bufferSize = 512;
 		char *_receiveBuffer = new char[_bufferSize + 1];
 	};

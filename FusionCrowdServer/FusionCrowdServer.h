@@ -35,8 +35,8 @@ namespace FusionCrowdWeb
 		void InitBuilderByNavMeshPath(const char* inNavMeshPath);
 		void InitBuilderByNavMeshName(const char* inNavMeshName);
 		void StartSimulation();
-		void ProcessRequest();
-		void SendResponce(ResponseCode inResponseCode);
-		void SendResponce(ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize);
+		void ProcessRequest(int inClientId);
+		void SendResponce(int inClientId, ResponseCode inResponseCode);
+		void SendResponce(int inClientId, ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize);
 	};
 }

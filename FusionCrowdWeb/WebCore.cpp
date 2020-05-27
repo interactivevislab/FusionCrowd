@@ -7,12 +7,7 @@
 
 namespace FusionCrowdWeb
 {
-	WebCore::WebCore(bool inIsServer) : _dataSocket(inIsServer ? AnotherSocket : OwnSocket)
-	{
-	}
-
-
-	void WebCore::Start()
+	void WebCore::GlobalStartup()
 	{
 		WSADATA winsockData;
 		auto result = WSAStartup(MAKEWORD(2, 2), &winsockData);
@@ -20,21 +15,29 @@ namespace FusionCrowdWeb
 		{
 			throw FcWebException("WSAStartUp failed");
 		}
+	}
 
+
+	void WebCore::GlobalCleanup()
+	{
+		auto result = WSACleanup();
+		CheckWsResult(result, "WSACleanup failed");
+	}
+
+
+	void WebCore::Initialize()
+	{
 		OwnSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(OwnSocket, "TCP socket creation failed");
 	}
 
 
-	void WebCore::Shutdown()
+	void WebCore::Finalize()
 	{
 		delete[] _receiveBuffer;
 
 		auto result = closesocket(OwnSocket);
 		CheckWsResult(result, "Closing socket failed");
-
-		result = WSACleanup();
-		CheckWsResult(result, "WSACleanup failed");
 	}
 
 
@@ -49,24 +52,17 @@ namespace FusionCrowdWeb
 	}
 
 
-	void WebCore::Disconnect()
-	{
-		auto result = closesocket(_dataSocket);
-		CheckWsResult(result, "Disconnect failed");
-	}
-
-
-	void WebCore::Send(WebCode inWebCode, const char* inData, size_t inDataSize)
+	void WebCore::Send(SOCKET inDestSocket, WebCode inWebCode, const char* inData, size_t inDataSize)
 	{
 		WebMessageHead messageHead = { inWebCode, inDataSize };
-		auto bytesSended = send(_dataSocket, reinterpret_cast<const char*>(&messageHead), sizeof(WebMessageHead), 0);
+		auto bytesSended = send(inDestSocket, reinterpret_cast<const char*>(&messageHead), sizeof(WebMessageHead), 0);
 		CheckWsResult(bytesSended, "Sending failed");
 
 		int totalBytesSended = 0;
 		int bytesleft = static_cast<int>(inDataSize);
 		while (totalBytesSended < inDataSize)
 		{
-			bytesSended = send(_dataSocket, inData + totalBytesSended, bytesleft, 0);
+			bytesSended = send(inDestSocket, inData + totalBytesSended, bytesleft, 0);
 			CheckWsResult(bytesSended, "Sending failed");
 			totalBytesSended += bytesSended;
 			bytesleft -= bytesSended;
@@ -74,10 +70,10 @@ namespace FusionCrowdWeb
 	}
 
 
-	std::pair<WebCode, const char*> WebCore::Receive()
+	std::pair<WebCode, const char*> WebCore::Receive(SOCKET inSrcSocket)
 	{
 		WebMessageHead messageHead;
-		auto bytesRecieved = recv(_dataSocket, reinterpret_cast<char*>(&messageHead), sizeof(WebMessageHead), 0);
+		auto bytesRecieved = recv(inSrcSocket, reinterpret_cast<char*>(&messageHead), sizeof(WebMessageHead), 0);
 		CheckWsResult(bytesRecieved, "Receive data failed");
 
 		if (_bufferSize < messageHead.MessageLength)
@@ -92,7 +88,7 @@ namespace FusionCrowdWeb
 		int bytesleft = static_cast<int>(messageHead.MessageLength);
 		while (totalBytesRecieved < messageHead.MessageLength)
 		{
-			auto bytesRecieved = recv(_dataSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
+			auto bytesRecieved = recv(inSrcSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
 			CheckWsResult(bytesRecieved, "Receive data failed");
 			totalBytesRecieved += bytesRecieved;
 			bytesleft -= bytesRecieved;

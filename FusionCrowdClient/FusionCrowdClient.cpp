@@ -13,7 +13,7 @@ namespace FusionCrowdWeb
 	{
 		using namespace std;
 
-		_clientCore.Start();
+		_clientCore.Initialize();
 
 		bool connected = false;
 		while (!connected)
@@ -55,6 +55,6 @@ namespace FusionCrowdWeb
 
 	void FusionCrowdClient::Shutdown()
 	{
-		_clientCore.Shutdown();
+		_clientCore.Finalize();
 	}
 }
