@@ -33,19 +33,23 @@ namespace FusionCrowdWeb
 		cout << endl << "Session started" << endl << endl;
 
 		char request[100];
-		while (strcmp(request, "exit"))
+		while (true)
 		{
-			request[0] = StartWithNavMesh;
-			cin >> request + sizeof(RequestCode);
+			cin >> request;
+
+			if (strcmp(request, "exit") == 0)
+			{
+				break;
+			}
 
 			cout << "Sending request..." << endl;
-			size_t requestSize = sizeof(RequestCode) + strlen(request + sizeof(RequestCode)) + 1;
-			_clientCore.Send(request, requestSize);
+			_clientCore.Send(StartWithNavMesh, request, strlen(request) + 1);
 
-			auto response = _clientCore.Receive(1);
-			ResponseCode messageCode = (ResponseCode)response[0];
-			response += sizeof(ResponseCode);
-			cout << "Received: " << response << endl << endl;
+			auto response = _clientCore.Receive();
+			auto responseCode = response.first.AsRequestCode;
+			auto responseData = response.second;
+			cout << "Received code: " << responseCode << endl;
+			cout << "Received data: " << responseData << endl << endl;
 		}
 	}
 

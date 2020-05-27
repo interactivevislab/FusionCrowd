@@ -56,14 +56,17 @@ namespace FusionCrowdWeb
 	}
 
 
-	void WebCore::Send(const char* inData, size_t inDataSize)
+	void WebCore::Send(WebCode inWebCode, const char* inData, size_t inDataSize)
 	{
+		WebMessageHead messageHead = { inWebCode, inDataSize };
+		auto bytesSended = send(_dataSocket, reinterpret_cast<const char*>(&messageHead), sizeof(WebMessageHead), 0);
+		CheckWsResult(bytesSended, "Sending failed");
+
 		int totalBytesSended = 0;
 		int bytesleft = static_cast<int>(inDataSize);
-
 		while (totalBytesSended < inDataSize)
 		{
-			auto bytesSended = send(_dataSocket, inData + totalBytesSended, bytesleft, 0);
+			bytesSended = send(_dataSocket, inData + totalBytesSended, bytesleft, 0);
 			CheckWsResult(bytesSended, "Sending failed");
 			totalBytesSended += bytesSended;
 			bytesleft -= bytesSended;
@@ -71,43 +74,31 @@ namespace FusionCrowdWeb
 	}
 
 
-	void WebCore::SendString(const char* inData)
+	std::pair<WebCode, const char*> WebCore::Receive()
 	{
-		int dataSize = static_cast<int>(strlen(inData)) + 1;
-		auto result = send(_dataSocket, inData, dataSize, 0);
-		CheckWsResult(result, "Sending failed");
-	}
+		WebMessageHead messageHead;
+		auto bytesRecieved = recv(_dataSocket, reinterpret_cast<char*>(&messageHead), sizeof(WebMessageHead), 0);
+		CheckWsResult(bytesRecieved, "Receive data failed");
 
-
-	const char* WebCore::Receive(size_t inDataSize)
-	{
-		if (_bufferSize < inDataSize)
+		if (_bufferSize < messageHead.MessageLength)
 		{
 			_bufferSize = 3 * _bufferSize / 2;
-			_bufferSize = (_bufferSize > inDataSize) ? _bufferSize : inDataSize;
+			_bufferSize = (_bufferSize > messageHead.MessageLength) ? _bufferSize : messageHead.MessageLength;
 			delete[] _receiveBuffer;
 			_receiveBuffer = new char[_bufferSize];
 		}
 
 		int totalBytesRecieved = 0;
-		int bytesleft = static_cast<int>(inDataSize);
-
-		while (totalBytesRecieved < inDataSize)
+		int bytesleft = static_cast<int>(messageHead.MessageLength);
+		while (totalBytesRecieved < messageHead.MessageLength)
 		{
 			auto bytesRecieved = recv(_dataSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
 			CheckWsResult(bytesRecieved, "Receive data failed");
 			totalBytesRecieved += bytesRecieved;
 			bytesleft -= bytesRecieved;
 		}
-		return _receiveBuffer;
-	}
 
-
-	const char* WebCore::ReceiveString()
-	{
-		auto result = recv(_dataSocket, _receiveBuffer, static_cast<int>(_bufferSize), 0);
-		CheckWsResult(result, "Receive data failed");
-		return _receiveBuffer;
+		return std::make_pair(messageHead.WebCode, _receiveBuffer);
 	}
 
 

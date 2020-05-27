@@ -26,13 +26,19 @@ namespace FusionCrowdWeb
 		InnerFusionCrowdError
 	};
 
+	union FC_WEB_API WebCode
+	{
+		RequestCode AsRequestCode;
+		ResponseCode AsResponseCode;
+
+		WebCode() {}
+		WebCode(RequestCode inRequestCode) : AsRequestCode(inRequestCode) {}
+		WebCode(ResponseCode inResponseCode) : AsResponseCode(inResponseCode) {}
+	};
+
 	struct FC_WEB_API WebMessageHead
 	{
-		union WebCode
-		{
-			RequestCode RequestCode;
-			ResponseCode ResponseCode;
-		} WebCode;
-		size_t MessageLenght;
+		WebCode WebCode;
+		size_t MessageLength;
 	};
 }
