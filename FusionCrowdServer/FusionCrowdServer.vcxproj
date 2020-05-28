@@ -154,12 +154,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="WebServerCore.cpp" />
     <ClCompile Include="FusionCrowdServer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FcServerApi.h" />
-    <ClInclude Include="WebServerCore.h" />
     <ClInclude Include="FusionCrowdServer.h" />
     <ClInclude Include="RequestProcessor.h" />
   </ItemGroup>

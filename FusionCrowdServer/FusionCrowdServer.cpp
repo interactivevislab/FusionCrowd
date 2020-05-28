@@ -103,14 +103,13 @@ namespace FusionCrowdWeb
 
 	void FusionCrowdServer::StartOn(const char* inIpAdress, short inPort)
 	{
-		_serverCore.Initialize();
-		_serverCore.Start(inIpAdress, inPort);
+		_webNode.StartServer(inIpAdress, inPort);
 
 		std::cout << "Successfully started on " << inIpAdress << ':' << inPort << std::endl << std::endl;
 
 		while (true)
 		{
-			auto clientId = _serverCore.Accept();
+			auto clientId = _webNode.AcceptInputConnection();
 			std::cout << "Client connected" << std::endl << std::endl;
 
 			while (true)
@@ -123,7 +122,7 @@ namespace FusionCrowdWeb
 				catch (WsException e)
 				{
 					std::cout << "Client disconnected" << std::endl << std::endl;
-					_serverCore.Disconnect(clientId);
+					_webNode.Disconnect(clientId);
 					break;
 				}			
 			}
@@ -136,7 +135,7 @@ namespace FusionCrowdWeb
 
 	void FusionCrowdServer::ProcessRequest(int inClientId)
 	{
-		auto request = _serverCore.Receive(inClientId);
+		auto request = _webNode.Receive(inClientId);
 		auto requestCode = request.first.AsRequestCode;
 		auto requestData = request.second;
 		std::cout << "Request received" << std::endl;
@@ -197,20 +196,20 @@ namespace FusionCrowdWeb
 
 	void FusionCrowdServer::SendResponce(int inClientId, ResponseCode inResponseCode)
 	{
-		_serverCore.Send(inClientId, inResponseCode, nullptr, 0);
+		_webNode.Send(inClientId, inResponseCode, nullptr, 0);
 		std::cout << "Responce sent" << std::endl << std::endl;
 	}
 
 
 	void FusionCrowdServer::SendResponce(int inClientId, ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize)
 	{
-		_serverCore.Send(inClientId, inResponseCode, inResponseData, inDataSize);
+		_webNode.Send(inClientId, inResponseCode, inResponseData, inDataSize);
 		std::cout << "Responce sent" << std::endl << std::endl;
 	}
 
 
 	void FusionCrowdServer::Shutdown()
 	{
-		_serverCore.Finalize();
+		_webNode.ShutdownServer();
 	}
 }

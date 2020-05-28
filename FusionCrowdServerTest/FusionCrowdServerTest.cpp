@@ -1,4 +1,4 @@
-#include "WebCore.h"
+#include "WebNode.h"
 #include "FusionCrowdServer.h"
 
 #include <iostream>
@@ -9,13 +9,13 @@ int main()
 	using namespace std;
 	using namespace FusionCrowdWeb;
 
-	WebCore::GlobalStartup();
+	WebNode::GlobalStartup();
 	cout << "---Fusion Crowd Server---" << endl;
 
 	FusionCrowdServer server;
 	server.StartOn("127.0.0.1", 8000);
 
-	WebCore::GlobalCleanup();
+	WebNode::GlobalCleanup();
 
 	system("pause");
 	return 0;

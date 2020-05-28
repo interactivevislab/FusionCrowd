@@ -21,11 +21,11 @@
   <ItemGroup>
     <ClInclude Include="FusionCrowdWebApi.h" />
     <ClInclude Include="WebMessage.h" />
-    <ClInclude Include="WebCore.h" />
+    <ClInclude Include="WebNode.h" />
     <ClInclude Include="WsException.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WebCore.cpp" />
+    <ClCompile Include="WebNode.cpp" />
     <ClCompile Include="WsException.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

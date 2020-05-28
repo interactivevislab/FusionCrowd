@@ -18,21 +18,21 @@
     <ClInclude Include="FusionCrowdWebApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WebCore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WsException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WebMessage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WebNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="WebCore.cpp">
+    <ClCompile Include="WsException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WsException.cpp">
+    <ClCompile Include="WebNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

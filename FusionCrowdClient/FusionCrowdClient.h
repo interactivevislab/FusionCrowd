@@ -1,7 +1,7 @@
 #pragma once
 
 #include "FcClientApi.h"
-#include "WebClientCore.h"
+#include "WebNode.h"
 //#include "WebMessage.h"
 
 
@@ -13,10 +13,9 @@ namespace FusionCrowdWeb
 	{
 	public:
 		void StartOn(const char* inIpAdress, short inPort);
-		void Shutdown();
 
 	private:
-		WebClientCore _clientCore;
+		WebNode _webNode;
 
 		//void InitBuilderByNavMeshPath(const char* inNavMeshPath);
 		//void InitBuilderByNavMeshName(const char* inNavMeshName);

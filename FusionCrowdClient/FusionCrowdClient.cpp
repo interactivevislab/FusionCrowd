@@ -13,14 +13,13 @@ namespace FusionCrowdWeb
 	{
 		using namespace std;
 
-		_clientCore.Initialize();
-
+		int clientId;
 		bool connected = false;
 		while (!connected)
 		{
 			try
 			{
-				_clientCore.Connect(inIpAdress, inPort);
+				clientId = _webNode.ConnectToServer(inIpAdress, inPort);
 				connected = true;
 				cout << "Successfully connected to " << inIpAdress << ':' << inPort << endl << endl;
 			}
@@ -43,18 +42,18 @@ namespace FusionCrowdWeb
 			}
 
 			cout << "Sending request..." << endl;
-			_clientCore.Send(StartWithNavMesh, request, strlen(request) + 1);
+			_webNode.Send(clientId, StartWithNavMesh, request, strlen(request) + 1);
 
-			auto response = _clientCore.Receive();
+			auto response = _webNode.Receive(clientId);
 			auto responseCode = response.first.AsRequestCode;
 			auto responseData = response.second;
-			cout << "Received code: " << responseCode << endl;
-			cout << "Received data: " << responseData << endl << endl;
-		}
-	}
 
-	void FusionCrowdClient::Shutdown()
-	{
-		_clientCore.Finalize();
+			cout << "Received code: " << responseCode << endl;
+			if (responseData != nullptr)
+			{
+				cout << "Received data: " << responseData << endl;
+			}
+			cout << endl;
+		}
 	}
 }

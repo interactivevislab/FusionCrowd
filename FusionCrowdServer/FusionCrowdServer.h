@@ -2,7 +2,7 @@
 
 #include "FcServerApi.h"
 #include "Export/Export.h"
-#include "WebServerCore.h"
+#include "WebNode.h"
 #include "RequestProcessor.h"
 #include "WebMessage.h"
 
@@ -24,7 +24,7 @@ namespace FusionCrowdWeb
 		void Shutdown();
 
 	private:
-		WebServerCore _serverCore;
+		WebNode _webNode;
 
 		std::shared_ptr<ISimulatorBuilder> _builder;
 		std::shared_ptr<ISimulatorFacade> _simulator;
