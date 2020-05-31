@@ -20,11 +20,10 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{66E66F7C-6F1B-4BAC-A8EC-C76E4022B0C8}</ProjectGuid>
+    <ProjectGuid>{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>FusionCrowdServerTest</RootNamespace>
+    <RootNamespace>FcMainServerTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
-    <ProjectName>FcComputationalServerTest</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -92,7 +91,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowd;$(SolutionDir)FusionCrowdWeb;$(SolutionDir)FusionCrowdServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowdMainServer;$(SolutionDir)FusionCrowdWeb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -153,11 +152,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FcComputationalServer.cpp" />
+    <ClCompile Include="FcMainServerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FusionCrowdServer\FusionCrowdServer.vcxproj">
-      <Project>{ca5008de-ded8-43fa-9373-1b78c883d621}</Project>
+    <ProjectReference Include="..\FusionCrowdMainServer\FusionCrowdMainServer.vcxproj">
+      <Project>{3f4bef93-300e-4744-af4d-f1c891c22101}</Project>
     </ProjectReference>
     <ProjectReference Include="..\FusionCrowdWeb\FusionCrowdWeb.vcxproj">
       <Project>{2e1b78b0-db71-44c1-912e-7bebb8d02542}</Project>

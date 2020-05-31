@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FusionCrowdServerTest.cpp">
+    <ClCompile Include="FcComputationalServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

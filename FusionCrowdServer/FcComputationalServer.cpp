@@ -1,4 +1,4 @@
-#include "FusionCrowdServer.h"
+#include "FcComputationalServer.h"
 
 #include <iostream>
 
@@ -9,7 +9,7 @@
 
 namespace FusionCrowdWeb
 {
-	FusionCrowdServer::FusionCrowdServer()
+	FcComputationalServer::FcComputationalServer()
 	{
 		_requestProcessors = {
 			{
@@ -48,7 +48,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	FusionCrowdServer::~FusionCrowdServer()
+	FcComputationalServer::~FcComputationalServer()
 	{
 		for (auto processor : _requestProcessors)
 		{
@@ -57,7 +57,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FusionCrowdServer::InitBuilderByNavMeshPath(const char* inNavMeshPath)
+	void FcComputationalServer::InitBuilderByNavMeshPath(const char* inNavMeshPath)
 	{
 		using namespace FusionCrowd;
 
@@ -74,7 +74,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FusionCrowdServer::InitBuilderByNavMeshName(const char* inNavMeshName)
+	void FcComputationalServer::InitBuilderByNavMeshName(const char* inNavMeshName)
 	{
 		using namespace std;
 
@@ -87,7 +87,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FusionCrowdServer::StartSimulation()
+	void FcComputationalServer::StartSimulation()
 	{
 		using namespace FusionCrowd;
 
@@ -101,7 +101,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FusionCrowdServer::StartOn(const char* inIpAdress, short inPort)
+	void FcComputationalServer::StartOn(const char* inIpAdress, short inPort)
 	{
 		_webNode.StartServer(inIpAdress, inPort);
 
@@ -133,7 +133,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FusionCrowdServer::ProcessRequest(int inClientId)
+	void FcComputationalServer::ProcessRequest(int inClientId)
 	{
 		auto request = _webNode.Receive(inClientId);
 		auto requestCode = request.first.AsRequestCode;
@@ -194,21 +194,21 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FusionCrowdServer::SendResponce(int inClientId, ResponseCode inResponseCode)
+	void FcComputationalServer::SendResponce(int inClientId, ResponseCode inResponseCode)
 	{
 		_webNode.Send(inClientId, inResponseCode, nullptr, 0);
 		std::cout << "Responce sent" << std::endl << std::endl;
 	}
 
 
-	void FusionCrowdServer::SendResponce(int inClientId, ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize)
+	void FcComputationalServer::SendResponce(int inClientId, ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize)
 	{
 		_webNode.Send(inClientId, inResponseCode, inResponseData, inDataSize);
 		std::cout << "Responce sent" << std::endl << std::endl;
 	}
 
 
-	void FusionCrowdServer::Shutdown()
+	void FcComputationalServer::Shutdown()
 	{
 		_webNode.ShutdownServer();
 	}

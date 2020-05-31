@@ -1,5 +1,5 @@
 #include "WebNode.h"
-#include "FusionCrowdServer.h"
+#include "FcComputationalServer.h"
 
 #include <iostream>
 
@@ -10,9 +10,9 @@ int main()
 	using namespace FusionCrowdWeb;
 
 	WebNode::GlobalStartup();
-	cout << "---Fusion Crowd Server---" << endl;
+	cout << "---Fusion Crowd Computational Server---" << endl;
 
-	FusionCrowdServer server;
+	FcComputationalServer server;
 	server.StartOn("127.0.0.1", 8000);
 
 	WebNode::GlobalCleanup();

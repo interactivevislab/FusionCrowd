@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FcServerApi.h"
+#include "FcComputationalServerApi.h"
 #include "Export/Export.h"
 #include "WebNode.h"
 #include "RequestProcessor.h"
@@ -14,11 +14,11 @@ namespace FusionCrowdWeb
 {
 	using namespace FusionCrowd;
 
-	class FC_SERVER_API FusionCrowdServer
+	class FC_COMPUTATIONAL_SERVER_API FcComputationalServer
 	{
 	public:
-		FusionCrowdServer();
-		~FusionCrowdServer();
+		FcComputationalServer();
+		~FcComputationalServer();
 
 		void StartOn(const char* inIpAdress, short inPort);
 		void Shutdown();

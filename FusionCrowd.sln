@@ -9,15 +9,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFusionCrowd", "TestFusi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdClient", "FusionCrowdClient\FusionCrowdClient.vcxproj", "{9D29E00E-4270-49AD-910C-3A2C5CA16A79}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdServer", "FusionCrowdServer\FusionCrowdServer.vcxproj", "{CA5008DE-DED8-43FA-9373-1B78C883D621}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdComputationalServer", "FusionCrowdServer\FusionCrowdServer.vcxproj", "{CA5008DE-DED8-43FA-9373-1B78C883D621}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{27C9796F-3325-4630-8053-1F2C845D1A17}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdClientTest", "FusionCrowdClientTest\FusionCrowdClientTest.vcxproj", "{05E35E67-7EC4-4459-AC83-DD092778550B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FcClientTest", "FusionCrowdClientTest\FusionCrowdClientTest.vcxproj", "{05E35E67-7EC4-4459-AC83-DD092778550B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdServerTest", "FusionCrowdServerTest\FusionCrowdServerTest.vcxproj", "{66E66F7C-6F1B-4BAC-A8EC-C76E4022B0C8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FcComputationalServerTest", "FusionCrowdServerTest\FusionCrowdServerTest.vcxproj", "{66E66F7C-6F1B-4BAC-A8EC-C76E4022B0C8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdWeb", "FusionCrowdWeb\FusionCrowdWeb.vcxproj", "{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdMainServer", "FusionCrowdMainServer\FusionCrowdMainServer.vcxproj", "{3F4BEF93-300E-4744-AF4D-F1C891C22101}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FcMainServerTest", "FcMainServerTest\FcMainServerTest.vcxproj", "{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +93,22 @@ Global
 		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Release|x64.Build.0 = Release|x64
 		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Release|x86.ActiveCfg = Release|Win32
 		{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}.Release|x86.Build.0 = Release|Win32
+		{3F4BEF93-300E-4744-AF4D-F1C891C22101}.Debug|x64.ActiveCfg = Debug|x64
+		{3F4BEF93-300E-4744-AF4D-F1C891C22101}.Debug|x64.Build.0 = Debug|x64
+		{3F4BEF93-300E-4744-AF4D-F1C891C22101}.Debug|x86.ActiveCfg = Debug|Win32
+		{3F4BEF93-300E-4744-AF4D-F1C891C22101}.Debug|x86.Build.0 = Debug|Win32
+		{3F4BEF93-300E-4744-AF4D-F1C891C22101}.Release|x64.ActiveCfg = Release|x64
+		{3F4BEF93-300E-4744-AF4D-F1C891C22101}.Release|x64.Build.0 = Release|x64
+		{3F4BEF93-300E-4744-AF4D-F1C891C22101}.Release|x86.ActiveCfg = Release|Win32
+		{3F4BEF93-300E-4744-AF4D-F1C891C22101}.Release|x86.Build.0 = Release|Win32
+		{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}.Debug|x64.ActiveCfg = Debug|x64
+		{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}.Debug|x64.Build.0 = Debug|x64
+		{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}.Debug|x86.ActiveCfg = Debug|Win32
+		{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}.Debug|x86.Build.0 = Debug|Win32
+		{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}.Release|x64.ActiveCfg = Release|x64
+		{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}.Release|x64.Build.0 = Release|x64
+		{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}.Release|x86.ActiveCfg = Release|Win32
+		{9D47511D-B353-45C2-A89A-9BBCF86EFEDF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
