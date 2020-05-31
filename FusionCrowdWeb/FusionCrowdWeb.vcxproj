@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FcWebApi.h" />
+    <ClInclude Include="FcWebData.h" />
     <ClInclude Include="WebMessage.h" />
     <ClInclude Include="WebNode.h" />
     <ClInclude Include="WsException.h" />

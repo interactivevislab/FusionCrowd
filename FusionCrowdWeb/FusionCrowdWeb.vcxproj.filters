@@ -27,6 +27,9 @@
     <ClInclude Include="FcWebApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FcWebData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WsException.cpp">

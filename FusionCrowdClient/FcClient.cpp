@@ -9,51 +9,48 @@
 
 namespace FusionCrowdWeb
 {
-	void FusionCrowdClient::StartOn(const char* inIpAdress, short inPort)
+	void FusionCrowdClient::ConnectToMainServer(const char* inIpAdress, short inPort)
 	{
-		using namespace std;
+		std::cout << "Connecting to " << inIpAdress << ':' << inPort << "... ";
 
-		int clientId;
 		bool connected = false;
 		while (!connected)
 		{
 			try
 			{
-				clientId = _webNode.ConnectToServer(inIpAdress, inPort);
+				_mainServerId = ConnectToServer(inIpAdress, inPort);
 				connected = true;
-				cout << "Successfully connected to " << inIpAdress << ':' << inPort << endl << endl;
+				std::cout << " success" << std::endl << std::endl;
 			}
 			catch (...)
 			{
 				//
 			}
 		}
+	}
 
-		cout << endl << "Session started" << endl << endl;
 
-		char request[100];
-		while (true)
-		{
-			cin >> request;
+	void FusionCrowdClient::DisconnectFromMainServer()
+	{
+		Disconnect(_mainServerId);
+	}
 
-			if (strcmp(request, "exit") == 0)
-			{
-				break;
-			}
 
-			cout << "Sending request..." << endl;
-			_webNode.Send(clientId, StartWithNavMesh, request, strlen(request) + 1);
+	void FusionCrowdClient::InitComputation(InitComputingData inInitData)
+	{
+		//stub
+	}
 
-			auto response = _webNode.Receive(clientId);
-			auto responseCode = response.first.AsRequestCode;
-			auto responseData = response.second;
 
-			cout << "Received code: " << responseCode << endl;
-			if (responseData != nullptr)
-			{
-				cout << "Received data: " << responseData << endl;
-			}
-			cout << endl;
-		}
+	void FusionCrowdClient::RequestComputation(int inSimulationStepsNum, float inSimulationStep)
+	{
+		//stub
+	}
+
+
+	OutputComputingData FusionCrowdClient::GetComputationResult()
+	{
+		//stub
+		return OutputComputingData();
 	}
 }

@@ -1,4 +1,3 @@
-#include "WebNode.h"
 #include "FcMainServer.h"
 
 #include <iostream>
@@ -9,14 +8,19 @@ int main()
 	using namespace std;
 	using namespace FusionCrowdWeb;
 
-	WebNode::GlobalStartup();
+	FcMainServer::GlobalStartup();
 	cout << "---Fusion Crowd Main Server---" << endl;
 
 	FcMainServer server;
-	server.StartOn("127.0.0.1", 8000);
-	server.Shutdown();
 
-	WebNode::GlobalCleanup();
+	server.ConnectToComputationalServer("127.0.0.1", 8000);;
+	server.AcceptClientConnection();
+	server.InitComputation();
+	server.ProcessComputationRequest();
+
+	server.ShutdownServer();
+
+	FcMainServer::GlobalCleanup();
 
 	system("pause");
 	return 0;

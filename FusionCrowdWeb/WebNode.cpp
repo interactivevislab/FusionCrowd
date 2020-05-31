@@ -112,6 +112,11 @@ namespace FusionCrowdWeb
 		}
 	}
 
+	void WebNode::Send(int inSocketId, WebCode inWebCode)
+	{
+		Send(inSocketId, inWebCode, nullptr, 0);
+	}
+
 
 	std::pair<WebCode, const char*> WebNode::Receive(int inSocketId)
 	{

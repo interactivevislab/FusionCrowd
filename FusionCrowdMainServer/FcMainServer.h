@@ -9,13 +9,20 @@ namespace FusionCrowdWeb
 {
 	using namespace FusionCrowd;
 
-	class FC_MAIN_SERVER_API FcMainServer
+	class FC_MAIN_SERVER_API FcMainServer : public WebNode
 	{
 	public:
-		void StartOn(const char* inIpAdress, short inPort);
-		void Shutdown();
+		void StartServer(const char* inIpAdress, short inPort) override;
+
+		void ConnectToComputationalServer(const char* inIpAdress, short inPort);
+		void DisconnectFromComputationalServer();
+
+		void AcceptClientConnection();
+		void InitComputation();
+		void ProcessComputationRequest();
 
 	private:
-		WebNode _webNode;
+		int _computationalServerId;
+		int _clientId;
 	};
 }

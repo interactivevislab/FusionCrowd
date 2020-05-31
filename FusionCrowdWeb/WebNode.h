@@ -17,15 +17,16 @@ namespace FusionCrowdWeb
 	public:
 		~WebNode();
 
-		void StartServer(const char* inIpAdress, short inPort);
-		void ShutdownServer();
+		virtual void StartServer(const char* inIpAdress, short inPort);
+		virtual void ShutdownServer();
 
-		int AcceptInputConnection();
-		int ConnectToServer(const char* inIpAdress, short inPort);
-		void Disconnect(int inSocketId);
+		virtual int AcceptInputConnection();
+		virtual int ConnectToServer(const char* inIpAdress, short inPort);
+		virtual void Disconnect(int inSocketId);
 
-		void Send(int inSocketId, WebCode inWebCode, const char* inData, size_t inDataSize);
-		std::pair<WebCode, const char*> Receive(int inSocketId);
+		virtual void Send(int inSocketId, WebCode inWebCode, const char* inData, size_t inDataSize);
+		virtual void Send(int inSocketId, WebCode inWebCode);
+		virtual std::pair<WebCode, const char*> Receive(int inSocketId);
 
 		static void GlobalStartup();
 		static void GlobalCleanup();

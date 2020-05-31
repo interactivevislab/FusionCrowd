@@ -153,7 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FcComputationalServer.cpp" />
+    <ClCompile Include="FcComputationalServerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FusionCrowdComputationalServer\FusionCrowdComputationalServer.vcxproj">

@@ -2,26 +2,24 @@
 
 #include "FcClientApi.h"
 #include "WebNode.h"
-//#include "WebMessage.h"
+#include "FcWebData.h"
 
 
 namespace FusionCrowdWeb
 {
 	//using namespace FusionCrowd;
 
-	class FC_CLIENT_API FusionCrowdClient
+	class FC_CLIENT_API FusionCrowdClient : public WebNode
 	{
 	public:
-		void StartOn(const char* inIpAdress, short inPort);
+		void ConnectToMainServer(const char* inIpAdress, short inPort);
+		void DisconnectFromMainServer();
+
+		void InitComputation(InitComputingData inInitData);
+		void RequestComputation(int inSimulationStepsNum, float inSimulationStep);
+		OutputComputingData GetComputationResult();
 
 	private:
-		WebNode _webNode;
-
-		//void InitBuilderByNavMeshPath(const char* inNavMeshPath);
-		//void InitBuilderByNavMeshName(const char* inNavMeshName);
-		//void StartSimulation();
-		//void ProcessRequest();
-		//void SendResponce(ResponseCode inResponseCode);
-		//void SendResponce(ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize);
+		int _mainServerId;
 	};
 }
