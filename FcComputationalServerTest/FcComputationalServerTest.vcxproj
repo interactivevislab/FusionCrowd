@@ -92,7 +92,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowd;$(SolutionDir)FusionCrowdWeb;$(SolutionDir)FusionCrowdServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowd;$(SolutionDir)FusionCrowdWeb;$(SolutionDir)FusionCrowdComputationalServer;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,7 +156,7 @@
     <ClCompile Include="FcComputationalServer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FusionCrowdServer\FusionCrowdServer.vcxproj">
+    <ProjectReference Include="..\FusionCrowdComputationalServer\FusionCrowdComputationalServer.vcxproj">
       <Project>{ca5008de-ded8-43fa-9373-1b78c883d621}</Project>
     </ProjectReference>
     <ProjectReference Include="..\FusionCrowdWeb\FusionCrowdWeb.vcxproj">

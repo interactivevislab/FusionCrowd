@@ -9,13 +9,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFusionCrowd", "TestFusi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdClient", "FusionCrowdClient\FusionCrowdClient.vcxproj", "{9D29E00E-4270-49AD-910C-3A2C5CA16A79}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdComputationalServer", "FusionCrowdServer\FusionCrowdServer.vcxproj", "{CA5008DE-DED8-43FA-9373-1B78C883D621}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdComputationalServer", "FusionCrowdComputationalServer\FusionCrowdComputationalServer.vcxproj", "{CA5008DE-DED8-43FA-9373-1B78C883D621}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{27C9796F-3325-4630-8053-1F2C845D1A17}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FcClientTest", "FusionCrowdClientTest\FusionCrowdClientTest.vcxproj", "{05E35E67-7EC4-4459-AC83-DD092778550B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FcClientTest", "FcClientTest\FcClientTest.vcxproj", "{05E35E67-7EC4-4459-AC83-DD092778550B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FcComputationalServerTest", "FusionCrowdServerTest\FusionCrowdServerTest.vcxproj", "{66E66F7C-6F1B-4BAC-A8EC-C76E4022B0C8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FcComputationalServerTest", "FcComputationalServerTest\FcComputationalServerTest.vcxproj", "{66E66F7C-6F1B-4BAC-A8EC-C76E4022B0C8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FusionCrowdWeb", "FusionCrowdWeb\FusionCrowdWeb.vcxproj", "{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}"
 EndProject
