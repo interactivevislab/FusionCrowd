@@ -2,10 +2,13 @@
 
 #include "FcMainServerApi.h"
 #include "WebNode.h"
+#include "Export/Export.h"
 
 
 namespace FusionCrowdWeb
 {
+	using namespace FusionCrowd;
+
 	class FC_MAIN_SERVER_API FcMainServer
 	{
 	public:

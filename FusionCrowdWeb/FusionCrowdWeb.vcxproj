@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FusionCrowdWebApi.h" />
+    <ClInclude Include="FcWebApi.h" />
     <ClInclude Include="WebMessage.h" />
     <ClInclude Include="WebNode.h" />
     <ClInclude Include="WsException.h" />

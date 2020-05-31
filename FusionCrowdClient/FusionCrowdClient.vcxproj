@@ -154,11 +154,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FusionCrowdClient.cpp" />
+    <ClCompile Include="FcClient.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FcClientApi.h" />
-    <ClInclude Include="FusionCrowdClient.h" />
+    <ClInclude Include="FcClient.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FusionCrowdWeb\FusionCrowdWeb.vcxproj">
