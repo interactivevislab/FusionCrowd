@@ -13,15 +13,16 @@ int main()
 
 	FcComputationalServer server;
 
-	server.StartServer("127.0.0.1", 8000);
+	server.StartServer("127.0.0.1", 8080);
 	server.AcceptMainServerConnection();
 	server.InitComputation();
 	server.ProcessComputationRequest();
+
+	system("pause");
 
 	server.ShutdownServer();
 
 	FcComputationalServer::GlobalCleanup();
 
-	system("pause");
 	return 0;
 }

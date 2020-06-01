@@ -38,5 +38,8 @@
     <ClCompile Include="WebNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FcWebData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

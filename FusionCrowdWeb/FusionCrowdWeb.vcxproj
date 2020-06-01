@@ -26,6 +26,7 @@
     <ClInclude Include="WsException.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FcWebData.cpp" />
     <ClCompile Include="WebNode.cpp" />
     <ClCompile Include="WsException.cpp" />
   </ItemGroup>

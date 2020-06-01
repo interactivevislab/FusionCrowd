@@ -30,6 +30,7 @@ namespace FusionCrowdWeb
 
 	private:
 		int _mainServerId;
+		float _stubData;
 		//std::shared_ptr<ISimulatorBuilder> _builder;
 		//std::shared_ptr<ISimulatorFacade> _simulator;
 		//bool _isSimulationStarted = false;

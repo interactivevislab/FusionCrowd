@@ -5,6 +5,7 @@
 #include "Export/ComponentId.h"
 #include "WsException.h"
 #include "WebMessage.h"
+#include "FcWebData.h"
 
 
 namespace FusionCrowdWeb
@@ -19,19 +20,39 @@ namespace FusionCrowdWeb
 	void FcComputationalServer::AcceptMainServerConnection()
 	{
 		_mainServerId = AcceptInputConnection();
-		std::cout << "Client connected" << std::endl << std::endl;
+		std::cout << "MainServer connected" << std::endl << std::endl;
 	}
 
 
 	void FcComputationalServer::InitComputation()
 	{
 		//stub
+
+		auto request = Receive(_mainServerId);
+		InitComputingData data = InitComputingData::Deserialize(request.second);
+		std::cout << "Init data received - " << data.StubData << std::endl;
+
+		_stubData = data.StubData;
 	}
 
 
 	void FcComputationalServer::ProcessComputationRequest()
 	{
 		//stub
+
+		auto request = Receive(_mainServerId);
+		InputComputingData inData = InputComputingData::Deserialize(request.second);
+		std::cout << "Computing data received - " << inData.StubData << std::endl;
+
+		_stubData += inData.StubData;
+
+		OutputComputingData outData = OutputComputingData{ _stubData };
+		char* rawData = (char*)std::malloc(sizeof(float));
+		OutputComputingData::Serialize(outData, rawData);
+		Send(_mainServerId, RequestCode(2), rawData, sizeof(OutputComputingData));
+		std::cout << "Computing result sent - " << outData.StubData << std::endl;
+
+		delete rawData;
 	}
 
 	//FcComputationalServer::FcComputationalServer()

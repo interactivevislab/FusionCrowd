@@ -15,9 +15,8 @@ namespace FusionCrowdWeb
 		void ConnectToMainServer(const char* inIpAdress, short inPort);
 		void DisconnectFromMainServer();
 
-		void InitComputation(InitComputingData inInitData);
-		void RequestComputation(int inSimulationStepsNum, float inSimulationStep);
-		OutputComputingData GetComputationResult();
+		void InitComputation(const InitComputingData& inInitData);
+		OutputComputingData RequestComputation(const InputComputingData& inComputingData);
 
 	private:
 		int _mainServerId;

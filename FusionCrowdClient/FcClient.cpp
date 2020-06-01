@@ -36,21 +36,36 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FusionCrowdClient::InitComputation(InitComputingData inInitData)
+	void FusionCrowdClient::InitComputation(const InitComputingData& inInitData)
 	{
 		//stub
+
+		char* rawData = (char*)std::malloc(sizeof(float));
+		InitComputingData::Serialize(inInitData, rawData);
+
+		Send(_mainServerId, RequestCode(0), rawData, sizeof(InitComputingData));
+		std::cout << "Init data sent - " << inInitData.StubData << std::endl;
+
+		delete rawData;
 	}
 
 
-	void FusionCrowdClient::RequestComputation(int inSimulationStepsNum, float inSimulationStep)
+	OutputComputingData FusionCrowdClient::RequestComputation(const InputComputingData& inComputingData)
 	{
 		//stub
-	}
 
+		char* rawData = (char*)std::malloc(sizeof(float));
+		InputComputingData::Serialize(inComputingData, rawData);
 
-	OutputComputingData FusionCrowdClient::GetComputationResult()
-	{
-		//stub
-		return OutputComputingData();
+		Send(_mainServerId, RequestCode(1), rawData, sizeof(InputComputingData));
+		std::cout << "Computing data sent - " << inComputingData.StubData << std::endl;
+
+		delete rawData;
+
+		auto request = Receive(_mainServerId);
+		OutputComputingData result = OutputComputingData::Deserialize(request.second);
+		std::cout << "Computing result received - " << result.StubData << std::endl;
+
+		return result;
 	}
 }
