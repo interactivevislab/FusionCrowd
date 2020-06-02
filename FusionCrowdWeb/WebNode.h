@@ -12,16 +12,26 @@
 
 namespace FusionCrowdWeb
 {
+	struct FC_WEB_API WebAddress
+	{
+		const char* IpAddress;
+		short Port;
+
+		WebAddress(const char* inIpAddress, short inPort);
+		operator sockaddr_in();
+	};
+
+
 	class FC_WEB_API WebNode
 	{
 	public:
 		~WebNode();
 
-		virtual void StartServer(const char* inIpAdress, short inPort);
+		virtual void StartServer(WebAddress inAddress);
 		virtual void ShutdownServer();
 
 		virtual int AcceptInputConnection();
-		virtual int ConnectToServer(const char* inIpAdress, short inPort);
+		virtual int ConnectToServer(WebAddress inAddress);
 		virtual void Disconnect(int inSocketId);
 
 		virtual void Send(int inSocketId, WebCode inWebCode, const char* inData, size_t inDataSize);
@@ -39,8 +49,6 @@ namespace FusionCrowdWeb
 
 		std::map<int, SOCKET> _connectedSockets;
 		int _freeSocketId = 0;
-
-		static sockaddr_in GetSocketAddress(const char* inIpAdress, short inPort);
 
 		int SaveConnectedSocket(SOCKET inSocket);
 		SOCKET GetConnectedSocket(int inSocketId);

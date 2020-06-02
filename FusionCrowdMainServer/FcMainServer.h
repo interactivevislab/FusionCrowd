@@ -12,9 +12,9 @@ namespace FusionCrowdWeb
 	class FC_MAIN_SERVER_API FcMainServer : public WebNode
 	{
 	public:
-		void StartServer(const char* inIpAdress, short inPort) override;
+		void StartServer(WebAddress inAddress) override;
 
-		void ConnectToComputationalServer(const char* inIpAdress, short inPort);
+		void ConnectToComputationalServer(WebAddress inAddress);
 		void DisconnectFromComputationalServer();
 
 		void AcceptClientConnection();

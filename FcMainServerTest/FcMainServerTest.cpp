@@ -12,8 +12,8 @@ int main()
 	cout << "---Fusion Crowd Main Server---" << endl;
 
 	FcMainServer server;
-	server.StartServer("127.0.0.1", 8000);
-	server.ConnectToComputationalServer("127.0.0.1", 8080);
+	server.StartServer(WebAddress("127.0.0.1", 8000));
+	server.ConnectToComputationalServer(WebAddress("127.0.0.1", 8080));
 	server.AcceptClientConnection();
 	server.InitComputation();
 	server.ProcessComputationRequest();

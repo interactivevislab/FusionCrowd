@@ -7,23 +7,23 @@
 
 namespace FusionCrowdWeb
 {
-	void FcMainServer::StartServer(const char* inIpAdress, short inPort)
+	void FcMainServer::StartServer(WebAddress inAddress)
 	{
-		WebNode::StartServer(inIpAdress, inPort);
-		std::cout << "Successfully started on " << inIpAdress << ':' << inPort << std::endl << std::endl;
+		WebNode::StartServer(inAddress);
+		std::cout << "Successfully started on " << inAddress.IpAddress << ':' << inAddress.Port << std::endl << std::endl;
 	}
 
 
-	void FcMainServer::ConnectToComputationalServer(const char* inIpAdress, short inPort)
+	void FcMainServer::ConnectToComputationalServer(WebAddress inAddress)
 	{
-		std::cout << "Connecting to " << inIpAdress << ':' << inPort << "... ";
+		std::cout << "Connecting to " << inAddress.IpAddress << ':' << inAddress.Port << "... ";
 
 		bool connected = false;
 		while (!connected)
 		{
 			try
 			{
-				_computationalServerId = ConnectToServer(inIpAdress, inPort);
+				_computationalServerId = ConnectToServer(inAddress);
 				connected = true;
 				std::cout << " success" << std::endl << std::endl;
 			}

@@ -9,16 +9,16 @@
 
 namespace FusionCrowdWeb
 {
-	void FusionCrowdClient::ConnectToMainServer(const char* inIpAdress, short inPort)
+	void FusionCrowdClient::ConnectToMainServer(WebAddress inAddress)
 	{
-		std::cout << "Connecting to " << inIpAdress << ':' << inPort << "... ";
+		std::cout << "Connecting to " << inAddress.IpAddress << ':' << inAddress.Port << "... ";
 
 		bool connected = false;
 		while (!connected)
 		{
 			try
 			{
-				_mainServerId = ConnectToServer(inIpAdress, inPort);
+				_mainServerId = ConnectToServer(inAddress);
 				connected = true;
 				std::cout << " success" << std::endl << std::endl;
 			}

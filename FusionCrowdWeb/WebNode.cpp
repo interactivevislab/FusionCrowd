@@ -34,12 +34,12 @@ namespace FusionCrowdWeb
 	}
 
 
-	void WebNode::StartServer(const char* inIpAdress, short inPort)
+	void WebNode::StartServer(WebAddress inAddress)
 	{
 		_ownServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(_ownServerSocket, "TCP socket creation failed");
 
-		auto address = GetSocketAddress(inIpAdress, inPort);
+		sockaddr_in address = inAddress;
 		auto result = bind(_ownServerSocket, (SOCKADDR*)&address, sizeof(address));
 		CheckWsResult(result, "Binding failed");
 
@@ -66,12 +66,12 @@ namespace FusionCrowdWeb
 	}
 
 
-	int WebNode::ConnectToServer(const char* inIpAdress, short inPort)
+	int WebNode::ConnectToServer(WebAddress inAddress)
 	{
 		auto connectedSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(connectedSocket, "TCP socket creation failed");
 
-		auto address = GetSocketAddress(inIpAdress, inPort);
+		sockaddr_in address = inAddress;
 		auto result = connect(connectedSocket, (SOCKADDR*)&address, sizeof(address));
 		if (result == SOCKET_ERROR)
 		{
@@ -157,17 +157,6 @@ namespace FusionCrowdWeb
 	}
 
 
-	sockaddr_in WebNode::GetSocketAddress(const char* inIpAdress, short inPort)
-	{
-		sockaddr_in address;
-		address.sin_family = AF_INET;
-		InetPton(AF_INET, inIpAdress, &(address.sin_addr.s_addr));
-		address.sin_port = htons(inPort);
-
-		return address;
-	}
-
-
 	int WebNode::SaveConnectedSocket(SOCKET inSocket)
 	{
 		_connectedSockets.insert({ _freeSocketId, inSocket });
@@ -213,5 +202,21 @@ namespace FusionCrowdWeb
 		{
 			throw WsException(inErrorMessage);
 		}
+	}
+
+
+	WebAddress::WebAddress(const char* inIpAddress, short inPort) : IpAddress(inIpAddress), Port(inPort)
+	{
+	}
+
+
+	WebAddress::operator sockaddr_in()
+	{
+		sockaddr_in address;
+		address.sin_family = AF_INET;
+		InetPton(AF_INET, IpAddress, &(address.sin_addr.s_addr));
+		address.sin_port = htons(Port);
+
+		return address;
 	}
 }

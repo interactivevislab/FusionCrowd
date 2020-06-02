@@ -10,10 +10,10 @@
 
 namespace FusionCrowdWeb
 {
-	void FcComputationalServer::StartServer(const char* inIpAdress, short inPort)
+	void FcComputationalServer::StartServer(WebAddress inAddress)
 	{
-		WebNode::StartServer(inIpAdress, inPort);
-		std::cout << "Successfully started on " << inIpAdress << ':' << inPort << std::endl << std::endl;
+		WebNode::StartServer(inAddress);
+		std::cout << "Successfully started on " << inAddress.IpAddress << ':' << inAddress.Port << std::endl << std::endl;
 	}
 
 

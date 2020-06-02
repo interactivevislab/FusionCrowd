@@ -13,7 +13,7 @@ int main()
 
 	FusionCrowdClient client;
 
-	client.ConnectToMainServer("127.0.0.1", 8000);
+	client.ConnectToMainServer(WebAddress("127.0.0.1", 8000));
 	client.InitComputation(InitComputingData{5});
 	auto result = client.RequestComputation(InputComputingData{0.1f});
 	cout << "Computing result = " << result.StubData << endl;

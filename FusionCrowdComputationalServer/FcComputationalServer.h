@@ -17,7 +17,7 @@ namespace FusionCrowdWeb
 	class FC_COMPUTATIONAL_SERVER_API FcComputationalServer : public WebNode
 	{
 	public:
-		void StartServer(const char* inIpAdress, short inPort) override;
+		void StartServer(WebAddress inAddress) override;
 
 		void AcceptMainServerConnection();
 		void InitComputation();

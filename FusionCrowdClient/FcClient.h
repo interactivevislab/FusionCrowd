@@ -12,7 +12,7 @@ namespace FusionCrowdWeb
 	class FC_CLIENT_API FusionCrowdClient : public WebNode
 	{
 	public:
-		void ConnectToMainServer(const char* inIpAdress, short inPort);
+		void ConnectToMainServer(WebAddress inAddress);
 		void DisconnectFromMainServer();
 
 		void InitComputation(const InitComputingData& inInitData);
