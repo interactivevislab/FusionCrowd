@@ -2,6 +2,7 @@
 
 #include "FcWebApi.h"
 
+#include "FcWebData.h"
 #include "WebMessage.h"
 
 #include <utility>
@@ -34,9 +35,19 @@ namespace FusionCrowdWeb
 		virtual int ConnectToServer(WebAddress inAddress);
 		virtual void Disconnect(int inSocketId);
 
-		virtual void Send(int inSocketId, WebCode inWebCode, const char* inData, size_t inDataSize);
-		virtual void Send(int inSocketId, WebCode inWebCode);
-		virtual std::pair<WebCode, const char*> Receive(int inSocketId);
+		void Send(int inSocketId, WebCode inWebCode, const char* inData, size_t inDataSize);
+		void Send(int inSocketId, WebCode inWebCode);
+
+		template<typename DataType>
+		void Send(int inSocketId, WebCode inWebCode, const DataType& inData)
+		{
+			char* rawData;
+			auto dataSize = WebDataSerializer<DataType>::Serialize(inData, rawData);
+			Send(inSocketId, inWebCode, rawData, dataSize);
+			delete[] rawData;
+		}
+
+		std::pair<WebCode, const char*> Receive(int inSocketId);
 
 		static void GlobalStartup();
 		static void GlobalCleanup();

@@ -1,6 +1,7 @@
 #include "FcMainServer.h"
 
 #include "FcWebData.h"
+#include "WsException.h"
 
 #include <iostream>
 
@@ -51,42 +52,48 @@ namespace FusionCrowdWeb
 	void FcMainServer::InitComputation()
 	{
 		auto request = Receive(_clientId);
+		if (request.first.AsRequestCode != RequestCode::InitSimulation)
+		{
+			throw FcWebException("RequestError");
+		}
 		auto data = WebDataSerializer<InitComputingData>::Deserialize(request.second);
 		std::cout << "Init data received" << std::endl;
 
 		//TODO: data processing
 
-		char* rawData;
-		auto dataSize = WebDataSerializer<InitComputingData>::Serialize(data, rawData);
-		Send(_computationalServerId, RequestCode(0), rawData, dataSize);
+		Send(_computationalServerId, RequestCode::InitSimulation, data);
 		std::cout << "Init data sent" << std::endl;
-		delete[] rawData;
 	}
 
 
 	void FcMainServer::ProcessComputationRequest()
 	{
 		auto request = Receive(_clientId);
+		if (request.first.AsRequestCode != RequestCode::DoStep)
+		{
+			throw FcWebException("RequestError");
+		}
 		auto inData = WebDataSerializer<InputComputingData>::Deserialize(request.second);
 		std::cout << "Computing data received" << std::endl;
 
 		//TODO: inData processing
 
-		char* rawData;
-		auto dataSize = WebDataSerializer<InputComputingData>::Serialize(inData, rawData);
-		Send(_computationalServerId, RequestCode(1), rawData, dataSize);
+		Send(_computationalServerId, RequestCode::DoStep, inData);
 		std::cout << "Computing data sent" << std::endl;
-		delete[] rawData;
+
+		//waiting...
 
 		request = Receive(_computationalServerId);
+		if (request.first.AsResponseCode != ResponseCode::Success)
+		{
+			throw FcWebException("ResponseError");
+		}
 		auto outData = WebDataSerializer<OutputComputingData>::Deserialize(request.second);
 		std::cout << "Computing result received" << std::endl;
 
 		//TODO: outData processing
 
-		dataSize = WebDataSerializer<OutputComputingData>::Serialize(outData, rawData);
-		Send(_clientId, RequestCode(2), rawData, dataSize);
+		Send(_clientId, ResponseCode::Success, outData);
 		std::cout << "Computing result sent" << std::endl;
-		delete[] rawData;
 	}
 }
