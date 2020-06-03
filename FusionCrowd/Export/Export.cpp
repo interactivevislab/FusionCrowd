@@ -17,6 +17,7 @@
 #include "OperationComponent/ZanlungoComponent.h"
 #include "OperationComponent/PedVOComponent.h"
 #include "OperationComponent/GCFComponent.h"
+#include "TransportOComponent.h"
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
 
@@ -139,6 +140,11 @@ namespace FusionCrowd
 			_sim->AddAgentToGroup(agentId, groupId);
 		}
 
+		void AddTrafficLight(size_t nodeId)
+		{
+			_sim->AddTrafficLight(nodeId);
+		}
+
 	private:
 		std::shared_ptr<Simulator> _sim;
 	};
@@ -235,6 +241,9 @@ namespace FusionCrowd
 					break;
 				case ComponentIds::GCF_ID:
 					sim->AddOpModel(std::make_shared<GCF::GCFComponent>(navSystem));
+					break;
+				case ComponentIds::TRANSPORT_ID:
+					sim->AddOpModel(std::make_shared<Transport::TransportOComponent>(navSystem));
 					break;
 				default:
 					break;

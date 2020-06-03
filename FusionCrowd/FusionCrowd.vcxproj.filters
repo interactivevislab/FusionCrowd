@@ -52,6 +52,9 @@
     <ClCompile Include="Group\Group.cpp" />
     <ClCompile Include="Group\GroupShape.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
+    <ClCompile Include="TransportOComponent.cpp" />
+    <ClCompile Include="TrafficLight.cpp" />
+    <ClCompile Include="TrafficLightsBunch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -127,6 +130,9 @@
     <ClInclude Include="Group\GroupShape.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="Export\NavGraph.h" />
+    <ClInclude Include="TransportOComponent.h" />
+    <ClInclude Include="TrafficLight.h" />
+    <ClInclude Include="TrafficLightsBunch.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -152,7 +152,7 @@ namespace FusionCrowd
 
 		void SetAgentGoal(Agent & agent, DirectX::SimpleMath::Vector2 goalPos)
 		{
-			auto point = _tacticComponents[ComponentIds::NAVMESH_ID]->GetClosestAvailablePoint(goalPos);
+			auto point = _tacticComponents[ComponentIds::NAVGRAPH_ID]->GetClosestAvailablePoint(goalPos);
 			auto goal = _goalFactory.CreateDiscGoal(point, 1.5f);
 			agent.currentGoal = goal;
 		}
@@ -160,6 +160,11 @@ namespace FusionCrowd
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos)
 		{
 			SetAgentGoal(_agents.find(agentId)->second, goalPos);
+		}
+
+		void AddTrafficLight(size_t nodeId)
+		{
+			_navSystem->AddTrafficLights(nodeId);
 		}
 
 		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
@@ -503,6 +508,11 @@ namespace FusionCrowd
 
 	const Goal & Simulator::GetAgentGoal(size_t agentId) const {
 		return pimpl->GetAgentGoal(agentId);
+	}
+
+	void Simulator::AddTrafficLight(size_t nodeId)
+	{
+		pimpl->AddTrafficLight(nodeId);
 	}
 
 	bool Simulator::SetOperationComponent(size_t agentId, ComponentId newOperationComponent)

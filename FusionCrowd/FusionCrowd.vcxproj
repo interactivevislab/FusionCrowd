@@ -47,6 +47,9 @@
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
     <ClInclude Include="TacticComponent\NavGraphComponent.h" />
+    <ClInclude Include="TrafficLight.h" />
+    <ClInclude Include="TrafficLightsBunch.h" />
+    <ClInclude Include="TransportOComponent.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
     <ClInclude Include="Export\FCArray.h" />
     <ClInclude Include="Math\Util.h" />
@@ -120,6 +123,9 @@
     <ClCompile Include="StrategyComponent\FSM\FsmStrategy.cpp" />
     <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
     <ClCompile Include="Group\Group.cpp" />
+    <ClCompile Include="TrafficLight.cpp" />
+    <ClCompile Include="TrafficLightsBunch.cpp" />
+    <ClCompile Include="TransportOComponent.cpp" />
     <ClCompile Include="Util\RecordingSerializer.cpp" />
     <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Agent.cpp" />

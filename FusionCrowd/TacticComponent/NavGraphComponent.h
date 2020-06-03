@@ -5,6 +5,7 @@
 #include "Navigation/NavGraph/NavGraph.h"
 #include "Navigation/NavSystem.h"
 #include "Navigation/NavGraph/NavGraphPathPlanner.h"
+#include "TrafficLightsBunch.h"
 
 
 
@@ -26,6 +27,7 @@ namespace FusionCrowd
 		void Update(float timeStep) override;
 		DirectX::SimpleMath::Vector2 GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) override;
 		unsigned int getNodeId(size_t agentId) const;
+		unsigned int getGoalNodeId(size_t agentId) const;
 
 		ComponentId GetId() override { return ComponentIds::NAVGRAPH_ID; }
 
@@ -44,8 +46,6 @@ namespace FusionCrowd
 		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);
 		void UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, float deltaTime) const;
 		void Replan(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
-		size_t GetForwardAgent(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
-		std::vector<AgentStruct> GetAllAgentsInRadius(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float radius);
 
 		std::shared_ptr<Simulator> _simulator;
 		std::shared_ptr<NavGraph> _navGraph;

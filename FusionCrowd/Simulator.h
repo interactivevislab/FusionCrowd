@@ -79,6 +79,8 @@ namespace FusionCrowd
 		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos);
 		Agent & GetAgent(size_t id);
 
+		void AddTrafficLight(size_t nodeId);
+
 
 		size_t AddGroup(std::unique_ptr<IGroupShape> shape, DirectX::SimpleMath::Vector2 origin);
 		const Group & GetGroup(size_t groupId) const;

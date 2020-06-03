@@ -12,11 +12,13 @@
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
 #include "Navigation/FastFixedRadiusNearestNeighbors/NeighborsSeeker.h"
 
+
 #include <limits>
 #include <unordered_map>
 #include <map>
 #include <algorithm>
 #include <math.h>
+#include <set>
 
 using namespace DirectX::SimpleMath;
 
@@ -85,6 +87,25 @@ namespace FusionCrowd
 
 		void RemoveAgent(unsigned int id) {
 			_agentsInfo.erase(id);
+		}
+
+		void AddTrafficLights(size_t nodeId)
+		{
+			_lightsIds.insert(nodeId);
+			TrafficLightsBunch* newLight = new TrafficLightsBunch;
+			_trafficLights.insert(std::make_pair(nodeId, newLight));
+		}
+
+		TrafficLightsBunch* GetTrafficLights(size_t id)
+		{
+			std::map <size_t,TrafficLightsBunch*>::iterator it;
+			
+			if (_trafficLights.find(id) == _trafficLights.end())
+			{
+				return nullptr;
+			}
+
+			return _trafficLights[id];
 		}
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId)
@@ -170,6 +191,11 @@ namespace FusionCrowd
 			}
 
 			UpdateNeighbours();
+
+			for (auto light : _trafficLights)
+			{
+				light.second->UpdateAllLights(timeStep);
+			}
 		}
 
 		void UpdatePos(AgentSpatialInfo & agent, float timeStep)
@@ -340,6 +366,8 @@ namespace FusionCrowd
 		std::shared_ptr<NavMesh> _navMesh;
 		std::shared_ptr<NavGraph> _navGraph;
 		std::shared_ptr<NavMeshLocalizer> _localizer;
+		std::map<size_t, TrafficLightsBunch*> _trafficLights;
+		std::set<size_t> _lightsIds;
 
 		NeighborsSeeker _neighborsSeeker;
 		std::map<size_t, AgentSpatialInfo> _agentsInfo;
@@ -368,6 +396,16 @@ namespace FusionCrowd
 	void NavSystem::RemoveAgent(unsigned int id)
 	{
 		pimpl->RemoveAgent(id);
+	}
+
+	void NavSystem::AddTrafficLights(size_t id)
+	{
+		pimpl->AddTrafficLights(id);
+	}
+
+	TrafficLightsBunch* NavSystem::GetTrafficLights(size_t id)
+	{
+		return pimpl->GetTrafficLights(id);
 	}
 
 	AgentSpatialInfo & NavSystem::GetSpatialInfo(size_t agentId)

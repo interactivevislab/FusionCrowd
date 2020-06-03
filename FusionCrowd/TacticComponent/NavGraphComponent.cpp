@@ -60,8 +60,12 @@ namespace FusionCrowd
 	{
 
 		NavGraphNode goalNode = _navGraph->GetNode(agentStruct.goalNodeID);
-		float dist = goalNode.position.Distance(goalNode.position, agentInfo.pos);
-
+		
+		Vector2 shift = { -1*agentInfo.orient.y, agentInfo.orient.x };
+		shift.Normalize();
+		shift *= agentInfo.radius * 4;
+		float dist = goalNode.position.Distance(goalNode.position + shift, agentInfo.pos);
+		
 		if(dist < agentInfo.prefSpeed * timeStep)
 		{
 			agentInfo.prefVelocity.setSpeed(dist);
@@ -72,12 +76,23 @@ namespace FusionCrowd
 
 		if (abs(dist) > 1e-6)
 		{
-			agentInfo.prefVelocity.setSingle((goalNode.position - agentInfo.pos) / dist);
+			agentInfo.prefVelocity.setSingle((goalNode.position + shift - agentInfo.pos) / dist);
 		} else
 		{
-			agentInfo.prefVelocity.setSpeed(0);
+			agentInfo.prefVelocity.setSpeed(1e-6);
 		}
 
+		TrafficLightsBunch* curLights = _navSystem->GetTrafficLights(agentStruct.goalNodeID);
+		if (curLights)
+		{
+			if ((curLights->GetProperLight(agentInfo.orient)->GetCurLight() == TrafficLight::red || 
+				curLights->GetProperLight(agentInfo.orient)->GetCurLight() == TrafficLight::yellow) && 
+				dist < agentInfo.radius*15 && dist > agentInfo.radius * 12)
+			{
+				agentInfo.prefVelocity.setSpeed(1e-6);
+			}
+			
+		}
 	}
 
 	DirectX::SimpleMath::Vector2 NavGraphComponent::GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p)
@@ -109,35 +124,16 @@ namespace FusionCrowd
 		return _navGraph->GetClosestNodeIdByPosition(agentInfo.pos, _navGraph->GetAllNodes());
 	}
 
-	/*size_t NavGraphComponent::GetForwardAgent(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
+	unsigned int NavGraphComponent::getGoalNodeId(size_t agentId) const
 	{
-		std::vector<size_t> nearestAgents = GetAllAgentsInRadius(agentInfo, agentStruct, 5.0f);
-
-		for (auto agentID : nearestAgents)
+		for (auto agtStruct : _agents)
 		{
-			AgentSpatialInfo & info = _simulator->GetSpatialInfo(agentID);
-
-		}
-	}
-
-	std::vector<AgentStruct> NavGraphComponent::GetAllAgentsInRadius(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float radius)
-	{
-		std::vector<AgentStruct> ret;
-		for (auto & agtStruct : _agents)
-		{
-			size_t id = agtStruct.id;
-			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
-			float dist = info.pos.Distance(info.pos, agentInfo.pos);
-
-			if (dist < radius)
+			if (agentId == agtStruct.id)
 			{
-				ret.push_back(agtStruct);
+				return agtStruct.goalNodeID;
 			}
 		}
 
-		return ret;
-	}*/
-
-
-
+		return 0;
+	}
 }

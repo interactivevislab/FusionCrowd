@@ -11,6 +11,7 @@
 #include "Util/spimpl.h"
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 #include "Navigation/NavGraph/NavGraph.h"
+#include "TrafficLightsBunch.h"
 
 namespace FusionCrowd
 {
@@ -39,6 +40,9 @@ namespace FusionCrowd
 		// Very confusing methods pair
 		void AddAgent(size_t agentId, DirectX::SimpleMath::Vector2 position);
 		void AddAgent(AgentSpatialInfo spatialInfo);
+
+		void AddTrafficLights(size_t nodeId);
+		TrafficLightsBunch* GetTrafficLights(size_t nodeId);
 
 		void RemoveAgent(unsigned int id);
 
