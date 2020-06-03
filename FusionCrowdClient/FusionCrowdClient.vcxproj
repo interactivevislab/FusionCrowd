@@ -126,7 +126,7 @@
       <PreprocessorDefinitions>FC_CLIENT_EXPORTS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowdWeb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowd;$(SolutionDir)FusionCrowdWeb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,6 +163,9 @@
   <ItemGroup>
     <ProjectReference Include="..\FusionCrowdWeb\FusionCrowdWeb.vcxproj">
       <Project>{2e1b78b0-db71-44c1-912e-7bebb8d02542}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\FusionCrowd\FusionCrowd.vcxproj">
+      <Project>{123e7db0-e9bc-4064-9f4b-c5f7c268731e}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

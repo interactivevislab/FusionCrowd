@@ -30,6 +30,11 @@
     <ClCompile Include="WebNode.cpp" />
     <ClCompile Include="WsException.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FusionCrowd\FusionCrowd.vcxproj">
+      <Project>{123e7db0-e9bc-4064-9f4b-c5f7c268731e}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{2E1B78B0-DB71-44C1-912E-7BEBB8D02542}</ProjectGuid>
@@ -103,6 +108,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PreprocessorDefinitions>FC_WEB_EXPORTS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)FusionCrowd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -23,25 +23,10 @@ namespace FusionCrowdWeb
 		void InitComputation();
 		void ProcessComputationRequest();
 
-		//FcComputationalServer();
-		//~FcComputationalServer();
-
-		//void StartOn(const char* inIpAdress, short inPort);
-
 	private:
 		int _mainServerId;
-		float _stubData;
-		//std::shared_ptr<ISimulatorBuilder> _builder;
-		//std::shared_ptr<ISimulatorFacade> _simulator;
-		//bool _isSimulationStarted = false;
 
-		//std::map<RequestCode, IRequestProcessor*> _requestProcessors;
-
-		//void InitBuilderByNavMeshPath(const char* inNavMeshPath);
-		//void InitBuilderByNavMeshName(const char* inNavMeshName);
-		//void StartSimulation();
-		//void ProcessRequest(int inClientId);
-		//void Send(int inClientId, ResponseCode inResponseCode);
-		//void Send(int inClientId, ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize);
+		std::shared_ptr<ISimulatorBuilder> _builder;
+		std::shared_ptr<ISimulatorFacade> _simulator;
 	};
 }
