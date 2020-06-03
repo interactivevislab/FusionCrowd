@@ -51,13 +51,13 @@ namespace FusionCrowdWeb
 	void FcMainServer::InitComputation()
 	{
 		auto request = Receive(_clientId);
-		InitComputingData data = InitComputingData::Deserialize(request.second);
+		auto data = WebDataSerializer<InitComputingData>::Deserialize(request.second);
 		std::cout << "Init data received" << std::endl;
 
 		//TODO: data processing
 
 		char* rawData;
-		auto dataSize = InitComputingData::Serialize(data, rawData);
+		auto dataSize = WebDataSerializer<InitComputingData>::Serialize(data, rawData);
 		Send(_computationalServerId, RequestCode(0), rawData, dataSize);
 		std::cout << "Init data sent" << std::endl;
 		delete[] rawData;
@@ -67,24 +67,24 @@ namespace FusionCrowdWeb
 	void FcMainServer::ProcessComputationRequest()
 	{
 		auto request = Receive(_clientId);
-		InputComputingData inData = InputComputingData::Deserialize(request.second);
+		auto inData = WebDataSerializer<InputComputingData>::Deserialize(request.second);
 		std::cout << "Computing data received" << std::endl;
 
 		//TODO: inData processing
 
 		char* rawData;
-		auto dataSize = InputComputingData::Serialize(inData, rawData);
+		auto dataSize = WebDataSerializer<InputComputingData>::Serialize(inData, rawData);
 		Send(_computationalServerId, RequestCode(1), rawData, dataSize);
 		std::cout << "Computing data sent" << std::endl;
 		delete[] rawData;
 
 		request = Receive(_computationalServerId);
-		OutputComputingData outData = OutputComputingData::Deserialize(request.second);
+		auto outData = WebDataSerializer<OutputComputingData>::Deserialize(request.second);
 		std::cout << "Computing result received" << std::endl;
 
 		//TODO: outData processing
 
-		dataSize = OutputComputingData::Serialize(outData, rawData);
+		dataSize = WebDataSerializer<OutputComputingData>::Serialize(outData, rawData);
 		Send(_clientId, RequestCode(2), rawData, dataSize);
 		std::cout << "Computing result sent" << std::endl;
 		delete[] rawData;

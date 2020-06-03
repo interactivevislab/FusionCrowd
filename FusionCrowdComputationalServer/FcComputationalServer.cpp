@@ -28,7 +28,7 @@ namespace FusionCrowdWeb
 	{
 		//reading data
 		auto request = Receive(_mainServerId);
-		InitComputingData data = InitComputingData::Deserialize(request.second);
+		auto data = WebDataSerializer<InitComputingData>::Deserialize(request.second);
 		std::cout << "Init data received" << std::endl;
 
 		//initing simulation
@@ -69,7 +69,7 @@ namespace FusionCrowdWeb
 	void FcComputationalServer::ProcessComputationRequest()
 	{
 		auto request = Receive(_mainServerId);
-		InputComputingData inData = InputComputingData::Deserialize(request.second);
+		auto inData = WebDataSerializer<InputComputingData>::Deserialize(request.second);
 		std::cout << "Computing data received" << std::endl;
 
 		_simulator->DoStep(inData.TimeStep);
@@ -79,7 +79,7 @@ namespace FusionCrowdWeb
 		OutputComputingData outData = OutputComputingData{ agents };
 
 		char* rawData;
-		auto dataSize = OutputComputingData::Serialize(outData, rawData);
+		auto dataSize = WebDataSerializer<OutputComputingData>::Serialize(outData, rawData);
 		Send(_mainServerId, RequestCode(2), rawData, dataSize);
 		std::cout << "Computing result sent" << std::endl;
 		delete[] rawData;

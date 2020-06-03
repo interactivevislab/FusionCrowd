@@ -39,7 +39,7 @@ namespace FusionCrowdWeb
 	void FusionCrowdClient::InitComputation(const InitComputingData& inInitData)
 	{
 		char* rawData;
-		auto dataSize = InitComputingData::Serialize(inInitData, rawData);
+		auto dataSize = WebDataSerializer<InitComputingData>::Serialize(inInitData, rawData);
 		Send(_mainServerId, RequestCode(0), rawData, dataSize);
 		std::cout << "Init data sent" << std::endl;
 		delete[] rawData;
@@ -49,13 +49,13 @@ namespace FusionCrowdWeb
 	OutputComputingData FusionCrowdClient::RequestComputation(const InputComputingData& inComputingData)
 	{
 		char* rawData;
-		auto dataSize = InputComputingData::Serialize(inComputingData, rawData);
+		auto dataSize = WebDataSerializer<InputComputingData>::Serialize(inComputingData, rawData);
 		Send(_mainServerId, RequestCode(1), rawData, dataSize);
 		std::cout << "Computing data sent" << std::endl;
 		delete[] rawData;
 
 		auto request = Receive(_mainServerId);
-		OutputComputingData result = OutputComputingData::Deserialize(request.second);
+		auto result = WebDataSerializer<OutputComputingData>::Deserialize(request.second);
 		std::cout << "Computing result received" << std::endl;
 
 		return result;
