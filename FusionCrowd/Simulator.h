@@ -19,7 +19,7 @@
 #include "Math/Util.h"
 
 #include "Group/Group.h"
-#include "Group/GroupShape.h"
+#include "Group/IGroupShape.h"
 
 #include <memory>
 

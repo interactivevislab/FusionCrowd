@@ -50,9 +50,12 @@
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="TacticComponent\NavGraphComponent.cpp" />
     <ClCompile Include="Group\Group.cpp" />
-    <ClCompile Include="Group\GroupShape.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
-    <ClCompile Include="TransportOComponent.cpp" />
+	<ClCompile Include="Group\FixedGridShape.cpp" />
+    <ClCompile Include="Group\FreeGridShape.cpp" />
+    <ClCompile Include="OperationComponent\BicycleComponent.cpp" />
+    <ClCompile Include="TacticComponent\Path\PathRandomization.cpp" />
+	<ClCompile Include="TransportOComponent.cpp" />
     <ClCompile Include="TrafficLight.cpp" />
     <ClCompile Include="TrafficLightsBunch.cpp" />
   </ItemGroup>
@@ -127,13 +130,15 @@
     <ClInclude Include="TacticComponent\NavGraphComponent.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\Modificator.h" />
     <ClInclude Include="Group\Group.h" />
-    <ClInclude Include="Group\GroupShape.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="Export\NavGraph.h" />
-    <ClInclude Include="TransportOComponent.h" />
+	<ClInclude Include="Group\IGroupShape.h" />
+    <ClInclude Include="Group\FixedGridShape.h" />
+    <ClInclude Include="Group\FreeGridShape.h" />
+    <ClInclude Include="OperationComponent\BicycleComponent.h" />
+    <ClInclude Include="TacticComponent\Path\PathRandomization.h" />    <ClInclude Include="TransportOComponent.h" />
     <ClInclude Include="TrafficLight.h" />
-    <ClInclude Include="TrafficLightsBunch.h" />
-  </ItemGroup>
+    <ClInclude Include="TrafficLightsBunch.h" />  </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="navgraph.spec" />

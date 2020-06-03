@@ -616,7 +616,11 @@ namespace FusionCrowd {
 		obst->_point = poly0;
 		obst->_unitDir = (poly1 - poly0) / (poly1 - poly0).Length();
 		obst->_length = (poly1 - poly0).Length();
-		tmp_obst.push_back(obst);
+		//TODO
+		//some times here spawns unnecessary obstacles then j = -1. if should be removed
+		//if (j != -1) {
+			tmp_obst.push_back(obst);
+		//}
 
 		for (int i = 0; i < _current_node->_obstCount; i++) {
 			NavMeshObstacle *obst = _current_node->_obstacles[i];

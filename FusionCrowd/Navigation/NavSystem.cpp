@@ -298,17 +298,22 @@ namespace FusionCrowd
 			auto agentsPositions = new Point[_numAgents];
 			auto groupsPositions = new Point[_numGroups];
 
+			//maps transform from position in existance array to agentInfo.id
+			std::map<size_t, size_t> _m_agentNeighbours;
+			std::map<size_t, size_t> _m_groupNeighbours;
 			size_t a = 0;
 			size_t g = 0;
 			for (auto & info : _agentsInfo)
 			{
 				if(info.second.collisionsLevel == AgentSpatialInfo::AGENT)
 				{
+					_m_agentNeighbours.insert({ a, info.first });
 					agentsPositions[a].x = info.second.pos.x - minX;
 					agentsPositions[a].y = info.second.pos.y - minY;
 					a++;
 				} else
 				{
+					_m_groupNeighbours.insert({ g, info.first });
 					groupsPositions[g].x = info.second.pos.x - minX;
 					groupsPositions[g].y = info.second.pos.y - minY;
 					g++;
@@ -317,23 +322,24 @@ namespace FusionCrowd
 
 			auto agentNeighbours = _neighborsSeeker.FindNeighbors(agentsPositions, _numAgents, maxX - minX, maxY - minY, _agentsSensitivityRadius, false);
 			auto groupNeighbours = _neighborsSeeker.FindNeighbors(groupsPositions, _numGroups, maxX - minX, maxY - minY, _groupSensitivityRadius, false);
-
 			a = 0;
 			g = 0;
 			for (auto & info : _agentsInfo)
 			{
-				auto neighbors = (info.second.collisionsLevel == AgentSpatialInfo::AGENT) ? agentNeighbours[a] : groupNeighbours[g];
+				bool isAgent = info.second.collisionsLevel == AgentSpatialInfo::AGENT;
+				auto neighbors = isAgent ? agentNeighbours[a] : groupNeighbours[g];
 
 				auto & neighborsInfos = _agentsNeighbours[info.second.id];
 				neighborsInfos.clear();
 				neighborsInfos.reserve(neighbors.neighborsCount);
 
 				for (int j = 0; j < neighbors.neighborsCount; j++) {
-					auto & neighbour = _agentsInfo[neighbors.neighborsID[j]];
+					size_t neighbour_id = isAgent ? _m_agentNeighbours[neighbors.neighborsID[j]] : _m_groupNeighbours[neighbors.neighborsID[j]];
+					auto & neighbour = _agentsInfo[neighbour_id];
 					neighborsInfos.push_back(neighbour);
 				}
 
-				if(info.second.collisionsLevel == AgentSpatialInfo::AGENT) { a++; } else { g++; }
+				if(isAgent) { a++; } else { g++; }
 			}
 
 			delete[] agentsPositions;
@@ -371,7 +377,7 @@ namespace FusionCrowd
 
 		NeighborsSeeker _neighborsSeeker;
 		std::map<size_t, AgentSpatialInfo> _agentsInfo;
-		float _agentsSensitivityRadius = 1;
+		float _agentsSensitivityRadius = 3;
 		float _groupSensitivityRadius = 100;
 
 		size_t _numAgents = 0;

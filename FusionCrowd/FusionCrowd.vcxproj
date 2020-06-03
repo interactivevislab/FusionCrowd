@@ -30,8 +30,10 @@
     <ClInclude Include="Export\ModelAgentParams.h" />
     <ClInclude Include="Export\INavSystemPublic.h" />
     <ClInclude Include="Export\NavGraph.h" />
+    <ClInclude Include="Group\FreeGridShape.h" />
+    <ClInclude Include="Group\FixedGridShape.h" />
     <ClInclude Include="Group\Group.h" />
-    <ClInclude Include="Group\GroupShape.h" />
+    <ClInclude Include="Group\IGroupShape.h" />
     <ClInclude Include="Math\BoundingBox.h" />
     <ClInclude Include="Navigation\FastFixedRadiusNearestNeighbors\NeighborsSeekerShader.h" />
     <ClInclude Include="Navigation\NavGraph\NavGraph.h" />
@@ -41,10 +43,12 @@
     <ClInclude Include="Navigation\NavMesh\Modification\ModificationProcessor.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\ModificationHelper.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\NavMeshModification.h" />
+    <ClInclude Include="OperationComponent\bicycleComponent.h" />
     <ClInclude Include="OperationComponent\GCFComponent.h" />
     <ClInclude Include="OperationComponent\ZanlungoComponent.h" />
     <ClInclude Include="OperationComponent\SwitchingComponent.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
+    <ClInclude Include="TacticComponent\Path\PathRandomization.h" />
     <ClInclude Include="StrategyComponent\FSM\FsmStartegy.h" />
     <ClInclude Include="TacticComponent\NavGraphComponent.h" />
     <ClInclude Include="TrafficLight.h" />
@@ -99,15 +103,18 @@
   <ItemGroup>
     <ClCompile Include="Benchmark\MicroscopicMetric.cpp" />
     <ClCompile Include="Export\Export.cpp" />
-    <ClCompile Include="Group\GroupShape.cpp" />
+    <ClCompile Include="Group\FreeGridShape.cpp" />
+    <ClCompile Include="Group\FixedGridShape.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraph.cpp" />
     <ClCompile Include="Navigation\NavGraph\NavGraphPathPlanner.cpp" />
     <ClCompile Include="Navigation\NavMesh\QuadTree.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationProcessor.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\ModificationHelper.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\NavMeshModification.cpp" />
+    <ClCompile Include="OperationComponent\bicycleComponent.cpp" />
     <ClCompile Include="OperationComponent\GCFComponent.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\PolygonPreprocessor.cpp" />
+    <ClCompile Include="TacticComponent\Path\PathRandomization.cpp" />
     <ClCompile Include="StrategyComponent\FSM\Fsm.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuCalculator.cpp" />
     <ClCompile Include="Navigation\FastFixedRadiusNearestNeighbors\GpuHelper.cpp" />

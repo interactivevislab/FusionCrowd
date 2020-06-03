@@ -17,11 +17,15 @@
 #include "OperationComponent/ZanlungoComponent.h"
 #include "OperationComponent/PedVOComponent.h"
 #include "OperationComponent/GCFComponent.h"
+#include "OperationComponent/BicycleComponent.h"
 #include "TransportOComponent.h"
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
 
-#include "Group/GroupShape.h"
+#include "Group/FixedGridShape.h"
+#include "Group/FreeGridShape.h"
+
+using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
@@ -59,7 +63,7 @@ namespace FusionCrowd
 
 		OperationStatus SetAgentGoal(size_t agentId, float x, float y)
 		{
-			_sim->SetAgentGoal(agentId, DirectX::SimpleMath::Vector2(x, y));
+			_sim->SetAgentGoal(agentId, Vector2(x, y));
 
 			return OperationStatus::OK;
 		}
@@ -77,6 +81,22 @@ namespace FusionCrowd
 		)
 		{
 			return _sim->AddAgent(x, y, opId, tacticId, strategyId);
+		}
+
+		size_t AddAgent(
+			float x, float y, float radius, float preferedVelocity,
+			ComponentId opId,
+			ComponentId tacticId,
+			ComponentId strategyId
+		)
+		{
+			AgentSpatialInfo info;
+			info.pos = Vector2(x, y);
+			info.radius = radius;
+			//info.maxSpeed = preferedVelocity;
+			info.prefSpeed = preferedVelocity;
+
+			return _sim->AddAgent(info, opId, tacticId, strategyId);
 		}
 
 		OperationStatus RemoveAgent(size_t agentId)
@@ -120,9 +140,16 @@ namespace FusionCrowd
 
 		size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist)
 		{
-			auto grid = std::make_unique<GroupGridShape>(agetsInRow, interAgtDist);
+			auto grid = std::make_unique<FixedGridShape>(agetsInRow, interAgtDist);
 
 			return _sim->AddGroup(std::move(grid), DirectX::SimpleMath::Vector2(x, y));
+		}
+
+		size_t AddFreeGridGroup(float x, float y, size_t agetsInRow, float interAgtDist)
+		{
+			auto freeGrid = std::make_unique<FreeGridShape>(agetsInRow, interAgtDist);
+
+			return _sim->AddGroup(std::move(freeGrid), DirectX::SimpleMath::Vector2(x, y));
 		}
 
 		void RemoveAgentFromGroup(size_t agentId, size_t groupId)
@@ -189,7 +216,7 @@ namespace FusionCrowd
 			return this;
 		}
 
-		ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> nodesArray, FCArray<Export::NavGraphEdge> edgesArray)
+		ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> & nodesArray, FCArray<Export::NavGraphEdge> & edgesArray)
 		{
 			std::vector<NavGraphNode> nodes;
 			for(auto& n : nodesArray)
@@ -241,10 +268,13 @@ namespace FusionCrowd
 					break;
 				case ComponentIds::GCF_ID:
 					sim->AddOpModel(std::make_shared<GCF::GCFComponent>(navSystem));
-					break;
+					break;				
+				case ComponentIds::BICYCLE:
+					sim->AddOpModel(std::make_shared<Bicycle::BicycleComponent>(navSystem));
+					break;				
 				case ComponentIds::TRANSPORT_ID:
 					sim->AddOpModel(std::make_shared<Transport::TransportOComponent>(navSystem));
-					break;
+					break;				
 				default:
 					break;
 			}

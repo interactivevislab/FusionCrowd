@@ -9,6 +9,8 @@
 #include "Navigation/OnlineRecording/OnlineRecording.h"
 #include "Group/Group.h"
 
+#include <random>
+
 using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
@@ -83,6 +85,9 @@ namespace FusionCrowd
 			AgentSpatialInfo info;
 			info.pos = Vector2(x, y);
 
+			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
+			info.prefSpeed *= dist(_rnd_seed);
+
 			return AddAgent(info, opId, tacticId, strategyId);
 		}
 
@@ -117,6 +122,9 @@ namespace FusionCrowd
 			AgentSpatialInfo info = props;
 			auto agentId = GetNextId();
 			info.id = agentId;
+
+			std::uniform_real_distribution<float> dist(0.9f, 1.1f);
+			info.prefSpeed *= dist(_rnd_seed);
 
 			Vector2 goal_pos = _tacticComponents[tacticId]->GetClosestAvailablePoint(info.pos);
 			_navSystem->AddAgent(info);
@@ -475,6 +483,9 @@ namespace FusionCrowd
 		std::map<ComponentId, std::shared_ptr<IOperationComponent>> _operComponents;
 
 		GoalFactory _goalFactory;
+
+		std::random_device _rnd_device;
+		std::mt19937 _rnd_seed;
 	};
 
 #pragma endregion

@@ -36,6 +36,12 @@ namespace FusionCrowd
 
 	bool NavGraphComponent::DeleteAgent(size_t id)
 	{
+		for (int i = 0; i < _agents.size(); i++) {
+			if (_agents[i].id == id) {
+				_agents.erase(_agents.begin() + i);
+				return true;
+			}
+		}
 		return false;
 	}
 
