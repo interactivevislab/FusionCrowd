@@ -329,9 +329,6 @@ namespace FusionCrowd
 				case ComponentIds::STRICT_ID:
 					sim->AddOpModel(std::make_shared<StrictComp::StrictComponent>(navSystem));
 					break;
-				case ComponentIds::STRICT_ID:
-					sim->AddOpModel(std::make_shared<StrictComp::StrictComponent>(navSystem));
-					break;
 				default:
 					break;
 			}
