@@ -121,6 +121,24 @@ namespace FusionCrowd
 #pragma warning( default : 4311 )
 #endif
 
+	std::shared_ptr<NavMesh> NavMesh::Load(const std::string& fileName)
+	{
+		std::ifstream f;
+		f.open(fileName, std::ios::in);
+
+		if (f.is_open())
+		{
+			auto navMesh = NavMesh::Load(f);
+			f.close();
+			return navMesh;
+		}
+		else
+		{
+			throw std::ios_base::failure("Can't load navmesh");
+		}
+	}
+
+
 	std::shared_ptr<NavMesh> NavMesh::Load(std::istream& f)
 	{
 		// TODO: Change this to support comments.

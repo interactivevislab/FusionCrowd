@@ -160,7 +160,6 @@
   <ItemGroup>
     <ClInclude Include="FcComputationalServerApi.h" />
     <ClInclude Include="FcComputationalServer.h" />
-    <ClInclude Include="RequestProcessor.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FusionCrowdWeb\FusionCrowdWeb.vcxproj">

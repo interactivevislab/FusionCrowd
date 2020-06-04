@@ -19,14 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FcFileWrapper.h" />
     <ClInclude Include="FcWebApi.h" />
     <ClInclude Include="FcWebData.h" />
+    <ClInclude Include="SimpleDataSerializer.h" />
+    <ClInclude Include="WebDataSerializer.h" />
     <ClInclude Include="WebMessage.h" />
     <ClInclude Include="WebNode.h" />
     <ClInclude Include="WsException.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FcWebData.cpp" />
+    <ClCompile Include="FcFileWrapper.cpp" />
+    <ClCompile Include="WebDataSerializer.cpp" />
     <ClCompile Include="WebNode.cpp" />
     <ClCompile Include="WsException.cpp" />
   </ItemGroup>

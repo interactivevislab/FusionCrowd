@@ -1,9 +1,10 @@
 #include "FcComputationalServer.h"
 
-#include "Export/ComponentId.h"
 #include "WsException.h"
 #include "WebMessage.h"
 #include "FcWebData.h"
+#include "WebDataSerializer.h"
+#include "FcFileWrapper.h"
 
 #include <iostream>
 
@@ -36,23 +37,20 @@ namespace FusionCrowdWeb
 		std::cout << "Init data received" << std::endl;
 
 		//initing simulation
-		const char* navMeshName = "verysimplenavmesh.nav";
-		char exePath[MAX_PATH];
-		GetModuleFileName(NULL, exePath, MAX_PATH);
-		std::string::size_type pos = std::string(exePath).find_last_of("\\/");
-		auto navMeshPath = (std::string(exePath).substr(0, pos + 1).append("Resources\\").append(navMeshName));
-
 		_builder = std::shared_ptr<ISimulatorBuilder>(BuildSimulator(), [](ISimulatorBuilder* inBuilder)
 		{
 			BuilderDeleter(inBuilder);
 		});
 
-		_builder->WithNavMesh(navMeshPath.c_str());
-
 		for (auto component : ComponentIds::allOperationComponentTypes)
 		{
 			_builder->WithOp(component);
 		}
+
+		data.NavMeshFile.SetFileNameAsResource("duplicate.nav");
+		data.NavMeshFile.Unwrap();
+
+		_builder->WithNavMesh(data.NavMeshFile.GetFileName());
 
 		_simulator = std::shared_ptr<ISimulatorFacade>(_builder->Build(), [](ISimulatorFacade* inSimulatorFacade)
 		{

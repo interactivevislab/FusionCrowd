@@ -59,6 +59,7 @@ namespace FusionCrowd
 	{
 	public:
 		NavMeshLocalizer(const std::string& fileName, bool usePlanner);
+		NavMeshLocalizer(std::shared_ptr<NavMesh> navMesh, bool usePlanner);
 		~NavMeshLocalizer();
 
 		unsigned int getNodeId(const DirectX::SimpleMath::Vector2& p) const;

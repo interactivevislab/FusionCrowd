@@ -61,19 +61,14 @@ namespace FusionCrowd
 			return nullptr;
 	}
 
-	NavMeshLocalizer::NavMeshLocalizer(const std::string& name, bool usePlanner) : _navMesh(0x0), _trackAll(false), _planner(0x0)
+	NavMeshLocalizer::NavMeshLocalizer(const std::string& fileName, bool usePlanner)
+		: NavMeshLocalizer(NavMesh::Load(fileName), usePlanner)
 	{
-		std::ifstream f;
-		f.open(name, std::ios::in);
+	}
 
-		if (f.is_open())
-		{
-			_navMesh = NavMesh::Load(f);
-		} else
-		{
-			throw std::ios_base::failure("Can't load navmesh");
-		}
 
+	NavMeshLocalizer::NavMeshLocalizer(std::shared_ptr<NavMesh> navMesh, bool usePlanner) : _navMesh(navMesh), _trackAll(false), _planner(0x0)
+	{
 		const size_t NODE_COUNT = _navMesh->getNodeCount();
 
 		if (usePlanner)
@@ -83,13 +78,14 @@ namespace FusionCrowd
 		}
 
 		std::vector<QuadTree::Box> nodeBoxes;
-		for(size_t nodeId = 0; nodeId < NODE_COUNT; nodeId++)
+		for (size_t nodeId = 0; nodeId < NODE_COUNT; nodeId++)
 		{
-			nodeBoxes.push_back({_navMesh->GetNodeByPos(nodeId).GetBB(), nodeId });
+			nodeBoxes.push_back({ _navMesh->GetNodeByPos(nodeId).GetBB(), nodeId });
 		}
 
 		_nodeBBTree = std::make_unique<QuadTree>(nodeBoxes);
 	}
+
 
 	NavMeshLocalizer::~NavMeshLocalizer()
 	{

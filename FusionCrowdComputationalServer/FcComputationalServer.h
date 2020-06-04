@@ -3,11 +3,9 @@
 #include "FcComputationalServerApi.h"
 #include "Export/Export.h"
 #include "WebNode.h"
-#include "RequestProcessor.h"
 #include "WebMessage.h"
 
 #include <memory>
-#include <map>
 
 
 namespace FusionCrowdWeb

@@ -1,6 +1,7 @@
 #include "FcClient.h"
 
 #include "WsException.h"
+#include "WebDataSerializer.h"
 #include "WebMessage.h"
 
 #include <string.h> 

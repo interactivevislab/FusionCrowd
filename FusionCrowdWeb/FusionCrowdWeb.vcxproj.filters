@@ -30,6 +30,15 @@
     <ClInclude Include="FcWebData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FcFileWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WebDataSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleDataSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WsException.cpp">
@@ -38,7 +47,10 @@
     <ClCompile Include="WebNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FcWebData.cpp">
+    <ClCompile Include="FcFileWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WebDataSerializer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

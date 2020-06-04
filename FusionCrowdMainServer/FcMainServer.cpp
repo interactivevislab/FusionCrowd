@@ -1,6 +1,7 @@
 #include "FcMainServer.h"
 
 #include "FcWebData.h"
+#include "WebDataSerializer.h"
 #include "WsException.h"
 
 #include <iostream>
