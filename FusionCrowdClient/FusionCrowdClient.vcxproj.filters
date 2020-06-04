@@ -15,15 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FCClientCore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ClientMain.cpp">
+    <ClCompile Include="FusionCrowdClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FCClientCore.h">
+    <ClInclude Include="FcClientApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FusionCrowdClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

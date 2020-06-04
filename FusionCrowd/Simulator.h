@@ -18,8 +18,7 @@
 #include "Util/spimpl.h"
 #include "Math/Util.h"
 
-#include "Group/Group.h"
-#include "Group/IGroupShape.h"
+#include "Group/IGroup.h"
 
 #include <memory>
 
@@ -36,8 +35,6 @@ namespace FusionCrowd
 		Simulator & AddTactic(std::shared_ptr<ITacticComponent> tacticComponent);
 		Simulator & AddStrategy(std::shared_ptr<IStrategyComponent> strategyComponent);
 		Simulator & UseNavSystem(std::shared_ptr<NavSystem> system);
-
-		void SetNavSystem(std::shared_ptr<NavSystem> navSystem);
 
 		bool DoStep(float timeStep);
 
@@ -58,12 +55,18 @@ namespace FusionCrowd
 		size_t GetAgentCount() const;
 		const Goal & GetAgentGoal(size_t agentId) const;
 
-		size_t AddAgent(DirectX::SimpleMath::Vector2 pos);
+		bool UpdateAgentParams(AgentParams params);
+		bool UpdateNeighbourSearchShape(size_t agentId, Cone cone);
+		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk);
 
 		OperationStatus RemoveAgent(size_t agentId);
 
+		OperationStatus RemoveGroup(size_t groupId);
+
+		size_t AddAgent(DirectX::SimpleMath::Vector2 pos);
+
 		size_t AddAgent(
-			float x, float y,
+			DirectX::SimpleMath::Vector2 pos,
 			ComponentId opId,
 			ComponentId strategyId,
 			ComponentId tacticId
@@ -76,20 +79,18 @@ namespace FusionCrowd
 			ComponentId strategyId
 		);
 
-		void SetAgentGoal(size_t agentId, DirectX::SimpleMath::Vector2 goalPos);
+		void SetAgentGoal(size_t agentId, Goal && goal);
 		Agent & GetAgent(size_t id);
 
+		size_t AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance);
+		size_t AddGuidedGroup(size_t leaderId);
 		void AddTrafficLight(size_t nodeId);
-
-
-		size_t AddGroup(std::unique_ptr<IGroupShape> shape, DirectX::SimpleMath::Vector2 origin);
-		const Group & GetGroup(size_t groupId) const;
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos);
-		void RemoveGroup(size_t groupId);
 
 		void AddAgentToGroup(size_t agentId, size_t groupId);
 		void RemoveAgentFromGroup(size_t agentId, size_t groupId);
 
+		IGroup* GetGroup(size_t groupId);
 
 		FCArray<AgentInfo> GetAgentsInfo();
 
@@ -97,6 +98,7 @@ namespace FusionCrowd
 		bool GetAgentsInfo(FCArray<AgentInfo> & output);
 
 		NavSystem* GetNavSystem() const;
+		GoalFactory & GetGoalFactory();
 	private:
 		class SimulatorImpl;
 

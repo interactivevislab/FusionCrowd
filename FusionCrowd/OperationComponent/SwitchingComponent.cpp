@@ -59,7 +59,7 @@ namespace FusionCrowd
 
 			//TEMP SOLUTION
 			bool NeedSwitchToSecondary(size_t agentId) {
-				return _navSystem->CountNeighbors(agentId) <= 3;
+				return _navSystem->GetNeighbours(agentId).size() <= 3;
 			}
 
 			void UpdateAgentsDistribution() {

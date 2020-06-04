@@ -1,7 +1,7 @@
 #include <fstream>
 #include "NavMesh.h"
 #include "NavMeshEdge.h"
-#include "NavMeshObstacle.h";
+#include "NavMeshObstacle.h"
 #include <iostream>
 #include <fstream>
 
@@ -65,7 +65,7 @@ namespace FusionCrowd
 			edge._distance = (edge._node0->getCenter() - edge._node1->getCenter()).Length();
 
 			// Confirm that point is on the left when looking from node0
-			if (FusionCrowd::MathUtil::det(edge._dir, edge._node0->_center - edge._point) > 0.f)
+			if (FusionCrowd::Math::det(edge._dir, edge._node0->_center - edge._point) > 0.f)
 			{
 				NavMeshNode* tmp = edge._node0;
 				edge._node0 = edge._node1;
@@ -249,7 +249,7 @@ namespace FusionCrowd
 			{
 				obst = (NavMeshObstacle &) *obst._nextObstacle;
 
-				if(MathUtil::leftOf(obst._prevObstacle->getP0(), obst.getP0(), obst.getP1()) >= 0)
+				if(Math::leftOf(obst._prevObstacle->getP0(), obst.getP0(), obst.getP1()) >= 0)
 					reverted++;
 
 

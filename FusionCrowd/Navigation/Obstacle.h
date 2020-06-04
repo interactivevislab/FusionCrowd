@@ -51,7 +51,7 @@ namespace FusionCrowd
 
 		inline bool pointOutside(const DirectX::SimpleMath::Vector2& point) const
 		{
-			return _doubleSided || (FusionCrowd::MathUtil::leftOf(_point, getP1(), point) < 0.f);
+			return _doubleSided || (FusionCrowd::Math::leftOf(_point, getP1(), point) < 0.f);
 		}
 
 		inline bool p0Convex(bool agtOnRight) const

@@ -1,10 +1,28 @@
 #include "Goal.h"
 
-#include "TacticComponent/Path/PrefVelocity.h"
+#include "TacticComponent/PrefVelocity.h"
+
+#include "Math/Shapes/RectShape.h"
+#include "Math/Shapes/PointShape.h"
+#include "Math/Shapes/DiskShape.h"
 
 namespace FusionCrowd
 {
-	Goal::Goal(size_t id, std::shared_ptr<Math::Geometry2D> geometry) : _id(id), _geometry(std::move(geometry)) { }
+	Goal::Goal(const Goal& other)
+	{
+		_geometry = std::unique_ptr<Math::Geometry2D>(other.getGeometry()->Clone());
+		_id = other.getID();
+	}
+
+	Goal& Goal::operator=(const Goal& other)
+	{
+		_geometry = std::unique_ptr<Math::Geometry2D>(other.getGeometry()->Clone());
+		_id = other.getID();
+
+		return *this;
+	}
+
+	Goal::Goal(size_t id, std::unique_ptr<Math::Geometry2D> geometry) : _id(id), _geometry(std::move(geometry)) { }
 
 	float Goal::squaredDistance(const DirectX::SimpleMath::Vector2 & pt) const
 	{
@@ -33,22 +51,45 @@ namespace FusionCrowd
 		return _id;
 	}
 
+	GoalFactory::GoalFactory() { }
+
 	Goal GoalFactory::CreatePointGoal(const DirectX::SimpleMath::Vector2& p)
 	{
-		auto geometry = std::make_unique<FusionCrowd::Math::PointShape>(p);
+		auto geometry = std::make_unique<Math::PointShape>(p);
+
+		return Goal(goalId++, std::move(geometry));
+	}
+
+	Goal GoalFactory::CreatePointGoal(const Point& p)
+	{
+		auto geometry = std::make_unique<Math::PointShape>(p);
+
+		return Goal(goalId++, std::move(geometry));
+	}
+
+	Goal GoalFactory::CreateDiscGoal(const Disk& d)
+	{
+		auto geometry = std::make_unique<Math::DiskShape>(d);
 
 		return Goal(goalId++, std::move(geometry));
 	}
 
 	Goal GoalFactory::CreateDiscGoal(const DirectX::SimpleMath::Vector2& p, float R)
 	{
-		auto geometry = std::make_unique<FusionCrowd::Math::PointShape>(p);
+		auto geometry = std::make_unique <Math::DiskShape>(p, R);
 
 		return Goal(goalId++, std::move(geometry));
 	}
 
-	Goal GoalFactory::CreateGeometryGoal(std::shared_ptr<Math::Geometry2D> geometry)
+	Goal GoalFactory::CreateRectGoal(const Rect& r)
 	{
-		return Goal(goalId++, geometry);
+		auto geometry = std::make_unique <Math::RectShape>(r);
+
+		return Goal(goalId++, std::move(geometry));
+	}
+
+	Goal GoalFactory::CreateGeometryGoal(std::unique_ptr<Math::Geometry2D> geometry)
+	{
+		return Goal(goalId++, std::move(geometry));
 	}
 }

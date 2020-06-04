@@ -3,6 +3,7 @@
 #include "Agent.h"
 #include "Simulator.h"
 #include "Navigation/NavSystem.h"
+#include "Navigation/NeighborInfo.h"
 #include "OperationComponent/IOperationComponent.h"
 #include "Util/spimpl.h"
 #include "Export/ComponentId.h"

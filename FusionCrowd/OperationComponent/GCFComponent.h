@@ -6,6 +6,8 @@
 #include "OperationComponent/IOperationComponent.h"
 #include "Navigation/NavSystem.h"
 #include "Export/ComponentId.h"
+#include "Navigation/NeighborInfo.h"
+#include "Navigation/AgentSpatialInfo.h"
 
 #include <map>
 #include <memory>
@@ -57,7 +59,7 @@ namespace FusionCrowd
 
 			void UpdateEllipse(const AgentSpatialInfo & agentInfo);
 			DirectX::SimpleMath::Vector2 DriveForce(const AgentSpatialInfo & agentInfo) const;
-			int GetRepulsionParameters(const AgentSpatialInfo & agent, const AgentSpatialInfo & other,
+			int GetRepulsionParameters(const AgentSpatialInfo & agent, const NeighborInfo & other,
 				float& effDist, DirectX::SimpleMath::Vector2& forceDir,
 				float& K_ij, float& response, float& velScale, float& magnitude) const;
 			DirectX::SimpleMath::Vector2 ObstacleForce(const AgentSpatialInfo & agent, Obstacle & obst) const;

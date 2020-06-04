@@ -5,9 +5,11 @@
 #include "Export/IStrategyComponent.h"
 #include "Export/INavMeshPublic.h"
 #include "Export/INavSystemPublic.h"
+#include "Export/IExternalControlInterface.h"
 #include "Export/ComponentId.h"
 #include "Export/ModelAgentParams.h"
 #include "Export/NavGraph.h"
+#include "Export/Math/Shapes.h"
 
 namespace FusionCrowd
 {
@@ -31,6 +33,20 @@ namespace FusionCrowd
 			float goalX, goalY;
 		};
 
+		struct FUSION_CROWD_API AgentParams
+		{
+			size_t id;
+			float radius;
+			float maxSpeed;
+			float maxAccel;
+			float prefSpeed;
+			float maxAngVel;
+			bool inertiaEnabled;
+			bool useNavMeshObstacles;
+			ComponentId opCompId;
+			ComponentId tacticCompId;
+		};
+
 		enum FUSION_CROWD_API OperationStatus
 		{
 			OK,
@@ -48,7 +64,10 @@ namespace FusionCrowd
 			virtual OperationStatus SetAgentTactic(size_t agentId, ComponentId tacticID) = 0;
 			virtual OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId) = 0;
 			virtual void SetAgentStrategyParam(size_t agentId, ComponentId strategyId, ModelAgentParams & params) = 0;
-			virtual OperationStatus SetAgentGoal(size_t agentId, float x, float y) = 0;
+
+			virtual OperationStatus SetAgentGoal(size_t agentId, Point p) = 0;
+			virtual OperationStatus SetAgentGoal(size_t agentId, Disk d) = 0;
+			virtual OperationStatus SetAgentGoal(size_t agentId, Rect r) = 0;
 
 			virtual size_t GetAgentCount() = 0;
 
@@ -68,15 +87,20 @@ namespace FusionCrowd
 				ComponentId strategyId
 			) = 0;
 
+			virtual bool UpdateAgent(AgentParams params) = 0;
+			virtual bool UpdateNeighbourSearchShape(size_t agentId, Disk disk) = 0;
+			virtual bool UpdateNeighbourSearchShape(size_t agentId, Cone cone) = 0;
+
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
+			virtual OperationStatus RemoveGroup(size_t groupId) = 0;
 
+			virtual size_t AddGridGroup(float x, float y, size_t agentsInRow, float interAgtDist) = 0;
+			virtual size_t AddGuidedGroup(size_t leaderId) = 0;
 			virtual void AddTrafficLight(size_t nodeId) = 0;
-
-			virtual size_t AddGridGroup(float x, float y, size_t agetsInRow, float interAgtDist) = 0;
-			virtual size_t AddFreeGridGroup(float x, float y, size_t agetsInRow, float interAgtDist) = 0;
 			virtual void AddAgentToGroup(size_t agentId, size_t groupId) = 0;
 			virtual void RemoveAgentFromGroup(size_t agentId, size_t groupId) = 0;
 			virtual void SetGroupGoal(size_t groupId, float goalX, float goalY) = 0;
+			virtual size_t GetGroupDummyAgent(size_t groupId) = 0;
 
 			virtual IRecording & GetRecording() = 0;
 
@@ -100,6 +124,8 @@ namespace FusionCrowd
 		class FUSION_CROWD_API ISimulatorBuilder
 		{
 		public:
+
+			virtual ISimulatorBuilder* WithExternal(IExternalControllInterface*& returned_controll) = 0;
 			virtual ISimulatorBuilder* WithNavMesh(const char* path) = 0;
 			virtual ISimulatorBuilder* WithNavGraph(const char* path) = 0;
 			virtual ISimulatorBuilder* WithNavGraph(FCArray<Export::NavGraphNode> & nodesArray, FCArray<Export::NavGraphEdge> & edgesArray) = 0;

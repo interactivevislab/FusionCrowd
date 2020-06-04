@@ -106,6 +106,7 @@ namespace FusionCrowd
 
 	void FsmStrategy::Update(float timeStep)
 	{
+		auto & goalFactory = _sim->GetGoalFactory();
 		for(auto & p: _agentFsms)
 		{
 			AgentId agentId = p.first;
@@ -121,7 +122,7 @@ namespace FusionCrowd
 			{
 				for (auto & desc : _closeToEvents[fsmId])
 				{
-					if((desc.target - agentInfo.pos).LengthSquared() >= desc.radiusSqr)
+					if((desc.target - agentInfo.GetPos()).LengthSquared() >= desc.radiusSqr)
 					{
 						continue;
 					}
@@ -171,7 +172,7 @@ namespace FusionCrowd
 				auto & actions = _gotoActions[fsmId];
 				if(actions.find(state) != actions.end())
 				{
-					_sim->SetAgentGoal(agentId, actions[state]);
+					_sim->SetAgentGoal(agentId, goalFactory.CreatePointGoal(actions[state]));
 				}
 
 				auto & anyActions = _gotoAnyActions[fsmId];
@@ -180,7 +181,7 @@ namespace FusionCrowd
 					auto & goals = anyActions[state];
 
 					std::uniform_int_distribution<int> gen(0, goals.size() - 1);
-					_sim->SetAgentGoal(agentId, goals[gen(_random_engine)]);
+					_sim->SetAgentGoal(agentId, goalFactory.CreatePointGoal(goals[gen(_random_engine)]));
 				}
 			}
 

@@ -1,6 +1,6 @@
 #include "GCFComponent.h"
+
 #include "Math/geomQuery.h"
-#include "Navigation/AgentSpatialInfo.h"
 
 #include <algorithm>
 
@@ -91,7 +91,7 @@ namespace FusionCrowd
 		{
 			Vector2 force(DriveForce(agentInfo));  // driving force
 
-			for (const AgentSpatialInfo & other : _navSystem->GetNeighbours(agentInfo.id))
+			for (const auto & other : _navSystem->GetNeighbours(agentInfo.id))
 			{
 				float effDist, K_ij, response, velScale, magnitude;
 				Vector2 forceDir;
@@ -102,7 +102,7 @@ namespace FusionCrowd
 			}
 
 			// Obstacles
-			const float SPEED = agentInfo.vel.Length();
+			const float SPEED = agentInfo.GetVel().Length();
 			if (SPEED > 0.0001f) {
 				// No obstacle force if basically stationary
 				for (Obstacle & obst : _navSystem->GetClosestObstacles(agentInfo.id))
@@ -112,17 +112,17 @@ namespace FusionCrowd
 			}
 
 			// We're assuming unit mass
-			agentInfo.velNew = agentInfo.vel + force * _timeStep;
+			agentInfo.velNew = agentInfo.GetVel() + force * _timeStep;
 		}
 
 		void GCFComponent::UpdateEllipse(const AgentSpatialInfo & agentInfo)
 		{
-			float speed = agentInfo.vel.Length();
+			float speed = agentInfo.GetVel().Length();
 
 			AgentParamentrs & agentParams = _agents[agentInfo.id];
 			// update ellipse
-			agentParams._ellipse.SetCenter(agentInfo.pos);
-			agentParams._ellipse.SetOrientation(agentInfo.orient);
+			agentParams._ellipse.SetCenter(agentInfo.GetPos());
+			agentParams._ellipse.SetOrientation(agentInfo.GetOrient());
 			// compute major and minor axis values based on speed
 			float major = agentParams._aMin + agentParams._aRate * speed;
 			float minor = agentParams._bMax - agentParams._bGrowth * speed / 1.3f;
@@ -131,11 +131,11 @@ namespace FusionCrowd
 
 		Vector2 GCFComponent::DriveForce(const AgentSpatialInfo & agentInfo) const
 		{
-			return (agentInfo.prefVelocity.getPreferredVel() - agentInfo.vel) / _reactionTime;
+			return (agentInfo.prefVelocity.getPreferredVel() - agentInfo.GetVel()) / _reactionTime;
 		}
 
 		int GCFComponent::GetRepulsionParameters(
-			const AgentSpatialInfo & agent, const AgentSpatialInfo & other,
+			const AgentSpatialInfo & agent, const NeighborInfo & other,
 			float& effDist, DirectX::SimpleMath::Vector2& forceDir,
 			float& K_ij, float& response, float& velScale, float& magnitude) const
 		{
@@ -159,7 +159,7 @@ namespace FusionCrowd
 			}
 
 			// field of view
-			K_ij = agent.orient.Dot(forceDir);
+			K_ij = agent.GetOrient().Dot(forceDir);
 
 			// This represents 360 degree sensitivity, with the maximum sensitivity in the oriented
 			//	direction fading to zero in the opposite direction
@@ -167,7 +167,7 @@ namespace FusionCrowd
 			K_ij = (K_ij * 0.45f) - 0.55f;
 
 			// relative velocities
-			Vector2 relVel = agent.vel - other.vel;
+			Vector2 relVel = agent.GetVel() - other.vel;
 
 			float velWeight = relVel.Dot(forceDir);
 			velScale = _nuAgent * PREF_SPEED;
@@ -195,7 +195,7 @@ namespace FusionCrowd
 			//	and point along wall behind.
 			Vector2 nearPt;  // gets set by distanceSqToPoint
 			float distSq;    // gets set by distanceSqToPoint
-			if (obst.distanceSqToPoint(agent.pos, nearPt, distSq) == Obstacle::LAST)
+			if (obst.distanceSqToPoint(agent.GetPos(), nearPt, distSq) == Obstacle::LAST)
 			{
 				return force;
 			}
@@ -203,7 +203,7 @@ namespace FusionCrowd
 			// No force if the agent is ON the point
 			if (distSq < 0.0001f) return force;
 
-			Vector2 disp = nearPt - agent.pos;
+			Vector2 disp = nearPt - agent.GetPos();
 			float dist = sqrtf(distSq);
 			Vector2 dir = disp / dist;
 
@@ -211,7 +211,7 @@ namespace FusionCrowd
 			// away.  This makes *no* sense.  Even from a vision perspective, this doesn't make sense
 			// if the wall extends out in *front* of the agent.
 			// test visibility
-			float cosTheta = agent.orient.Dot(dir);
+			float cosTheta = agent.GetOrient().Dot(dir);
 			// No force if the point is more than 90 degrees away from
 			//	movement direction
 			if (cosTheta < -0.5f) return force;

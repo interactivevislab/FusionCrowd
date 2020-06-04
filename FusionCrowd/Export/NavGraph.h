@@ -6,13 +6,13 @@ namespace FusionCrowd
 {
 	namespace Export
 	{
-		struct NavGraphNode
+		struct FUSION_CROWD_API NavGraphNode
 		{
 			size_t id;
 			float x, y;
 		};
 
-		struct NavGraphEdge
+		struct FUSION_CROWD_API NavGraphEdge
 		{
 			size_t nodeFrom;
 			size_t nodeTo;

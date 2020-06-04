@@ -137,11 +137,11 @@ class Player:
 
         self.canvas.coords(item, x - rx, y - ry, x + rx, y + ry)
 
-    def line(self, p1, p2, color="white"):
+    def line(self, p1, p2, color="white", **kwargs):
         sp1 = p1[0] * self.scale, p1[1] * self.scale
         sp2 = p2[0] * self.scale, p2[1] * self.scale
 
-        result = self.canvas.create_line(*sp1, *sp2, fill=color)
+        result = self.canvas.create_line(*sp1, *sp2, fill=color, **kwargs)
 
         return result
 
@@ -152,15 +152,15 @@ class Player:
 
         return result
 
-    def move_orientation(self, item, target_pos, target_orient):
-        pos1 = (target_pos[0] + target_orient[0]) * self.scale, (target_pos[1] + target_orient[1]) * self.scale
-        pos = target_pos[0] * self.scale, target_pos[1] * self.scale
+    def move_orientation(self, item, target):
+        pos1 = (target.pos[0] + target.orient[0] * target.R) * self.scale, (target.pos[1] + target.orient[1] * target.R) * self.scale
+        pos = target.pos[0] * self.scale, target.pos[1] * self.scale
 
         self.canvas.coords(item, *pos, *pos1)
 
-    def orientation(self, pos, orient, color="white"):
-        pos1 = pos[0] + orient[0], pos[1] + orient[1]
-        return self.line(pos, pos1, color)
+    def orientation(self, agt, color="white"):
+        pos1 = agt.pos[0] + agt.orient[0] * agt.R, agt.pos[1] + agt.orient[1] * agt.R
+        return self.line(agt.pos, pos1, color)
 
     def vector(self, p1, p2, color="white"):
         self.line(p1, p2, color)

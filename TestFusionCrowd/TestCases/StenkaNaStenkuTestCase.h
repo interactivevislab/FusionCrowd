@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TestCases/ITestCase.h"
+#include "Export/ComponentId.h"
 
 namespace TestFusionCrowd
 {
@@ -11,5 +12,7 @@ namespace TestFusionCrowd
 
 		void Pre() override;
 		std::string GetName() const override { return "StenkaNaStenkuTestCase"; };
+	private:
+		FusionCrowd::ComponentId _op;
 	};
 }

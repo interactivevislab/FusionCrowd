@@ -2,6 +2,7 @@
 
 #include "Math/geomQuery.h"
 #include "Math/Util.h"
+#include "Math/consts.h"
 #include "Navigation/Obstacle.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/NavSystem.h"
@@ -66,19 +67,19 @@ namespace FusionCrowd
 
 				if (interacts) {
 					// if T_i never got set, there are no interactions to do
-					const float SPEED = agent.vel.Length();
+					const float SPEED = agent.GetVel().Length();
 					const float B = _forceDistance;
 
-					std::vector<AgentSpatialInfo> nearAgents = _navSystem->GetNeighbours(agent.id);
+					std::vector<NeighborInfo> nearAgents(_navSystem->GetNeighbours(agent.id));
 					// const float MAG = Simulator::AGENT_SCALE * SPEED / T_i;
 					for (size_t j = 0; j < nearAgents.size(); ++j) {
 						// 2. Use T_i to compute the direction
-						AgentSpatialInfo other = nearAgents[j];
+						NeighborInfo other = nearAgents[j];
 
 						force += AgentForce(&agent, &other, T_i);
 					}
 					// obstacles
-					Vector2 futurePos = agent.pos + agent.vel * T_i;
+					Vector2 futurePos = agent.GetPos() + agent.GetVel() * T_i;
 					const float OBST_MAG = _obstScale * SPEED / T_i;
 					for (auto obst : _navSystem->GetClosestObstacles(agent.id)) {
 						Vector2 nearPt;  // set by call to distanceSqToPoint
@@ -94,29 +95,29 @@ namespace FusionCrowd
 				}
 
 				Vector2 acc = force / _agents[agent.id]._mass;
-				agent.velNew = agent.vel + acc * timeStep;
+				agent.velNew = agent.GetVel() + acc * timeStep;
 			}
 
 			bool ComputeTTI(AgentSpatialInfo* agent, float& T_i, float timeStep) const
 			{
 				const float COS_FOV = -0.8f;  // cos( HALFPI );// cos( PI / 4.f ); //
 				bool interacts = false;
-				T_i = MathUtil::INFTY;
+				T_i = Math::INFTY;
 #define COLLIDE_PRIORITY
 #ifdef COLLIDE_PRIORITY
 				float t_collision = T_i;
 #endif
-				std::vector<AgentSpatialInfo> nearAgents = _navSystem->GetNeighbours(agent->id);
+				std::vector<NeighborInfo> nearAgents = _navSystem->GetNeighbours(agent->id);
 				for (size_t j = 0; j < nearAgents.size(); ++j) {
-					AgentSpatialInfo other = nearAgents[j];
+					NeighborInfo other = nearAgents[j];
 
 					// Right of way-dependent calculations
-					Vector2 myVel = agent->vel;
+					Vector2 myVel = agent->GetVel();
 					Vector2 hisVel = other.vel;
 					//m RightOfWayVel(agent, hisVel, other->_velPref.getPreferredVel(), other->_priority, myVel);
 
 					const Vector2 relVel = myVel - hisVel;
-					Vector2 relPos = agent->pos - other.pos;
+					Vector2 relPos = agent->GetPos() - other.pos;
 					//	This define determines if additional prediction code is executed
 					//		The original zanlungo model does not include performing exact collisions
 					//		between disks.  It simply estimates the time to interaction based on
@@ -136,7 +137,7 @@ namespace FusionCrowd
 						t_collision = contactT;
 						interacts = true;
 					}
-					else if (t_collision == MathUtil::INFTY) {
+					else if (t_collision == Math::INFTY) {
 #else
 					if (contactT < T_i) {
 						// the ray intersects the circle -- actual collision is possible
@@ -184,14 +185,14 @@ namespace FusionCrowd
 					//	by COLLISIONS.  Only if I'm going to collide with an obstacle is
 					//	a force applied.  This may be too naive.
 					//	I'll have to investigate this.
-					float t = obst.circleIntersection(agent->vel, agent->pos, agent->radius);
+					float t = obst.circleIntersection(agent->GetVel(), agent->GetPos(), agent->radius);
 					if (t < T_i) {
 						T_i = t;
 						interacts = true;
 					}
 				}
 #ifdef COLLIDE_PRIORITY
-				if (t_collision < MathUtil::INFTY) T_i = t_collision;
+				if (t_collision < Math::INFTY) T_i = t_collision;
 #endif
 				if (T_i < timeStep) {
 					T_i = timeStep;
@@ -222,23 +223,23 @@ namespace FusionCrowd
 			//	}
 			//}
 
-			Vector2 AgentForce(AgentSpatialInfo* agent, AgentSpatialInfo * other, float T_i) const
+			Vector2 AgentForce(AgentSpatialInfo* agent, NeighborInfo * other, float T_i) const
 			{
 				float D = _forceDistance;
 				// Right of way-dependent calculations
-				Vector2 myVel = agent->vel;
+				Vector2 myVel = agent->GetVel();
 				Vector2 hisVel = other->vel;
 				float weight =
 					1.f; //- RightOfWayVel(agent, hisVel, other->prefVelocity.getPreferred(), other->priority, myVel);
 
 				const Vector2 relVel = myVel - hisVel;
 
-				Vector2 futPos = agent->pos + myVel * T_i;
+				Vector2 futPos = agent->GetPos() + myVel * T_i;
 				Vector2 otherFuturePos = other->pos + hisVel * T_i;
 				Vector2 D_ij = futPos - otherFuturePos;
 
 				// If the relative velocity is divergent do nothing
-				if (D_ij.Dot(agent->vel - other->vel) > 0.f) return Vector2(0.f, 0.f);
+				if (D_ij.Dot(agent->GetVel() - other->vel) > 0.f) return Vector2(0.f, 0.f);
 				float dist = D_ij.Length();
 				D_ij /= dist;
 				//if (weight > 1.f) {
@@ -269,7 +270,7 @@ namespace FusionCrowd
 				//	}
 				//	// spherical linear interpolation
 				//	if (interpolate) {
-				//		float sinTheta = MathUtil::det(perpDir, D_ij);
+				//		float sinTheta = Math::det(perpDir, D_ij);
 				//		if (sinTheta < 0.f) {
 				//			sinTheta = -sinTheta;
 				//		}
@@ -280,7 +281,7 @@ namespace FusionCrowd
 				//	}
 				//}
 				dist -= (agent->radius + other->radius);
-				float magnitude = weight * _agentScale * (agent->vel - other->vel).Length() / T_i;
+				float magnitude = weight * _agentScale * (agent->GetVel() - other->vel).Length() / T_i;
 				const float MAX_FORCE = 1e15f;
 				if (magnitude >= MAX_FORCE) {
 					magnitude = MAX_FORCE;
@@ -293,7 +294,7 @@ namespace FusionCrowd
 			Vector2 DrivingForce(AgentSpatialInfo* agent)
 			{
 				auto & agentInfo = _navSystem->GetSpatialInfo(agent->id);
-				return (agentInfo.prefVelocity.getPreferredVel() - agent->vel) * (_agents[agent->id]._mass / _reactionTime);
+				return (agentInfo.prefVelocity.getPreferredVel() - agent->GetVel()) * (_agents[agent->id]._mass / _reactionTime);
 			}
 
 			std::shared_ptr<NavSystem> _navSystem;

@@ -64,7 +64,6 @@ namespace FusionCrowd
 		unsigned int getNodeId(const DirectX::SimpleMath::Vector2& p) const;
 
 		void setTrackAll() { _trackAll = true; }
-		void updateAgentPosition(size_t agentId, const unsigned int oldLoc, unsigned int newLoc);
 
 		std::shared_ptr<PathPlanner> getPlanner() { return _planner; }
 		void setPlanner(std::shared_ptr<PathPlanner> planner) { _planner = planner; }
@@ -76,6 +75,7 @@ namespace FusionCrowd
 		unsigned int findNodeInGroup(const DirectX::SimpleMath::Vector2& p, const std::string& grpName, bool searchAll) const;
 		unsigned int findNodeInRange(const DirectX::SimpleMath::Vector2& p, unsigned int start, unsigned int stop) const;
 		unsigned int testNeighbors(const NavMeshNode& node, const DirectX::SimpleMath::Vector2& p) const;
+		DirectX::SimpleMath::Vector2 GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p);
 		void Update(std::vector<NavMeshNode*>& added_nodes, std::vector<size_t>& del_nodes);
 
 	private:

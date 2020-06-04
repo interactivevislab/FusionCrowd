@@ -9,15 +9,18 @@
 
 namespace FusionCrowd
 {
+	using NavGraphNodeId = size_t;
+	using NavGraphEdgeId = size_t;
+
 	struct NavGraphNode
 	{
-		size_t id;
+		NavGraphNodeId id;
 		DirectX::SimpleMath::Vector2 position;
 
 		NavGraphNode() : id(-1), position(DirectX::SimpleMath::Vector2(0, 0))
 		{}
 
-		NavGraphNode(size_t id, DirectX::SimpleMath::Vector2 pos) : id(id), position(pos)
+		NavGraphNode(NavGraphNodeId id, DirectX::SimpleMath::Vector2 pos) : id(id), position(pos)
 		{}
 
 		NavGraphNode(const NavGraphNode& other) : id(other.id), position(std::move(other.position))
@@ -65,7 +68,7 @@ namespace FusionCrowd
 		NavGraphEdge() : id(-1), nodeFrom(-1), nodeTo(-1), weight(0), width(0)
 		{}
 
-		NavGraphEdge(size_t id, size_t nodeFrom, size_t nodeTo, float weight, float width) :
+		NavGraphEdge(NavGraphEdgeId id, NavGraphNodeId nodeFrom, NavGraphNodeId nodeTo, float weight, float width) :
 			id(id),
 		    nodeFrom(nodeFrom),
 		    nodeTo(nodeTo),
@@ -135,22 +138,23 @@ namespace FusionCrowd
 	public:
 		NavGraph(std::vector<NavGraphNode> nodes, std::vector<NavGraphEdge> edges);
 
-		const NavGraphNode & GetNode(size_t id) const;
+		const NavGraphNode & GetNode(NavGraphNodeId id) const;
 
-		const size_t GetClosestNodeIdByPosition(DirectX::SimpleMath::Vector2 p, std::unordered_set<NavGraphNode> nodes);
+		const NavGraphNodeId GetClosestNodeIdByPosition(DirectX::SimpleMath::Vector2 p, std::unordered_set<NavGraphNode> nodes);
+		const DirectX::SimpleMath::Vector2 GetClosiestPointAndNodeId(DirectX::SimpleMath::Vector2 p, NavGraphNodeId& nodeId);
 
-		std::vector<NavGraphEdge> GetOutEdges(size_t fromNodeId) const;
-		std::vector<NavGraphEdge> GetInEdges(size_t toNodeId) const;
+		std::vector<NavGraphEdge> GetOutEdges(NavGraphNodeId from) const;
+		std::vector<NavGraphEdge> GetInEdges(NavGraphNodeId to) const;
 
-		std::unordered_set<NavGraphNode> GetOutNeighbours(size_t fromNodeId) const;
-		std::unordered_set<NavGraphNode> GetInNeighbours(size_t toNodeId) const;
+		std::unordered_set<NavGraphNode> GetOutNeighbours(NavGraphNodeId from) const;
+		std::unordered_set<NavGraphNode> GetInNeighbours(NavGraphNodeId to) const;
 
 		std::unordered_set<NavGraphNode> GetAllNodes() const;
 	private:
-		std::unordered_map<size_t, NavGraphNode> _nodes;
+		std::unordered_map<NavGraphNodeId, NavGraphNode> _nodes;
 
-		std::unordered_map<size_t, std::vector<NavGraphEdge>> _outEdges;
-		std::unordered_map<size_t, std::vector<NavGraphEdge>> _inEdges;
+		std::unordered_map<NavGraphNodeId, std::vector<NavGraphEdge>> _outEdges;
+		std::unordered_map<NavGraphNodeId, std::vector<NavGraphEdge>> _inEdges;
 	};
 }
 

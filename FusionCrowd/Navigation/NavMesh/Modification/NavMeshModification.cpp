@@ -288,7 +288,9 @@ namespace FusionCrowd {
 
 	/*Find second/first node if it == nullptr, adds obstacle if node can't be finded*/
 	bool NavMeshModification::ProcessEdge(NavMeshEdge* edge) {
+		Vector2 mid_edge = edge->getP0(edge->getWidth() / 2.0);
 		if (edge->getFirstNode() != nullptr && edge->getSecondNode() != nullptr) {
+
 			return true;
 		}
 
@@ -298,7 +300,6 @@ namespace FusionCrowd {
 			throw 1;
 		}
 		float d = 0.25;
-		Vector2 mid_edge = edge->getP0(edge->getWidth() / 2.0);
 		Vector2 check_point;
 		size_t exist_id = 0;
 		NavMeshNode* node;

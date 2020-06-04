@@ -22,6 +22,7 @@ namespace FusionCrowd
 	class PathPlanner;
 	class ModificationProcessor;
 	class NavMeshModification;
+	class EdgeObstacleReplaner;
 
 	class NMNodeGroup
 	{
@@ -105,6 +106,7 @@ namespace FusionCrowd
 
 		friend ModificationProcessor;
 		friend NavMeshModification;
+		friend EdgeObstacleReplaner;
 
 	private:
 		size_t _version = 0;

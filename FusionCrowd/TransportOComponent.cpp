@@ -1,7 +1,7 @@
 #include "TransportOComponent.h"
 
 #include "Navigation/NavSystem.h"
-#include "TacticComponent/NavGraphComponent.h"
+#include "TacticComponent/NavGraph/NavGraphComponent.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include <iostream>
 
@@ -56,7 +56,7 @@ namespace FusionCrowd
 				{
 					AgentSpatialInfo & otherAgentInfo = _navSystem->GetSpatialInfo(forwardAgtId);
 
-					float d = curAgentInfo.pos.Distance(curAgentInfo.pos, otherAgentInfo.pos);
+					float d = curAgentInfo.GetPos().Distance(curAgentInfo.GetPos(), otherAgentInfo.GetPos());
 					float dv = speed - otherAgentInfo.prefVelocity.getSpeed();
 					if (d > safeDist)
 					{
@@ -66,10 +66,11 @@ namespace FusionCrowd
 
 					else
 					{
-						acceleration = -1* curAgentInfo.maxAccel;
+						acceleration = -1 * curAgentInfo.maxAccel;
 						curAgentInfo.prefSpeed = otherAgentInfo.prefVelocity.getSpeed();
 					}			
 				}
+
 				else
 				{
 					acceleration = 0.5f;
@@ -117,16 +118,16 @@ namespace FusionCrowd
 				for (auto agentID : nearestAgents)
 				{
 					AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agentID);
-					dotProduct = info.orient.Dot(curAgentInfo.orient);
+					dotProduct = info.GetOrient().Dot(curAgentInfo.GetOrient());
 
 					if (dotProduct > 0.8f)
 					{
-						DirectX::SimpleMath::Vector2 distV = info.pos - curAgentInfo.pos;
+						DirectX::SimpleMath::Vector2 distV = info.GetPos() - curAgentInfo.GetPos();
 						distV.Normalize();
-						float d = curAgentInfo.orient.Dot(distV);
+						float d = curAgentInfo.GetOrient().Dot(distV);
 						if (d > 0.3f)
 						{
-							distV = info.pos - curAgentInfo.pos;
+							distV = info.GetPos() - curAgentInfo.GetPos();
 
 							if (distV.Length() < minDist)
 							{
@@ -150,12 +151,12 @@ namespace FusionCrowd
 				for (auto agentID : nearestAgents)
 				{
 					AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agentID);
-					DirectX::SimpleMath::Vector2 distV = info.pos - curAgentInfo.pos;
+					DirectX::SimpleMath::Vector2 distV = info.GetPos() - curAgentInfo.GetPos();
 					distV.Normalize();
-					float d = curAgentInfo.orient.Dot(distV);
+					float d = curAgentInfo.GetOrient().Dot(distV);
 					if (d > 0.9f)
 					{
-						distV = info.pos - curAgentInfo.pos;
+						distV = info.GetPos() - curAgentInfo.GetPos();
 						if (distV.Length() < minDist)
 						{
 							minDist = distV.Length();
@@ -174,7 +175,7 @@ namespace FusionCrowd
 				for (auto & agtId : _agents)
 				{
 					AgentSpatialInfo & info = _navSystem->GetSpatialInfo(agtId);
-					float dist = info.pos.Distance(info.pos, curAgentInfo.pos);
+					float dist = info.GetPos().Distance(info.GetPos(), curAgentInfo.GetPos());
 
 					if (dist < radius && curAgentId != agtId)
 					{

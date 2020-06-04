@@ -1,50 +1,42 @@
 #pragma once
 
+#include "FcServerApi.h"
+#include "Export/Export.h"
+#include "WebNode.h"
+#include "RequestProcessor.h"
+#include "WebMessage.h"
+
 #include <memory>
 #include <map>
 
-#include "Export/Export.h"
-#include "FCServerCore.h"
-#include "RequestProcessor.h"
 
-#include "MessageCodes.h"
-
-
-namespace FusionCrowdWeb {
-
+namespace FusionCrowdWeb
+{
 	using namespace FusionCrowd;
 
-	class FusionCrowdServer
+	class FC_SERVER_API FusionCrowdServer
 	{
-	private:
-		FCServerCore _serverCore;
-		std::shared_ptr<ISimulatorBuilder> _builder;
-		std::shared_ptr<ISimulatorFacade> _simulator;
-		bool _isSimulationStarted = false;
-		std::map<RequestCode, IRequestProcessor*> _requestProcessors {
-			{ DoStep,			new RequestProcessor<void, float>										(&ISimulatorFacade::DoStep) },
-			{ SetAgentOp,		new RequestProcessor<OperationStatus, size_t, ComponentId>				(&ISimulatorFacade::SetAgentOp) },
-			{ SetAgentStrategy,	new RequestProcessor<OperationStatus, size_t, ComponentId>				(&ISimulatorFacade::SetAgentStrategy) },
-			{ SetAgentGoal,		new RequestProcessor<OperationStatus, size_t, float, float>				(&ISimulatorFacade::SetAgentGoal) },
-			{ GetAgentCount,	new RequestProcessor<size_t>											(&ISimulatorFacade::GetAgentCount) },
-			//{ GetAgents,		new RequestProcessor<>													(&ISimulatorFacade::GetAgents) },
-			{ AddAgent,			new RequestProcessor<size_t, float, float, ComponentId, ComponentId>	(&ISimulatorFacade::AddAgent) },
-			{ RemoveAgent,		new RequestProcessor<OperationStatus, size_t>							(&ISimulatorFacade::RemoveAgent) }
-		};
-
-		void InitBuilderByNavMeshPath(const char* navMeshPath);
-		void InitBuilderByNavMeshName(const char* navMeshName);
-		void StartSimulation();
-		void ProcessRequest();
-		void SendResponce(ResponseCode responseCode);
-		void SendResponce(ResponseCode responseCode, const char * responseData, size_t dataSize);
-
 	public:
 		FusionCrowdServer();
 		~FusionCrowdServer();
 
-		void StartOn(const char* ipAdress, short port);
+		void StartOn(const char* inIpAdress, short inPort);
 		void Shutdown();
-	};
 
+	private:
+		WebNode _webNode;
+
+		std::shared_ptr<ISimulatorBuilder> _builder;
+		std::shared_ptr<ISimulatorFacade> _simulator;
+		bool _isSimulationStarted = false;
+
+		std::map<RequestCode, IRequestProcessor*> _requestProcessors;
+
+		void InitBuilderByNavMeshPath(const char* inNavMeshPath);
+		void InitBuilderByNavMeshName(const char* inNavMeshName);
+		void StartSimulation();
+		void ProcessRequest(int inClientId);
+		void SendResponce(int inClientId, ResponseCode inResponseCode);
+		void SendResponce(int inClientId, ResponseCode inResponseCode, const char * inResponseData, size_t inDataSize);
+	};
 }

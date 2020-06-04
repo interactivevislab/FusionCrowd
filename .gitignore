@@ -1,5 +1,6 @@
 TestFusionCrowd/*.csv
 TestFusionCrowd/VTune Amplifier Results/
+TestFusionCrowd/Runs/*
 
 # Sourcetrail stuff
 compile_commands.json

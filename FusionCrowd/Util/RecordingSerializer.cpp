@@ -9,14 +9,18 @@ namespace FusionCrowd
 {
 	namespace Recordings
 	{
-		void Serialize(IRecording & rec, char const * destFilePath, size_t pathLen)
+		namespace
+		{
+			const char SEP = ',';
+		}
+
+		void Serialize(IRecording const &  rec, char const * destFilePath, size_t pathLen)
 		{
 			std::string filename(destFilePath, pathLen);
 			std::ofstream trajs(filename);
 
-			std::string separator = ",";
-
 			size_t slicesCount = rec.GetSlicesCount();
+
 			TimeSpan timespan(slicesCount);
 			rec.GetTimeSpan(timespan);
 			for(float step : timespan)
@@ -27,21 +31,14 @@ namespace FusionCrowd
 				FCArray<size_t> ids(agentCount);
 				slice.GetAgentIds(ids);
 
-				bool first = true;
+				trajs << slice.GetTime();
 				for(size_t id : ids)
 				{
 					auto info = slice.GetAgentInfo(id);
-					if(!first)
-					{
-						trajs << separator;
-					}
-
-					trajs << id << separator
-					      << info.posX << separator << info.posY << separator
-					      << info.orientX << separator << info.orientY << separator
+					trajs << SEP << id << SEP
+					      << info.posX << SEP << info.posY << SEP
+					      << info.orientX << SEP << info.orientY << SEP
 					      << info.radius;
-
-					first = false;
 				}
 				trajs << std::endl;
 			}

@@ -1,8 +1,8 @@
 #include "NavMeshLocalizer.h"
 
 #include "NavMeshNode.h"
-#include "TacticComponent/Path/PathPlanner.h"
-#include "TacticComponent/Path/PortalPath.h"
+#include "TacticComponent/NavMesh/Path/PathPlanner.h"
+#include "TacticComponent/NavMesh/Path/PortalPath.h"
 
 #include <limits>
 #include <iostream>
@@ -59,25 +59,6 @@ namespace FusionCrowd
 			return _path;
 		else
 			return nullptr;
-	}
-
-	//
-	//
-
-	void NavMeshLocalizer::updateAgentPosition(size_t agentId, const unsigned int oldLoc, unsigned int newLoc)
-	{
-		if (newLoc != oldLoc)
-		{
-			if (newLoc == NavMeshLocation::NO_NODE)
-			{
-				newLoc = static_cast<unsigned int>(_navMesh->getNodeCount());
-			}
-
-			// remove the agent from the set for oldLoc and place it in newLoc
-#pragma omp critical( NAV_MESH_LOCALIZER_MOVE_AGENT )
-			{
-			}
-		}
 	}
 
 	NavMeshLocalizer::NavMeshLocalizer(const std::string& name, bool usePlanner) : _navMesh(0x0), _trackAll(false), _planner(0x0)
@@ -194,6 +175,46 @@ namespace FusionCrowd
 			}
 		}
 		return NavMeshLocation::NO_NODE;
+	}
+
+
+	DirectX::SimpleMath::Vector2 NavMeshLocalizer::GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) {
+		if (findNodeBlind(p) != NavMeshLocation::NO_NODE)
+		{
+			return p;
+		}
+
+		float min_dist = INFINITY;
+		Vector2 res;
+		auto* vertices = _navMesh->GetVertices();
+		for (int i = _navMesh->getNodeCount() - 1; i >= 0; i--)
+		{
+			const auto & node = _navMesh->GetNodeByPos(i);
+			if (node.deleted)
+				continue;
+
+			const size_t vCount = node.getVertexCount();
+			for (size_t v = 0; v < vCount; v++)
+			{
+				Vector2 vertex1 = vertices[node.getVertexID(v)];
+				Vector2 vertex2 = vertices[(node.getVertexID(v) + 1) % vCount];
+
+				auto projection = Math::projectOnSegment(vertex1, vertex2, p);
+
+				const float d = Vector2::DistanceSquared(p, projection);
+				if (d < min_dist)
+				{
+					min_dist = d;
+					res = projection;
+				}
+			}
+		}
+		if (min_dist == INFINITY)
+		{
+			throw 1;
+		}
+
+		return res;
 	}
 
 	void NavMeshLocalizer::Update(std::vector<NavMeshNode*>& added_nodes, std::vector<size_t>& del_nodes) {

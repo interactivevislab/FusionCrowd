@@ -8,6 +8,6 @@ namespace FusionCrowd
 {
 	namespace Recordings
 	{
-		void FUSION_CROWD_API Serialize(IRecording & rec, char const * destFilePath, size_t pathLen);
+		void FUSION_CROWD_API Serialize(IRecording const &  rec, char const * destFilePath, size_t pathLen);
 	}
 }
