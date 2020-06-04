@@ -64,9 +64,11 @@
     <ClCompile Include="Math\Shapes\DiskShape.cpp" />
     <ClCompile Include="Math\Shapes\ConeShape.cpp" />
     <ClCompile Include="Math\Shapes\RectShape.cpp" />
-	<ClCompile Include="TransportOComponent.cpp" />
+
+	  <ClCompile Include="TransportOComponent.cpp" />
     <ClCompile Include="TrafficLight.cpp" />
     <ClCompile Include="TrafficLightsBunch.cpp" />
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -129,7 +131,9 @@
     <ClInclude Include="Navigation\NavMesh\Modification\PolygonPreprocessor.h" />
     <ClInclude Include="Export\NavGraph.h" />
     <ClInclude Include="OperationComponent\BicycleComponent.h" />
-	<ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
+
+    <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
+
     <ClInclude Include="OperationComponent\StrictComponent.h" />
     <ClInclude Include="TacticComponent\ExternalControl.h" />
     <ClInclude Include="Export\IExternalControlInterface.h" />
@@ -156,9 +160,13 @@
     <ClInclude Include="Math\Shapes\DiskShape.h" />
     <ClInclude Include="Math\Shapes\ConeShape.h" />
     <ClInclude Include="Math\Shapes\RectShape.h" />
-	<ClInclude Include="TransportOComponent.h" />
-	<ClInclude Include="TrafficLight.h" />
-    <ClInclude Include="TrafficLightsBunch.h" />  <ItemGroup>
+	  <ClInclude Include="TransportOComponent.h" />
+	  <ClInclude Include="TrafficLight.h" />
+    <ClInclude Include="TrafficLightsBunch.h" />
+
+  </ItemGroup>
+  <ItemGroup>
+
     <None Include="packages.config" />
     <None Include="navgraph.spec" />
   </ItemGroup>

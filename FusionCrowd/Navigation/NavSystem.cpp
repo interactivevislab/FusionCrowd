@@ -175,6 +175,7 @@ namespace FusionCrowd
 			}
 
 			updatedPos = agent.GetPos() + agent.GetVel() * timeStep;
+
 			if (_navMesh != NULL)
 			{
 				updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
@@ -320,19 +321,15 @@ namespace FusionCrowd
 		pimpl->AddTrafficLights(id);
 	}
 
+
 	TrafficLightsBunch* NavSystem::GetTrafficLights(size_t id)
 	{
 		return pimpl->GetTrafficLights(id);
 	}
 
-	AgentSpatialInfo & NavSystem::GetSpatialInfo(size_t agentId)
-	{
-		return pimpl->GetSpatialInfo(agentId);
-	}
-
 	std::vector<NeighborInfo> NavSystem::GetNeighbours(size_t agentId) const
 	{
-		return pimpl->GetNeighbours(agentId);
+		return pimpl->GetSpatialInfo(agentId);
 	}
 
 	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId)

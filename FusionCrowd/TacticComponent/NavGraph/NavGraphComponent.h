@@ -7,6 +7,7 @@
 #include "TacticComponent/NavGraph/NavGraphPathPlanner.h"
 #include "TrafficLightsBunch.h"
 
+
 namespace FusionCrowd
 {
 	class NavGraphComponent : public ITacticComponent
@@ -26,6 +27,7 @@ namespace FusionCrowd
 		DirectX::SimpleMath::Vector2 GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) override;
 		size_t getNodeId(size_t agentId) const;
 		unsigned int getGoalNodeId(size_t agentId) const;
+
 
 		ComponentId GetId() override { return ComponentIds::NAVGRAPH_ID; }
 
