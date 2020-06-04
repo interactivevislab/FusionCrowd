@@ -74,7 +74,7 @@ namespace FusionCrowd
 				speed = 0.05f;
 			}
 
-			if (distanceToTarget > 5.0f && speed < spatialInfo.prefSpeed && neighbours.size() < 10) {
+			if (distanceToTarget > 5.0f && speed < spatialInfo.prefSpeed && neighbours.size() < 1) {
 				speed += maxAcceleration;
 				if (speed > spatialInfo.prefSpeed) speed = spatialInfo.prefSpeed;
 			}
@@ -85,7 +85,7 @@ namespace FusionCrowd
 				speed = 0.0f;
 			}
 			float inCrowdSpeed = spatialInfo.prefSpeed * 0.3f;
-			if (neighbours.size() > 5 && speed > inCrowdSpeed) {
+			if (neighbours.size() >= 1 && speed > inCrowdSpeed) {
 				speed -= maxAcceleration;
 			}
 

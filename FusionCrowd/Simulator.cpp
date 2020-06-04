@@ -166,7 +166,7 @@ namespace FusionCrowd
 				return false;
 
 			auto & agt = _navSystem->GetSpatialInfo(agentId);
-			agt.neighbourSearchShape = std::make_unique<Math::ConeShape>(Vector2(), 0, 0);
+			agt.neighbourSearchShape = std::make_unique<Math::ConeShape>(cone);
 
 			return true;
 		}
