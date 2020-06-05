@@ -3,6 +3,7 @@
 #include "FcMainServerApi.h"
 #include "WebNode.h"
 #include "Export/Export.h"
+#include <vector>
 
 
 namespace FusionCrowdWeb
@@ -14,15 +15,15 @@ namespace FusionCrowdWeb
 	public:
 		void StartServer(WebAddress inAddress) override;
 
-		void ConnectToComputationalServer(WebAddress inAddress);
-		void DisconnectFromComputationalServer();
+		void ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses);
+		void DisconnectFromComputationalServers();
 
 		void AcceptClientConnection();
 		void InitComputation();
 		void ProcessComputationRequest();
 
 	private:
-		int _computationalServerId;
+		std::vector<int> _computationalServersIds;
 		int _clientId;
 	};
 }

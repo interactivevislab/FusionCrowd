@@ -1,7 +1,5 @@
 #include "WebNode.h"
 
-#include "WsException.h"
-
 #include "Ws2tcpip.h"
 
 
@@ -99,14 +97,14 @@ namespace FusionCrowdWeb
 
 		WebMessageHead messageHead = { inWebCode, inDataSize };
 		auto bytesSended = send(destSocket, reinterpret_cast<const char*>(&messageHead), sizeof(WebMessageHead), 0);
-		CheckWsResult(bytesSended, "Sending failed");
+		CheckTransferredBytes(bytesSended, "Sending failed");
 
 		int totalBytesSended = 0;
 		int bytesleft = static_cast<int>(inDataSize);
 		while (totalBytesSended < inDataSize)
 		{
 			bytesSended = send(destSocket, inData + totalBytesSended, bytesleft, 0);
-			CheckWsResult(bytesSended, "Sending failed");
+			CheckTransferredBytes(bytesSended, "Sending failed");
 			totalBytesSended += bytesSended;
 			bytesleft -= bytesSended;
 		}
@@ -124,7 +122,7 @@ namespace FusionCrowdWeb
 
 		WebMessageHead messageHead;
 		auto bytesRecieved = recv(srcSocket, reinterpret_cast<char*>(&messageHead), sizeof(WebMessageHead), 0);
-		CheckWsResult(bytesRecieved, "Receive data failed");
+		CheckTransferredBytes(bytesRecieved, "Receive data failed");
 
 		auto messageLength = messageHead.MessageLength;
 
@@ -143,7 +141,7 @@ namespace FusionCrowdWeb
 			while (totalBytesRecieved < messageLength)
 			{
 				auto bytesRecieved = recv(srcSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
-				CheckWsResult(bytesRecieved, "Receive data failed");
+				CheckTransferredBytes(bytesRecieved, "Receive data failed");
 				totalBytesRecieved += bytesRecieved;
 				bytesleft -= bytesRecieved;
 			}
@@ -199,6 +197,15 @@ namespace FusionCrowdWeb
 	void WebNode::CheckWsResult(int inResult, const char* inErrorMessage)
 	{
 		if (inResult == SOCKET_ERROR)
+		{
+			throw WsException(inErrorMessage);
+		}
+	}
+
+
+	void WebNode::CheckTransferredBytes(int inBytesNum, const char* inErrorMessage)
+	{
+		if ((inBytesNum == SOCKET_ERROR) || (inBytesNum == 0))
 		{
 			throw WsException(inErrorMessage);
 		}

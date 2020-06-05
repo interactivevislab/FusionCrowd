@@ -6,22 +6,18 @@
 #include "WebDataSerializer.h"
 #include "FcFileWrapper.h"
 
-#include <iostream>
-
 
 namespace FusionCrowdWeb
 {
 	void FcComputationalServer::StartServer(WebAddress inAddress)
 	{
 		WebNode::StartServer(inAddress);
-		std::cout << "Successfully started on " << inAddress.IpAddress << ':' << inAddress.Port << std::endl << std::endl;
 	}
 
 
 	void FcComputationalServer::AcceptMainServerConnection()
 	{
 		_mainServerId = AcceptInputConnection();
-		std::cout << "MainServer connected" << std::endl << std::endl;
 	}
 
 
@@ -34,7 +30,6 @@ namespace FusionCrowdWeb
 			throw FcWebException("RequestError");
 		}
 		auto data = WebDataSerializer<InitComputingData>::Deserialize(request.second);
-		std::cout << "Init data received" << std::endl;
 
 		//initing simulation
 		_builder = std::shared_ptr<ISimulatorBuilder>(BuildSimulator(), [](ISimulatorBuilder* inBuilder)
@@ -76,7 +71,6 @@ namespace FusionCrowdWeb
 			throw FcWebException("RequestError");
 		}
 		auto inData = WebDataSerializer<InputComputingData>::Deserialize(request.second);
-		std::cout << "Computing data received" << std::endl;
 
 		_simulator->DoStep(inData.TimeStep);
 
@@ -85,6 +79,5 @@ namespace FusionCrowdWeb
 		OutputComputingData outData = OutputComputingData{ agents };
 
 		Send(_mainServerId, ResponseCode::Success, outData);
-		std::cout << "Computing result sent" << std::endl;
 	}
 }

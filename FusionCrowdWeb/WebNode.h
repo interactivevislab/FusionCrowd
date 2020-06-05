@@ -2,6 +2,7 @@
 
 #include "FcWebApi.h"
 
+#include "WsException.h"
 #include "WebDataSerializer.h"
 #include "WebMessage.h"
 
@@ -16,7 +17,7 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API WebAddress
 	{
 		const char* IpAddress;
-		short Port;
+		u_short Port;
 
 		WebAddress(const char* inIpAddress, short inPort);
 		operator sockaddr_in();
@@ -67,5 +68,6 @@ namespace FusionCrowdWeb
 
 		static void CheckSocket(SOCKET inSocket, const char* inErrorMessage);
 		static void CheckWsResult(int inResult, const char* inErrorMessage);
+		static void CheckTransferredBytes(int inBytesNum, const char* inErrorMessage);
 	};
 }
