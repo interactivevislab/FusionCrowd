@@ -48,6 +48,7 @@ namespace FusionCrowd
 		};
 
 		struct FUSION_CROWD_API SpecialOCParams {};
+
 		struct FUSION_CROWD_API StrictOCParams : SpecialOCParams {
 			int neighboursToStop;
 			float minSpeed;
