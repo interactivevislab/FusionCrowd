@@ -40,6 +40,7 @@ namespace FusionCrowd
 		Agents::PrefVelocity prefVelocity = Agents::PrefVelocity(DirectX::SimpleMath::Vector2(1.f, 0.f), prefSpeed, DirectX::SimpleMath::Vector2(0.f, 0.f));
 
 		std::unique_ptr<Math::Geometry2D> neighbourSearchShape;
+		std::unique_ptr <SpecialOCParams> specialOPParams;
 
 		bool useNavMeshObstacles = true;
 

@@ -125,6 +125,11 @@ namespace FusionCrowd
 			return _sim->UpdateNeighbourSearchShape(agentId, cone);
 		}
 
+
+		OperationStatus UpdateSpecialOpParams(size_t agentId, StrictOCParams params) {
+			return _sim->UpdateSpecialOpParams(agentId, params);
+		}
+
 		OperationStatus RemoveAgent(size_t agentId)
 		{
 			return _sim->RemoveAgent(agentId);

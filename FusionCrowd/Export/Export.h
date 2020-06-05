@@ -47,6 +47,13 @@ namespace FusionCrowd
 			ComponentId tacticCompId;
 		};
 
+		struct FUSION_CROWD_API SpecialOCParams {};
+		struct FUSION_CROWD_API StrictOCParams : SpecialOCParams {
+			int neighboursToStop;
+			float minSpeed;
+			float inCrowdSpeedMult;
+		};
+
 		enum FUSION_CROWD_API OperationStatus
 		{
 			OK,
@@ -90,6 +97,7 @@ namespace FusionCrowd
 			virtual bool UpdateAgent(AgentParams params) = 0;
 			virtual bool UpdateNeighbourSearchShape(size_t agentId, Disk disk) = 0;
 			virtual bool UpdateNeighbourSearchShape(size_t agentId, Cone cone) = 0;
+			virtual OperationStatus UpdateSpecialOpParams(size_t agentId, StrictOCParams params) = 0;
 
 			virtual OperationStatus RemoveAgent(size_t agentId) = 0;
 			virtual OperationStatus RemoveGroup(size_t groupId) = 0;

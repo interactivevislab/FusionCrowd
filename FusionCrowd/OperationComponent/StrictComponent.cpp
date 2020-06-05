@@ -6,6 +6,7 @@
 
 #include "Navigation/AgentSpatialInfo.h"
 #include "Navigation/Obstacle.h"
+#include "Export/Export.h"
 
 #include <algorithm>
 #include <list>
@@ -47,6 +48,13 @@ namespace FusionCrowd
 
 		void StrictComponent::ComputeNewVelocity(AgentSpatialInfo & spatialInfo, float timeStep)
 		{
+			auto params = static_cast<StrictOCParams*>(spatialInfo.specialOPParams.get());
+			if (params == nullptr) {
+				params = new StrictOCParams();
+				params->minSpeed = 0.05f;
+				params->neighboursToStop = 1;
+				params->inCrowdSpeedMult = 0.3f;
+			}
 			auto neighbours = _navSystem->GetNeighbours(spatialInfo.id);
 			const float maxAcceleration = spatialInfo.maxAccel * timeStep;
 
@@ -69,23 +77,21 @@ namespace FusionCrowd
 
 			//speed = spatialInfo.prefSpeed;
 
-			if (speed < 0.05f)
+			if (speed < params->minSpeed)
 			{
-				speed = 0.05f;
+				speed = params->minSpeed;
 			}
 
 			if (distanceToTarget > 5.0f && speed < spatialInfo.prefSpeed && neighbours.size() < 1) {
 				speed += maxAcceleration;
 				if (speed > spatialInfo.prefSpeed) speed = spatialInfo.prefSpeed;
 			}
-			if (distanceToTarget < 5.0f && speed > 0.3f) {
-			}
 
 			if (distanceToTarget < 1e-2f) {
 				speed = 0.0f;
 			}
-			float inCrowdSpeed = spatialInfo.prefSpeed * 0.3f;
-			if (neighbours.size() >= 1 && speed > inCrowdSpeed) {
+			float inCrowdSpeed = spatialInfo.prefSpeed * params->inCrowdSpeedMult;
+			if (neighbours.size() >= params->neighboursToStop && speed > inCrowdSpeed) {
 				speed -= maxAcceleration;
 			}
 

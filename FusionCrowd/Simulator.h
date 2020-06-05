@@ -58,6 +58,7 @@ namespace FusionCrowd
 		bool UpdateAgentParams(AgentParams params);
 		bool UpdateNeighbourSearchShape(size_t agentId, Cone cone);
 		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk);
+		OperationStatus UpdateSpecialOpParams(size_t agentId, StrictOCParams params);
 
 		OperationStatus RemoveAgent(size_t agentId);
 
