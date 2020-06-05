@@ -1,6 +1,8 @@
 #include "FcClient.h"
 
+#include <vector>
 #include <iostream>
+#include <iomanip>
 
 
 int main()
@@ -13,9 +15,9 @@ int main()
 
 	FusionCrowdClient client;
 
-	std::cout << "Connecting to main server... ";
+	cout << "Connecting to main server... ";
 	client.ConnectToMainServer(WebAddress("127.0.0.1", 49000));
-	std::cout << "success" << std::endl << std::endl;
+	cout << "success" << endl;
 
 	FusionCrowd::FCArray<AgentInitData> agentsData(4);
 	agentsData[0] = { -25.f, -25.f, 25.f, 25.f };
@@ -29,22 +31,37 @@ int main()
 	};
 
 	client.InitComputation(initData);
-	std::cout << "Computation initialization requested" << std::endl << std::endl;
+	cout << "Computation initialization requested" << endl;
 
-	for (int i = 0; i < 10; i++)
+	cout << "Computing steps requesting... ";
+	const int stepsNum = 200;
+	vector<OutputComputingData> results;
+	for (int i = 0; i < stepsNum; i++)
 	{
-		cout << "Computing step requesting... ";
+		
 		auto result = client.RequestComputation(InputComputingData{ 0.1f });
-
+		results.push_back(result);
 		auto agentInfo = result.AgentInfos[0];
-		cout << "result = { " << agentInfo.posX << ", " << agentInfo.posY << " }" << endl;
+		
 	}
-	cout << endl;
+	cout << "success" << endl;
 
 	client.DisconnectFromMainServer();
 	cout << "Disconnection from main server" << endl << endl;
 
 	FusionCrowdClient::GlobalCleanup();
+
+	cout << "Results:" << endl << endl;
+	cout << setprecision(3);
+	for (int i = 0; i < results.size(); i += 5)
+	{
+		for (auto info : results[i].AgentInfos)
+		{
+			cout << setw(8) << info.posX << setw(8) << info.posY;
+		}
+		cout << endl;
+	}
+	cout << endl;
 
 	system("pause");
 

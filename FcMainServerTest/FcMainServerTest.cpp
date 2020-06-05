@@ -13,40 +13,40 @@ int main()
 
 	FcMainServer server;
 	server.StartServer(WebAddress("127.0.0.1", 49000));
-	std::cout << "Successfully started" << std::endl << std::endl;
+	cout << "Successfully started" << endl;
 
-	std::vector<WebAddress> computationalServersAddresses {
+	vector<WebAddress> computationalServersAddresses {
 		WebAddress("127.0.0.1", 49001),
 		WebAddress("127.0.0.1", 49002)
 	};
-	std::cout << "Connecting to computational servers... ";
+	cout << "Connecting to computational servers... ";
 	server.ConnectToComputationalServers(computationalServersAddresses);
-	std::cout << "success" << std::endl << std::endl;
+	cout << "success" << endl;
 
 	server.AcceptClientConnection();
-	std::cout << "Client connected" << std::endl << std::endl;
+	cout << "Client connected" << endl;
 
-	std::cout << "Processing init data... ";
+	cout << "Processing init data... ";
 	server.InitComputation();
-	std::cout << "success" << std::endl << endl;
+	cout << "success" << endl;
 
+	cout << "Processing computation data... ";
 	try
 	{
 		while (true)
 		{
-			std::cout << "Processing computation data... ";
 			server.ProcessComputationRequest();
-			std::cout << "success" << std::endl;
 		}
 	}
 	catch (FusionCrowdWeb::FcWebException e)
 	{
-		cout << "error: " << e.What() << endl << endl;
-		cout << "Client disconnected" << endl << endl;
+		cout << "success" << endl;
+		//cout << "error: " << e.What() << endl;
+		cout << "Client disconnected" << endl;
 	}
 
 	server.DisconnectFromComputationalServers();
-	cout << "Disconnection from computational servers" << endl << endl;
+	cout << "Disconnection from computational servers" << endl;
 
 	server.ShutdownServer();
 	cout << "Server shutdown" << endl << endl;
