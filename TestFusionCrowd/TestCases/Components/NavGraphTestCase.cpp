@@ -14,6 +14,7 @@ namespace TestFusionCrowd
 	NavGraphTestCase::NavGraphTestCase(size_t agentsNum, size_t simulationSteps, bool writeTraj) :
 		ITestCase(agentsNum, simulationSteps, writeTraj),
 		_opComponent(FusionCrowd::ComponentIds::TRANSPORT_ID)
+
 	{
 	}
 
@@ -29,8 +30,6 @@ namespace TestFusionCrowd
 
 		for (int i = 0; i < _agentsNum; i++)
 		{
-
-
 			float goalX, goalY, x, y;
 			if (i % 4 == 0)
 			{				
@@ -101,6 +100,5 @@ namespace TestFusionCrowd
 			_sim->SetAgentGoal(id, Point {goalX, goalY});
 		}
 		_sim->AddTrafficLight(8);
-
 	}
 }

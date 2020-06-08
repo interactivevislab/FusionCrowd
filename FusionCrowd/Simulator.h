@@ -85,6 +85,7 @@ namespace FusionCrowd
 		size_t AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance);
 		size_t AddGuidedGroup(size_t leaderId);
 		void AddTrafficLight(size_t nodeId);
+
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos);
 
 		void AddAgentToGroup(size_t agentId, size_t groupId);

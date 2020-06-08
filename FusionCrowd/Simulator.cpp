@@ -157,7 +157,9 @@ namespace FusionCrowd
 			si.inertiaEnabled = params.inertiaEnabled;
 			si.useNavMeshObstacles = params.useNavMeshObstacles;
 
-			return true;		}
+			return true;
+		}
+
 
 		bool UpdateNeighbourSearchShape(size_t agentId, Cone cone)
 		{
@@ -170,10 +172,13 @@ namespace FusionCrowd
 			return true;
 		}
 
+
 		void AddTrafficLight(size_t nodeId)
 		{
 			_navSystem->AddTrafficLights(nodeId);
-		}		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk)
+		}	
+    
+		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk)
 		{
 			if(_agents.find(agentId) == _agents.end())
 				return false;
@@ -241,7 +246,9 @@ namespace FusionCrowd
 				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goal.getCentroid());
 				agent.currentGoal = std::move(goal);
 			}
-		}		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
+		}		
+    
+    bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
 		{
 			if(_operComponents.find(newOperationComponent) == _operComponents.end())
 			{

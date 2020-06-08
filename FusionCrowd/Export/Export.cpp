@@ -22,6 +22,7 @@
 #include "OperationComponent/StrictComponent.h"
 #include "TransportOComponent.h"
 
+
 #include "StrategyComponent/FSM/FsmStartegy.h"
 
 using namespace DirectX::SimpleMath;
@@ -198,10 +199,13 @@ namespace FusionCrowd
 		size_t GetGroupDummyAgent(size_t groupId)
 		{
 			return _sim->GetGroup(groupId)->GetDummyId();
-		}		void AddTrafficLight(size_t nodeId)
+		}		
+    
+    void AddTrafficLight(size_t nodeId)
 		{
 			_sim->AddTrafficLight(nodeId);
 		}
+
 	private:
 		std::shared_ptr<Simulator> _sim;
 	};

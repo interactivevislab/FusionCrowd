@@ -14,6 +14,7 @@
 #include "Navigation/NeighborInfo.h"
 #include "Navigation/AgentSpatialInfo.h"
 #include "TrafficLightsBunch.h"
+
 #include "Util/spimpl.h"
 
 namespace FusionCrowd
@@ -37,6 +38,7 @@ namespace FusionCrowd
 		void RemoveAgent(size_t id);
 		void AddTrafficLights(size_t nodeId);
 		TrafficLightsBunch* GetTrafficLights(size_t nodeId);
+
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 
 		std::vector<NeighborInfo> GetNeighbours(size_t agentId) const;

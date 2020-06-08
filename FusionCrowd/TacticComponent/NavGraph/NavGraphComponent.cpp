@@ -22,7 +22,6 @@ namespace FusionCrowd
 		agtStruct.route = pathPlanner.GetRoute(curPos, curPos);
 		agtStruct.pointsComplete = 0;
 		_agents.push_back(agtStruct);
-
 	}
 
 	void NavGraphComponent::Replan(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct)
