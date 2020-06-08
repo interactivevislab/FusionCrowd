@@ -325,9 +325,14 @@ namespace FusionCrowd
 		return pimpl->GetTrafficLights(id);
 	}
 
-	std::vector<NeighborInfo> NavSystem::GetNeighbours(size_t agentId) const
+	AgentSpatialInfo & NavSystem::GetSpatialInfo(size_t agentId)
 	{
 		return pimpl->GetSpatialInfo(agentId);
+	}
+
+	std::vector<NeighborInfo> NavSystem::GetNeighbours(size_t agentId) const
+	{
+		return pimpl->GetNeighbours(agentId);
 	}
 
 	std::vector<Obstacle> NavSystem::GetClosestObstacles(size_t agentId)
