@@ -175,7 +175,7 @@ namespace FusionCrowd
 			}
 
 			updatedPos = agent.GetPos() + agent.GetVel() * timeStep;
-			if (_navMesh != NULL)
+			if (agent.useNavMeshObstacles)
 			{
 				updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
 			}
