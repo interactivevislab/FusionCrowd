@@ -30,6 +30,7 @@ namespace FusionCrowdWeb
 			throw FcWebException("RequestError");
 		}
 		auto data = WebDataSerializer<InitComputingData>::Deserialize(request.second);
+		_navMeshRegion = data.NavMeshRegion;
 
 		//initing simulation
 		_builder = std::shared_ptr<ISimulatorBuilder>(BuildSimulator(), [](ISimulatorBuilder* inBuilder)
@@ -42,8 +43,7 @@ namespace FusionCrowdWeb
 			_builder->WithOp(component);
 		}
 
-		data.NavMeshFile.SetFileNameAsResource("duplicate.nav");
-		data.NavMeshFile.Unwrap();
+		data.NavMeshFile.Unwrap(FcFileWrapper::GetFullNameForResource("cs_navmesh.nav"));
 
 		_builder->WithNavMesh(data.NavMeshFile.GetFileName());
 

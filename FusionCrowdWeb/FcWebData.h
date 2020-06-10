@@ -4,15 +4,29 @@
 #include "Export/Export.h"
 #include "FcFileWrapper.h"
 
+#include <vector>
+
 
 namespace FusionCrowdWeb
 {
 	struct FC_WEB_API AgentInitData
 	{
-		float X;
-		float Y;
-		float GoalX;
-		float GoalY;
+		float X, Y;
+		float GoalX, GoalY;
+	};
+
+
+	struct FC_WEB_API NavMeshRegion
+	{
+		float CenterX, CenterY;
+		float Width = -1, Height = -1;
+
+		NavMeshRegion();
+		NavMeshRegion(const std::string& inNavMeshPath);
+		bool IsPointInside(float inX, float inY);
+		void Split(size_t inNumParts, std::vector<NavMeshRegion>& outParts);
+		std::vector<NavMeshRegion> Split(size_t inNumParts);
+		bool IsValid();
 	};
 
 
@@ -21,6 +35,7 @@ namespace FusionCrowdWeb
 	{
 		FcFileWrapper NavMeshFile;
 		FusionCrowd::FCArray<AgentInitData> AgentsData;
+		NavMeshRegion NavMeshRegion;
 	};
 
 

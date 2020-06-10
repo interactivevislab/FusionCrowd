@@ -38,11 +38,8 @@ int main()
 	vector<OutputComputingData> results;
 	for (int i = 0; i < stepsNum; i++)
 	{
-		
 		auto result = client.RequestComputation(InputComputingData{ 0.1f });
 		results.push_back(result);
-		auto agentInfo = result.AgentInfos[0];
-		
 	}
 	cout << "success" << endl;
 

@@ -11,7 +11,7 @@ namespace FusionCrowdWeb
 	{
 	public:
 		FcFileWrapper();
-		explicit FcFileWrapper(const char* inFileName);
+		explicit FcFileWrapper(const std::string& inFileName);
 
 		FcFileWrapper(FcFileWrapper &&);
 		FcFileWrapper & operator=(FcFileWrapper &&);
@@ -19,17 +19,16 @@ namespace FusionCrowdWeb
 		~FcFileWrapper();
 
 		size_t GetSize() const;
-		void SetFileName(const char* inFileName);
-		void SetFileNameAsResource(const char* inFileName);
+		void SetFileName(const std::string& inFileName);
 		const char* GetFileName();
 
 		void WriteToMemory(char*& outMemoryIterator) const;
 		void ReadFromMemory(const char*& outMemoryIterator);
 
-		void Unwrap();
+		void Unwrap(const std::string& inFileName);
 
-		static size_t GetFileSize(const char* inFileName);
-		static std::string GetFullNameForResource(const char* inFileName);
+		static size_t GetFileSize(const std::string& inFileName);
+		static std::string GetFullNameForResource(const std::string& inFileName);
 
 	private:
 		char* _fileName = nullptr;

@@ -3,7 +3,9 @@
 #include "FcMainServerApi.h"
 #include "WebNode.h"
 #include "Export/Export.h"
+
 #include <vector>
+#include <map>
 
 
 namespace FusionCrowdWeb
@@ -24,6 +26,8 @@ namespace FusionCrowdWeb
 
 	private:
 		std::vector<int> _computationalServersIds;
+		std::map<int, NavMeshRegion> _navMeshRegions;
+
 		int _clientId;
 	};
 }

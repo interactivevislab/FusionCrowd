@@ -9,12 +9,14 @@ namespace FusionCrowdWeb
 	size_t WebDataSerializer<InitComputingData>::Serialize(const InitComputingData& inData, char*& outRawData)
 	{
 		size_t dataSize = inData.NavMeshFile.GetSize() 
-			+ SimpleDataSerializer<FCArray<AgentInitData>>::SizeOf(inData.AgentsData);
+			+ SimpleDataSerializer<FCArray<AgentInitData>>::SizeOf(inData.AgentsData) 
+			+ sizeof(NavMeshRegion);
 		outRawData = new char[dataSize];
 		auto iter = outRawData;
 
 		inData.NavMeshFile.WriteToMemory(iter);
 		SimpleDataSerializer<FCArray<AgentInitData>>::Serialize(inData.AgentsData, iter);
+		SimpleDataSerializer<NavMeshRegion>::Serialize(inData.NavMeshRegion, iter);
 
 		return dataSize;
 	}
@@ -24,7 +26,8 @@ namespace FusionCrowdWeb
 	{
 		FcFileWrapper navMeshFile;
 		navMeshFile.ReadFromMemory(inRawData);
-		FCArray<AgentInitData> agentsData = SimpleDataSerializer<FCArray<AgentInitData>>::Deserialize(inRawData);
+		auto agentsData = SimpleDataSerializer<FCArray<AgentInitData>>::Deserialize(inRawData);
+		auto navMeshRegion = SimpleDataSerializer<NavMeshRegion>::Deserialize(inRawData);
 
 		return InitComputingData{ std::move(navMeshFile), agentsData };
 	}
@@ -44,7 +47,8 @@ namespace FusionCrowdWeb
 
 	InputComputingData WebDataSerializer<InputComputingData>::Deserialize(const char* inRawData)
 	{
-		float timeStep = SimpleDataSerializer<float>::Deserialize(inRawData);
+		auto timeStep = SimpleDataSerializer<float>::Deserialize(inRawData);
+
 		return InputComputingData{ timeStep };
 	}
 
@@ -63,7 +67,7 @@ namespace FusionCrowdWeb
 
 	OutputComputingData WebDataSerializer<OutputComputingData>::Deserialize(const char* inRawData)
 	{
-		FCArray<AgentInfo> agents = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
+		auto agents = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
 
 		return OutputComputingData{ agents };
 	}

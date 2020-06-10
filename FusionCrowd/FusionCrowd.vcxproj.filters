@@ -64,6 +64,7 @@
     <ClCompile Include="Math\Shapes\DiskShape.cpp" />
     <ClCompile Include="Math\Shapes\ConeShape.cpp" />
     <ClCompile Include="Math\Shapes\RectShape.cpp" />
+    <ClCompile Include="Export\INavMeshPublic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />

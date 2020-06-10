@@ -26,5 +26,7 @@ namespace FusionCrowdWeb
 
 		std::shared_ptr<ISimulatorBuilder> _builder;
 		std::shared_ptr<ISimulatorFacade> _simulator;
+
+		NavMeshRegion _navMeshRegion;
 	};
 }

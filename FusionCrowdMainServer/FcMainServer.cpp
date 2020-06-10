@@ -4,8 +4,6 @@
 #include "WebDataSerializer.h"
 #include "WsException.h"
 
-#include <map>
-
 
 namespace FusionCrowdWeb
 {
@@ -64,18 +62,28 @@ namespace FusionCrowdWeb
 		auto initData = WebDataSerializer<InitComputingData>::Deserialize(request.second);
 		
 		//init data processing
-		std::map<int, std::vector<AgentInitData>> initDataParts;
-		for (auto serverId : _computationalServersIds)
+		auto navMeshFileName = FcFileWrapper::GetFullNameForResource("ms_navmesh.nav");
+		initData.NavMeshFile.Unwrap(navMeshFileName);
+		initData.NavMeshRegion = NavMeshRegion(navMeshFileName);
+
+		auto serversNum = _computationalServersIds.size();
+		auto navMeshRegionsBuffer = initData.NavMeshRegion.Split(serversNum);
+		for (int i = 0; i < serversNum; i++)
 		{
-			initDataParts[serverId] = std::vector<AgentInitData>();
+			_navMeshRegions[_computationalServersIds[i]] = navMeshRegionsBuffer[i];
 		}
 
-		int stubConter = 0;
-		auto serversNum = _computationalServersIds.size();
+		std::map<int, std::vector<AgentInitData>> initDataParts;
 		for (auto agentInitData : initData.AgentsData)
 		{
-			int targetServerId = _computationalServersIds[stubConter++ % serversNum];	//stub logic
-			initDataParts[targetServerId].push_back(agentInitData);
+			for (auto serverId : _computationalServersIds)
+			{
+				if (_navMeshRegions[serverId].IsPointInside(agentInitData.X, agentInitData.Y))
+				{
+					initDataParts[serverId].push_back(agentInitData);
+					break;
+				}
+			}		
 		}
 
 		//sending init data
@@ -87,6 +95,8 @@ namespace FusionCrowdWeb
 			{
 				initData.AgentsData[i] = agentsData[i];
 			}
+
+			initData.NavMeshRegion = _navMeshRegions[serverId];
 
 			Send(serverId, RequestCode::InitSimulation, initData);
 		}

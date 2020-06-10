@@ -12,7 +12,7 @@ namespace FusionCrowdWeb
 	{
 	}
 
-	FcFileWrapper::FcFileWrapper(const char* inFileName)
+	FcFileWrapper::FcFileWrapper(const std::string& inFileName)
 	{
 		SetFileName(inFileName);
 
@@ -71,21 +71,15 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FcFileWrapper::SetFileName(const char* inFileName)
+	void FcFileWrapper::SetFileName(const std::string& inFileName)
 	{
 		if (_fileName != nullptr)
 		{
 			delete[] _fileName;
 		}
-		_fileNameSize = std::strlen(inFileName) + 1;
+		_fileNameSize = inFileName.length() + 1;
 		_fileName = new char[_fileNameSize];
-		std::memcpy(_fileName, inFileName, _fileNameSize);
-	}
-
-
-	void FcFileWrapper::SetFileNameAsResource(const char* inFileName)
-	{
-		SetFileName(GetFullNameForResource(inFileName).c_str());
+		std::memcpy(_fileName, inFileName.c_str(), _fileNameSize);
 	}
 
 
@@ -119,16 +113,16 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FcFileWrapper::Unwrap()
+	void FcFileWrapper::Unwrap(const std::string& inFileName)
 	{
 		std::ofstream file;
-		file.open(_fileName, std::ifstream::binary);
+		file.open(inFileName, std::ifstream::binary);
 		file.write(_fileData, _fileDataSize);
 		file.close();
 	}
 
 
-	size_t FcFileWrapper::GetFileSize(const char* inFileName)
+	size_t FcFileWrapper::GetFileSize(const std::string& inFileName)
 	{
 		std::ifstream file;
 		file.open(inFileName, std::ios::binary | std::ios::ate);
@@ -138,7 +132,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	std::string FcFileWrapper::GetFullNameForResource(const char* inFileName)
+	std::string FcFileWrapper::GetFullNameForResource(const std::string& inFileName)
 	{
 		char exePath[MAX_PATH];
 		GetModuleFileName(NULL, exePath, MAX_PATH);

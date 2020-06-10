@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FcFileWrapper.cpp" />
+    <ClCompile Include="FcWebData.cpp" />
     <ClCompile Include="WebDataSerializer.cpp" />
     <ClCompile Include="WebNode.cpp" />
     <ClCompile Include="WsException.cpp" />
@@ -174,6 +175,5 @@
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>
