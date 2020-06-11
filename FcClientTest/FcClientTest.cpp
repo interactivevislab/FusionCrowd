@@ -25,10 +25,7 @@ int main()
 	agentsData[2] = { -25.f, 25.f, 25.f, -25.f };
 	agentsData[3] = { 25.f, -25.f, -25.f, 25.f };
 
-	InitComputingData initData{
-		FcFileWrapper(FcFileWrapper::GetFullNameForResource("verysimplenavmesh.nav").c_str()),
-		agentsData
-	};
+	InitComputingData initData(FcFileWrapper::GetFullNameForResource("verysimplenavmesh.nav"), agentsData);
 
 	client.InitComputation(initData);
 	cout << "Computation initialization requested" << endl;
@@ -38,7 +35,7 @@ int main()
 	vector<OutputComputingData> results;
 	for (int i = 0; i < stepsNum; i++)
 	{
-		auto result = client.RequestComputation(InputComputingData{ 0.1f });
+		auto result = client.RequestComputation(InputComputingData(0.1f));
 		results.push_back(result);
 	}
 	cout << "success" << endl;

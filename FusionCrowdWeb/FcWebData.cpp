@@ -47,6 +47,15 @@ namespace FusionCrowdWeb
 	}
 
 
+	bool NavMeshRegion::IsPointInsideBoundaryZone(float inX, float inY, float inBoundaryZoneDepth)
+	{
+		auto regionCopy = *this;
+		regionCopy.Width += inBoundaryZoneDepth;
+		regionCopy.Height += inBoundaryZoneDepth;
+		return regionCopy.IsPointInside(inX, inY) && !IsPointInside(inX, inY);
+	}
+
+
 	void NavMeshRegion::Split(size_t inNumParts, std::vector<NavMeshRegion>& outParts)
 	{
 		if (inNumParts == 1)
@@ -96,5 +105,46 @@ namespace FusionCrowdWeb
 	bool NavMeshRegion::IsValid()
 	{
 		return (Width > 0) && (Height > 0);
+	}
+
+
+	InitComputingData::InitComputingData()
+		: AgentsData(FusionCrowd::FCArray<AgentInitData>(0)),
+		BoundaryAgentsData(FusionCrowd::FCArray<AgentInitData>(0))
+	{
+	}
+
+
+	InitComputingData::InitComputingData(const std::string& inNavMeshFileName, FusionCrowd::FCArray<AgentInitData> inAgentsData)
+		: NavMeshFile(inNavMeshFileName), AgentsData(inAgentsData), 
+		BoundaryAgentsData(FusionCrowd::FCArray<AgentInitData>(0))
+	{
+	}
+
+
+	InputComputingData::InputComputingData()
+		: NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
+		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+	{
+	}
+
+
+	InputComputingData::InputComputingData(float inTimeStep)
+		: TimeStep(inTimeStep), NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)), 
+		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+	{
+	}
+
+
+	OutputComputingData::OutputComputingData()
+		: AgentInfos(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)), 
+		MissingAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+	{
+	}
+
+
+	OutputComputingData::OutputComputingData(FusionCrowd::FCArray<FusionCrowd::AgentInfo> inAgentInfos)
+		: AgentInfos(inAgentInfos), MissingAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+	{
 	}
 }
