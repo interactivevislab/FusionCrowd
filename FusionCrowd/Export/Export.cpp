@@ -20,7 +20,7 @@
 #include "OperationComponent/GCFComponent.h"
 #include "OperationComponent/BicycleComponent.h"
 #include "OperationComponent/StrictComponent.h"
-#include "TransportOComponent.h"
+#include "OperationComponent/TransportOperationComponent.h"
 
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
@@ -324,7 +324,7 @@ namespace FusionCrowd
 					sim->AddOpModel(std::make_shared<Bicycle::BicycleComponent>(navSystem));
 					break;				
 				case ComponentIds::TRANSPORT_ID:
-					sim->AddOpModel(std::make_shared<Transport::TransportOComponent>(navSystem));
+					sim->AddOpModel(std::make_shared<Transport::TransportOperationComponent>(navSystem));
 					break;				
 				case ComponentIds::STRICT_ID:
 					sim->AddOpModel(std::make_shared<StrictComp::StrictComponent>(navSystem));

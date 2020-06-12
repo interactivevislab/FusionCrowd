@@ -13,7 +13,7 @@
 #include "Navigation/NavGraph/NavGraph.h"
 #include "Navigation/NeighborInfo.h"
 #include "Navigation/AgentSpatialInfo.h"
-#include "TrafficLightsBunch.h"
+#include "Navigation/TrafficLightsBunch.h"
 
 #include "Util/spimpl.h"
 

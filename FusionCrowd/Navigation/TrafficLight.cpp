@@ -1,6 +1,6 @@
 #include "TrafficLight.h"
 
-TrafficLight::TrafficLight(int currentLight)
+TrafficLight::TrafficLight(Lights currentLight)
 {
 	rTime = gTime = 10.0f;
 	yTime = 3.0f;
@@ -8,7 +8,7 @@ TrafficLight::TrafficLight(int currentLight)
 	timePassed = 0.0f;
 }
 
-TrafficLight::TrafficLight(float rT, float yT, float gT, int light)
+TrafficLight::TrafficLight(float rT, float yT, float gT, Lights light)
 {
 	rTime = rT;
 	yTime = yT;
@@ -17,7 +17,7 @@ TrafficLight::TrafficLight(float rT, float yT, float gT, int light)
 	timePassed = 0.0f;
 }
 
-int TrafficLight::GetCurLight()
+TrafficLight::Lights TrafficLight::GetCurLight()
 {
 	return curLight;
 }
@@ -28,29 +28,28 @@ void TrafficLight::UpdateLights(float dt)
 
 	switch (curLight)
 	{
-	case red:
+	case Lights::red:
 		if (timePassed > rTime)
 		{
 			prevLight = curLight;
 			timePassed = 0.0f;
-			curLight = yellow;
+			curLight = Lights::yellow;
 		}
 		return;
-	case yellow:
+	case Lights::yellow:
 		if (timePassed > yTime)
 		{
-			prevLight == red ? curLight = green : curLight = red;
+			prevLight == Lights::red ? curLight = Lights::green : curLight = Lights::red;
 			timePassed = 0.0f;
 		}
 		return;
-	case green:
+	case Lights::green:
 		if (timePassed > gTime)
 		{
 			prevLight = curLight;
 			timePassed = 0.0f;
-			curLight = yellow;
+			curLight = Lights::yellow;
 		}
 		return;
 	}
-
 }

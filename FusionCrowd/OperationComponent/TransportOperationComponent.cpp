@@ -1,4 +1,4 @@
-#include "TransportOComponent.h"
+#include "TransportOperationComponent.h"
 
 #include "Navigation/NavSystem.h"
 #include "TacticComponent/NavGraph/NavGraphComponent.h"
@@ -12,16 +12,16 @@ namespace FusionCrowd
 	namespace Transport
 	{
 #pragma region Impl
-		class TransportOComponent::TransportOComponentImpl
+		class TransportOperationComponent::TransportOperationComponentImpl
 		{
 
 		public:
-			TransportOComponentImpl(std::shared_ptr<NavSystem> navSystem) : 
+			TransportOperationComponentImpl(std::shared_ptr<NavSystem> navSystem) :
 				_navSystem(navSystem), _navGraph(navSystem->GetNavGraph())
 			{
 			}
 
-			~TransportOComponentImpl() = default;
+			~TransportOperationComponentImpl() = default;
 
 			void AddAgent(size_t id)
 			{
@@ -213,22 +213,22 @@ namespace FusionCrowd
 #pragma endregion
 
 #pragma region proxy methods
-		TransportOComponent::TransportOComponent(std::shared_ptr<NavSystem> navSystem)
-			: pimpl(spimpl::make_unique_impl<TransportOComponentImpl>(navSystem))
+		TransportOperationComponent::TransportOperationComponent(std::shared_ptr<NavSystem> navSystem)
+			: pimpl(spimpl::make_unique_impl<TransportOperationComponentImpl>(navSystem))
 		{
 		}
 
-		void TransportOComponent::AddAgent(size_t id)
+		void TransportOperationComponent::AddAgent(size_t id)
 		{
 			pimpl->AddAgent(id);
 		}
 
-		bool TransportOComponent::DeleteAgent(size_t id)
+		bool TransportOperationComponent::DeleteAgent(size_t id)
 		{
 			return pimpl->DeleteAgent(id);
 		}
 
-		void TransportOComponent::Update(float timeStep)
+		void TransportOperationComponent::Update(float timeStep)
 		{
 			pimpl->Update(timeStep);
 		}

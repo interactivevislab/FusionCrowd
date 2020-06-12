@@ -24,7 +24,7 @@ namespace TestFusionCrowd
 
 		//builder->WithNavMesh("Resources/square.nav")->
 		//builder->WithNavGraph("Resources/graph/randomgrid_6x6.navgraph")->WithOp(_opComponent);
-		builder-> WithNavGraph("Resources/graph/crossroad.navgraph")->WithOp(_opComponent);
+		builder->WithNavMesh("Resources/square.nav")->WithNavGraph("Resources/graph/crossroad.navgraph")->WithOp(_opComponent);
 
 		_sim = std::unique_ptr<ISimulatorFacade, decltype(&SimulatorFacadeDeleter)>(builder->Build(), SimulatorFacadeDeleter);
 
@@ -101,4 +101,5 @@ namespace TestFusionCrowd
 		}
 		_sim->AddTrafficLight(8);
 	}
+
 }

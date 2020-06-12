@@ -9,10 +9,10 @@ namespace FusionCrowd
 {
 	namespace Transport
 	{
-		class TransportOComponent : public IOperationComponent
+		class TransportOperationComponent : public IOperationComponent
 		{
 		public:
-			TransportOComponent(std::shared_ptr<NavSystem> navSystem);
+			TransportOperationComponent(std::shared_ptr<NavSystem> navSystem);
 
 			ComponentId GetId() override { return ComponentIds::TRANSPORT_ID; }
 
@@ -23,9 +23,9 @@ namespace FusionCrowd
 			void Update(float timeStep) override;
 
 		private:
-			class TransportOComponentImpl;
+			class TransportOperationComponentImpl;
 
-			spimpl::unique_impl_ptr<TransportOComponentImpl> pimpl;
+			spimpl::unique_impl_ptr<TransportOperationComponentImpl> pimpl;
 		};
 	}
 }

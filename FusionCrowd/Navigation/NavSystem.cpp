@@ -78,23 +78,23 @@ namespace FusionCrowd
 			}
 		}
 
-		void AddTrafficLights(size_t nodeId)
+		void AddTrafficLights(size_t NavGraphsNodeId)
 		{
-			_lightsIds.insert(nodeId);
+			_lightsIds.insert(NavGraphsNodeId);
 			TrafficLightsBunch* newLight = new TrafficLightsBunch;
-			_trafficLights.insert(std::make_pair(nodeId, newLight));
+			_trafficLights.insert(std::make_pair(NavGraphsNodeId, newLight));
 		}
 
-		TrafficLightsBunch* GetTrafficLights(size_t id)
+		TrafficLightsBunch* GetTrafficLights(size_t NavGraphsNodeId)
 		{
-			std::map <size_t,TrafficLightsBunch*>::iterator it;
+			auto it = _trafficLights.find(NavGraphsNodeId);
 			
-			if (_trafficLights.find(id) == _trafficLights.end())
+			if (it != _trafficLights.end())
 			{
-				return nullptr;
+				return it->second;
 			}
 
-			return _trafficLights[id];
+			return nullptr;
 		}
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId)
@@ -146,7 +146,7 @@ namespace FusionCrowd
 
 			UpdateNeighbours();
 
-			for (auto light : _trafficLights)
+			for (auto& light : _trafficLights)
 			{
 				light.second->UpdateAllLights(timeStep);
 			}

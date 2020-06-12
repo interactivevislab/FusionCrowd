@@ -43,7 +43,14 @@ namespace FusionCrowd
 
 
 		constexpr ComponentId allOperationComponentTypes[8] = {
-			KARAMOUZAS_ID, HELBING_ID, ORCA_ID, ZANLUNGO_ID, PEDVO_ID, SWITCHING, BICYCLE, TRANSPORT_ID
+			KARAMOUZAS_ID, 
+			HELBING_ID, 
+			ORCA_ID, 
+			ZANLUNGO_ID, 
+			PEDVO_ID, 
+			SWITCHING, 
+			BICYCLE, 
+			TRANSPORT_ID
 		};
 	}
 }

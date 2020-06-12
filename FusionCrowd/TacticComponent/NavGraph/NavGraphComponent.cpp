@@ -113,8 +113,8 @@ namespace FusionCrowd
 		TrafficLightsBunch* curLights = _navSystem->GetTrafficLights(_navGraph->GetClosestNodeIdByPosition(currentGoal, _navGraph->GetAllNodes()));
 		if (curLights)
 		{
-			if ((curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::red ||
-				curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::yellow) &&
+			if ((curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::red ||
+				curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::yellow) &&
 				dist < agentInfo.radius * 15 && dist > agentInfo.radius * 12)
 			{
 				agentInfo.prefVelocity.setSpeed(1e-6);
@@ -148,5 +148,11 @@ namespace FusionCrowd
 	{
 		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(agentId);
 		return _navGraph->GetClosestNodeIdByPosition(agentInfo.GetPos(), _navGraph->GetAllNodes());
+	}
+
+	unsigned int NavGraphComponent::getGoalNodeId(size_t agentId) const
+	{
+		auto & agentGoal = _simulator->GetAgentGoal(agentId);
+		return _navGraph->GetClosestNodeIdByPosition(agentGoal.getCentroid(), _navGraph->GetAllNodes());
 	}
 }
