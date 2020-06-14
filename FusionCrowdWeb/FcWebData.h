@@ -9,6 +9,9 @@
 
 namespace FusionCrowdWeb
 {
+	using FusionCrowd::FCArray;
+
+
 	struct FC_WEB_API AgentInitData
 	{
 		float X, Y;
@@ -35,13 +38,12 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API InitComputingData
 	{
 		InitComputingData();
-		InitComputingData(const std::string& inNavMeshFileName, FusionCrowd::FCArray<AgentInitData> inAgentsData);
+		InitComputingData(const std::string& inNavMeshFileName, FCArray<AgentInitData> inAgentsData);
 
 		FcFileWrapper NavMeshFile;
-		FusionCrowd::FCArray<AgentInitData> AgentsData;
+		FCArray<AgentInitData> AgentsData;
 
 		NavMeshRegion NavMeshRegion;
-		FusionCrowd::FCArray<AgentInitData> BoundaryAgentsData;
 	};
 
 
@@ -53,8 +55,8 @@ namespace FusionCrowdWeb
 
 		float TimeStep;
 
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> NewAgents;
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> BoundaryAgents;
+		FCArray<AgentInitData> NewAgents;
+		FCArray<AgentInitData> BoundaryAgents;
 	};
 
 
@@ -62,10 +64,10 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API OutputComputingData
 	{
 		OutputComputingData();
-		OutputComputingData(FusionCrowd::FCArray<FusionCrowd::AgentInfo> inAgentInfos);
+		OutputComputingData(FCArray<FusionCrowd::AgentInfo> inAgentInfos);
 
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> AgentInfos;
+		FCArray<FusionCrowd::AgentInfo> AgentInfos;
 
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> MissingAgents;
+		FCArray<FusionCrowd::AgentInfo> DisplacedAgents;
 	};
 }

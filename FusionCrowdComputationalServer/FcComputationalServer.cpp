@@ -65,6 +65,7 @@ namespace FusionCrowdWeb
 
 	void FcComputationalServer::ProcessComputationRequest()
 	{
+		//reading data
 		auto request = Receive(_mainServerId);
 		if (request.first.AsRequestCode != RequestCode::DoStep)
 		{
@@ -72,11 +73,55 @@ namespace FusionCrowdWeb
 		}
 		auto inData = WebDataSerializer<InputComputingData>::Deserialize(request.second);
 
+		//adding agents
+		for (auto& agentData : inData.NewAgents)
+		{
+			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 1, 10,
+				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
+			_simulator->SetAgentGoal(agentId, Point(agentData.GoalX, agentData.GoalY));
+		}
+
+		std::vector<int> boundaryAgentsIds;
+		for (auto& agentData : inData.BoundaryAgents)
+		{
+			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 1, 10,
+				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
+			_simulator->SetAgentGoal(agentId, Point(agentData.GoalX, agentData.GoalY));
+			boundaryAgentsIds.push_back(agentId);
+		}
+
+		//step
 		_simulator->DoStep(inData.TimeStep);
 
+		for (auto boundaryAgentsId : boundaryAgentsIds)
+		{
+			_simulator->RemoveAgent(boundaryAgentsId);
+		}
+
+		//sending output data
 		FCArray<AgentInfo> agents(_simulator->GetAgentCount());
 		_simulator->GetAgents(agents);
-		OutputComputingData outData = OutputComputingData{ agents };
+
+		std::vector<AgentInfo> displacedAgents;
+		for (auto& agent : agents)
+		{
+			if (!_navMeshRegion.IsPointInside(agent.posX, agent.posX))
+			{
+				displacedAgents.push_back(agent);
+				_simulator->RemoveAgent(agent.id);
+			}
+		}
+
+		agents = FCArray<AgentInfo>(_simulator->GetAgentCount());
+		_simulator->GetAgents(agents);
+
+		OutputComputingData outData;
+		outData.AgentInfos = agents;
+		outData.DisplacedAgents = FCArray<AgentInfo>(displacedAgents.size());
+		for (int i = 0; i < displacedAgents.size(); i++)
+		{
+			outData.DisplacedAgents[i] = displacedAgents[i];
+		}
 
 		Send(_mainServerId, ResponseCode::Success, outData);
 	}

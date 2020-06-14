@@ -6,6 +6,7 @@
 #include "WebMessage.h"
 
 #include <memory>
+#include <vector>
 
 
 namespace FusionCrowdWeb

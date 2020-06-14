@@ -25,9 +25,12 @@ namespace FusionCrowdWeb
 		void ProcessComputationRequest();
 
 	private:
-		std::vector<int> _computationalServersIds;
-		std::map<int, NavMeshRegion> _navMeshRegions;
-
 		int _clientId;
+		std::vector<int> _computationalServersIds;
+		FCArray<AgentInfo> _allAgents = FCArray<AgentInfo>(0);
+		std::vector<AgentInfo> _displacedAgents;
+
+		std::map<int, NavMeshRegion> _navMeshRegions;
+		const float _boundaryZoneDepth = 5;
 	};
 }

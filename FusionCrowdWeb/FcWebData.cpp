@@ -108,43 +108,40 @@ namespace FusionCrowdWeb
 	}
 
 
-	InitComputingData::InitComputingData()
-		: AgentsData(FusionCrowd::FCArray<AgentInitData>(0)),
-		BoundaryAgentsData(FusionCrowd::FCArray<AgentInitData>(0))
+	InitComputingData::InitComputingData() : AgentsData(FCArray<AgentInitData>(0))
 	{
 	}
 
 
-	InitComputingData::InitComputingData(const std::string& inNavMeshFileName, FusionCrowd::FCArray<AgentInitData> inAgentsData)
-		: NavMeshFile(inNavMeshFileName), AgentsData(inAgentsData), 
-		BoundaryAgentsData(FusionCrowd::FCArray<AgentInitData>(0))
+	InitComputingData::InitComputingData(const std::string& inNavMeshFileName, FCArray<AgentInitData> inAgentsData)
+		: NavMeshFile(inNavMeshFileName), AgentsData(inAgentsData)
 	{
 	}
 
 
 	InputComputingData::InputComputingData()
-		: NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
-		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+		: NewAgents(FCArray<AgentInitData>(0)),
+		BoundaryAgents(FCArray<AgentInitData>(0))
 	{
 	}
 
 
 	InputComputingData::InputComputingData(float inTimeStep)
-		: TimeStep(inTimeStep), NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)), 
-		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+		: TimeStep(inTimeStep), NewAgents(FCArray<AgentInitData>(0)),
+		BoundaryAgents(FCArray<AgentInitData>(0))
 	{
 	}
 
 
 	OutputComputingData::OutputComputingData()
-		: AgentInfos(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)), 
-		MissingAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+		: AgentInfos(FCArray<FusionCrowd::AgentInfo>(0)), 
+		DisplacedAgents(FCArray<FusionCrowd::AgentInfo>(0))
 	{
 	}
 
 
-	OutputComputingData::OutputComputingData(FusionCrowd::FCArray<FusionCrowd::AgentInfo> inAgentInfos)
-		: AgentInfos(inAgentInfos), MissingAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+	OutputComputingData::OutputComputingData(FCArray<FusionCrowd::AgentInfo> inAgentInfos)
+		: AgentInfos(inAgentInfos), DisplacedAgents(FCArray<FusionCrowd::AgentInfo>(0))
 	{
 	}
 }
