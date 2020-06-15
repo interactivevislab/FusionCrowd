@@ -119,7 +119,7 @@ namespace FusionCrowdWeb
 		{
 			for (auto serverId : _computationalServersIds)
 			{
-				if (_navMeshRegions[serverId].IsPointInside(displacedAgent.posX, displacedAgent.posX))
+				if (_navMeshRegions[serverId].IsPointInside(displacedAgent.posX, displacedAgent.posY))
 				{
 					auto agentInitData = AgentInitData{ displacedAgent.posX, displacedAgent.posY, 
 						displacedAgent.goalX, displacedAgent.goalY };
@@ -134,7 +134,7 @@ namespace FusionCrowdWeb
 		{
 			for (auto serverId : _computationalServersIds)
 			{
-				if (_navMeshRegions[serverId].IsPointInsideBoundaryZone(agent.posX, agent.posX, _boundaryZoneDepth))
+				if (_navMeshRegions[serverId].IsPointInsideBoundaryZone(agent.posX, agent.posY, _boundaryZoneDepth))
 				{
 					auto agentInitData = AgentInitData{ agent.posX, agent.posY,
 						agent.goalX, agent.goalY };
@@ -175,7 +175,7 @@ namespace FusionCrowdWeb
 				throw FcWebException("ResponseError");
 			}
 			auto outDataPart = WebDataSerializer<OutputComputingData>::Deserialize(request.second);
-			agentsNum += outDataPart.AgentInfos.size();
+			agentsNum += outDataPart.AgentInfos.size() + outDataPart.DisplacedAgents.size();
 			outDataParts.push_back(outDataPart);
 		}
 
@@ -191,6 +191,7 @@ namespace FusionCrowdWeb
 			}
 			for (auto agentInfo : outDataPart.DisplacedAgents)
 			{
+				_allAgents[infoIndex++] = agentInfo;
 				_displacedAgents.push_back(agentInfo);
 			}
 		}

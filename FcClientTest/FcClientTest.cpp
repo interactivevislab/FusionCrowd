@@ -19,19 +19,17 @@ int main()
 	client.ConnectToMainServer(WebAddress("127.0.0.1", 49000));
 	cout << "success" << endl;
 
-	FusionCrowd::FCArray<AgentInitData> agentsData(4);
-	agentsData[0] = { -25.f, -25.f, 25.f, 25.f };
-	agentsData[1] = { 25.f, 25.f, -25.f, -25.f };
-	agentsData[2] = { -25.f, 25.f, 25.f, -25.f };
-	agentsData[3] = { 25.f, -25.f, -25.f, 25.f };
+	FusionCrowd::FCArray<AgentInitData> agentsData(2);
+	agentsData[0] = { -20.f, 0, 20.f, 0 };
+	agentsData[1] = { 20.f, 0, -20.f, 0 };
 
-	InitComputingData initData(FcFileWrapper::GetFullNameForResource("verysimplenavmesh.nav"), agentsData);
+	InitComputingData initData(FcFileWrapper::GetFullNameForResource("grid.nav"), agentsData);
 
 	client.InitComputation(initData);
 	cout << "Computation initialization requested" << endl;
 
 	cout << "Computing steps requesting... ";
-	const int stepsNum = 200;
+	const int stepsNum = 50;
 	vector<OutputComputingData> results;
 	for (int i = 0; i < stepsNum; i++)
 	{
@@ -51,7 +49,7 @@ int main()
 	{
 		for (auto info : results[i].AgentInfos)
 		{
-			cout << setw(8) << info.posX << setw(8) << info.posY;
+			cout << setw(10) << info.posX << setw(10) << info.posY;
 		}
 		cout << endl;
 	}

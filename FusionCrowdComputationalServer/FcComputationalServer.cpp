@@ -105,7 +105,7 @@ namespace FusionCrowdWeb
 		std::vector<AgentInfo> displacedAgents;
 		for (auto& agent : agents)
 		{
-			if (!_navMeshRegion.IsPointInside(agent.posX, agent.posX))
+			if (!_navMeshRegion.IsPointInside(agent.posX, agent.posY))
 			{
 				displacedAgents.push_back(agent);
 				_simulator->RemoveAgent(agent.id);
