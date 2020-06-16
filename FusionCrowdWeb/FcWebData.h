@@ -55,8 +55,8 @@ namespace FusionCrowdWeb
 
 		float TimeStep;
 
-		FCArray<AgentInitData> NewAgents;
-		FCArray<AgentInitData> BoundaryAgents;
+		FCArray<FusionCrowd::AgentInfo> NewAgents;
+		FCArray<FusionCrowd::AgentInfo> BoundaryAgents;
 	};
 
 
@@ -69,5 +69,15 @@ namespace FusionCrowdWeb
 		FCArray<FusionCrowd::AgentInfo> AgentInfos;
 
 		FCArray<FusionCrowd::AgentInfo> DisplacedAgents;
+	};
+
+
+	//list of agents ids
+	struct FC_WEB_API AgentsIds
+	{
+		AgentsIds();
+		AgentsIds(size_t inNum);
+
+		FCArray<size_t> Values;
 	};
 }

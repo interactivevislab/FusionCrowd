@@ -48,4 +48,13 @@ namespace FusionCrowdWeb
 		static size_t Serialize(const OutputComputingData& inData, char*& outRawData);
 		static OutputComputingData Deserialize(const char* inRawData);
 	};
+
+
+	template<>
+	class FC_WEB_API WebDataSerializer<AgentsIds>
+	{
+	public:
+		static size_t Serialize(const AgentsIds& inData, char*& outRawData);
+		static AgentsIds Deserialize(const char* inRawData);
+	};
 }

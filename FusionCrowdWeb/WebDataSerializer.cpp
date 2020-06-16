@@ -37,14 +37,14 @@ namespace FusionCrowdWeb
 	size_t WebDataSerializer<InputComputingData>::Serialize(const InputComputingData& inData, char*& outRawData)
 	{
 		size_t dataSize = sizeof(float)
-			+ SimpleDataSerializer<FCArray<AgentInitData>>::SizeOf(inData.NewAgents)
-			+ SimpleDataSerializer<FCArray<AgentInitData>>::SizeOf(inData.BoundaryAgents);
+			+ SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.NewAgents)
+			+ SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.BoundaryAgents);
 		outRawData = new char[dataSize];
 		auto iter = outRawData;
 
 		SimpleDataSerializer<float>::Serialize(inData.TimeStep, iter);
-		SimpleDataSerializer<FCArray<AgentInitData>>::Serialize(inData.NewAgents, iter);
-		SimpleDataSerializer<FCArray<AgentInitData>>::Serialize(inData.BoundaryAgents, iter);
+		SimpleDataSerializer<FCArray<AgentInfo>>::Serialize(inData.NewAgents, iter);
+		SimpleDataSerializer<FCArray<AgentInfo>>::Serialize(inData.BoundaryAgents, iter);
 
 		return dataSize;
 	}
@@ -55,8 +55,8 @@ namespace FusionCrowdWeb
 		InputComputingData result;
 
 		result.TimeStep = SimpleDataSerializer<float>::Deserialize(inRawData);
-		result.NewAgents = SimpleDataSerializer<FCArray<AgentInitData>>::Deserialize(inRawData);
-		result.BoundaryAgents = SimpleDataSerializer<FCArray<AgentInitData>>::Deserialize(inRawData);
+		result.NewAgents = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
+		result.BoundaryAgents = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
 
 		return std::move(result);
 	}
@@ -82,6 +82,28 @@ namespace FusionCrowdWeb
 
 		result.AgentInfos = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
 		result.DisplacedAgents = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
+
+		return std::move(result);
+	}
+
+
+	size_t WebDataSerializer<AgentsIds>::Serialize(const AgentsIds& inData, char*& outRawData)
+	{
+		size_t dataSize = SimpleDataSerializer<FCArray<size_t>>::SizeOf(inData.Values);
+		outRawData = new char[dataSize];
+		auto iter = outRawData;
+
+		SimpleDataSerializer<FCArray<size_t>>::Serialize(inData.Values, iter);
+
+		return dataSize;
+	}
+
+
+	AgentsIds WebDataSerializer<AgentsIds>::Deserialize(const char* inRawData)
+	{
+		AgentsIds result;
+
+		result.Values = SimpleDataSerializer<FCArray<size_t>>::Deserialize(inRawData);
 
 		return std::move(result);
 	}

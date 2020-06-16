@@ -120,15 +120,15 @@ namespace FusionCrowdWeb
 
 
 	InputComputingData::InputComputingData()
-		: NewAgents(FCArray<AgentInitData>(0)),
-		BoundaryAgents(FCArray<AgentInitData>(0))
+		: NewAgents(FCArray<FusionCrowd::AgentInfo>(0)),
+		BoundaryAgents(FCArray<FusionCrowd::AgentInfo>(0))
 	{
 	}
 
 
 	InputComputingData::InputComputingData(float inTimeStep)
-		: TimeStep(inTimeStep), NewAgents(FCArray<AgentInitData>(0)),
-		BoundaryAgents(FCArray<AgentInitData>(0))
+		: TimeStep(inTimeStep), NewAgents(FCArray<FusionCrowd::AgentInfo>(0)),
+		BoundaryAgents(FCArray<FusionCrowd::AgentInfo>(0))
 	{
 	}
 
@@ -142,6 +142,16 @@ namespace FusionCrowdWeb
 
 	OutputComputingData::OutputComputingData(FCArray<FusionCrowd::AgentInfo> inAgentInfos)
 		: AgentInfos(inAgentInfos), DisplacedAgents(FCArray<FusionCrowd::AgentInfo>(0))
+	{
+	}
+
+
+	AgentsIds::AgentsIds() : Values(FCArray<size_t>(0))
+	{
+	}
+
+
+	AgentsIds::AgentsIds(size_t inNum) : Values(FCArray<size_t>(inNum))
 	{
 	}
 }

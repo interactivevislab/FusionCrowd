@@ -54,12 +54,18 @@ namespace FusionCrowdWeb
 		_simulator->SetIsRecording(false);
 
 		//initing agents
-		for (auto& agentData : data.AgentsData)
+		auto agentsNum = data.AgentsData.size();
+		AgentsIds agentIds(agentsNum);
+		for (int i = 0; i < agentsNum; i++)
 		{
+			auto& agentData = data.AgentsData[i];
 			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 1, 10,
 				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
 			_simulator->SetAgentGoal(agentId, Point(agentData.GoalX, agentData.GoalY));
+			agentIds.Values[i] = agentId;
 		}
+
+		Send(_mainServerId, ResponseCode::Success, agentIds);
 	}
 
 
@@ -74,19 +80,23 @@ namespace FusionCrowdWeb
 		auto inData = WebDataSerializer<InputComputingData>::Deserialize(request.second);
 
 		//adding agents
-		for (auto& agentData : inData.NewAgents)
+		auto newAgentsNum = inData.NewAgents.size();
+		AgentsIds newAgentIds(newAgentsNum);
+		for (int i = 0; i < newAgentsNum; i++)
 		{
-			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 1, 10,
+			auto& agentData = inData.NewAgents[i];
+			auto agentId = _simulator->AddAgent(agentData.posX, agentData.posY, 1, 10,
 				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
-			_simulator->SetAgentGoal(agentId, Point(agentData.GoalX, agentData.GoalY));
+			_simulator->SetAgentGoal(agentId, Point(agentData.goalX, agentData.goalY));
+			newAgentIds.Values[i] = agentId;
 		}
 
-		std::vector<int> boundaryAgentsIds;
+		std::vector<size_t> boundaryAgentsIds;
 		for (auto& agentData : inData.BoundaryAgents)
 		{
-			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 1, 10,
+			auto agentId = _simulator->AddAgent(agentData.posX, agentData.posY, 1, 10,
 				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
-			_simulator->SetAgentGoal(agentId, Point(agentData.GoalX, agentData.GoalY));
+			_simulator->SetAgentGoal(agentId, Point(agentData.goalX, agentData.goalY));
 			boundaryAgentsIds.push_back(agentId);
 		}
 
@@ -124,5 +134,6 @@ namespace FusionCrowdWeb
 		}
 
 		Send(_mainServerId, ResponseCode::Success, outData);
+		Send(_mainServerId, ResponseCode::Success, newAgentIds);
 	}
 }
