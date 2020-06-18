@@ -9,19 +9,7 @@ namespace FusionCrowdWeb
 {
 	void FusionCrowdClient::ConnectToMainServer(WebAddress inAddress)
 	{
-		bool connected = false;
-		while (!connected)
-		{
-			try
-			{
-				_mainServerId = ConnectToServer(inAddress);
-				connected = true;
-			}
-			catch (...)
-			{
-				//connect error - try again
-			}
-		}
+		_mainServerId = WaitForConnectionToServer(inAddress);
 	}
 
 
@@ -41,12 +29,7 @@ namespace FusionCrowdWeb
 	{
 		Send(_mainServerId, RequestCode::DoStep, inComputingData);
 
-		auto request = Receive(_mainServerId);
-		if (request.first.AsResponseCode != ResponseCode::Success)
-		{
-			throw FcWebException("ResponseError");
-		}
-		auto result = WebDataSerializer<OutputComputingData>::Deserialize(request.second);
+		auto result = Receive<OutputComputingData>(_mainServerId, ResponseCode::Success, "ResponseError");
 
 		return result;
 	}

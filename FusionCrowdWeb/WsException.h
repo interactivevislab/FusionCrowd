@@ -13,12 +13,12 @@ namespace FusionCrowdWeb
 	public:
 
 		FcWebException() noexcept;
-		FcWebException(char const* const _Message) noexcept;
-		FcWebException(FcWebException const& _Other) noexcept;
+		FcWebException(char const* const inMessage) noexcept;
+		FcWebException(FcWebException const& inOther) noexcept;
 
 		virtual ~FcWebException() noexcept;
 
-		FcWebException& operator=(FcWebException const& _Other) noexcept;
+		FcWebException& operator=(FcWebException const& inOther) noexcept;
 
 		virtual char const* What() const;
 

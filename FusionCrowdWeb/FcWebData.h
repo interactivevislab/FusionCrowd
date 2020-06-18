@@ -9,9 +9,6 @@
 
 namespace FusionCrowdWeb
 {
-	using FusionCrowd::FCArray;
-
-
 	struct FC_WEB_API AgentInitData
 	{
 		float X, Y;
@@ -21,16 +18,20 @@ namespace FusionCrowdWeb
 
 	struct FC_WEB_API NavMeshRegion
 	{
+	public:
 		float CenterX, CenterY;
 		float Width = -1, Height = -1;
 
-		NavMeshRegion();
+		NavMeshRegion() = default;
 		NavMeshRegion(const std::string& inNavMeshPath);
+
 		bool IsPointInside(float inX, float inY);
 		bool IsPointInsideBoundaryZone(float inX, float inY, float inBoundaryZoneDepth);
-		void Split(size_t inNumParts, std::vector<NavMeshRegion>& outParts);
+
 		std::vector<NavMeshRegion> Split(size_t inNumParts);
-		bool IsValid();
+
+	private:
+		void Split(size_t inNumParts, std::vector<NavMeshRegion>& outParts);
 	};
 
 
@@ -38,10 +39,10 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API InitComputingData
 	{
 		InitComputingData();
-		InitComputingData(const std::string& inNavMeshFileName, FCArray<AgentInitData> inAgentsData);
+		InitComputingData(const std::string& inNavMeshFileName, FusionCrowd::FCArray<AgentInitData> inAgentsData);
 
 		FcFileWrapper NavMeshFile;
-		FCArray<AgentInitData> AgentsData;
+		FusionCrowd::FCArray<AgentInitData> AgentsData;
 
 		NavMeshRegion NavMeshRegion;
 	};
@@ -55,8 +56,8 @@ namespace FusionCrowdWeb
 
 		float TimeStep;
 
-		FCArray<FusionCrowd::AgentInfo> NewAgents;
-		FCArray<FusionCrowd::AgentInfo> BoundaryAgents;
+		FusionCrowd::FCArray<FusionCrowd::AgentInfo> NewAgents;
+		FusionCrowd::FCArray<FusionCrowd::AgentInfo> BoundaryAgents;
 	};
 
 
@@ -64,11 +65,11 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API OutputComputingData
 	{
 		OutputComputingData();
-		OutputComputingData(FCArray<FusionCrowd::AgentInfo> inAgentInfos);
+		OutputComputingData(FusionCrowd::FCArray<FusionCrowd::AgentInfo> inAgentInfos);
 
-		FCArray<FusionCrowd::AgentInfo> AgentInfos;
+		FusionCrowd::FCArray<FusionCrowd::AgentInfo> AgentInfos;
 
-		FCArray<FusionCrowd::AgentInfo> DisplacedAgents;
+		FusionCrowd::FCArray<FusionCrowd::AgentInfo> DisplacedAgents;
 	};
 
 
@@ -78,6 +79,6 @@ namespace FusionCrowdWeb
 		AgentsIds();
 		AgentsIds(size_t inNum);
 
-		FCArray<size_t> Values;
+		FusionCrowd::FCArray<size_t> Values;
 	};
 }

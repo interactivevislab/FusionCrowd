@@ -64,7 +64,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	int WebNode::ConnectToServer(WebAddress inAddress)
+	int WebNode::TryConnectToServer(WebAddress inAddress)
 	{
 		auto connectedSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(connectedSocket, "TCP socket creation failed");
@@ -77,6 +77,22 @@ namespace FusionCrowdWeb
 		}
 
 		return SaveConnectedSocket(connectedSocket);
+	}
+
+
+	int WebNode::WaitForConnectionToServer(WebAddress inAddress)
+	{
+		while (true)
+		{
+			try
+			{
+				return TryConnectToServer(inAddress);
+			}
+			catch (WsException e)
+			{
+				//connection error - try again
+			}
+		}
 	}
 
 
@@ -116,7 +132,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	std::pair<WebCode, const char*> WebNode::Receive(int inSocketId)
+	WebMessage WebNode::Receive(int inSocketId)
 	{
 		auto srcSocket = GetConnectedSocket(inSocketId);
 
@@ -146,11 +162,11 @@ namespace FusionCrowdWeb
 				bytesleft -= bytesRecieved;
 			}
 
-			return std::make_pair(messageHead.WebCode, _receiveBuffer);
+			return WebMessage { messageHead.WebCode, _receiveBuffer };
 		}
 		else
 		{
-			return std::make_pair(messageHead.WebCode, nullptr);
+			return WebMessage { messageHead.WebCode, nullptr };
 		}
 	}
 
@@ -167,11 +183,12 @@ namespace FusionCrowdWeb
 		auto clientSocketData = _connectedSockets.find(inSocketId);
 		if (clientSocketData == _connectedSockets.end())
 		{
-			throw FcWebException("Wrong client id");
+			throw FcWebException("Wrong socket id");
 		}
 
 		return clientSocketData->second;
 	}
+
 
 	std::vector<int> WebNode::GetAllConnectedSocketsIds()
 	{

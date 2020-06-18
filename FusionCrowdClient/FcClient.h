@@ -7,8 +7,6 @@
 
 namespace FusionCrowdWeb
 {
-	//using namespace FusionCrowd;
-
 	class FC_CLIENT_API FusionCrowdClient : public WebNode
 	{
 	public:

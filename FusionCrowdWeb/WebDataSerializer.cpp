@@ -4,10 +4,10 @@
 
 namespace FusionCrowdWeb
 {
-	using namespace FusionCrowd;
-
 	size_t WebDataSerializer<InitComputingData>::Serialize(const InitComputingData& inData, char*& outRawData)
 	{
+		using namespace FusionCrowd;
+
 		size_t dataSize = inData.NavMeshFile.GetSize()
 			+ SimpleDataSerializer<FCArray<AgentInitData>>::SizeOf(inData.AgentsData)
 			+ sizeof(NavMeshRegion);
@@ -24,6 +24,8 @@ namespace FusionCrowdWeb
 
 	InitComputingData WebDataSerializer<InitComputingData>::Deserialize(const char* inRawData)
 	{
+		using namespace FusionCrowd;
+
 		InitComputingData result;
 
 		result.NavMeshFile.ReadFromMemory(inRawData);
@@ -36,6 +38,8 @@ namespace FusionCrowdWeb
 
 	size_t WebDataSerializer<InputComputingData>::Serialize(const InputComputingData& inData, char*& outRawData)
 	{
+		using namespace FusionCrowd;
+
 		size_t dataSize = sizeof(float)
 			+ SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.NewAgents)
 			+ SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.BoundaryAgents);
@@ -52,6 +56,8 @@ namespace FusionCrowdWeb
 
 	InputComputingData WebDataSerializer<InputComputingData>::Deserialize(const char* inRawData)
 	{
+		using namespace FusionCrowd;
+
 		InputComputingData result;
 
 		result.TimeStep = SimpleDataSerializer<float>::Deserialize(inRawData);
@@ -64,6 +70,8 @@ namespace FusionCrowdWeb
 
 	size_t WebDataSerializer<OutputComputingData>::Serialize(const OutputComputingData& inData, char*& outRawData)
 	{
+		using namespace FusionCrowd;
+
 		size_t dataSize = SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.AgentInfos)
 			+ SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.DisplacedAgents);
 		outRawData = new char[dataSize];
@@ -78,6 +86,8 @@ namespace FusionCrowdWeb
 
 	OutputComputingData WebDataSerializer<OutputComputingData>::Deserialize(const char* inRawData)
 	{
+		using namespace FusionCrowd;
+
 		OutputComputingData result;
 
 		result.AgentInfos = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
@@ -89,6 +99,8 @@ namespace FusionCrowdWeb
 
 	size_t WebDataSerializer<AgentsIds>::Serialize(const AgentsIds& inData, char*& outRawData)
 	{
+		using namespace FusionCrowd;
+
 		size_t dataSize = SimpleDataSerializer<FCArray<size_t>>::SizeOf(inData.Values);
 		outRawData = new char[dataSize];
 		auto iter = outRawData;
@@ -101,6 +113,8 @@ namespace FusionCrowdWeb
 
 	AgentsIds WebDataSerializer<AgentsIds>::Deserialize(const char* inRawData)
 	{
+		using namespace FusionCrowd;
+
 		AgentsIds result;
 
 		result.Values = SimpleDataSerializer<FCArray<size_t>>::Deserialize(inRawData);

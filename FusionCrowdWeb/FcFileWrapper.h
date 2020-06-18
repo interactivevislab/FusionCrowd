@@ -10,7 +10,7 @@ namespace FusionCrowdWeb
 	class FC_WEB_API FcFileWrapper
 	{
 	public:
-		FcFileWrapper();
+		FcFileWrapper() = default;
 		explicit FcFileWrapper(const std::string& inFileName);
 
 		FcFileWrapper(FcFileWrapper &&);

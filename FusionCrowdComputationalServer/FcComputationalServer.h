@@ -3,21 +3,13 @@
 #include "FcComputationalServerApi.h"
 #include "Export/Export.h"
 #include "WebNode.h"
-#include "WebMessage.h"
-
-#include <memory>
-#include <vector>
 
 
 namespace FusionCrowdWeb
 {
-	using namespace FusionCrowd;
-
 	class FC_COMPUTATIONAL_SERVER_API FcComputationalServer : public WebNode
 	{
 	public:
-		void StartServer(WebAddress inAddress) override;
-
 		void AcceptMainServerConnection();
 		void InitComputation();
 		void ProcessComputationRequest();
@@ -25,8 +17,8 @@ namespace FusionCrowdWeb
 	private:
 		int _mainServerId;
 
-		std::shared_ptr<ISimulatorBuilder> _builder;
-		std::shared_ptr<ISimulatorFacade> _simulator;
+		std::shared_ptr<FusionCrowd::ISimulatorBuilder> _builder;
+		std::shared_ptr<FusionCrowd::ISimulatorFacade> _simulator;
 
 		NavMeshRegion _navMeshRegion;
 	};

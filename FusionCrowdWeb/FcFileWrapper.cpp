@@ -8,10 +8,6 @@
 
 namespace FusionCrowdWeb
 {
-	FcFileWrapper::FcFileWrapper()
-	{
-	}
-
 	FcFileWrapper::FcFileWrapper(const std::string& inFileName)
 	{
 		SetFileName(inFileName);
@@ -28,30 +24,31 @@ namespace FusionCrowdWeb
 
 	inline FcFileWrapper::FcFileWrapper(FcFileWrapper&& other)
 	{
-		_fileName = other._fileName;
-		_fileData = other._fileData;
-		_fileNameSize = other._fileNameSize;
-		_fileDataSize = other._fileDataSize;
+		_fileName		= other._fileName;
+		_fileData		= other._fileData;
+		_fileNameSize	= other._fileNameSize;
+		_fileDataSize	= other._fileDataSize;
 
-		other._fileName = nullptr;
-		other._fileData = nullptr;
-		other._fileNameSize = 0;
-		other._fileDataSize = 0;
+		other._fileName		= nullptr;
+		other._fileData		= nullptr;
+		other._fileNameSize	= 0;
+		other._fileDataSize	= 0;
 	}
+
 
 	inline FcFileWrapper& FcFileWrapper::operator=(FcFileWrapper&& other)
 	{
 		if (this != &other)
 		{
-			_fileName = other._fileName;
-			_fileData = other._fileData;
-			_fileNameSize = other._fileNameSize;
-			_fileDataSize = other._fileDataSize;
+			_fileName		= other._fileName;
+			_fileData		= other._fileData;
+			_fileNameSize	= other._fileNameSize;
+			_fileDataSize	= other._fileDataSize;
 
-			other._fileName = nullptr;
-			other._fileData = nullptr;
-			other._fileNameSize = 0;
-			other._fileDataSize = 0;
+			other._fileName		= nullptr;
+			other._fileData		= nullptr;
+			other._fileNameSize	= 0;
+			other._fileDataSize	= 0;
 		}
 
 		return *this;

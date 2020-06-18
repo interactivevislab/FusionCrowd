@@ -6,7 +6,6 @@
 #include "WebDataSerializer.h"
 #include "WebMessage.h"
 
-#include <utility>
 #include <WinSock2.h>
 #include <map>
 #include <vector>
@@ -29,12 +28,13 @@ namespace FusionCrowdWeb
 	public:
 		~WebNode();
 
-		virtual void StartServer(WebAddress inAddress);
-		virtual void ShutdownServer();
+		void StartServer(WebAddress inAddress);
+		void ShutdownServer();
 
-		virtual int AcceptInputConnection();
-		virtual int ConnectToServer(WebAddress inAddress);
-		virtual void Disconnect(int inSocketId);
+		int AcceptInputConnection();
+		int TryConnectToServer(WebAddress inAddress);
+		int WaitForConnectionToServer(WebAddress inAddress);
+		void Disconnect(int inSocketId);
 
 		void Send(int inSocketId, WebCode inWebCode, const char* inData, size_t inDataSize);
 		void Send(int inSocketId, WebCode inWebCode);
@@ -48,7 +48,18 @@ namespace FusionCrowdWeb
 			delete[] rawData;
 		}
 
-		std::pair<WebCode, const char*> Receive(int inSocketId);
+		WebMessage Receive(int inSocketId);
+
+		template<typename DataType>
+		DataType Receive(int inSocketId, WebCode inExpectedWebCode, char const* inErrorMessage)
+		{
+			auto message = Receive(inSocketId);
+			if (message.WebCode.AsResponseCode != inExpectedWebCode.AsResponseCode)
+			{
+				throw FcWebException(inErrorMessage);
+			}
+			return WebDataSerializer<DataType>::Deserialize(message.Data);
+		}
 
 		static void GlobalStartup();
 		static void GlobalCleanup();

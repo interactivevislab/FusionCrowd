@@ -9,30 +9,12 @@
 
 namespace FusionCrowdWeb
 {
-	void FcMainServer::StartServer(WebAddress inAddress)
-	{
-		WebNode::StartServer(inAddress);
-	}
-
-
 	void FcMainServer::ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses)
 	{
 		for (auto address : inAddresses)
 		{
-			bool connected = false;
-			while (!connected)
-			{
-				try
-				{
-					auto serverId = ConnectToServer(address);
-					_computationalServersIds.push_back(serverId);
-					connected = true;
-				}
-				catch (...)
-				{
-					//connect error - try again
-				}
-			}
+			auto serverId = WaitForConnectionToServer(address);
+			_computationalServersIds.push_back(serverId);
 		}
 	}
 
@@ -55,14 +37,9 @@ namespace FusionCrowdWeb
 
 	void FcMainServer::InitComputation()
 	{
-		//reception init data
-		auto request = Receive(_clientId);
-		if (request.first.AsRequestCode != RequestCode::InitSimulation)
-		{
-			throw FcWebException("RequestError");
-		}
-		auto initData = WebDataSerializer<InitComputingData>::Deserialize(request.second);
-		
+		//reception init data	
+		auto initData = Receive<InitComputingData>(_clientId, RequestCode::InitSimulation, "RequestError");
+
 		//init data processing
 		auto navMeshFileName = FcFileWrapper::GetFullNameForResource("ms_navmesh.nav");
 		initData.NavMeshFile.Unwrap(navMeshFileName);
@@ -76,7 +53,7 @@ namespace FusionCrowdWeb
 		}
 
 		std::map<int, std::vector<AgentInitData>> initAgentsDataParts;
-		for (auto agentInitData : initData.AgentsData)
+		for (auto& agentInitData : initData.AgentsData)
 		{
 			for (auto serverId : _computationalServersIds)
 			{
@@ -92,7 +69,7 @@ namespace FusionCrowdWeb
 		for (auto serverId : _computationalServersIds)
 		{
 			auto& agentsData = initAgentsDataParts[serverId];
-			initData.AgentsData = FCArray<AgentInitData>(agentsData.size());
+			initData.AgentsData = FusionCrowd::FCArray<AgentInitData>(agentsData.size());
 			for (int i = 0; i < agentsData.size(); i++)
 			{
 				initData.AgentsData[i] = agentsData[i];
@@ -106,13 +83,7 @@ namespace FusionCrowdWeb
 		//reception agents ids
 		for (auto serverId : _computationalServersIds)
 		{
-			auto initResponce = Receive(serverId);
-			if (request.first.AsResponseCode != ResponseCode::Success)
-			{
-				throw FcWebException("RequestError");
-			}
-			auto agentIds = WebDataSerializer<AgentsIds>::Deserialize(initResponce.second);
-
+			auto agentIds = Receive<AgentsIds>(serverId, ResponseCode::Success, "ResponseError");
 			for (auto id : agentIds.Values)
 			{
 				_agentsIds[serverId][id] = _freeId++;
@@ -123,17 +94,15 @@ namespace FusionCrowdWeb
 
 	void FcMainServer::ProcessComputationRequest()
 	{
+		using FusionCrowd::FCArray;
+		using FusionCrowd::AgentInfo;
+
 		//reception input data
-		auto request = Receive(_clientId);
-		if (request.first.AsRequestCode != RequestCode::DoStep)
-		{
-			throw FcWebException("RequestError");
-		}
-		auto inData = WebDataSerializer<InputComputingData>::Deserialize(request.second);
+		auto inData = Receive<InputComputingData>(_clientId, RequestCode::DoStep, "RequestError");
 
 		//input data processing
 		std::map<int, std::vector<AgentInfo>> newAgentsDataParts;
-		for (auto displacedAgent : _displacedAgents)
+		for (auto& displacedAgent : _displacedAgents)
 		{
 			for (auto serverId : _computationalServersIds)
 			{
@@ -146,7 +115,7 @@ namespace FusionCrowdWeb
 		}
 
 		std::map<int, std::vector<AgentInfo>> boundaryAgentsDataParts;
-		for (auto agent : _allAgents)
+		for (auto& agent : _allAgents)
 		{
 			for (auto serverId : _computationalServersIds)
 			{
@@ -184,22 +153,13 @@ namespace FusionCrowdWeb
 		size_t agentsNum = 0;
 		for (auto serverId : _computationalServersIds)
 		{
-			request = Receive(serverId);
-			if (request.first.AsResponseCode != ResponseCode::Success)
-			{
-				throw FcWebException("ResponseError");
-			}
-			auto outDataPart = WebDataSerializer<OutputComputingData>::Deserialize(request.second);
-			agentsNum += outDataPart.AgentInfos.size() + outDataPart.DisplacedAgents.size();
+			auto outDataPart = Receive<OutputComputingData>(serverId, ResponseCode::Success, "ResponseError");
 			outDataParts[serverId] = outDataPart;
 
-			request = Receive(serverId);
-			if (request.first.AsResponseCode != ResponseCode::Success)
-			{
-				throw FcWebException("ResponseError");
-			}
-			auto newAgentIds = WebDataSerializer<AgentsIds>::Deserialize(request.second);
+			auto newAgentIds = Receive<AgentsIds>(serverId, ResponseCode::Success, "ResponseError");
 			outNewAgentIds[serverId] = newAgentIds;
+
+			agentsNum += outDataPart.AgentInfos.size() + outDataPart.DisplacedAgents.size();
 		}
 
 		//id updating
@@ -207,8 +167,6 @@ namespace FusionCrowdWeb
 		{
 			std::vector<AgentInfo>& currentDisplacedAgents = newAgentsDataParts[serverId];
 			FCArray<size_t>& currentDisplacedAgentsIds = outNewAgentIds[serverId].Values;
-			FCArray<AgentInfo>& newDisplacedAgents = outDataParts[serverId].DisplacedAgents;
-
 			for (int i = 0; i < currentDisplacedAgents.size(); i++)
 			{
 				auto displacedAgent = currentDisplacedAgents[i];
@@ -216,7 +174,7 @@ namespace FusionCrowdWeb
 				_agentsIds[serverId][newId] = displacedAgent.id;
 			}
 
-			for (auto& newDisplacedAgent : newDisplacedAgents)
+			for (auto& newDisplacedAgent : outDataParts[serverId].DisplacedAgents)
 			{
 				auto oldId = newDisplacedAgent.id;
 				newDisplacedAgent.id = _agentsIds[serverId][oldId];
@@ -230,14 +188,14 @@ namespace FusionCrowdWeb
 		_displacedAgents.clear();
 		for (auto& outDataPart : outDataParts)
 		{
-			auto serverId = outDataPart.first;
-			auto& data = outDataPart.second;
-			for (auto agentInfo : data.AgentInfos)
+			auto serverId	= outDataPart.first;
+			auto& data		= outDataPart.second;
+			for (auto& agentInfo : data.AgentInfos)
 			{
 				agentInfo.id = _agentsIds[serverId][agentInfo.id];
 				_allAgents[infoIndex++] = agentInfo;
 			}
-			for (auto agentInfo : data.DisplacedAgents)
+			for (auto& agentInfo : data.DisplacedAgents)
 			{
 				_allAgents[infoIndex++] = agentInfo;
 				_displacedAgents.push_back(agentInfo);

@@ -9,12 +9,6 @@
 
 namespace FusionCrowdWeb
 {
-	void FcComputationalServer::StartServer(WebAddress inAddress)
-	{
-		WebNode::StartServer(inAddress);
-	}
-
-
 	void FcComputationalServer::AcceptMainServerConnection()
 	{
 		_mainServerId = AcceptInputConnection();
@@ -23,18 +17,14 @@ namespace FusionCrowdWeb
 
 	void FcComputationalServer::InitComputation()
 	{
+		using namespace FusionCrowd;
+
 		//reading data
-		auto request = Receive(_mainServerId);
-		if (request.first.AsRequestCode != RequestCode::InitSimulation)
-		{
-			throw FcWebException("RequestError");
-		}
-		auto data = WebDataSerializer<InitComputingData>::Deserialize(request.second);
+		auto data = Receive<InitComputingData>(_mainServerId, RequestCode::InitSimulation, "RequestError");
 		_navMeshRegion = data.NavMeshRegion;
 
 		//initing simulation
-		_builder = std::shared_ptr<ISimulatorBuilder>(BuildSimulator(), [](ISimulatorBuilder* inBuilder)
-		{
+		_builder = std::shared_ptr<ISimulatorBuilder>(BuildSimulator(), [](ISimulatorBuilder* inBuilder) {
 			BuilderDeleter(inBuilder);
 		});
 
@@ -47,8 +37,7 @@ namespace FusionCrowdWeb
 
 		_builder->WithNavMesh(data.NavMeshFile.GetFileName());
 
-		_simulator = std::shared_ptr<ISimulatorFacade>(_builder->Build(), [](ISimulatorFacade* inSimulatorFacade)
-		{
+		_simulator = std::shared_ptr<ISimulatorFacade>(_builder->Build(), [](ISimulatorFacade* inSimulatorFacade) {
 			SimulatorFacadeDeleter(inSimulatorFacade);
 		});
 		_simulator->SetIsRecording(false);
@@ -71,13 +60,10 @@ namespace FusionCrowdWeb
 
 	void FcComputationalServer::ProcessComputationRequest()
 	{
+		using namespace FusionCrowd;
+
 		//reading data
-		auto request = Receive(_mainServerId);
-		if (request.first.AsRequestCode != RequestCode::DoStep)
-		{
-			throw FcWebException("RequestError");
-		}
-		auto inData = WebDataSerializer<InputComputingData>::Deserialize(request.second);
+		auto inData = Receive<InputComputingData>(_mainServerId, RequestCode::DoStep, "RequestError");
 
 		//adding agents
 		auto newAgentsNum = inData.NewAgents.size();

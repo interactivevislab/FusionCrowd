@@ -5,11 +5,6 @@
 
 namespace FusionCrowdWeb
 {
-	NavMeshRegion::NavMeshRegion()
-	{
-	}
-
-
 	NavMeshRegion::NavMeshRegion(const std::string& inNavMeshPath)
 	{
 		using namespace FusionCrowd;
@@ -33,26 +28,28 @@ namespace FusionCrowdWeb
 			minY = vertex.Y < minY ? vertex.Y : minY;
 		}
 
-		CenterX = (maxX + minX) / 2;
-		CenterY = (maxY + minY) / 2;
-		Width = maxX - minX;
-		Height = maxY - minY;
+		CenterX	= (maxX + minX) / 2;
+		CenterY	= (maxY + minY) / 2;
+		Width	= maxX - minX;
+		Height	= maxY - minY;
 	}
 
 
 	bool NavMeshRegion::IsPointInside(float inX, float inY)
 	{
-		return (inX > CenterX - Width / 2) && (inX < CenterX + Width / 2)
-			&& (inY > CenterY - Height / 2) && (inY < CenterY + Height / 2);
+		return (inX > CenterX - Width / 2)
+			&& (inX < CenterX + Width / 2)
+			&& (inY > CenterY - Height / 2)
+			&& (inY < CenterY + Height / 2);
 	}
 
 
 	bool NavMeshRegion::IsPointInsideBoundaryZone(float inX, float inY, float inBoundaryZoneDepth)
 	{
 		auto regionCopy = *this;
-		regionCopy.Width += inBoundaryZoneDepth;
-		regionCopy.Height += inBoundaryZoneDepth;
-		return regionCopy.IsPointInside(inX, inY) && !IsPointInside(inX, inY);
+		regionCopy.Width	+= inBoundaryZoneDepth;
+		regionCopy.Height	+= inBoundaryZoneDepth;
+		return (regionCopy.IsPointInside(inX, inY)) && (!IsPointInside(inX, inY));
 	}
 
 
@@ -68,8 +65,10 @@ namespace FusionCrowdWeb
 		float share = static_cast<float>(inNumParts / 2) / inNumParts;
 		if (Width > Height)
 		{
-			part1.CenterY = part2.CenterY = CenterY;
-			part1.Height = part2.Height = Height;
+			part1.CenterY	= CenterY;
+			part2.CenterY	= CenterY;
+			part1.Height	= Height;
+			part2.Height	= Height;
 
 			part1.Width = share * Width;
 			part2.Width = Width - part1.Width;
@@ -79,8 +78,10 @@ namespace FusionCrowdWeb
 		}
 		else
 		{
-			part1.CenterX = part2.CenterX = CenterX;
-			part1.Width = part2.Width = Width;
+			part1.CenterX	= CenterX;
+			part2.CenterX	= CenterX;
+			part1.Width		= Width;
+			part2.Width		= Width;
 
 			part1.Height = share * Height;
 			part2.Height = Height - part1.Height;
@@ -102,56 +103,51 @@ namespace FusionCrowdWeb
 	}
 
 
-	bool NavMeshRegion::IsValid()
-	{
-		return (Width > 0) && (Height > 0);
-	}
-
-
-	InitComputingData::InitComputingData() : AgentsData(FCArray<AgentInitData>(0))
+	InitComputingData::InitComputingData() : AgentsData(FusionCrowd::FCArray<AgentInitData>(0))
 	{
 	}
 
 
-	InitComputingData::InitComputingData(const std::string& inNavMeshFileName, FCArray<AgentInitData> inAgentsData)
+	InitComputingData::InitComputingData(const std::string& inNavMeshFileName, 
+		FusionCrowd::FCArray<AgentInitData> inAgentsData)
 		: NavMeshFile(inNavMeshFileName), AgentsData(inAgentsData)
 	{
 	}
 
 
 	InputComputingData::InputComputingData()
-		: NewAgents(FCArray<FusionCrowd::AgentInfo>(0)),
-		BoundaryAgents(FCArray<FusionCrowd::AgentInfo>(0))
+		: NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
+		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
 	{
 	}
 
 
 	InputComputingData::InputComputingData(float inTimeStep)
-		: TimeStep(inTimeStep), NewAgents(FCArray<FusionCrowd::AgentInfo>(0)),
-		BoundaryAgents(FCArray<FusionCrowd::AgentInfo>(0))
+		: TimeStep(inTimeStep), NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
+		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
 	{
 	}
 
 
 	OutputComputingData::OutputComputingData()
-		: AgentInfos(FCArray<FusionCrowd::AgentInfo>(0)), 
-		DisplacedAgents(FCArray<FusionCrowd::AgentInfo>(0))
+		: AgentInfos(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
+		DisplacedAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
 	{
 	}
 
 
-	OutputComputingData::OutputComputingData(FCArray<FusionCrowd::AgentInfo> inAgentInfos)
-		: AgentInfos(inAgentInfos), DisplacedAgents(FCArray<FusionCrowd::AgentInfo>(0))
+	OutputComputingData::OutputComputingData(FusionCrowd::FCArray<FusionCrowd::AgentInfo> inAgentInfos)
+		: AgentInfos(inAgentInfos), DisplacedAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
 	{
 	}
 
 
-	AgentsIds::AgentsIds() : Values(FCArray<size_t>(0))
+	AgentsIds::AgentsIds() : Values(FusionCrowd::FCArray<size_t>(0))
 	{
 	}
 
 
-	AgentsIds::AgentsIds(size_t inNum) : Values(FCArray<size_t>(inNum))
+	AgentsIds::AgentsIds(size_t inNum) : Values(FusionCrowd::FCArray<size_t>(inNum))
 	{
 	}
 }

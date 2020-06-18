@@ -11,11 +11,13 @@ namespace FusionCrowdWeb
 		DoStep
 	};
 
+
 	enum FC_WEB_API ResponseCode : unsigned char
 	{
 		Success,
 		Error
 	};
+
 
 	union FC_WEB_API WebCode
 	{
@@ -27,9 +29,17 @@ namespace FusionCrowdWeb
 		WebCode(ResponseCode inResponseCode) : AsResponseCode(inResponseCode) {}
 	};
 
+
 	struct FC_WEB_API WebMessageHead
 	{
 		WebCode WebCode;
 		size_t MessageLength;
+	};
+
+
+	struct FC_WEB_API WebMessage
+	{
+		WebCode WebCode;
+		const char* Data;
 	};
 }
