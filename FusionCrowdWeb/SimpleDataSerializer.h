@@ -5,10 +5,21 @@
 
 namespace FusionCrowdWeb
 {
+	/**
+	* \class SimpleDataSerializer
+	* \brief Class for simple data types (fundamental types, structs and so on) serialization.
+	*/
 	template<typename T>
 	class SimpleDataSerializer
 	{
 	public:
+		/**
+		* \fn Serialize
+		* \brief Serializes data and writes it to memory.
+		*
+		* @param inData				Data for serialization.
+		* @param outMemoryIterator	In-memory iterator for writing data.
+		*/
 		static void Serialize(const T& inData, char*& outMemoryIterator)
 		{
 			size_t size = sizeof(T);
@@ -17,6 +28,14 @@ namespace FusionCrowdWeb
 		}
 
 
+		/**
+		* \fn Deserialize
+		* \brief Reads data from memory and deserializes it.
+		*
+		* @param outMemoryIterator	In-memory iterator for reading data.
+		*
+		* @return Deserialized data.
+		*/
 		static T Deserialize(const char*& outMemoryIterator)
 		{
 			T data = *reinterpret_cast<const T*>(outMemoryIterator);
@@ -26,6 +45,7 @@ namespace FusionCrowdWeb
 	};
 
 
+	/** SimpleDataSerializer specialization for FusionCrowd::FCArray. */
 	template<typename T>
 	class SimpleDataSerializer<FusionCrowd::FCArray<T>>
 	{

@@ -7,15 +7,35 @@
 
 namespace FusionCrowdWeb
 {
+	/**
+	* \class SimpleDataSerializer
+	* \brief Class for special web data types serialization.
+	*/
 	template<typename T>
 	class WebDataSerializer
 	{
 	public:
+		/**
+		* \fn Serialize
+		* \brief Serializes data and writes it to memory.
+		*
+		* @param inData		Data for serialization.
+		* @param outRawData	In-memory iterator for writing data.
+		*/
 		static size_t Serialize(const T& inData, char*& outRawData)
 		{
 			static_assert(sizeof(T) == 0, "Unimplemented function");
 		}
 
+
+		/**
+		* \fn Deserialize
+		* \brief Reads data from memory and deserializes it.
+		*
+		* @param inRawData	In-memory iterator for reading data.
+		*
+		* @return Deserialized data.
+		*/
 		static T Deserialize(const char* inRawData)
 		{
 			static_assert(sizeof(T) == 0, "Unimplemented function");
@@ -23,6 +43,7 @@ namespace FusionCrowdWeb
 	};
 
 
+	/** WebDataSerializer specialization for InitComputingData. */
 	template<>
 	class FC_WEB_API WebDataSerializer<InitComputingData>
 	{
@@ -32,6 +53,7 @@ namespace FusionCrowdWeb
 	};
 
 
+	/** WebDataSerializer specialization for InputComputingData. */
 	template<>
 	class FC_WEB_API WebDataSerializer<InputComputingData>
 	{
@@ -41,6 +63,7 @@ namespace FusionCrowdWeb
 	};
 
 
+	/** WebDataSerializer specialization for OutputComputingData. */
 	template<>
 	class FC_WEB_API WebDataSerializer<OutputComputingData>
 	{
@@ -50,6 +73,7 @@ namespace FusionCrowdWeb
 	};
 
 
+	/** WebDataSerializer specialization for AgentsIds. */
 	template<>
 	class FC_WEB_API WebDataSerializer<AgentsIds>
 	{
