@@ -51,8 +51,9 @@ namespace FusionCrowd
 				AgentSpatialInfo & curAgentInfo = _navSystem->GetSpatialInfo(agentId);
 				float speed = curAgentInfo.prefVelocity.getSpeed();
 				float safeDist = curAgentInfo.radius * 6;
+				float angleSpeed = 45;
 
-				if (forwardAgtId > 0)
+				if (forwardAgtId > 0) //move acording forward-moving agent
 				{
 					AgentSpatialInfo & otherAgentInfo = _navSystem->GetSpatialInfo(forwardAgtId);
 
@@ -71,18 +72,19 @@ namespace FusionCrowd
 					}			
 				}
 
-				else
+				else //increase speed if there no forward agent
 				{
 					acceleration = 0.5f;
 				}
 
 
+				Vector2 previousVel = curAgentInfo.GetVel();
 				Vector2 newVel = curAgentInfo.prefVelocity.getPreferredVel();
 
 				int avoidAgt = GetForwardAgentToAvoid(agentId);
 				float avoidAngle = 0.5;
 
-				if (avoidAgt > 0 && avoidAgt != forwardAgtId)
+				if (avoidAgt > 0 && avoidAgt != forwardAgtId) //turn right to avoid agents (except lead agent)
 				{
 					AgentSpatialInfo & avoidAgentInfo = _navSystem->GetSpatialInfo(avoidAgt);
 
@@ -99,12 +101,20 @@ namespace FusionCrowd
 
 				}
 
+				
+				float deltaAngle = acos(previousVel.Dot(newVel) / (newVel.Length() * previousVel.Length() + 1e-6))*180/3.14;
+				if (abs(deltaAngle) > angleSpeed*timeStep)
+				{
+					newVel = previousVel.Lerp(previousVel, newVel, (angleSpeed*timeStep / abs(deltaAngle)));//smooth turn with angleSpeed
+				}
 
 				curAgentInfo.prefSpeed += acceleration * timeStep;
 
-				curAgentInfo.prefSpeed = Saturate(curAgentInfo.prefSpeed, curAgentInfo.maxSpeed);
+				curAgentInfo.prefSpeed = Clamp(curAgentInfo.prefSpeed, curAgentInfo.maxSpeed);
 
 				curAgentInfo.velNew = newVel;
+
+				
 			}
 
 
@@ -186,7 +196,7 @@ namespace FusionCrowd
 				return ret;
 			}
 
-			float Saturate(float curSpeed, float maxSpeed)
+			float Clamp(float curSpeed, float maxSpeed)
 			{
 				if (curSpeed > maxSpeed)
 				{

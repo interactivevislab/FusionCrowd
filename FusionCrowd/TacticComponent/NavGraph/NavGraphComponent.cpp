@@ -50,7 +50,6 @@ namespace FusionCrowd
 		for (auto & agtStruct : _agents)
 		{
 			size_t id = agtStruct.id;
-
 			size_t groupId = _simulator->GetAgent(id).GetGroupId();
 			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
 
