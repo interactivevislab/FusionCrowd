@@ -161,13 +161,22 @@ namespace FusionCrowd
 		}
 
 
+		OperationStatus UpdateSpecialOpParams(size_t agentId, StrictOCParams params) {
+			if (_agents.find(agentId) == _agents.end())
+				return OperationStatus::InvalidArgument;
+			auto & agt = _navSystem->GetSpatialInfo(agentId);
+			agt.specialOPParams = std::make_unique<StrictOCParams>(params);
+			return OperationStatus::OK;
+		}
+
+
 		bool UpdateNeighbourSearchShape(size_t agentId, Cone cone)
 		{
 			if(_agents.find(agentId) == _agents.end())
 				return false;
 
 			auto & agt = _navSystem->GetSpatialInfo(agentId);
-			agt.neighbourSearchShape = std::make_unique<Math::ConeShape>(Vector2(), 0, 0);
+			agt.neighbourSearchShape = std::make_unique<Math::ConeShape>(cone);
 
 			return true;
 		}
@@ -689,6 +698,10 @@ namespace FusionCrowd
 	bool Simulator::UpdateNeighbourSearchShape(size_t agentId, Cone cone)
 	{
 		return pimpl->UpdateNeighbourSearchShape(agentId, cone);
+	}
+
+	OperationStatus Simulator::UpdateSpecialOpParams(size_t agentId, StrictOCParams params) {
+		return pimpl->UpdateSpecialOpParams(agentId, params);
 	}
 
 	bool Simulator::UpdateNeighbourSearchShape(size_t agentId, Disk disk)
