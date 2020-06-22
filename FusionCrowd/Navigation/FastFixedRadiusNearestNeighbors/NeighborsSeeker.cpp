@@ -111,7 +111,16 @@ namespace FusionCrowd
 
 						for(auto & n : cell->second)
 						{
-							if(r.CanCollide(n) && r.neighbourSearchShape->containsPoint(n.GetPos() - pos))
+							//transform to agent coordinates
+							auto translate = n.GetPos() - pos;
+							//angle between agent orient and (1,0) vector
+							auto orient = r.GetOrient();
+							float angle = acos(orient.x / orient.Length());
+							angle = orient.y > 0 ? angle : angle + (orient.x > 0 ? -acos(0) : acos(0));
+							auto pointToCheck = translate;
+							pointToCheck.x = translate.x * cos(angle) - translate.y * sin(angle);
+							pointToCheck.y = translate.x * sin(angle) + translate.y * cos(angle);
+							if(r.CanCollide(n) && r.neighbourSearchShape->containsPoint(pointToCheck))
 							{
 								result.neighbors.push_back(NeighborInfo(n));
 							}
