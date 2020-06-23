@@ -68,7 +68,7 @@ namespace FusionCrowd
 		return _nodes.at(id);
 	}
 
-	const NavGraphNodeId NavGraph::GetClosestNodeIdByPosition(Vector2 p, std::unordered_map<NavGraphNodeId, NavGraphNode> const nodes)
+	const NavGraphNodeId NavGraph::GetClosestNodeIdByPosition(Vector2 p, const std::unordered_map<NavGraphNodeId, NavGraphNode>& nodes)
 	{
 		float minDistance = INFINITY;
 		NavGraphNodeId retID = 0;
@@ -187,7 +187,7 @@ namespace FusionCrowd
 		return result;
 	}
 
-	std::unordered_map<NavGraphNodeId, NavGraphNode> NavGraph::GetAllNodes() const
+	const std::unordered_map<NavGraphNodeId, NavGraphNode>& NavGraph::GetAllNodes()
 	{
 		return _nodes;
 	}
