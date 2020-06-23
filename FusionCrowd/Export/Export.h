@@ -31,6 +31,8 @@ namespace FusionCrowd
 			ComponentId stratCompId;
 
 			float goalX, goalY;
+
+			int serverId;
 		};
 
 		struct FUSION_CROWD_API AgentParams
@@ -144,5 +146,7 @@ namespace FusionCrowd
 		FUSION_CROWD_API ISimulatorBuilder* BuildSimulator();
 		FUSION_CROWD_API void BuilderDeleter(ISimulatorBuilder* builder);
 
+		FUSION_CROWD_API IRecording* BuildRecord();
+		FUSION_CROWD_API void RecordDeleter(IRecording* recording);
 	}
 }

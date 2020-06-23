@@ -7,6 +7,7 @@
 
 #include "Navigation/NavMesh/NavMeshLocalizer.h"
 #include "Navigation/NavSystem.h"
+#include "Navigation/OnlineRecording/OnlineRecording.h"
 
 #include "TacticComponent/NavMesh/NavMeshComponent.h"
 #include "TacticComponent/NavGraph/NavGraphComponent.h"
@@ -388,5 +389,15 @@ namespace FusionCrowd
 	void SimulatorFacadeDeleter(ISimulatorFacade* sim)
 	{
 		delete sim;
+	}
+
+	IRecording* BuildRecord()
+	{
+		return new OnlineRecording;
+	}
+
+	void RecordDeleter(IRecording* recording)
+	{
+		delete recording;
 	}
 }

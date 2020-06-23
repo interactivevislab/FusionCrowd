@@ -89,6 +89,11 @@ namespace FusionCrowdWeb
 				_agentsIds[serverId][id] = _freeId++;
 			}
 		}
+
+		_recording = std::shared_ptr<FusionCrowd::IRecording>(FusionCrowd::BuildRecord(),
+			[](FusionCrowd::IRecording* inRecording) {
+			RecordDeleter(inRecording);
+		});
 	}
 
 
@@ -154,6 +159,14 @@ namespace FusionCrowdWeb
 		for (auto serverId : _computationalServersIds)
 		{
 			auto outDataPart = Receive<OutputComputingData>(serverId, ResponseCode::Success, "ResponseError");
+			for (auto& agentInfo : outDataPart.AgentInfos)
+			{
+				agentInfo.serverId = serverId;
+			}
+			for (auto& agentInfo : outDataPart.DisplacedAgents)
+			{
+				agentInfo.serverId = serverId;
+			}
 			outDataParts[serverId] = outDataPart;
 
 			auto newAgentIds = Receive<AgentsIds>(serverId, ResponseCode::Success, "ResponseError");
@@ -206,7 +219,15 @@ namespace FusionCrowdWeb
 			return a.id < b.id;
 		});
 
+		_recording->MakeRecord(_allAgents, inData.TimeStep);
+
 		//sending output data
 		Send(_clientId, ResponseCode::Success, OutputComputingData{ _allAgents });
+	}
+
+
+	void FcMainServer::SaveRecording(std::string inRecordingFileName)
+	{
+		_recording->Serialize(inRecordingFileName.c_str(), inRecordingFileName.size());
 	}
 }

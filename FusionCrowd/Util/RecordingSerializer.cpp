@@ -38,7 +38,7 @@ namespace FusionCrowd
 					trajs << SEP << id << SEP
 					      << info.posX << SEP << info.posY << SEP
 					      << info.orientX << SEP << info.orientY << SEP
-					      << info.radius;
+					      << info.radius << SEP << info.serverId;
 				}
 				trajs << std::endl;
 			}

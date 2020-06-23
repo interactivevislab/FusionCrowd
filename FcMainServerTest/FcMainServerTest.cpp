@@ -43,6 +43,8 @@ int main()
 		cout << "success" << endl;
 		//cout << "error: " << e.What() << endl;
 		cout << "Client disconnected" << endl;
+
+		server.SaveRecording(FcFileWrapper::GetFullNameForResource("debug_recording.txt"));
 	}
 
 	server.DisconnectFromComputationalServers();

@@ -51,6 +51,14 @@ namespace FusionCrowdWeb
 		*/
 		void ProcessComputationRequest();
 
+		/**
+		* \fn SaveRecording
+		* \brief Serializes recording of current simulation into file.
+		*
+		* @param inRecordingFileName	Result file name.
+		*/
+		void SaveRecording(std::string inRecordingFileName);
+
 	private:
 		/** Id of client socket. */
 		int _clientId;
@@ -82,5 +90,8 @@ namespace FusionCrowdWeb
 
 		/** NavMesh regions boundary zone size. */
 		float _boundaryZoneDepth = 5;
+
+		/** Recording of current simulation. */
+		std::shared_ptr<FusionCrowd::IRecording> _recording;
 	};
 }

@@ -80,7 +80,7 @@ namespace FusionCrowd
 						first_value = false;
 						continue;
 					}
-					switch (i % 6) {
+					switch (i % 7) {
 					case 0 :
 						cur_info->id = std::stoi(value);
 						break;
@@ -99,9 +99,12 @@ namespace FusionCrowd
 					case 5 :
 						cur_info->radius = std::stof(value);
 						break;
+					case 6:
+						cur_info->serverId = std::stoi(value);
+						break;
 					}
 					i++;
-					if (i == 6) {
+					if (i == 7) {
 						i = 0;
 						cur_slice->AddAgent(*cur_info);
 						delete cur_info;
@@ -136,12 +139,16 @@ namespace FusionCrowd
 		{
 			assert(timeStep > 0 && "Time step must be positive");
 
+			if (m_slices.size() > 0)
+			{
+				m_currentTime += timeStep;
+			}
+
+			m_currentSlice = OnlineRecordingSlice(std::move(agentsInfos), m_currentTime);
+
 			m_snapshotTimes.push_back(m_currentTime);
 			m_slices.push_back(m_currentSlice);
 			m_prevAgentCount = std::max(m_prevAgentCount, m_currentSlice.GetAgentCount());
-
-			m_currentTime += timeStep;
-			m_currentSlice = OnlineRecordingSlice(std::move(agentsInfos), m_currentTime);
 		}
 
 		void GetAgentIds(FCArray<size_t> & outIds)
