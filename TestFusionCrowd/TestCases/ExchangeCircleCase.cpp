@@ -30,8 +30,8 @@ namespace TestFusionCrowd
 			const float alpha = dAlpha * i;
 			const float oppositeAlpha = alpha + 3.1415f;
 
-			size_t id = _sim->AddAgent(bigR * cos(alpha), bigR * sin(alpha), _op, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
-			_sim->SetAgentGoal(id, Point { bigR * cos(oppositeAlpha), bigR * sin(oppositeAlpha) } );
+			size_t id = _sim->AddAgent(bigR * (float)cos(alpha), bigR * (float)sin(alpha), _op, ComponentIds::NAVMESH_ID, ComponentIds::NO_COMPONENT);
+			_sim->SetAgentGoal(id, Point { bigR * (float)cos(oppositeAlpha), bigR * (float)sin(oppositeAlpha) } );
 		}
 	}
 }

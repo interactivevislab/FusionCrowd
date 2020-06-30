@@ -1,5 +1,6 @@
 #include "Export/Fsm/IFsm.h"
 
+#include <memory>
 #include <map>
 #include <random>
 
@@ -145,9 +146,9 @@ namespace FusionCrowd
 			return new BuilderImpl();
 		}
 
-		/*void BuilderDeleter(IBuilder * builder)
+		void IBuilderDeleter(IBuilder * builder)
 		{
 			delete builder;
-		}*/
+		}
 	}
 }
