@@ -6,6 +6,8 @@
 #include "TacticComponent/ITacticComponent.h"
 #include "TacticComponent/NavGraph/NavGraphPathPlanner.h"
 
+
+
 namespace FusionCrowd
 {
 	class NavGraphComponent : public ITacticComponent
@@ -24,6 +26,8 @@ namespace FusionCrowd
 		void Update(float timeStep) override;
 		DirectX::SimpleMath::Vector2 GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) override;
 		size_t getNodeId(size_t agentId) const;
+		unsigned int getGoalNodeId(size_t agentId) const;
+
 
 		ComponentId GetId() override { return ComponentIds::NAVGRAPH_ID; }
 

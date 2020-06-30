@@ -13,6 +13,7 @@
 #include "Navigation/NavGraph/NavGraph.h"
 #include "Navigation/NeighborInfo.h"
 #include "Navigation/AgentSpatialInfo.h"
+#include "Navigation/TrafficLightsBunch.h"
 
 #include "Util/spimpl.h"
 
@@ -35,6 +36,8 @@ namespace FusionCrowd
 		void AddAgent(AgentSpatialInfo spatialInfo);
 
 		void RemoveAgent(size_t id);
+		void AddTrafficLights(size_t nodeId);
+		TrafficLightsBunch* GetTrafficLights(size_t nodeId);
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 

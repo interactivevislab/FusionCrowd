@@ -64,6 +64,9 @@
     <ClCompile Include="Math\Shapes\DiskShape.cpp" />
     <ClCompile Include="Math\Shapes\ConeShape.cpp" />
     <ClCompile Include="Math\Shapes\RectShape.cpp" />
+    <ClCompile Include="Navigation\TrafficLight.cpp" />
+    <ClCompile Include="Navigation\TrafficLightsBunch.cpp" />
+    <ClCompile Include="OperationComponent\TransportOperationComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -153,6 +156,9 @@
     <ClInclude Include="Math\Shapes\DiskShape.h" />
     <ClInclude Include="Math\Shapes\ConeShape.h" />
     <ClInclude Include="Math\Shapes\RectShape.h" />
+    <ClInclude Include="Navigation\TrafficLight.h" />
+    <ClInclude Include="Navigation\TrafficLightsBunch.h" />
+    <ClInclude Include="OperationComponent\TransportOperationComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

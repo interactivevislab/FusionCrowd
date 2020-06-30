@@ -160,6 +160,7 @@ namespace FusionCrowd
 			return true;
 		}
 
+
 		OperationStatus UpdateSpecialOpParams(size_t agentId, StrictOCParams params) {
 			if (_agents.find(agentId) == _agents.end())
 				return OperationStatus::InvalidArgument;
@@ -167,6 +168,7 @@ namespace FusionCrowd
 			agt.specialOPParams = std::make_unique<StrictOCParams>(params);
 			return OperationStatus::OK;
 		}
+
 
 		bool UpdateNeighbourSearchShape(size_t agentId, Cone cone)
 		{
@@ -179,6 +181,12 @@ namespace FusionCrowd
 			return true;
 		}
 
+
+		void AddTrafficLight(size_t nodeId)
+		{
+			_navSystem->AddTrafficLights(nodeId);
+		}	
+    
 		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk)
 		{
 			if(_agents.find(agentId) == _agents.end())
@@ -247,9 +255,9 @@ namespace FusionCrowd
 				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goal.getCentroid());
 				agent.currentGoal = std::move(goal);
 			}
-		}
-
-		bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
+		}		
+    
+    bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
 		{
 			if(_operComponents.find(newOperationComponent) == _operComponents.end())
 			{
@@ -613,6 +621,11 @@ namespace FusionCrowd
 
 	const Goal & Simulator::GetAgentGoal(size_t agentId) const {
 		return pimpl->GetAgentGoal(agentId);
+	}
+
+	void Simulator::AddTrafficLight(size_t nodeId)
+	{
+		pimpl->AddTrafficLight(nodeId);
 	}
 
 	bool Simulator::SetOperationComponent(size_t agentId, ComponentId newOperationComponent)

@@ -32,6 +32,7 @@ namespace FusionCrowd
 		FUSION_CROWD_API const ComponentId GCF_ID        = 106;
 		FUSION_CROWD_API const ComponentId BICYCLE		 = 107;
 		FUSION_CROWD_API const ComponentId STRICT_ID	 = 108;
+		FUSION_CROWD_API const ComponentId TRANSPORT_ID	 = 109;
 
 		FUSION_CROWD_API const ComponentId NAVMESH_ID    = 200;
 		FUSION_CROWD_API const ComponentId NAVGRAPH_ID   = 201;
@@ -40,8 +41,16 @@ namespace FusionCrowd
 
 		FUSION_CROWD_API const ComponentId FSM_ID        = 300;
 
-		constexpr ComponentId allOperationComponentTypes[7] = {
-			KARAMOUZAS_ID, HELBING_ID, ORCA_ID, ZANLUNGO_ID, PEDVO_ID, SWITCHING, BICYCLE
+
+		constexpr ComponentId allOperationComponentTypes[8] = {
+			KARAMOUZAS_ID, 
+			HELBING_ID, 
+			ORCA_ID, 
+			ZANLUNGO_ID, 
+			PEDVO_ID, 
+			SWITCHING, 
+			BICYCLE, 
+			TRANSPORT_ID
 		};
 	}
 }

@@ -29,6 +29,9 @@
     <ClInclude Include="Math\Shapes\PointShape.h" />
     <ClInclude Include="Math\Shapes\RectShape.h" />
     <ClInclude Include="Navigation\NeighborInfo.h" />
+    <ClInclude Include="Navigation\TrafficLight.h" />
+    <ClInclude Include="Navigation\TrafficLightsBunch.h" />
+    <ClInclude Include="OperationComponent\TransportOperationComponent.h" />
     <ClInclude Include="TacticComponent\ExternalControl.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
     <ClInclude Include="Export\ComponentId.h" />
@@ -117,6 +120,9 @@
     <ClCompile Include="Math\Shapes\RectShape.cpp" />
     <ClCompile Include="Navigation\AgentSpatialInfo.cpp" />
     <ClCompile Include="Navigation\NeighborInfo.cpp" />
+    <ClCompile Include="Navigation\TrafficLight.cpp" />
+    <ClCompile Include="Navigation\TrafficLightsBunch.cpp" />
+    <ClCompile Include="OperationComponent\TransportOperationComponent.cpp" />
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="Export\Export.cpp" />
