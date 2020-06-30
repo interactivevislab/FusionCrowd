@@ -25,7 +25,7 @@ namespace FusionCrowd
 		std::map<NavGraphNodeId, float> distance;
 		for (const auto& node : _navGraph->GetAllNodes())
 		{
-			distance.insert({ node.id, INFINITY });
+			distance.insert({ node.first, INFINITY });
 		}
 		distance.at(nodeFrom) = 0;
 
@@ -40,7 +40,7 @@ namespace FusionCrowd
 		std::set<NavGraphNodeId> unvisited;
 		for(const auto & node : _navGraph->GetAllNodes())
 		{
-			unvisited.insert(node.id);
+			unvisited.insert(node.first);
 		}
 
 		unvisited.erase(nodeFrom);

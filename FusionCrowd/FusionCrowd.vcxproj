@@ -29,6 +29,9 @@
     <ClInclude Include="Math\Shapes\PointShape.h" />
     <ClInclude Include="Math\Shapes\RectShape.h" />
     <ClInclude Include="Navigation\NeighborInfo.h" />
+    <ClInclude Include="Navigation\TrafficLight.h" />
+    <ClInclude Include="Navigation\TrafficLightsBunch.h" />
+    <ClInclude Include="OperationComponent\TransportOperationComponent.h" />
     <ClInclude Include="TacticComponent\ExternalControl.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
     <ClInclude Include="Export\ComponentId.h" />
@@ -118,6 +121,9 @@
     <ClCompile Include="Math\Shapes\RectShape.cpp" />
     <ClCompile Include="Navigation\AgentSpatialInfo.cpp" />
     <ClCompile Include="Navigation\NeighborInfo.cpp" />
+    <ClCompile Include="Navigation\TrafficLight.cpp" />
+    <ClCompile Include="Navigation\TrafficLightsBunch.cpp" />
+    <ClCompile Include="OperationComponent\TransportOperationComponent.cpp" />
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="Export\Export.cpp" />
@@ -195,7 +201,7 @@
     <ProjectGuid>{123E7DB0-E9BC-4064-9F4B-C5F7C268731E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>FusionCrowd</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -215,12 +221,12 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

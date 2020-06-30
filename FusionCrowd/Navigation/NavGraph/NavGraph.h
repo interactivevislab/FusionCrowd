@@ -140,7 +140,7 @@ namespace FusionCrowd
 
 		const NavGraphNode & GetNode(NavGraphNodeId id) const;
 
-		const NavGraphNodeId GetClosestNodeIdByPosition(DirectX::SimpleMath::Vector2 p, std::unordered_set<NavGraphNode> nodes);
+		const NavGraphNodeId GetClosestNodeIdByPosition(DirectX::SimpleMath::Vector2 p, const std::unordered_map<NavGraphNodeId, NavGraphNode>& nodes);
 		const DirectX::SimpleMath::Vector2 GetClosiestPointAndNodeId(DirectX::SimpleMath::Vector2 p, NavGraphNodeId& nodeId);
 
 		std::vector<NavGraphEdge> GetOutEdges(NavGraphNodeId from) const;
@@ -149,7 +149,7 @@ namespace FusionCrowd
 		std::unordered_set<NavGraphNode> GetOutNeighbours(NavGraphNodeId from) const;
 		std::unordered_set<NavGraphNode> GetInNeighbours(NavGraphNodeId to) const;
 
-		std::unordered_set<NavGraphNode> GetAllNodes() const;
+		const std::unordered_map<NavGraphNodeId, NavGraphNode>& GetAllNodes();
 	private:
 		std::unordered_map<NavGraphNodeId, NavGraphNode> _nodes;
 

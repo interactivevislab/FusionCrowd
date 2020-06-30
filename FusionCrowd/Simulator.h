@@ -58,6 +58,7 @@ namespace FusionCrowd
 		bool UpdateAgentParams(AgentParams params);
 		bool UpdateNeighbourSearchShape(size_t agentId, Cone cone);
 		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk);
+		OperationStatus UpdateSpecialOpParams(size_t agentId, StrictOCParams params);
 
 		OperationStatus RemoveAgent(size_t agentId);
 
@@ -84,6 +85,7 @@ namespace FusionCrowd
 
 		size_t AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance);
 		size_t AddGuidedGroup(size_t leaderId);
+		void AddTrafficLight(size_t nodeId);
 
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos);
 

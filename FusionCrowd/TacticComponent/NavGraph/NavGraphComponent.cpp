@@ -17,7 +17,6 @@ namespace FusionCrowd
 		NavGraphPathPlanner pathPlanner(_navGraph);
 
 		Vector2 curPos = _navSystem->GetSpatialInfo(id).GetPos();
-
 		AgentStruct agtStruct;
 		agtStruct.id = id;
 		agtStruct.route = pathPlanner.GetRoute(curPos, curPos);
@@ -51,7 +50,6 @@ namespace FusionCrowd
 		for (auto & agtStruct : _agents)
 		{
 			size_t id = agtStruct.id;
-
 			size_t groupId = _simulator->GetAgent(id).GetGroupId();
 			AgentSpatialInfo & info = _simulator->GetSpatialInfo(id);
 
@@ -89,7 +87,11 @@ namespace FusionCrowd
 	{
 		Vector2 currentGoal = agentStruct.route.points[agentStruct.pointsComplete];
 
-		float dist = Vector2::Distance(currentGoal, agentInfo.GetPos());
+		Vector2 shift = { -1 * agentInfo.GetOrient().y, agentInfo.GetOrient().x };
+		shift.Normalize();
+		shift *= agentInfo.radius * 4;
+
+		float dist = Vector2::Distance(currentGoal + shift, agentInfo.GetPos());
 
 		if(dist < agentInfo.prefSpeed * timeStep)
 		{
@@ -101,12 +103,24 @@ namespace FusionCrowd
 
 		if (abs(dist) > 1e-6)
 		{
-			agentInfo.prefVelocity.setSingle((currentGoal - agentInfo.GetPos()) / dist);
+			agentInfo.prefVelocity.setSingle((currentGoal + shift - agentInfo.GetPos()) / dist);
 		} else
 		{
 			agentInfo.prefVelocity.setSpeed(0);
 		}
-		agentInfo.prefVelocity.setTarget(currentGoal);
+
+		TrafficLightsBunch* curLights = _navSystem->GetTrafficLights(_navGraph->GetClosestNodeIdByPosition(currentGoal, _navGraph->GetAllNodes()));
+		if (curLights)
+		{
+			if ((curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::red ||
+				curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::yellow) &&
+				dist < agentInfo.radius * 15 && dist > agentInfo.radius * 12)
+			{
+				agentInfo.prefVelocity.setSpeed(1e-6);
+			}
+		}
+
+		agentInfo.prefVelocity.setTarget(currentGoal+shift);
 	}
 
 	DirectX::SimpleMath::Vector2 NavGraphComponent::GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p)
@@ -133,5 +147,11 @@ namespace FusionCrowd
 	{
 		AgentSpatialInfo & agentInfo = _simulator->GetSpatialInfo(agentId);
 		return _navGraph->GetClosestNodeIdByPosition(agentInfo.GetPos(), _navGraph->GetAllNodes());
+	}
+
+	unsigned int NavGraphComponent::getGoalNodeId(size_t agentId) const
+	{
+		auto & agentGoal = _simulator->GetAgentGoal(agentId);
+		return _navGraph->GetClosestNodeIdByPosition(agentGoal.getCentroid(), _navGraph->GetAllNodes());
 	}
 }

@@ -12,6 +12,6 @@ namespace TestFusionCrowd
 	inline float RandFloat(float min, float max)
 	{
 		std::uniform_real_distribution<> dist(min, max);
-		return dist(e2);
+		return (float)dist(e2);
 	}
 }

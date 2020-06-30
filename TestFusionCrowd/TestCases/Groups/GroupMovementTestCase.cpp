@@ -41,7 +41,7 @@ namespace TestFusionCrowd
 
 	void GroupMovementTestCase::Pre()
 	{
-		std::unique_ptr<Fsm::IBuilder, decltype(&Fsm::BuilderDeleter)> fsmBuilder(Fsm::Builder(), Fsm::BuilderDeleter);
+		std::unique_ptr<Fsm::IBuilder, decltype(&Fsm::IBuilderDeleter)> fsmBuilder(Fsm::Builder(), Fsm::IBuilderDeleter);
 
 		FCArray<Fsm::State> cycle(2);
 		cycle[0] = States::HeadingTo1;

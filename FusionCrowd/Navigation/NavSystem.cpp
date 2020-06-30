@@ -14,11 +14,13 @@
 #include "Navigation/SpatialQuery/NavMeshSpatialQuery.h"
 #include "Navigation/FastFixedRadiusNearestNeighbors/NeighborsSeeker.h"
 
+
 #include <limits>
 #include <unordered_map>
 #include <map>
 #include <algorithm>
 #include <math.h>
+#include <set>
 
 using namespace DirectX::SimpleMath;
 
@@ -76,6 +78,25 @@ namespace FusionCrowd
 			}
 		}
 
+		void AddTrafficLights(size_t NavGraphsNodeId)
+		{
+			_lightsIds.insert(NavGraphsNodeId);
+			TrafficLightsBunch* newLight = new TrafficLightsBunch;
+			_trafficLights.insert(std::make_pair(NavGraphsNodeId, newLight));
+		}
+
+		TrafficLightsBunch* GetTrafficLights(size_t NavGraphsNodeId)
+		{
+			auto it = _trafficLights.find(NavGraphsNodeId);
+			
+			if (it != _trafficLights.end())
+			{
+				return it->second;
+			}
+
+			return nullptr;
+		}
+
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId)
 		{
 			return _agentsInfo.at(agentId);
@@ -124,6 +145,11 @@ namespace FusionCrowd
 			}
 
 			UpdateNeighbours();
+
+			for (auto& light : _trafficLights)
+			{
+				light.second->UpdateAllLights(timeStep);
+			}
 		}
 
 		void UpdatePos(AgentSpatialInfo & agent, float timeStep, Vector2 & updatedPos, Vector2 & updatedVel)
@@ -149,7 +175,10 @@ namespace FusionCrowd
 			}
 
 			updatedPos = agent.GetPos() + agent.GetVel() * timeStep;
-			updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
+			if (agent.useNavMeshObstacles)			{
+				updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
+			}
+			
 		}
 
 		void UpdateOrient(const AgentSpatialInfo & agent, float timeStep, Vector2 & newOrient)
@@ -258,6 +287,8 @@ namespace FusionCrowd
 		std::shared_ptr<NavMesh> _navMesh;
 		std::shared_ptr<NavGraph> _navGraph;
 		std::shared_ptr<NavMeshLocalizer> _localizer;
+		std::map<size_t, TrafficLightsBunch*> _trafficLights;
+		std::set<size_t> _lightsIds;
 
 		NeighborsSeeker _neighborsSeeker;
 		std::map<size_t, AgentSpatialInfo> _agentsInfo;
@@ -281,6 +312,17 @@ namespace FusionCrowd
 	void NavSystem::RemoveAgent(size_t id)
 	{
 		pimpl->RemoveAgent(id);
+	}
+
+	void NavSystem::AddTrafficLights(size_t id)
+	{
+		pimpl->AddTrafficLights(id);
+	}
+
+
+	TrafficLightsBunch* NavSystem::GetTrafficLights(size_t id)
+	{
+		return pimpl->GetTrafficLights(id);
 	}
 
 	AgentSpatialInfo & NavSystem::GetSpatialInfo(size_t agentId)
