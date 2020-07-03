@@ -4,6 +4,8 @@
 #include "Export/Export.h"
 #include "WebNode.h"
 
+#include <memory>
+
 
 namespace FusionCrowdWeb
 {
