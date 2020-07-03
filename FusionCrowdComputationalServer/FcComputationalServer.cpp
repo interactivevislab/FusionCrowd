@@ -71,18 +71,14 @@ namespace FusionCrowdWeb
 		for (int i = 0; i < newAgentsNum; i++)
 		{
 			auto& agentData = inData.NewAgents[i];
-			auto agentId = _simulator->AddAgent(agentData.posX, agentData.posY, 1, 10,
-				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
-			_simulator->SetAgentGoal(agentId, Point(agentData.goalX, agentData.goalY));
+			auto agentId = _simulator->AddAgent(agentData, 10);
 			newAgentIds.Values[i] = agentId;
 		}
 
 		std::vector<size_t> boundaryAgentsIds;
 		for (auto& agentData : inData.BoundaryAgents)
 		{
-			auto agentId = _simulator->AddAgent(agentData.posX, agentData.posY, 1, 10,
-				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
-			_simulator->SetAgentGoal(agentId, Point(agentData.goalX, agentData.goalY));
+			auto agentId = _simulator->AddAgent(agentData, 10);
 			boundaryAgentsIds.push_back(agentId);
 		}
 

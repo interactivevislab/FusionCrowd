@@ -114,6 +114,26 @@ namespace FusionCrowd
 		}
 
 
+		size_t AddAgent(AgentInfo inAgentInfo, float inPreferedVelocity)
+		{
+			AgentSpatialInfo info;
+			Vector2 pos = Vector2(inAgentInfo.posX, inAgentInfo.posY);
+			Vector2 vel = Vector2(inAgentInfo.velX, inAgentInfo.velY);
+			Vector2 orient = Vector2(inAgentInfo.orientX, inAgentInfo.orientY);
+			info.Update(pos, vel, orient);
+
+			info.radius = inAgentInfo.radius;
+			info.maxSpeed = inPreferedVelocity * 1.5f;
+			info.prefSpeed = inPreferedVelocity;
+
+			auto id = _sim->AddAgent(std::move(info), inAgentInfo.opCompId, inAgentInfo.tacticCompId, inAgentInfo.stratCompId);
+
+			_sim->SetAgentGoal(id, _sim->GetGoalFactory().CreatePointGoal(Point(inAgentInfo.goalX, inAgentInfo.goalY)));
+
+			return id;
+		}
+
+
 		bool UpdateAgent(AgentParams params) {
 			return _sim->UpdateAgentParams(params);
 		}

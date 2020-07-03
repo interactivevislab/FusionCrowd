@@ -97,6 +97,8 @@ namespace FusionCrowd
 				ComponentId strategyId
 			) = 0;
 
+			virtual size_t AddAgent(AgentInfo inAgentInfo, float inPreferedVelocity) = 0;
+
 			virtual bool UpdateAgent(AgentParams params) = 0;
 			virtual bool UpdateNeighbourSearchShape(size_t agentId, Disk disk) = 0;
 			virtual bool UpdateNeighbourSearchShape(size_t agentId, Cone cone) = 0;

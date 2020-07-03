@@ -686,6 +686,11 @@ namespace FusionCrowd
 		return pimpl->AddAgent(pos, opId, tacticId, strategyId);
 	}
 
+	size_t Simulator::AddAgent(AgentSpatialInfo props, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
+	{
+		return pimpl->AddAgent(std::move(props), opId, tacticId, strategyId);
+	}
+
 	size_t Simulator::AddAgent(DirectX::SimpleMath::Vector2 pos)
 	{
 		return pimpl->AddAgent(pos);
@@ -707,11 +712,6 @@ namespace FusionCrowd
 	bool Simulator::UpdateNeighbourSearchShape(size_t agentId, Disk disk)
 	{
 		return pimpl->UpdateNeighbourSearchShape(agentId, disk);
-	}
-
-	size_t Simulator::AddAgent(AgentSpatialInfo props, ComponentId opId, ComponentId tacticId, ComponentId strategyId)
-	{
-		return pimpl->AddAgent(std::move(props), opId, tacticId, strategyId);
 	}
 
 	OperationStatus Simulator::RemoveAgent(size_t agentId)
