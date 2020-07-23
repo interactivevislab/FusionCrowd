@@ -301,7 +301,8 @@ namespace FusionCrowd
 	{
 		//TODO remove _route->getEndNode() check
 		auto end_node = _route->getEndNode() != NavMeshLocation::NO_NODE ? _route->getEndNode() : startNode;
-		PortalRoute* route = planner->getRoute(startNode, end_node, agentRadius * 2.f);
+		bool pathFound = false;
+		PortalRoute* route = planner->getRoute(startNode, end_node, agentRadius * 2.f, pathFound);
 		_waypoints.clear();
 		_headings.clear();
 		_currPortal = 0;

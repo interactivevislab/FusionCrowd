@@ -45,7 +45,7 @@ namespace FusionCrowd
 			NavMeshLocation location;
 		};
 
-		NavMeshLocation Replan(DirectX::SimpleMath::Vector2 from, const Goal & target, float agentRadius);
+		NavMeshLocation Replan(DirectX::SimpleMath::Vector2 from, const Goal & target, float agentRadius, bool& foundPath, size_t agentId);
 		bool IsReplanNeeded(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
 
 		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);

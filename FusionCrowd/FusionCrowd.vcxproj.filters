@@ -67,6 +67,7 @@
     <ClCompile Include="Navigation\TrafficLight.cpp" />
     <ClCompile Include="Navigation\TrafficLightsBunch.cpp" />
     <ClCompile Include="OperationComponent\TransportOperationComponent.cpp" />
+    <ClCompile Include="TeleporterPortal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Agent.h" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Navigation\TrafficLight.h" />
     <ClInclude Include="Navigation\TrafficLightsBunch.h" />
     <ClInclude Include="OperationComponent\TransportOperationComponent.h" />
+    <ClInclude Include="TeleporterPortal.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -60,9 +60,23 @@ namespace FusionCrowd
 			return OperationStatus::OK;
 		}
 
+
+		Point GetAgentGoal(size_t agentId)
+		{
+			Vector2 point = _sim->GetAgentGoal(agentId).getCentroid();
+			return Point(point.x,point.y);
+		}
+
 		OperationStatus SetAgentGoal(size_t agentId, Point p)
 		{
 			_sim->SetAgentGoal(agentId, _sim->GetGoalFactory().CreatePointGoal(p));
+
+			return OperationStatus::OK;
+		}
+
+		OperationStatus SetAgentPrimaryGoal(size_t agentId, Point p)
+		{
+			_sim->SetAgentPrimaryGoal(agentId, _sim->GetGoalFactory().CreatePointGoal(p));
 
 			return OperationStatus::OK;
 		}
@@ -110,6 +124,13 @@ namespace FusionCrowd
 			info.SetPos(Vector2(x, y));
 
 			return _sim->AddAgent(std::move(info), opId, tacticId, strategyId);
+		}
+
+		void SetAgentPosition(size_t agentId, float x, float y)
+		{
+
+			AgentSpatialInfo &info = _sim->GetSpatialInfo(agentId);
+			info.SetPos(Vector2(x, y));
 		}
 
 
@@ -169,6 +190,11 @@ namespace FusionCrowd
 		INavMeshPublic* GetNavMesh() const
 		{
 			return _sim->GetNavSystem()->GetPublicNavMesh();
+		}
+
+		void AddTeleportalToNavMesh(float fromX, float fromY, float toX, float toY)
+		{
+			_sim->GetNavSystem()->AddTeleportal(fromX, fromY, toX, toY);
 		}
 
 		INavSystemPublic* GetNavSystem() const

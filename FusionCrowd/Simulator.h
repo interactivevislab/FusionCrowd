@@ -81,6 +81,7 @@ namespace FusionCrowd
 		);
 
 		void SetAgentGoal(size_t agentId, Goal && goal);
+		void SetAgentPrimaryGoal(size_t agentId, Goal&& goal);
 		Agent & GetAgent(size_t id);
 
 		size_t AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance);

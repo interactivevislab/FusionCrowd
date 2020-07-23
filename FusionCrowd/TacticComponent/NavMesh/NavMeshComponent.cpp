@@ -21,13 +21,73 @@ namespace FusionCrowd
 	{
 	}
 
-	NavMeshLocation NavMeshComponent::Replan(Vector2 fromPoint, const Goal & target, float agentRadius)
+	NavMeshLocation NavMeshComponent::Replan(Vector2 fromPoint, const Goal & target, float agentRadius, bool& foundPath, size_t agentId)
 	{
 		size_t from = GetClosestAvailableNode(fromPoint);
 		size_t to = GetClosestAvailableNode(target.getCentroid());
 
 		auto planner = _localizer->getPlanner();
-		auto* route = planner->getRoute(from, to, agentRadius);
+		auto* route = planner->getRoute(from, to, agentRadius, foundPath);
+
+		std::vector<size_t> prePortalCount;
+		std::vector<size_t> postPortalCount;
+		std::vector<size_t> portalIndex;
+
+		if (!foundPath)
+		{
+			for (size_t i = 0; i < _navMesh->teleportals.size(); i++)
+			{
+				//_simulator->SetAgentGoal(info.id, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+
+				//auto& newCurGoal = _simulator->GetAgentGoal(info.id);
+
+				//agtStruct.location = Replan(info.GetPos(), _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation), info.radius, pathFound);
+				size_t newTo = GetClosestAvailableNode(_simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation).getCentroid());
+				route = planner->getRoute(from, newTo, agentRadius, foundPath);
+				if (foundPath)
+				{
+					prePortalCount.push_back(route->getPortalCount());
+					portalIndex.push_back(i);
+					//_simulator->SetAgentGoal(info.id, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+
+					//auto& newCurGoal = _simulator->GetAgentGoal(info.id);
+
+					//agtStruct.location = Replan(_navMesh->teleportals[i]._teleportLocation, newCurGoal, info.radius, pathFound);
+					size_t newFrom = GetClosestAvailableNode(_navMesh->teleportals[i]._teleportLocation);
+					route = planner->getRoute(newFrom, to, agentRadius, foundPath);
+					if (foundPath)
+					{
+						postPortalCount.push_back(route->getPortalCount());
+						//_simulator->SetAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+						//break;
+					}
+					else
+					{
+						prePortalCount.pop_back();
+						portalIndex.pop_back();
+						continue;
+					}
+					//break;
+				}
+			}
+			if (prePortalCount.size()>0)
+			{
+				size_t lowestCount = prePortalCount[0] + postPortalCount[0];
+				size_t shortestPortalIndex = portalIndex[0];
+
+				for (size_t i = 1; i < prePortalCount.size(); i++)
+				{
+					if (lowestCount > prePortalCount[i] + postPortalCount[i])
+					{
+						lowestCount = prePortalCount[i] + postPortalCount[i];
+						shortestPortalIndex = portalIndex[i];
+					}
+				}
+
+				_simulator->SetAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[shortestPortalIndex]._portalLocation));
+			}
+		}
+
 		std::shared_ptr<PortalPath> path = std::make_shared<PortalPath>(fromPoint, target, route, agentRadius);
 
 		NavMeshLocation location(from);
@@ -44,7 +104,9 @@ namespace FusionCrowd
 
 		AgentStruct agtStruct;
 		agtStruct.id = id;
-		agtStruct.location = Replan(agentInfo.GetPos(), agentGoal, agentInfo.radius);
+
+		bool pathFound = false;
+		agtStruct.location = Replan(agentInfo.GetPos(), agentGoal, agentInfo.radius, pathFound, agentInfo.id);
 
 		_agents.push_back(agtStruct);
 	}
@@ -85,11 +147,44 @@ namespace FusionCrowd
 			if(IsReplanNeeded(info, agtStruct))
 			{
 				auto & curGoal = _simulator->GetAgentGoal(info.id);
-				agtStruct.location = Replan(info.GetPos(), curGoal, info.radius);
+				bool pathFound = false;
+				agtStruct.location = Replan(info.GetPos(), curGoal, info.radius, pathFound, info.id);
+
+				//if (!pathFound)
+				//{
+				//	for (size_t i = 0; i < _navMesh->teleportals.size(); i++)
+				//	{
+				//		//_simulator->SetAgentGoal(info.id, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+
+				//		auto & newCurGoal = _simulator->GetAgentGoal(info.id);
+
+				//		agtStruct.location = Replan(info.GetPos(), _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation), info.radius, pathFound);
+				//		if (pathFound)
+				//		{
+				//			//_simulator->SetAgentGoal(info.id, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+
+				//			auto& newCurGoal = _simulator->GetAgentGoal(info.id);
+
+				//			agtStruct.location = Replan(_navMesh->teleportals[i]._teleportLocation, newCurGoal, info.radius, pathFound);
+				//			if (pathFound)
+				//			{
+				//				_simulator->SetAgentGoal(info.id, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+				//				break;
+				//			}
+				//			else
+				//			{
+				//				continue;
+				//			}
+				//			//break;
+				//		}
+				//	}
+				//}
 			}
 
 			UpdateLocation(info, agtStruct, false);
 			SetPrefVelocity(info, agtStruct, timeStep);
+			
+			info.zPos = _localizer->getNavMesh()->GetNodeByPos(getNodeId(info.id)).getElevation(info.GetPos());
 		}
 	}
 

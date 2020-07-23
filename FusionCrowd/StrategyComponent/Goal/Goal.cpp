@@ -8,6 +8,10 @@
 
 namespace FusionCrowd
 {
+	Goal::Goal()
+	{
+	}
+
 	Goal::Goal(const Goal& other)
 	{
 		_geometry = std::unique_ptr<Math::Geometry2D>(other.getGeometry()->Clone());

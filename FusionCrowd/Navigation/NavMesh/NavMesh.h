@@ -11,6 +11,7 @@
 #include "NavMeshObstacle.h"
 #include "NavMeshNode.h"
 #include "Math/Util.h"
+#include "TeleporterPortal.h"
 
 namespace FusionCrowd
 {
@@ -89,6 +90,8 @@ namespace FusionCrowd
 		bool GetObstacles(FCArray<EdgeInfo> & output);
 		bool ExportNavMeshToFile(char* file_name) override;
 
+		std::vector<TeleporterPortal> teleportals;
+
 	protected:
 		void CheckObstaclesDirection();
 		void ReverseCycle(size_t obstId);
@@ -100,9 +103,11 @@ namespace FusionCrowd
 		NavMeshEdge* edges;
 		int obstCount;
 		std::vector<NavMeshObstacle> obstacles;
+		std::vector<size_t> portals;
 		int nCount;
 		NavMeshNode* nodes;
 		std::map<const std::string, NMNodeGroup> nodeGroups;
+		
 
 		friend ModificationProcessor;
 		friend NavMeshModification;

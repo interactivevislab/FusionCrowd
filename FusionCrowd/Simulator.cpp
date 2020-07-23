@@ -255,7 +255,21 @@ namespace FusionCrowd
 				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goal.getCentroid());
 				agent.currentGoal = std::move(goal);
 			}
-		}		
+		}	
+
+		void SetAgentPrimaryGoal(size_t agentId, Goal&& goal)
+		{
+			const auto& agentIt = _agents.find(agentId);
+			if (agentIt == _agents.end()) return;
+
+			Agent& agent = agentIt->second;
+			if (agent.tacticComponent.expired()) return;
+			if (auto tactic = agent.tacticComponent.lock())
+			{
+				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goal.getCentroid());
+				agent.primaryGoal = std::move(goal);
+			}
+		}
     
     bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
 		{
@@ -382,7 +396,7 @@ namespace FusionCrowd
 
 				output[i] = AgentInfo {
 					agent.id,
-					info.GetPos().x, info.GetPos().y,
+					info.GetPos().x, info.GetPos().y, info.zPos,
 					info.GetVel().x, info.GetVel().y,
 					info.GetOrient().x, info.GetOrient().y,
 					info.radius,
@@ -725,6 +739,11 @@ namespace FusionCrowd
 	void Simulator::SetAgentGoal(size_t agentId, Goal && goal)
 	{
 		pimpl->SetAgentGoal(agentId, std::move(goal));
+	}
+
+	void Simulator::SetAgentPrimaryGoal(size_t agentId, Goal&& goal)
+	{
+		pimpl->SetAgentPrimaryGoal(agentId, std::move(goal));
 	}
 
 	FCArray<AgentInfo> Simulator::GetAgentsInfo()

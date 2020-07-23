@@ -1,6 +1,5 @@
 #include "NavSystem.h"
 
-
 #include "Math/Util.h"
 #include "Math/consts.h"
 #include "TacticComponent/NavMesh/NavMeshComponent.h"
@@ -178,7 +177,7 @@ namespace FusionCrowd
 			if (agent.useNavMeshObstacles)			{
 				updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
 			}
-			
+			_localizer->findNodeBlind(updatedPos);
 		}
 
 		void UpdateOrient(const AgentSpatialInfo & agent, float timeStep, Vector2 & newOrient)
@@ -281,6 +280,11 @@ namespace FusionCrowd
 			return _navMesh.get();
 		}
 
+		void AddTeleportal(Vector2 from, Vector2 to) const
+		{
+			_navMesh->teleportals.push_back(TeleporterPortal(from,to));
+		}
+
 	private:
 		std::unordered_map<size_t, std::vector<NeighborInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
@@ -352,6 +356,14 @@ namespace FusionCrowd
 	INavMeshPublic* NavSystem::GetPublicNavMesh() const
 	{
 		return pimpl->GetPublicNavMesh();
+	}
+
+	void NavSystem::AddTeleportal(float fromX, float fromY, float toX, float toY) const
+	{
+		Vector2 from = Vector2(fromX, fromY);
+		Vector2 to = Vector2(toX, toY);
+		//Math::Geometry2D* shape = &FusionCrowd::Math::DiskShape::DiskShape(from, 5);
+		pimpl->AddTeleportal(from, to);
 	}
 
 	float NavSystem::CutPolygonFromMesh(FCArray<NavMeshVetrex>& polygon)

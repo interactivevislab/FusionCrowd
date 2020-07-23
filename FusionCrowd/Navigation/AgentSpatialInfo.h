@@ -32,6 +32,8 @@ namespace FusionCrowd
 		float prefSpeed = 1.04f;
 		float maxAngVel = 1.0f;
 
+		float zPos = 0.0f;
+
 		bool inertiaEnabled = true;
 
 		Type type = AGENT;

@@ -41,7 +41,7 @@ namespace FusionCrowd
 	}
 
 	PortalRoute* PathPlanner::getRoute(unsigned int startID, unsigned int endID,
-	                                   float minWidth)
+	                                   float minWidth, bool& foundPath)
 	{
 		RouteKey key = makeRouteKey(startID, endID);
 
@@ -68,16 +68,17 @@ namespace FusionCrowd
 		// Compute a new path
 		if (route == 0x0)
 		{
-			return computeRoute(startID, endID, minWidth);
+			return computeRoute(startID, endID, minWidth, foundPath);
 		}
 		else
 		{
+			foundPath = true;
 			return route;
 		}
 	}
 
 	PortalRoute* PathPlanner::computeRoute(unsigned int startID, unsigned int endID
-	                                       , float minWidth)
+	                                       , float minWidth, bool & foundPath)
 	{
 		const size_t N = _navMesh->getNodeCount();
 #ifdef _OPENMP
@@ -157,6 +158,8 @@ namespace FusionCrowd
 			}
 			path.push_front(startID);
 		}
+
+		foundPath = found;
 
 #ifdef _WIN32
 		// Visual studio 2005 compiler is giving an erroneous warning

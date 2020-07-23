@@ -21,7 +21,7 @@ namespace FusionCrowd
 		{
 			size_t id;
 
-			float posX, posY;
+			float posX, posY, posZ;
 			float velX, velY;
 			float orientX, orientY;
 			float radius;
@@ -77,6 +77,12 @@ namespace FusionCrowd
 			virtual OperationStatus SetAgentGoal(size_t agentId, Disk d) = 0;
 			virtual OperationStatus SetAgentGoal(size_t agentId, Rect r) = 0;
 
+			virtual Point GetAgentGoal(size_t agentId) = 0;
+
+			virtual void SetAgentPosition(size_t agentId, float x, float y) = 0;
+
+			virtual OperationStatus SetAgentPrimaryGoal(size_t agentId, Point p) = 0;
+
 			virtual size_t GetAgentCount() = 0;
 
 			virtual bool GetAgents(FCArray<AgentInfo> & output) = 0;
@@ -119,6 +125,8 @@ namespace FusionCrowd
 
 			virtual INavMeshPublic* GetNavMesh() const = 0;
 			virtual INavSystemPublic* GetNavSystem() const = 0;
+
+			virtual void AddTeleportalToNavMesh(float fromX, float fromY, float toX, float toY) = 0;
 		};
 
 		/*
