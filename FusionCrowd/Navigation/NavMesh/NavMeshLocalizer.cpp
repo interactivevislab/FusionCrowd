@@ -194,12 +194,10 @@ namespace FusionCrowd
 				continue;
 
 			const size_t vCount = node.getVertexCount();
+			Vector2 projection;
 			for (size_t v = 0; v < vCount; v++)
 			{
-				Vector2 vertex1 = vertices[node.getVertexID(v)];
-				Vector2 vertex2 = vertices[(node.getVertexID(v) + 1) % vCount];
-
-				auto projection = Math::projectOnSegment(vertex1, vertex2, p);
+				Math::projectOnSegment(vertices[node.getVertexID(v)], vertices[(node.getVertexID(v) + 1) % vCount], p, projection);
 
 				const float d = Vector2::DistanceSquared(p, projection);
 				if (d < min_dist)

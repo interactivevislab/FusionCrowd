@@ -35,7 +35,7 @@ namespace FusionCrowd
 			return (0 < val) - (val < 0);
 		}
 
-		inline float clamp(float val, float min, float max)
+		inline float clamp(const float& val, const float& min, const float& max)
 		{
 			if(val < min) return min;
 			if(val > max) return max;
@@ -43,22 +43,24 @@ namespace FusionCrowd
 			return val;
 		}
 
-		inline DirectX::SimpleMath::Vector2 projectOnSegment(DirectX::SimpleMath::Vector2 s1, DirectX::SimpleMath::Vector2 s2, DirectX::SimpleMath::Vector2 p)
+		inline void projectOnSegment(const DirectX::SimpleMath::Vector2& s1, const DirectX::SimpleMath::Vector2& s2,
+			const DirectX::SimpleMath::Vector2& p, DirectX::SimpleMath::Vector2& outProjection)
 		{
-			const float l2 = (s2 - s1).LengthSquared();
+			if (s1 == s2)
+			{
+				outProjection = s1;
+				return;
+			}
 
-			if (l2 == 0.0)
-				return s1;
-
-			const float t = clamp((p - s1).Dot(s2 - s1) / l2, 0, 1);
-			const DirectX::SimpleMath::Vector2 projection = s1 + t * (s2 - s1);  // Projection falls on the segment
-
-			return projection;
+			outProjection = s2 - s1;
+			outProjection *= clamp((p - s1).Dot(outProjection) / outProjection.LengthSquared(), 0, 1);
+			outProjection += s1;
 		}
 
 		inline float distanceToSegment(DirectX::SimpleMath::Vector2 s1, DirectX::SimpleMath::Vector2 s2, DirectX::SimpleMath::Vector2 p)
 		{
-			const DirectX::SimpleMath::Vector2 projection = projectOnSegment(s1, s2, p);
+			DirectX::SimpleMath::Vector2 projection;
+			projectOnSegment(s1, s2, p, projection);
 
 			return DirectX::SimpleMath::Vector2::Distance(p, projection);
 		}
