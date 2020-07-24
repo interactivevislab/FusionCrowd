@@ -53,7 +53,7 @@ namespace FusionCrowd
 			}
 
 			outProjection = s2 - s1;
-			outProjection *= clamp((p - s1).Dot(outProjection) / outProjection.LengthSquared(), 0, 1);
+			outProjection *= clamp((p - s1).Dot(outProjection) / outProjection.LengthSquared(), 0.0f, 1.0f);
 			outProjection += s1;
 		}
 

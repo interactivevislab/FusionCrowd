@@ -173,11 +173,45 @@ namespace FusionCrowd
 				updatedVel = agent.velNew;
 			}
 
-			updatedPos = agent.GetPos() + agent.GetVel() * timeStep;
-			if (agent.useNavMeshObstacles)			{
-				updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
+			
+			auto prevPos = agent.GetPos();
+
+			// Calculate new position
+			updatedPos = prevPos + agent.GetVel() * timeStep;
+			
+			if (agent.useNavMeshObstacles)	{
+				// If new position is out of navmesh
+				if (_localizer->findNodeBlind(updatedPos) == NavMeshLocation::NO_NODE) {
+					// Get previous node and project agent position to it
+					auto prevNode = _localizer->findNodeBlind(prevPos);
+
+					const auto node = _navMesh->GetNodeByID(prevNode);
+					if (prevNode == NavMeshLocation::NO_NODE || node == nullptr ||  node->deleted) {
+						updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
+						return;
+					}
+
+					float min_dist = INFINITY;
+					Vector2 res;
+					auto* vertices = _navMesh->GetVertices();
+
+					const size_t vCount = node->getVertexCount();
+					Vector2 projection;
+					for (size_t v = 0; v < vCount; v++) {
+						Math::projectOnSegment(vertices[node->getVertexID(v)], vertices[(node->getVertexID(v) + 1) % vCount], updatedPos, projection);
+
+						float d = Vector2::DistanceSquared(updatedPos, projection);
+						if (d < min_dist) {
+							min_dist = d;
+							res = projection;
+						}
+					}
+
+					updatedPos = projection;
+				}
+				//updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
 			}
-			_localizer->findNodeBlind(updatedPos);
+			//_localizer->findNodeBlind(updatedPos);
 		}
 
 		void UpdateOrient(const AgentSpatialInfo & agent, float timeStep, Vector2 & newOrient)
