@@ -41,7 +41,7 @@ namespace FusionCrowd
 		struct AgentStruct
 		{
 		public:
-			unsigned int id;
+			size_t id;
 			NavMeshLocation location;
 		};
 
@@ -58,7 +58,7 @@ namespace FusionCrowd
 		std::shared_ptr<NavMesh> _navMesh;
 		std::shared_ptr<NavMeshLocalizer> _localizer;
 		std::shared_ptr<NavMeshSpatialQuery> _spatial_query;
-		std::vector<AgentStruct> _agents;
+		std::map<size_t, AgentStruct> _agents;
 	};
 }
 

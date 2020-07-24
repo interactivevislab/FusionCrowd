@@ -108,24 +108,20 @@ namespace FusionCrowd
 		bool pathFound = false;
 		agtStruct.location = Replan(agentInfo.GetPos(), agentGoal, agentInfo.radius, pathFound, agentInfo.id);
 
-		_agents.push_back(agtStruct);
+		_agents.insert(std::pair<size_t, AgentStruct>(id, agtStruct));
 	}
 
 	bool NavMeshComponent::DeleteAgent(size_t id)
 	{
-		for (int i = 0; i < _agents.size(); i++) {
-			if (_agents[i].id == id) {
-				_agents.erase(_agents.begin() + i);
-				break;
-			}
-		}
-		return false;
+		_agents.erase(id);
+		return true;
 	}
 
 	void NavMeshComponent::Update(float timeStep)
 	{
-		for (auto & agtStruct : _agents)
+		for (auto & agentData : _agents)
 		{
+			auto& agtStruct = agentData.second;
 			size_t id = agtStruct.id;
 
 			size_t groupId = _simulator->GetAgent(id).GetGroupId();
@@ -290,8 +286,7 @@ namespace FusionCrowd
 
 	size_t NavMeshComponent::getNodeId(size_t agentId) const
 	{
-		unsigned int node = NavMeshLocation::NO_NODE;
-		return _agents[agentId].location.getNode();
+		return _agents.find(agentId)->second.location.getNode();
 	}
 
 	std::shared_ptr<NavMeshLocalizer> NavMeshComponent::GetLocalizer() const
