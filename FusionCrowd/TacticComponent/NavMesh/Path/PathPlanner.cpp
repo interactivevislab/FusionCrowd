@@ -191,7 +191,10 @@ namespace FusionCrowd
 #ifdef _WIN32
 #pragma warning( default : 4267 )
 #endif
-		cacheRoute(startID, endID, route);
+		if (found)
+		{
+			cacheRoute(startID, endID, route);
+		}
 		return route;
 	}
 

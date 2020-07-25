@@ -272,7 +272,11 @@ namespace FusionCrowd
 
 	unsigned int PortalPath::getNode() const
 	{
-		if (_currPortal == _route->getPortalCount())
+		if (_route->getPortalCount() == 0)
+		{
+			return _route->getStartNode();//getEndNode();
+		}
+		else if (_currPortal == _route->getPortalCount())
 		{
 			return _route->getEndNode();
 		}
