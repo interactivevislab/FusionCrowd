@@ -111,6 +111,11 @@ namespace FusionCrowd
 
 						for(auto & n : cell->second)
 						{
+							if (n.id == r.id)
+							{
+								continue;
+							}
+
 							//transform to agent coordinates
 							auto translate = n.GetPos() - pos;
 							//angle between agent orient and (1,0) vector

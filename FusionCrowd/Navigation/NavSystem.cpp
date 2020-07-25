@@ -57,24 +57,13 @@ namespace FusionCrowd
 			if(_agentsInfo.find(spatialInfo.id) != _agentsInfo.end())
 				return;
 
-			if(spatialInfo.type == AgentSpatialInfo::AGENT)
-				_numAgents++;
-			else
-				_numGroups++;
-
 			_agentsInfo[spatialInfo.id] = std::move(spatialInfo);
 			_agentsNeighbours[spatialInfo.id] = std::vector<NeighborInfo>();
 		}
 
 		void RemoveAgent(size_t id)
 		{
-			if(_agentsInfo.erase(id))
-			{
-				if (_agentsInfo[id].type == AgentSpatialInfo::AGENT)
-					_numAgents--;
-				else
-					_numGroups--;
-			}
+			_agentsInfo.erase(id);
 		}
 
 		void AddTrafficLights(size_t NavGraphsNodeId)
@@ -332,9 +321,6 @@ namespace FusionCrowd
 		std::map<size_t, AgentSpatialInfo> _agentsInfo;
 		float _agentsSensitivityRadius = 6;
 		float _groupSensitivityRadius = 100;
-
-		size_t _numAgents = 0;
-		size_t _numGroups = 0;
 	};
 
 	NavSystem::NavSystem()
