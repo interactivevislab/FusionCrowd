@@ -33,62 +33,77 @@ namespace FusionCrowd
 		std::vector<size_t> postPortalCount;
 		std::vector<size_t> portalIndex;
 
+		std::vector<size_t> visitedPortals = {};
+		std::vector<size_t> portalsRoute = {};
+		std::vector<size_t> portalsWeight = {};
+		size_t shortestWay = INT32_MAX;
+		std::vector<size_t> shortestRoute = {};
+		std::set<size_t> portalsRooms = {};
 		needsTeleportation = false;
 
 		if (!foundPath)
 		{
-			for (size_t i = 0; i < _navMesh->teleportals.size(); i++)
+			SeveralPortalsSearch(from, to, agentRadius, foundPath, visitedPortals,
+				portalsRoute, portalsWeight, planner, agentId, shortestWay, shortestRoute, portalsRooms);
+
+			if (shortestRoute.size()>0)
 			{
-				//_simulator->SetAgentGoal(info.id, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
-
-				//auto& newCurGoal = _simulator->GetAgentGoal(info.id);
-
-				//agtStruct.location = Replan(info.GetPos(), _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation), info.radius, pathFound);
-				size_t newTo = GetClosestAvailableNode(_simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation).getCentroid());
-				route = planner->getRoute(from, newTo, agentRadius, foundPath);
-				if (foundPath)
-				{
-					prePortalCount.push_back(route->getPortalCount());
-					portalIndex.push_back(i);
-					//_simulator->SetAgentGoal(info.id, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
-
-					//auto& newCurGoal = _simulator->GetAgentGoal(info.id);
-
-					//agtStruct.location = Replan(_navMesh->teleportals[i]._teleportLocation, newCurGoal, info.radius, pathFound);
-					size_t newFrom = GetClosestAvailableNode(_navMesh->teleportals[i]._teleportLocation);
-					route = planner->getRoute(newFrom, to, agentRadius, foundPath);
-					if (foundPath)
-					{
-						postPortalCount.push_back(route->getPortalCount());
-						//_simulator->SetAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
-						//break;
-					}
-					else
-					{
-						prePortalCount.pop_back();
-						portalIndex.pop_back();
-						continue;
-					}
-					//break;
-				}
-			}
-			if (prePortalCount.size()>0)
-			{
-				size_t lowestCount = prePortalCount[0] + postPortalCount[0];
-				size_t shortestPortalIndex = portalIndex[0];
-
-				for (size_t i = 1; i < prePortalCount.size(); i++)
-				{
-					if (lowestCount > prePortalCount[i] + postPortalCount[i])
-					{
-						lowestCount = prePortalCount[i] + postPortalCount[i];
-						shortestPortalIndex = portalIndex[i];
-					}
-				}
-
-				_simulator->SetAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[shortestPortalIndex]._portalLocation));
+				_simulator->SetAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[shortestRoute[0]]._portalLocation));
 				needsTeleportation = true;
 			}
+
+			//for (size_t i = 0; i < _navMesh->teleportals.size(); i++)
+			//{
+			//	//_simulator->SetAgentGoal(info.id, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+
+			//	//auto& newCurGoal = _simulator->GetAgentGoal(info.id);
+
+			//	//agtStruct.location = Replan(info.GetPos(), _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation), info.radius, pathFound);
+			//	size_t newTo = GetClosestAvailableNode(_simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation).getCentroid());
+			//	route = planner->getRoute(from, newTo, agentRadius, foundPath);
+			//	if (foundPath)
+			//	{
+			//		prePortalCount.push_back(route->getPortalCount());
+			//		portalIndex.push_back(i);
+			//		//_simulator->SetAgentGoal(info.id, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+
+			//		//auto& newCurGoal = _simulator->GetAgentGoal(info.id);
+
+			//		//agtStruct.location = Replan(_navMesh->teleportals[i]._teleportLocation, newCurGoal, info.radius, pathFound);
+			//		size_t newFrom = GetClosestAvailableNode(_navMesh->teleportals[i]._teleportLocation);
+			//		route = planner->getRoute(newFrom, to, agentRadius, foundPath);
+			//		if (foundPath)
+			//		{
+			//			postPortalCount.push_back(route->getPortalCount());
+			//			//_simulator->SetAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+			//			//break;
+			//		}
+			//		else
+			//		{
+			//			prePortalCount.pop_back();
+			//			portalIndex.pop_back();
+			//			continue;
+			//		}
+			//		//break;
+			//	}
+			//}
+			//if (prePortalCount.size()>0)
+			//{
+			//	size_t lowestCount = prePortalCount[0] + postPortalCount[0];
+			//	size_t shortestPortalIndex = portalIndex[0];
+
+			//	for (size_t i = 1; i < prePortalCount.size(); i++)
+			//	{
+			//		if (lowestCount > prePortalCount[i] + postPortalCount[i])
+			//		{
+			//			lowestCount = prePortalCount[i] + postPortalCount[i];
+			//			shortestPortalIndex = portalIndex[i];
+			//		}
+			//	}
+
+			//	_simulator->SetAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[shortestPortalIndex]._portalLocation));
+			//	needsTeleportation = true;
+			//}
 		}
 
 		std::shared_ptr<PortalPath> path = std::make_shared<PortalPath>(fromPoint, target, route, agentRadius);
@@ -97,6 +112,100 @@ namespace FusionCrowd
 		location.setPath(path);
 
 		return location;
+	}
+
+	void NavMeshComponent::SeveralPortalsSearch(unsigned int from, unsigned int to, float minWidth, bool& foundGoal, std::vector<size_t>& visitedPortals, 
+		std::vector<size_t>& portalsRoute, std::vector<size_t>& portalsWeight, std::shared_ptr<PathPlanner> planner, size_t agentId, size_t& shortestWay, 
+		std::vector<size_t>& shortestRoute, std::set<size_t>& portalsRooms)
+	{
+		for (size_t i = 0; i < _navMesh->teleportals.size(); i++)
+		{
+			std::vector<size_t> pRoute = portalsRoute;
+			std::vector<size_t> pWeight = portalsWeight;
+			std::set<size_t> pRooms = portalsRooms;
+
+			auto it = portalsRooms.find(_navMesh->teleportals[i]._leadsToRoomWithId);
+			auto index = std::distance(portalsRooms.begin(), it);
+
+			//auto it = std::find(visitedPortals.begin(), visitedPortals.end(), i);
+			//auto index = std::distance(visitedPortals.begin(), it);
+			//if (visitedPortals.size() > 0 && index != visitedPortals.size())
+			if(portalsRooms.size() > 0 && index != portalsRooms.size())
+			{
+				continue;
+			}
+			size_t newTo = GetClosestAvailableNode(_simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation).getCentroid());
+			auto route = planner->getRoute(from, newTo, minWidth, foundGoal);
+			if (foundGoal)
+			{
+				pRooms.insert(_navMesh->teleportals[_navMesh->teleportals[i]._backwayTeleporterIndex]._leadsToRoomWithId);
+
+				pWeight.push_back(route->getPortalCount());
+				pRoute.push_back(i);
+				visitedPortals.push_back(i);
+				visitedPortals.push_back(_navMesh->teleportals[i]._backwayTeleporterIndex);
+
+				size_t newFrom = GetClosestAvailableNode(_navMesh->teleportals[i]._teleportLocation);
+				route = planner->getRoute(newFrom, to, minWidth, foundGoal);
+
+				//portalsRooms.insert(_navMesh->teleportals[i]._leadsToRoomWithId);
+
+				if (foundGoal)
+				{
+					pWeight.push_back(route->getPortalCount());
+
+					size_t routeLengh = 0;
+
+					for (size_t j = 0; j < pWeight.size(); j++)
+					{
+						routeLengh += pWeight[j];
+					}
+					if (routeLengh < shortestWay)
+					{
+						shortestWay = routeLengh;
+						shortestRoute = pRoute;
+					}
+
+					//_simulator->SetAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+
+					//_simulator->QueueAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[i]._portalLocation));
+
+					//break;
+				}
+				else
+				{
+					SeveralPortalsSearch(newFrom, to, minWidth, foundGoal, visitedPortals,
+						pRoute, pWeight, planner, agentId, shortestWay, shortestRoute, pRooms);
+				}
+				//break;
+			}
+			else
+			{
+
+			}
+		}
+		if (!foundGoal)
+		{
+			portalsWeight.pop_back();
+			portalsRoute.pop_back();
+		}
+		//if (prePortalCount.size() > 0)
+		//{
+		//	size_t lowestCount = prePortalCount[0] + postPortalCount[0];
+		//	size_t shortestPortalIndex = portalIndex[0];
+
+		//	for (size_t i = 1; i < prePortalCount.size(); i++)
+		//	{
+		//		if (lowestCount > prePortalCount[i] + postPortalCount[i])
+		//		{
+		//			lowestCount = prePortalCount[i] + postPortalCount[i];
+		//			shortestPortalIndex = portalIndex[i];
+		//		}
+		//	}
+
+		//	_simulator->SetAgentGoal(agentId, _simulator->GetGoalFactory().CreatePointGoal(_navMesh->teleportals[shortestPortalIndex]._portalLocation));
+		//	needsTeleportation = true;
+		//}
 	}
 
 	void NavMeshComponent::AddAgent(size_t id)

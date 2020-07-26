@@ -37,6 +37,10 @@ namespace FusionCrowd
 
 		ComponentId GetId() override { return ComponentIds::NAVMESH_ID; }
 
+		void SeveralPortalsSearch(unsigned int from, unsigned int to, float minWidth, bool& foundGoal, std::vector<size_t>& visitedPortals,
+			std::vector<size_t>& portalsRoute, std::vector<size_t>& portalsWeight, std::shared_ptr<PathPlanner> planner, size_t agentId, size_t& shortestWay, 
+			std::vector<size_t>& shortestRoute, std::set<size_t>& portalsRooms);
+
 	private:
 		struct AgentStruct
 		{

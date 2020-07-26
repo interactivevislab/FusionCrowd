@@ -128,7 +128,7 @@ namespace FusionCrowd
 			virtual INavMeshPublic* GetNavMesh() const = 0;
 			virtual INavSystemPublic* GetNavSystem() const = 0;
 
-			virtual void AddTeleportalToNavMesh(float fromX, float fromY, float toX, float toY) = 0;
+			virtual void AddTeleportalToNavMesh(float fromX, float fromY, float toX, float toY, size_t backwayId, size_t toRoomId) = 0;
 		};
 
 		/*

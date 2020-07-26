@@ -303,9 +303,9 @@ namespace FusionCrowd
 			return _navMesh.get();
 		}
 
-		void AddTeleportal(Vector2 from, Vector2 to) const
+		void AddTeleportal(Vector2 from, Vector2 to, size_t backwayId, size_t toRoomId) const
 		{
-			_navMesh->teleportals.push_back(TeleporterPortal(from,to));
+			_navMesh->teleportals.push_back(TeleporterPortal(from,to, backwayId, toRoomId));
 		}
 
 	private:
@@ -378,12 +378,12 @@ namespace FusionCrowd
 		return pimpl->GetPublicNavMesh();
 	}
 
-	void NavSystem::AddTeleportal(float fromX, float fromY, float toX, float toY) const
+	void NavSystem::AddTeleportal(float fromX, float fromY, float toX, float toY, size_t backwayId, size_t toRoomId) const
 	{
 		Vector2 from = Vector2(fromX, fromY);
 		Vector2 to = Vector2(toX, toY);
 		//Math::Geometry2D* shape = &FusionCrowd::Math::DiskShape::DiskShape(from, 5);
-		pimpl->AddTeleportal(from, to);
+		pimpl->AddTeleportal(from, to, backwayId, toRoomId);
 	}
 
 	float NavSystem::CutPolygonFromMesh(FCArray<NavMeshVetrex>& polygon)

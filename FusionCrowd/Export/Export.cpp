@@ -192,9 +192,9 @@ namespace FusionCrowd
 			return _sim->GetNavSystem()->GetPublicNavMesh();
 		}
 
-		void AddTeleportalToNavMesh(float fromX, float fromY, float toX, float toY)
+		void AddTeleportalToNavMesh(float fromX, float fromY, float toX, float toY, size_t backwayId, size_t toRoomId)
 		{
-			_sim->GetNavSystem()->AddTeleportal(fromX, fromY, toX, toY);
+			_sim->GetNavSystem()->AddTeleportal(fromX, fromY, toX, toY, backwayId, toRoomId);
 		}
 
 		INavSystemPublic* GetNavSystem() const
