@@ -401,7 +401,8 @@ namespace FusionCrowd
 					info.GetOrient().x, info.GetOrient().y,
 					info.radius,
 					op, tactic, strat,
-					g.getCentroid().x, g.getCentroid().y
+					g.getCentroid().x, g.getCentroid().y,
+					info.awaitsTeleportation
 				};
 				i++;
 			}

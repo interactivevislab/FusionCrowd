@@ -33,6 +33,7 @@ namespace FusionCrowd
 		float maxAngVel = 1.0f;
 
 		float zPos = 0.0f;
+		bool awaitsTeleportation = false;
 
 		bool inertiaEnabled = true;
 

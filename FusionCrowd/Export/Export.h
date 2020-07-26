@@ -31,6 +31,8 @@ namespace FusionCrowd
 			ComponentId stratCompId;
 
 			float goalX, goalY;
+
+			bool awaitsTeleportation;
 		};
 
 		struct FUSION_CROWD_API AgentParams
