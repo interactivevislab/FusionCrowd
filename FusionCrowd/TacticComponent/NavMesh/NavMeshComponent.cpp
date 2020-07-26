@@ -239,7 +239,7 @@ namespace FusionCrowd
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
 
-		if (agentGoal.getGeometry()->containsPoint(agentInfo.GetPos()))
+		if (agentGoal.getGeometry()->squaredDistance(agentInfo.GetPos()) < agentInfo.radius * agentInfo.radius)
 		{
 			agentInfo.prefVelocity.setSpeed(0);
 			return;
