@@ -128,7 +128,7 @@ namespace FusionCrowd
 			return currNodeID;
 		}
 
-		if (!currNode->containsPoint(p))
+		if (!currNode->containsPoint(p) || (_waypoints[_currPortal] - agent.GetPos()).Length() < agent.radius)
 		{
 			// test to see if I've progressed to the next
 			bool gotoNext = false;
@@ -139,13 +139,13 @@ namespace FusionCrowd
 				const WayPortal* nextPortal = _route->getPortal(_currPortal + 1);
 				size_t nextID = nextPortal->_nodeID;
 				nextNode = &(navMesh->GetNodeByPos((unsigned int)nextID));
-				gotoNext = nextNode->containsPoint(p);
+				gotoNext = nextNode->containsPoint(p) || ((agent.GetPos() - nextNode->getCenter()).LengthSquared() < (agent.radius * agent.radius));
 			}
 			else if (_currPortal < PORTAL_COUNT)
 			{
 				// the next node is the goal polygon
 				nextNode = &(navMesh->GetNodeByPos((unsigned int)_route->getEndNode()));
-				gotoNext = nextNode->containsPoint(p);
+				gotoNext = nextNode->containsPoint(p) || ((agent.GetPos() - nextNode->getCenter()).LengthSquared() < (agent.radius * agent.radius));
 			}
 			if (gotoNext)
 			{
