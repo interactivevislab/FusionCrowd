@@ -49,6 +49,7 @@ namespace FusionCrowd
 
 		IRecording & GetRecording();
 		void SetIsRecording(bool isRecording);
+		void SetRecordingTimeStep(float timeStep);
 
 		float GetElapsedTime();
 

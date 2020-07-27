@@ -124,6 +124,7 @@ namespace FusionCrowd
 
 			virtual IStrategyComponent* GetStrategy(ComponentId strategyId) const = 0;
 			virtual void SetIsRecording(bool isRecording) = 0;
+			virtual void SetRecordingTimeStep(float timeStep) = 0;
 
 			virtual INavMeshPublic* GetNavMesh() const = 0;
 			virtual INavSystemPublic* GetNavSystem() const = 0;

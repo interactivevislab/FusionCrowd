@@ -172,6 +172,11 @@ namespace FusionCrowd
 			_sim->SetIsRecording(isRecording);
 		}
 
+		void SetRecordingTimeStep(float timeStep)
+		{
+			_sim->SetRecordingTimeStep(timeStep);
+		}
+
 		size_t GetAgentCount()
 		{
 			return _sim->GetAgentCount();
