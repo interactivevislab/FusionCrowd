@@ -128,7 +128,7 @@ namespace FusionCrowd
 			return currNodeID;
 		}
 
-		if (!currNode->containsPoint(p) || (_waypoints[_currPortal] - agent.GetPos()).Length() < agent.radius)
+		if (!currNode->containsPoint(p)/* && ((agent.GetPos() - currNode->getCenter()).LengthSquared() > (agent.radius * agent.radius))*/)
 		{
 			// test to see if I've progressed to the next
 			bool gotoNext = false;
@@ -165,7 +165,7 @@ namespace FusionCrowd
 					const WayPortal* prevPortal = _route->getPortal(_currPortal - 1);
 					size_t prevID = prevPortal->_nodeID;
 					prevNode = &(navMesh->GetNodeByPos((unsigned int)prevID));
-					gotoPrev = prevNode->containsPoint(p);
+					gotoPrev = prevNode->containsPoint(p) || ((agent.GetPos() - prevNode->getCenter()).LengthSquared() < (agent.radius * agent.radius));
 				}
 				if (gotoPrev)
 				{
