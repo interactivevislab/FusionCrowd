@@ -13,5 +13,6 @@ namespace FusionCrowd
 		PathRandomization();
 		~PathRandomization();
 		void RandomizePath(FusionCrowd::PortalPath* path);
+		void RandomizePath(FusionCrowd::PortalPath* path, size_t start, size_t end);
 	};
 }

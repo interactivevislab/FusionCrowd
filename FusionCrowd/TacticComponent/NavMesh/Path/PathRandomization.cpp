@@ -16,9 +16,9 @@ namespace FusionCrowd
 	using namespace DirectX::SimpleMath;
 
 	std::mt19937 _rnd_seed;
-	void PathRandomization::RandomizePath(FusionCrowd::PortalPath* path) {
+	void PathRandomization::RandomizePath(FusionCrowd::PortalPath* path, size_t start, size_t end) {
 		int portal_count = path->getPortalCount();
-		for (int i = 0; i < portal_count; i++) {
+		for (int i = start; i < end; i++) {
 			auto portal = path->getPortal(i);
 			float width = Vector2::Distance(portal->getLeft(), portal->getRight());
 			auto old_wp = path->getWayPoint(i);
@@ -30,5 +30,11 @@ namespace FusionCrowd
 			delta *= dist(_rnd_seed);
 			path->setWaypoints(i, i + 1, old_wp + delta, path->_headings[i]);
 		}
+	}
+
+	void PathRandomization::RandomizePath(FusionCrowd::PortalPath* path)
+	{
+		int portal_count = path->getPortalCount();
+		RandomizePath(path, 0, portal_count);
 	}
 }
