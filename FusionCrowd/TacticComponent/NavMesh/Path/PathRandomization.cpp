@@ -2,6 +2,8 @@
 #include "PortalPath.h"
 #include <random>
 
+#include "Navigation/AgentSpatialInfo.h"
+
 namespace FusionCrowd
 {
 	PathRandomization::PathRandomization()
@@ -34,7 +36,37 @@ namespace FusionCrowd
 
 	void PathRandomization::RandomizePath(FusionCrowd::PortalPath* path)
 	{
+		size_t start = 0;
 		int portal_count = path->getPortalCount();
-		RandomizePath(path, 0, portal_count);
+		RandomizePath(path, start, portal_count);
+	}
+
+	void PathRandomization::RandomizePath(FusionCrowd::PortalPath* path, float customEdgePosition, float customDistribution, float agentRadius)
+	{
+		int portal_count = path->getPortalCount();
+		RandomizePath(path, 0, portal_count, customEdgePosition, customDistribution, agentRadius);
+	}
+
+	void PathRandomization::RandomizePath(FusionCrowd::PortalPath* path, size_t start, size_t end, float customEdgePosition, float customDistribution, float agentRadius)
+	{
+		int portal_count = path->getPortalCount();
+		for (int i = start; i < end; i++)
+		{
+			auto portal = path->getPortal(i);
+			float width = Vector2::Distance(portal->getLeft(), portal->getRight());
+			auto old_wp = portal->getLeft(width * customEdgePosition);
+			Vector2 delta = (portal->getLeft() - portal->getRight()) / 2;
+			std::uniform_real_distribution<float> dist(-customDistribution, customDistribution);
+			delta *= dist(_rnd_seed);
+			auto newWaypoint = old_wp + delta;
+			float newToLeft = Vector2::Distance(portal->getLeft(), newWaypoint);
+			float newToRight = Vector2::Distance(newWaypoint, portal->getRight());
+			newWaypoint =
+				newToLeft > width ? portal->getRight(agentRadius) : 
+				newToRight > width ? portal->getLeft(agentRadius) : 
+				newWaypoint;
+
+			path->setWaypoints(i, i + 1, newWaypoint, path->_headings[i]);
+		}
 	}
 }

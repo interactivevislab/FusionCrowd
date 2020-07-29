@@ -97,7 +97,7 @@ namespace FusionCrowd
 			) = 0;
 
 			virtual size_t AddAgent(
-				float x, float y, float radius, float preferedVelocity,
+				float x, float y, float radius, float preferedVelocity, float customEdgePosition, float customDistribution, bool useCustomRandomizer,
 				ComponentId opId,
 				ComponentId tacticId,
 				ComponentId strategyId

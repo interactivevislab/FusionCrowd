@@ -34,6 +34,9 @@ namespace FusionCrowd
 
 		float zPos = 0.0f;
 		bool awaitsTeleportation = false;
+		float customEdgePosition = 0.5f;
+		float customDistribution = 0;
+		bool useCustomRandomizer = false;
 
 		bool inertiaEnabled = true;
 

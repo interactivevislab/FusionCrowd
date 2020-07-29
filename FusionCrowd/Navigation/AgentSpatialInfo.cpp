@@ -19,6 +19,9 @@ namespace FusionCrowd
 		maxSpeed(other.maxSpeed),
 		prefSpeed(other.prefSpeed),
 		maxAngVel(other.maxAngVel),
+		customEdgePosition(other.customEdgePosition),
+		customDistribution(other.customDistribution),
+		useCustomRandomizer(other.useCustomRandomizer),
 		inertiaEnabled(other.inertiaEnabled),
 		type(other.type),
 		collisionsLevel(other.collisionsLevel),
@@ -38,6 +41,9 @@ namespace FusionCrowd
 		maxSpeed  = other.maxSpeed;
 		prefSpeed = other.prefSpeed;
 		maxAngVel = other.maxAngVel;
+		customEdgePosition = other.customEdgePosition;
+		customDistribution = other.customDistribution;
+		useCustomRandomizer = other.useCustomRandomizer;
 		inertiaEnabled = other.inertiaEnabled;
 		type = other.type;
 		collisionsLevel = other.collisionsLevel;
@@ -58,6 +64,9 @@ namespace FusionCrowd
 		maxSpeed(other.maxSpeed),
 		prefSpeed(other.prefSpeed),
 		maxAngVel(other.maxAngVel),
+		customEdgePosition(other.customEdgePosition),
+		customDistribution(other.customDistribution),
+		useCustomRandomizer(other.useCustomRandomizer),
 		inertiaEnabled(other.inertiaEnabled),
 		type(other.type),
 		collisionsLevel(other.collisionsLevel),
@@ -77,6 +86,9 @@ namespace FusionCrowd
 		maxSpeed  = other.maxSpeed;
 		prefSpeed = other.prefSpeed;
 		maxAngVel = other.maxAngVel;
+		customEdgePosition = other.customEdgePosition;
+		customDistribution = other.customDistribution;
+		useCustomRandomizer = other.useCustomRandomizer;
 		inertiaEnabled = other.inertiaEnabled;
 		type = other.type;
 		collisionsLevel = other.collisionsLevel;

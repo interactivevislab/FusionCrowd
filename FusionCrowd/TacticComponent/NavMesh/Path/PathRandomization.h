@@ -14,5 +14,7 @@ namespace FusionCrowd
 		~PathRandomization();
 		void RandomizePath(FusionCrowd::PortalPath* path);
 		void RandomizePath(FusionCrowd::PortalPath* path, size_t start, size_t end);
+		void RandomizePath(FusionCrowd::PortalPath* path, float customEdgePosition, float customDistribution, float agentRadius);
+		void RandomizePath(FusionCrowd::PortalPath* path, size_t start, size_t end, float customEdgePosition, float customDistribution, float agentRadius);
 	};
 }

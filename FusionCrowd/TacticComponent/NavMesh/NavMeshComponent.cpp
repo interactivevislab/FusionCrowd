@@ -21,8 +21,9 @@ namespace FusionCrowd
 	{
 	}
 
-	NavMeshLocation NavMeshComponent::Replan(Vector2 fromPoint, const Goal & target, float agentRadius, bool& foundPath, size_t agentId, bool& needsTeleportation)
+	NavMeshLocation NavMeshComponent::Replan(Vector2 fromPoint, const Goal & target, const AgentSpatialInfo& agent, bool& foundPath, size_t agentId, bool& needsTeleportation)
 	{
+		auto agentRadius = agent.radius;
 		size_t from = GetClosestAvailableNode(fromPoint);
 		size_t to = GetClosestAvailableNode(target.getCentroid());
 
@@ -106,7 +107,7 @@ namespace FusionCrowd
 			//}
 		}
 
-		std::shared_ptr<PortalPath> path = std::make_shared<PortalPath>(fromPoint, target, route, agentRadius);
+		std::shared_ptr<PortalPath> path = std::make_shared<PortalPath>(fromPoint, target, route, agent);
 
 		NavMeshLocation location(from);
 		location.setPath(path);
@@ -218,7 +219,7 @@ namespace FusionCrowd
 		agtStruct.id = id;
 
 		bool pathFound = false;
-		agtStruct.location = Replan(agentInfo.GetPos(), agentGoal, agentInfo.radius, pathFound, agentInfo.id, agentInfo.awaitsTeleportation);
+		agtStruct.location = Replan(agentInfo.GetPos(), agentGoal, agentInfo/*.radius*/, pathFound, agentInfo.id, agentInfo.awaitsTeleportation);
 
 		_agents.insert(std::pair<size_t, AgentStruct>(id, agtStruct));
 	}
@@ -256,7 +257,7 @@ namespace FusionCrowd
 			{
 				auto & curGoal = _simulator->GetAgentGoal(info.id);
 				bool pathFound = false;
-				agtStruct.location = Replan(info.GetPos(), curGoal, info.radius, pathFound, info.id, info.awaitsTeleportation);
+				agtStruct.location = Replan(info.GetPos(), curGoal, info/*.radius*/, pathFound, info.id, info.awaitsTeleportation);
 
 				//if (!pathFound)
 				//{
