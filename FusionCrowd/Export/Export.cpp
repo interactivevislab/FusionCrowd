@@ -21,6 +21,7 @@
 #include "OperationComponent/BicycleComponent.h"
 #include "OperationComponent/StrictComponent.h"
 #include "OperationComponent/TransportOperationComponent.h"
+#include "OperationComponent/PassthroughComponent.h"
 
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
@@ -368,6 +369,9 @@ namespace FusionCrowd
 					break;				
 				case ComponentIds::STRICT_ID:
 					sim->AddOpModel(std::make_shared<StrictComp::StrictComponent>(navSystem));
+					break;
+				case ComponentIds::PASSTHROUGH_ID:
+					sim->AddOpModel(std::make_shared<PassthroughComp::PassthroughComponent>(navSystem));
 					break;
 				default:
 					break;
