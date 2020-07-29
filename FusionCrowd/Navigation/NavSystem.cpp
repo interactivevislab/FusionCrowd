@@ -187,16 +187,18 @@ namespace FusionCrowd
 					const size_t vCount = node->getVertexCount();
 					Vector2 projection;
 					for (size_t v = 0; v < vCount; v++) {
-						Math::projectOnSegment(vertices[node->getVertexID(v)], vertices[(node->getVertexID(v) + 1) % vCount], updatedPos, projection);
-
-						float d = Vector2::DistanceSquared(updatedPos, projection);
+						Math::projectOnSegment(vertices[node->getVertexID(v)], vertices[node->getVertexID((v + 1) % vCount)], updatedPos, projection);
+						auto dir = projection - updatedPos;
+						dir.Normalize();
+						dir *= agent.radius;
+						float d = Vector2::DistanceSquared(updatedPos, projection + dir);
 						if (d < min_dist) {
 							min_dist = d;
-							res = projection;
+							res = projection + dir;
 						}
 					}
 
-					updatedPos = projection;
+					updatedPos = res;
 				}
 				//updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
 			}
