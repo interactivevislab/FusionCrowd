@@ -35,6 +35,11 @@ namespace FusionCrowd
 			return _p0IsLeft ? _edge->getP1(offset) : _edge->getP0(offset);
 		}
 
+		inline unsigned int getNodeId() const
+		{
+			return _nodeID;
+		}
+
 		DirectX::SimpleMath::Vector2 intersectionPoint(const DirectX::SimpleMath::Vector2& point,
 		                                               const DirectX::SimpleMath::Vector2& dir) const;
 

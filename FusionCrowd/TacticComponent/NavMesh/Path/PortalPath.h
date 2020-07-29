@@ -18,9 +18,9 @@ namespace FusionCrowd
 	class PortalPath
 	{
 	public:
-		PortalPath(const DirectX::SimpleMath::Vector2 & startPos, const Goal & goal, const PortalRoute* route, const AgentSpatialInfo& agent);
+		PortalPath(const std::shared_ptr<NavMesh> navMesh, const DirectX::SimpleMath::Vector2 & startPos, const Goal & goal, const PortalRoute* route, const AgentSpatialInfo& agent);
 		~PortalPath();
-		void setPrefVelocity(AgentSpatialInfo & agent, float headingCos, float timeStep);
+		void setPrefVelocity(const std::shared_ptr<NavMesh> navMesh, AgentSpatialInfo & agent, float headingCos, float timeStep);
 		unsigned int updateLocation(const AgentSpatialInfo & agent, const std::shared_ptr<NavMesh> navMesh,
 		                            const std::shared_ptr<NavMeshLocalizer> localizer, const std::shared_ptr<PathPlanner> planner);
 		unsigned int getNode() const;
@@ -44,9 +44,9 @@ namespace FusionCrowd
 		const Goal _goal;
 		size_t _currPortal;
 
-		void computeCrossing(const DirectX::SimpleMath::Vector2& startPos, const AgentSpatialInfo& agent);
+		void computeCrossing(const std::shared_ptr<NavMesh> navMesh, const DirectX::SimpleMath::Vector2& startPos, const AgentSpatialInfo& agent);
 		std::vector<DirectX::SimpleMath::Vector2> _waypoints;
-		void replan(const DirectX::SimpleMath::Vector2& startPos, unsigned int startNode, unsigned int endNode,
+		void replan(const std::shared_ptr<NavMesh> navMesh, const DirectX::SimpleMath::Vector2& startPos, unsigned int startNode, unsigned int endNode,
 			const AgentSpatialInfo& agent, const std::shared_ptr<PathPlanner> planner);
 	};
 }

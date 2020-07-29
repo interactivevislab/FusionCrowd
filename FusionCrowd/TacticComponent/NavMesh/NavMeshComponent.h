@@ -52,7 +52,7 @@ namespace FusionCrowd
 		NavMeshLocation Replan(DirectX::SimpleMath::Vector2 from, const Goal & target, const AgentSpatialInfo& agent, bool& foundPath, size_t agentId, bool& needsTeleportation);
 		bool IsReplanNeeded(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
 
-		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);
+		void SetPrefVelocity(const std::shared_ptr<NavMesh> navMesh, AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);
 		unsigned int UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const;
 
 	private:

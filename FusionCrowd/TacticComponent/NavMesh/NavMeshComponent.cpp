@@ -107,7 +107,7 @@ namespace FusionCrowd
 			//}
 		}
 
-		std::shared_ptr<PortalPath> path = std::make_shared<PortalPath>(fromPoint, target, route, agent);
+		std::shared_ptr<PortalPath> path = std::make_shared<PortalPath>(_navMesh, fromPoint, target, route, agent);
 
 		NavMeshLocation location(from);
 		location.setPath(path);
@@ -291,7 +291,7 @@ namespace FusionCrowd
 			}
 
 			UpdateLocation(info, agtStruct, false);
-			SetPrefVelocity(info, agtStruct, timeStep);
+			SetPrefVelocity(_navMesh, info, agtStruct, timeStep);
 			
 			info.zPos = _localizer->getNavMesh()->GetNodeByPos(getNodeId(info.id)).getElevation(info.GetPos());
 		}
@@ -344,7 +344,7 @@ namespace FusionCrowd
 			!path->IsValid(_navMesh->GetVersion());
 	}
 
-	void NavMeshComponent::SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep)
+	void NavMeshComponent::SetPrefVelocity(const std::shared_ptr<NavMesh> navMesh, AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep)
 	{
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
@@ -355,7 +355,7 @@ namespace FusionCrowd
 			return;
 		}
 
-		path->setPrefVelocity(agentInfo, _headingDevCos, timeStep);
+		path->setPrefVelocity(navMesh, agentInfo, _headingDevCos, timeStep);
 	}
 
 	unsigned int NavMeshComponent::UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const
