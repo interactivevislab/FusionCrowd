@@ -37,6 +37,7 @@ namespace FusionCrowd
 		float customEdgePosition = 0.5f;
 		float customDistribution = 0;
 		bool useCustomRandomizer = false;
+		bool useRandomizer = true;
 
 		bool inertiaEnabled = true;
 

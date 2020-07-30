@@ -112,7 +112,7 @@ namespace FusionCrowd
 		}
 
 		size_t AddAgent(
-			float x, float y, float radius, float preferedVelocity, float customEdgePosition, float customDistribution, bool useCustomRandomizer,
+			float x, float y, float radius, float preferedVelocity, float customEdgePosition, float customDistribution, bool useCustomRandomizer, bool useRandomizer,
 			ComponentId opId,
 			ComponentId tacticId,
 			ComponentId strategyId
@@ -127,6 +127,7 @@ namespace FusionCrowd
 			info.customEdgePosition = customEdgePosition;
 			info.customDistribution = customDistribution;
 			info.useCustomRandomizer = useCustomRandomizer;
+			info.useRandomizer = useRandomizer;
 
 			return _sim->AddAgent(std::move(info), opId, tacticId, strategyId);
 		}

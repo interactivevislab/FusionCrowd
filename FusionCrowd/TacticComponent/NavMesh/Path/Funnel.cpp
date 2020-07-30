@@ -300,15 +300,18 @@ namespace FusionCrowd
 
 			path->setWaypoints(apex._id + 1, PORTAL_COUNT, goalPt, goalDir);
 		}
-		auto pr = PathRandomization();
-		if (agent.useCustomRandomizer)
+		if (agent.useRandomizer)
 		{
-			pr.RandomizePath(path, agent.customEdgePosition, agent.customDistribution, agent.radius);
-		} 
-		else
-		{
-			pr.RandomizePath(path);
+			auto pr = PathRandomization();
+			if (agent.useCustomRandomizer)
+			{
+				pr.RandomizePath(path, agent.customEdgePosition, agent.customDistribution, agent.radius);
+			}
+			else
+			{
+				pr.RandomizePath(path);
 		}
+	}
 #endif	// SIMPLE_FUNNEL
 	}
 }

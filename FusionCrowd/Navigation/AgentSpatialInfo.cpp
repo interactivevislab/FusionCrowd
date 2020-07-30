@@ -22,6 +22,7 @@ namespace FusionCrowd
 		customEdgePosition(other.customEdgePosition),
 		customDistribution(other.customDistribution),
 		useCustomRandomizer(other.useCustomRandomizer),
+		useRandomizer(other.useRandomizer),
 		inertiaEnabled(other.inertiaEnabled),
 		type(other.type),
 		collisionsLevel(other.collisionsLevel),
@@ -44,6 +45,7 @@ namespace FusionCrowd
 		customEdgePosition = other.customEdgePosition;
 		customDistribution = other.customDistribution;
 		useCustomRandomizer = other.useCustomRandomizer;
+		useRandomizer = other.useRandomizer;
 		inertiaEnabled = other.inertiaEnabled;
 		type = other.type;
 		collisionsLevel = other.collisionsLevel;
@@ -67,6 +69,7 @@ namespace FusionCrowd
 		customEdgePosition(other.customEdgePosition),
 		customDistribution(other.customDistribution),
 		useCustomRandomizer(other.useCustomRandomizer),
+		useRandomizer(other.useRandomizer),
 		inertiaEnabled(other.inertiaEnabled),
 		type(other.type),
 		collisionsLevel(other.collisionsLevel),
@@ -89,6 +92,7 @@ namespace FusionCrowd
 		customEdgePosition = other.customEdgePosition;
 		customDistribution = other.customDistribution;
 		useCustomRandomizer = other.useCustomRandomizer;
+		useRandomizer = other.useRandomizer;
 		inertiaEnabled = other.inertiaEnabled;
 		type = other.type;
 		collisionsLevel = other.collisionsLevel;
