@@ -5,6 +5,7 @@
 #include "Math/consts.h"
 
 #include "Navigation/AgentSpatialInfo.h"
+#include "Navigation/NavMesh/NavMesh.h"
 
 namespace FusionCrowd
 {
@@ -76,7 +77,7 @@ namespace FusionCrowd
 	public:
 		FunnelPlanner();
 		~FunnelPlanner();
-		void computeCrossing(const AgentSpatialInfo& agent, const DirectX::SimpleMath::Vector2& startPos, PortalPath* path,
+		void computeCrossing(const std::shared_ptr<NavMesh> navMesh, const AgentSpatialInfo& agent, const DirectX::SimpleMath::Vector2& startPos, PortalPath* path,
 		                     size_t startPortal = 0);
 #ifndef SIMPLE_FUNNEL
 	protected:

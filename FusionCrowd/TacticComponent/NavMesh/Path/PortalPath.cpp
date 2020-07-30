@@ -11,10 +11,10 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	PortalPath::PortalPath(const Vector2& startPos, const Goal & goal, const PortalRoute* route, const AgentSpatialInfo& agent) :
+	PortalPath::PortalPath(const std::shared_ptr<NavMesh> navMesh, const Vector2& startPos, const Goal & goal, const PortalRoute* route, const AgentSpatialInfo& agent) :
 		_route(route), _goal(goal), _currPortal(0)
 	{
-		computeCrossing(startPos, agent);
+		computeCrossing(navMesh, startPos, agent);
 	}
 
 	PortalPath::~PortalPath()
@@ -26,7 +26,7 @@ namespace FusionCrowd
 		return _route->IsValid(navMeshVersion);
 	}
 
-	void PortalPath::setPrefVelocity(AgentSpatialInfo & agent, float headingCos, float timeStep)
+	void PortalPath::setPrefVelocity(const std::shared_ptr<NavMesh> navMesh, AgentSpatialInfo & agent, float headingCos, float timeStep)
 	{
 		const size_t PORTAL_COUNT = _route->getPortalCount();
 		Vector2 dir;
@@ -76,7 +76,7 @@ namespace FusionCrowd
 				{
 					// Heading has deviated too far recompute crossing
 					FunnelPlanner planner;
-					planner.computeCrossing(agent/*.radius*/, agent.GetPos(), this, _currPortal);
+					planner.computeCrossing(navMesh, agent/*.radius*/, agent.GetPos(), this, _currPortal);
 					goalDir = _waypoints[_currPortal] - agent.GetPos();
 					dist = goalDir.Length();
 					if ((bigEnough = (dist >= Math::EPS)))
@@ -128,7 +128,7 @@ namespace FusionCrowd
 			return currNodeID;
 		}
 		auto wayDist = (agent.GetPos() - _waypoints[_currPortal]).Length();
-		auto reachedWaypoint = wayDist < agent.radius;
+		auto reachedWaypoint = wayDist < agent.radius * 2.5f;
 		if (!currNode->containsPoint(p) || reachedWaypoint)
 		{
 			// test to see if I've progressed to the next
@@ -190,7 +190,7 @@ namespace FusionCrowd
 						if (node->containsPoint(p))
 						{
 							// find a new path from this node to the goal
-							replan(p, node->getID(), _route->getEndNode(), agent/*.radius*/, planner);
+							replan(navMesh, p, node->getID(), _route->getEndNode(), agent/*.radius*/, planner);
 							changed = true;
 						}
 					}
@@ -245,7 +245,7 @@ namespace FusionCrowd
 						unsigned int nodeID = localizer->findNodeBlind(p, lastElevation);
 						if (nodeID != NavMeshLocation::NO_NODE)
 						{
-							replan(p, nodeID, _route->getEndNode(), agent/*.radius*/, planner);
+							replan(navMesh, p, nodeID, _route->getEndNode(), agent/*.radius*/, planner);
 						}
 						changed = true;
 					}
@@ -287,7 +287,7 @@ namespace FusionCrowd
 		}
 	}
 
-	void PortalPath::computeCrossing(const Vector2& startPos, const AgentSpatialInfo& agent)
+	void PortalPath::computeCrossing(const std::shared_ptr<NavMesh> navMesh, const Vector2& startPos, const AgentSpatialInfo& agent)
 	{
 		auto agentRadius = agent.radius;
 		const size_t PORTAL_COUNT = _route->getPortalCount();
@@ -298,11 +298,11 @@ namespace FusionCrowd
 			_waypoints.resize(PORTAL_COUNT);
 			_headings.resize(PORTAL_COUNT);
 			FunnelPlanner planner;
-			planner.computeCrossing(agent, startPos, this);
+			planner.computeCrossing(navMesh, agent, startPos, this);
 		}
 	}
 
-	void PortalPath::replan(const Vector2& startPos, unsigned int startNode,
+	void PortalPath::replan(const std::shared_ptr<NavMesh> navMesh, const Vector2& startPos, unsigned int startNode,
 	                        unsigned int endNode, const AgentSpatialInfo& agent, const std::shared_ptr<PathPlanner> planner)
 	{
 		auto agentRadius = agent.radius;
@@ -315,7 +315,7 @@ namespace FusionCrowd
 		_headings.clear();
 		_currPortal = 0;
 		_route = route;
-		computeCrossing(startPos, agent);
+		computeCrossing(navMesh, startPos, agent);
 	}
 
 	Vector2 PortalPath::getWayPoint(size_t i) const

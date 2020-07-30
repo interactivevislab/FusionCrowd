@@ -18,7 +18,7 @@ namespace FusionCrowd
 
 	using namespace DirectX::SimpleMath;
 
-	void FunnelPlanner::computeCrossing(const AgentSpatialInfo& agent, const Vector2& startPos, FusionCrowd::PortalPath* path,
+	void FunnelPlanner::computeCrossing(const std::shared_ptr<NavMesh> navMesh, const AgentSpatialInfo& agent, const Vector2& startPos, FusionCrowd::PortalPath* path,
 	                                    size_t startPortal)
 	{
 		auto radius = agent.radius;
@@ -305,7 +305,7 @@ namespace FusionCrowd
 			auto pr = PathRandomization();
 			if (agent.useCustomRandomizer)
 			{
-				pr.RandomizePath(path, agent.customEdgePosition, agent.customDistribution, agent.radius);
+				pr.RandomizePath(path, agent.customEdgePosition, agent.customDistribution, agent.radius, navMesh);
 			}
 			else
 			{
