@@ -22,6 +22,9 @@ namespace FusionCrowd
 		int portal_count = path->getPortalCount();
 		for (int i = start; i < end; i++) {
 			auto portal = path->getPortal(i);
+
+
+
 			float width = Vector2::Distance(portal->getLeft(), portal->getRight());
 			auto old_wp = path->getWayPoint(i);
 			Vector2 random_wp = old_wp;
@@ -54,7 +57,7 @@ namespace FusionCrowd
 		{
 			auto portal = path->getPortal(i);
 
-			unsigned int currNodeID = portal->getNodeId();//path->getNode();
+			unsigned int currNodeID = portal->getNodeId();
 			const NavMeshNode* currNode = &(navMesh->GetNodeByPos(currNodeID));
 			bool isLeft = false;
 			float leftOffset = agentRadius;
@@ -70,7 +73,7 @@ namespace FusionCrowd
 					oDir = currNode->getObstacle(j)->_unitDir;
 					isLeft = true;
 				}
-				else if(currNode->getObstacle(j)->getP0() == portal->getRight())
+				else if (currNode->getObstacle(j)->getP0() == portal->getRight())
 				{
 					oDir = currNode->getObstacle(j)->_unitDir;
 					pDir = (portal->getLeft() - portal->getRight());
@@ -82,12 +85,12 @@ namespace FusionCrowd
 					pDir = (portal->getRight() - portal->getLeft());
 					isLeft = true;
 				}
-				else if(currNode->getObstacle(j)->getP1() == portal->getRight())
+				else if (currNode->getObstacle(j)->getP1() == portal->getRight())
 				{
 					oDir = -currNode->getObstacle(j)->_unitDir;
 					pDir = (portal->getLeft() - portal->getRight());
 					isLeft = false;
-				} 
+				}
 				else
 				{
 					continue;
@@ -98,7 +101,7 @@ namespace FusionCrowd
 				auto pLen = pDir.Length();
 				auto magn = oLen * pLen;
 				auto cos = dot / magn;
-				auto sin = sqrt(1-cos*cos);
+				auto sin = sqrt(1 - cos * cos);
 
 				if (isLeft)
 					leftOffset = std::max(leftOffset, agentRadius / sin);
@@ -164,8 +167,37 @@ namespace FusionCrowd
 				else
 					rightOffset = std::max(rightOffset, agentRadius / sin);
 			}
+			/*Vector2 dir;
+			if (i <= 1)
+			{
+				dir = path->getWayPoint(i) - path->getWayPoint(i - 1);
+			}
+			if (i > 1)
+			{
+				dir = path->getWayPoint(i) - path->getWayPoint(i - 1);
+			}
+			if (i > 1)
+			{
+				dir = path->getWayPoint(i) - path->getWayPoint(i - 1);
+				float a = 30;
+				float angle = a;
+				auto rCos = std::cos(angle * std::_Pi / 180.0f);
+				auto rSin = std::sin(angle * std::_Pi / 180.0f);
+				auto dirLeft = Vector2(dir.x * rCos - dir.y * rSin, dir.x * rSin + dir.y * rCos);
+				auto dirLeftNormal = dirLeft;
+				dirLeftNormal.Normalize();
 
+				angle = 360 - a;
+				rCos = std::cos(angle * std::_Pi / 180.0f);
+				rSin = std::sin(angle * std::_Pi / 180.0f);
+				auto dirRight = Vector2(dir.x * rCos - dir.y * rSin, dir.x * rSin + dir.y * rCos);
+				auto dirRightNormal = dirRight;
+				dirRightNormal.Normalize();
 
+				auto leftPoint = path->getPortal(i)->intersectionPoint(path->getWayPoint(i - 1)+ dirLeft, dirLeftNormal);
+				auto rightPoint = path->getPortal(i)->intersectionPoint(path->getWayPoint(i - 1) + dirRight, dirRightNormal);
+				auto t = 0;
+			}*/
 
 
 
