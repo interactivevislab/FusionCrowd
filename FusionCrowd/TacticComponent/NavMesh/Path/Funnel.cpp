@@ -18,9 +18,10 @@ namespace FusionCrowd
 
 	using namespace DirectX::SimpleMath;
 
-	void FunnelPlanner::computeCrossing(float radius, const Vector2& startPos, FusionCrowd::PortalPath* path,
+	void FunnelPlanner::computeCrossing(const std::shared_ptr<NavMesh> navMesh, const AgentSpatialInfo& agent, const Vector2& startPos, FusionCrowd::PortalPath* path,
 	                                    size_t startPortal)
 	{
+		auto radius = agent.radius;
 		assert(path->getPortalCount() > 0 &&
 			"Funnel planner should only be applied to PortalPaths with at least one portal");
 		// if startPortal is zero, this should go to all 1s...i.e. -1 > all other size_t values
@@ -299,8 +300,18 @@ namespace FusionCrowd
 
 			path->setWaypoints(apex._id + 1, PORTAL_COUNT, goalPt, goalDir);
 		}
-		auto pr = PathRandomization();
-		pr.RandomizePath(path);
+		if (agent.useRandomizer)
+		{
+			auto pr = PathRandomization();
+			if (agent.useCustomRandomizer)
+			{
+				pr.RandomizePath(path, agent.customEdgePosition, agent.customDistribution, agent.radius, navMesh);
+			}
+			else
+			{
+				pr.RandomizePath(path);
+		}
+	}
 #endif	// SIMPLE_FUNNEL
 	}
 }

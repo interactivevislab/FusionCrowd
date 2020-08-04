@@ -21,7 +21,7 @@ namespace FusionCrowd
 		{
 			size_t id;
 
-			float posX, posY;
+			float posX, posY, posZ;
 			float velX, velY;
 			float orientX, orientY;
 			float radius;
@@ -31,6 +31,8 @@ namespace FusionCrowd
 			ComponentId stratCompId;
 
 			float goalX, goalY;
+
+			bool awaitsTeleportation;
 		};
 
 		struct FUSION_CROWD_API AgentParams
@@ -77,6 +79,12 @@ namespace FusionCrowd
 			virtual OperationStatus SetAgentGoal(size_t agentId, Disk d) = 0;
 			virtual OperationStatus SetAgentGoal(size_t agentId, Rect r) = 0;
 
+			virtual Point GetAgentGoal(size_t agentId) = 0;
+
+			virtual void SetAgentPosition(size_t agentId, float x, float y) = 0;
+
+			virtual OperationStatus SetAgentPrimaryGoal(size_t agentId, Point p) = 0;
+
 			virtual size_t GetAgentCount() = 0;
 
 			virtual bool GetAgents(FCArray<AgentInfo> & output) = 0;
@@ -89,7 +97,7 @@ namespace FusionCrowd
 			) = 0;
 
 			virtual size_t AddAgent(
-				float x, float y, float radius, float preferedVelocity,
+				float x, float y, float radius, float preferedVelocity, float customEdgePosition, float customDistribution, bool useCustomRandomizer, bool useRandomizer,
 				ComponentId opId,
 				ComponentId tacticId,
 				ComponentId strategyId
@@ -116,9 +124,12 @@ namespace FusionCrowd
 
 			virtual IStrategyComponent* GetStrategy(ComponentId strategyId) const = 0;
 			virtual void SetIsRecording(bool isRecording) = 0;
+			virtual void SetRecordingTimeStep(float timeStep) = 0;
 
 			virtual INavMeshPublic* GetNavMesh() const = 0;
 			virtual INavSystemPublic* GetNavSystem() const = 0;
+
+			virtual void AddTeleportalToNavMesh(float fromX, float fromY, float toX, float toY, size_t backwayId, size_t toRoomId) = 0;
 		};
 
 		/*

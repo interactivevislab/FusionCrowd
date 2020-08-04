@@ -52,7 +52,13 @@ namespace FusionCrowd
 			}
 
 			_navSystem->Update(timeStep);
-			if (_isRecording) _recording.MakeRecord(GetAgentsInfo(), timeStep);
+			_timeFromLastRecord += timeStep;
+			if (_isRecording)
+				if (_timeFromLastRecord >=_recordingTimeStep)
+				{
+					_recording.MakeRecord(GetAgentsInfo(), _recordingTimeStep > timeStep ? _timeFromLastRecord : timeStep /*timeStep*/);
+					_timeFromLastRecord = _recordingTimeStep > timeStep ? _timeFromLastRecord - _recordingTimeStep : 0;
+				}
 
 			return true;
 		}
@@ -69,6 +75,11 @@ namespace FusionCrowd
 
 		void SetIsRecording(bool isRecording) {
 			_isRecording = isRecording;
+		}
+
+		void SetRecordingTimeStep(float timeStep)
+		{
+			_recordingTimeStep = timeStep;
 		}
 
 		const Goal & GetAgentGoal(size_t agentId) const {
@@ -255,7 +266,21 @@ namespace FusionCrowd
 				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goal.getCentroid());
 				agent.currentGoal = std::move(goal);
 			}
-		}		
+		}	
+
+		void SetAgentPrimaryGoal(size_t agentId, Goal&& goal)
+		{
+			const auto& agentIt = _agents.find(agentId);
+			if (agentIt == _agents.end()) return;
+
+			Agent& agent = agentIt->second;
+			if (agent.tacticComponent.expired()) return;
+			if (auto tactic = agent.tacticComponent.lock())
+			{
+				auto point = _tacticComponents[tactic->GetId()]->GetClosestAvailablePoint(goal.getCentroid());
+				agent.primaryGoal = std::move(goal);
+			}
+		}
     
     bool SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
 		{
@@ -382,12 +407,13 @@ namespace FusionCrowd
 
 				output[i] = AgentInfo {
 					agent.id,
-					info.GetPos().x, info.GetPos().y,
+					info.GetPos().x, info.GetPos().y, info.zPos,
 					info.GetVel().x, info.GetVel().y,
 					info.GetOrient().x, info.GetOrient().y,
 					info.radius,
 					op, tactic, strat,
-					g.getCentroid().x, g.getCentroid().y
+					g.getCentroid().x, g.getCentroid().y,
+					info.awaitsTeleportation
 				};
 				i++;
 			}
@@ -578,6 +604,9 @@ namespace FusionCrowd
 		OnlineRecording _recording;
 		bool _isRecording = false;
 
+		float _recordingTimeStep = 0.0f;
+		float _timeFromLastRecord = 0.0f;
+
 		std::map<size_t, FusionCrowd::Agent> _agents;
 
 		std::map<ComponentId, std::shared_ptr<IStrategyComponent>> _strategyComponents;
@@ -617,6 +646,11 @@ namespace FusionCrowd
 
 	void Simulator::SetIsRecording(bool isRecording) {
 		pimpl->SetIsRecording(isRecording);
+	}
+
+	void Simulator::SetRecordingTimeStep(float timeStep)
+	{
+		pimpl->SetRecordingTimeStep(timeStep);
 	}
 
 	const Goal & Simulator::GetAgentGoal(size_t agentId) const {
@@ -725,6 +759,11 @@ namespace FusionCrowd
 	void Simulator::SetAgentGoal(size_t agentId, Goal && goal)
 	{
 		pimpl->SetAgentGoal(agentId, std::move(goal));
+	}
+
+	void Simulator::SetAgentPrimaryGoal(size_t agentId, Goal&& goal)
+	{
+		pimpl->SetAgentPrimaryGoal(agentId, std::move(goal));
 	}
 
 	FCArray<AgentInfo> Simulator::GetAgentsInfo()

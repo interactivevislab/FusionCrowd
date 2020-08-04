@@ -37,18 +37,22 @@ namespace FusionCrowd
 
 		ComponentId GetId() override { return ComponentIds::NAVMESH_ID; }
 
+		void SeveralPortalsSearch(unsigned int from, unsigned int to, float minWidth, bool& foundGoal, std::vector<size_t>& visitedPortals,
+			std::vector<size_t>& portalsRoute, std::vector<size_t>& portalsWeight, std::shared_ptr<PathPlanner> planner, size_t agentId, size_t& shortestWay, 
+			std::vector<size_t>& shortestRoute, std::set<size_t>& portalsRooms);
+
 	private:
 		struct AgentStruct
 		{
 		public:
-			unsigned int id;
+			size_t id;
 			NavMeshLocation location;
 		};
 
-		NavMeshLocation Replan(DirectX::SimpleMath::Vector2 from, const Goal & target, float agentRadius);
+		NavMeshLocation Replan(DirectX::SimpleMath::Vector2 from, const Goal & target, const AgentSpatialInfo& agent, bool& foundPath, size_t agentId, bool& needsTeleportation);
 		bool IsReplanNeeded(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct);
 
-		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);
+		void SetPrefVelocity(const std::shared_ptr<NavMesh> navMesh, AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);
 		unsigned int UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, bool force) const;
 
 	private:
@@ -58,7 +62,7 @@ namespace FusionCrowd
 		std::shared_ptr<NavMesh> _navMesh;
 		std::shared_ptr<NavMeshLocalizer> _localizer;
 		std::shared_ptr<NavMeshSpatialQuery> _spatial_query;
-		std::vector<AgentStruct> _agents;
+		std::map<size_t, AgentStruct> _agents;
 	};
 }
 

@@ -49,6 +49,7 @@ namespace FusionCrowd
 
 		IRecording & GetRecording();
 		void SetIsRecording(bool isRecording);
+		void SetRecordingTimeStep(float timeStep);
 
 		float GetElapsedTime();
 
@@ -81,6 +82,7 @@ namespace FusionCrowd
 		);
 
 		void SetAgentGoal(size_t agentId, Goal && goal);
+		void SetAgentPrimaryGoal(size_t agentId, Goal&& goal);
 		Agent & GetAgent(size_t id);
 
 		size_t AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance);

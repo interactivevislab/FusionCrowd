@@ -26,9 +26,9 @@ namespace FusionCrowd
 	public:
 		PathPlanner(std::shared_ptr<NavMesh> ptr);
 		~PathPlanner();
-		PortalRoute* getRoute(unsigned int startID, unsigned int endID, float minWidth);
+		PortalRoute* getRoute(unsigned int startID, unsigned int endID, float minWidth, bool& foundPath);
 	protected:
-		PortalRoute* computeRoute(unsigned int startID, unsigned int endID, float minWidth);
+		PortalRoute* computeRoute(unsigned int startID, unsigned int endID, float minWidth, bool& foundPath);
 		float computeH(unsigned int node, const DirectX::SimpleMath::Vector2& goal);
 		PortalRoute* cacheRoute(unsigned int startID, unsigned int endID, PortalRoute* route);
 		PRouteMap _routes;

@@ -1,6 +1,5 @@
 #include "NavSystem.h"
 
-
 #include "Math/Util.h"
 #include "Math/consts.h"
 #include "TacticComponent/NavMesh/NavMeshComponent.h"
@@ -58,24 +57,13 @@ namespace FusionCrowd
 			if(_agentsInfo.find(spatialInfo.id) != _agentsInfo.end())
 				return;
 
-			if(spatialInfo.type == AgentSpatialInfo::AGENT)
-				_numAgents++;
-			else
-				_numGroups++;
-
 			_agentsInfo[spatialInfo.id] = std::move(spatialInfo);
 			_agentsNeighbours[spatialInfo.id] = std::vector<NeighborInfo>();
 		}
 
 		void RemoveAgent(size_t id)
 		{
-			if(_agentsInfo.erase(id))
-			{
-				if (_agentsInfo[id].type == AgentSpatialInfo::AGENT)
-					_numAgents--;
-				else
-					_numGroups--;
-			}
+			_agentsInfo.erase(id);
 		}
 
 		void AddTrafficLights(size_t NavGraphsNodeId)
@@ -174,11 +162,47 @@ namespace FusionCrowd
 				updatedVel = agent.velNew;
 			}
 
-			updatedPos = agent.GetPos() + agent.GetVel() * timeStep;
-			if (agent.useNavMeshObstacles)			{
-				updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
-			}
 			
+			auto prevPos = agent.GetPos();
+
+			// Calculate new position
+			updatedPos = prevPos + agent.GetVel() * timeStep;
+			
+			if (agent.useNavMeshObstacles)	{
+				// If new position is out of navmesh
+				if (_localizer->findNodeBlind(updatedPos) == NavMeshLocation::NO_NODE) {
+					// Get previous node and project agent position to it
+					auto prevNode = _localizer->findNodeBlind(prevPos);
+
+					const auto node = _navMesh->GetNodeByID(prevNode);
+					if (prevNode == NavMeshLocation::NO_NODE || node == nullptr ||  node->deleted) {
+						updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
+						return;
+					}
+
+					float min_dist = INFINITY;
+					Vector2 res;
+					auto* vertices = _navMesh->GetVertices();
+
+					const size_t vCount = node->getVertexCount();
+					Vector2 projection;
+					for (size_t v = 0; v < vCount; v++) {
+						Math::projectOnSegment(vertices[node->getVertexID(v)], vertices[node->getVertexID((v + 1) % vCount)], updatedPos, projection);
+						auto dir = projection - updatedPos;
+						dir.Normalize();
+						dir *= agent.radius;
+						float d = Vector2::DistanceSquared(updatedPos, projection + dir);
+						if (d < min_dist) {
+							min_dist = d;
+							res = projection + dir;
+						}
+					}
+
+					updatedPos = res;
+				}
+				//updatedPos = _localizer->GetClosestAvailablePoint(updatedPos);
+			}
+			//_localizer->findNodeBlind(updatedPos);
 		}
 
 		void UpdateOrient(const AgentSpatialInfo & agent, float timeStep, Vector2 & newOrient)
@@ -281,6 +305,11 @@ namespace FusionCrowd
 			return _navMesh.get();
 		}
 
+		void AddTeleportal(Vector2 from, Vector2 to, size_t backwayId, size_t toRoomId) const
+		{
+			_navMesh->teleportals.push_back(TeleporterPortal(from,to, backwayId, toRoomId));
+		}
+
 	private:
 		std::unordered_map<size_t, std::vector<NeighborInfo>> _agentsNeighbours;
 		std::unique_ptr<NavMeshSpatialQuery> _navMeshQuery;
@@ -294,9 +323,6 @@ namespace FusionCrowd
 		std::map<size_t, AgentSpatialInfo> _agentsInfo;
 		float _agentsSensitivityRadius = 6;
 		float _groupSensitivityRadius = 100;
-
-		size_t _numAgents = 0;
-		size_t _numGroups = 0;
 	};
 
 	NavSystem::NavSystem()
@@ -352,6 +378,14 @@ namespace FusionCrowd
 	INavMeshPublic* NavSystem::GetPublicNavMesh() const
 	{
 		return pimpl->GetPublicNavMesh();
+	}
+
+	void NavSystem::AddTeleportal(float fromX, float fromY, float toX, float toY, size_t backwayId, size_t toRoomId) const
+	{
+		Vector2 from = Vector2(fromX, fromY);
+		Vector2 to = Vector2(toX, toY);
+		//Math::Geometry2D* shape = &FusionCrowd::Math::DiskShape::DiskShape(from, 5);
+		pimpl->AddTeleportal(from, to, backwayId, toRoomId);
 	}
 
 	float NavSystem::CutPolygonFromMesh(FCArray<NavMeshVetrex>& polygon)

@@ -50,6 +50,8 @@ namespace FusionCrowd
 		// INavSystemPublic
 		INavMeshPublic* GetPublicNavMesh() const;
 
+		void AddTeleportal(float fromX, float fromY, float toX, float toY, size_t backwayId, size_t toRoomId) const;
+
 		// Do we really need this method here?
 		float CutPolygonFromMesh(FCArray<NavMeshVetrex> & polygon);
 	private:
