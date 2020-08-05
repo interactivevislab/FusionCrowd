@@ -64,8 +64,9 @@ namespace FusionCrowd
 		size_t nodeTo;
 		float weight;
 		float width;
+		int lines;
 
-		NavGraphEdge() : id(-1), nodeFrom(-1), nodeTo(-1), weight(0), width(0)
+		NavGraphEdge() : id(-1), nodeFrom(-1), nodeTo(-1), weight(0), width(0), lines(1)
 		{}
 
 		NavGraphEdge(NavGraphEdgeId id, NavGraphNodeId nodeFrom, NavGraphNodeId nodeTo, float weight, float width) :
@@ -81,7 +82,8 @@ namespace FusionCrowd
 			  nodeFrom(other.nodeFrom),
 			  nodeTo(other.nodeTo),
 			  weight(other.weight),
-			  width(other.width)
+			  width(other.width),
+			  lines(other.lines)
 		{}
 
 		NavGraphEdge(NavGraphEdge&& other) noexcept
@@ -89,7 +91,8 @@ namespace FusionCrowd
 			  nodeFrom(other.nodeFrom),
 			  nodeTo(other.nodeTo),
 			  weight(other.weight),
-			  width(other.width)
+			  width(other.width),
+			  lines(other.lines)
 		{}
 
 		NavGraphEdge& operator=(const NavGraphEdge& other)
@@ -101,6 +104,7 @@ namespace FusionCrowd
 			nodeTo = other.nodeTo;
 			weight = other.weight;
 			width = other.width;
+			lines = other.lines;
 			return *this;
 		}
 
@@ -113,6 +117,7 @@ namespace FusionCrowd
 			nodeTo = other.nodeTo;
 			weight = other.weight;
 			width = other.width;
+			lines = other.lines;
 			return *this;
 		}
 
@@ -122,7 +127,8 @@ namespace FusionCrowd
 				&& lhs.nodeFrom == rhs.nodeFrom
 				&& lhs.nodeTo == rhs.nodeTo
 				&& lhs.weight == rhs.weight
-				&& lhs.width == rhs.width;
+				&& lhs.width == rhs.width
+				&& lhs.lines == rhs.lines;
 		}
 
 		friend bool operator!=(const NavGraphEdge& lhs, const NavGraphEdge& rhs)

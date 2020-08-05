@@ -98,6 +98,7 @@ namespace FusionCrowd
 			if(dist2 < min_dist)
 			{
 				min_dist = dist2;
+				//res = p;
 				res = node.second.position;
 				nodeId = node.second.id;
 			}

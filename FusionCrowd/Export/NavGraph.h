@@ -18,6 +18,7 @@ namespace FusionCrowd
 			size_t nodeTo;
 			float weight;
 			float width;
+			int lines;
 		};
 	}
 }

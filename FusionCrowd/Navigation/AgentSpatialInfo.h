@@ -32,6 +32,11 @@ namespace FusionCrowd
 		float prefSpeed = 1.04f;
 		float maxAngVel = 1.0f;
 
+		int currentLine = 0;
+		int linesAvailable = 1;
+		bool isCurrentLineOneWay = true;
+
+
 		bool inertiaEnabled = true;
 
 		Type type = AGENT;

@@ -5,7 +5,7 @@
 #include "Navigation/NavSystem.h"
 #include "TacticComponent/ITacticComponent.h"
 #include "TacticComponent/NavGraph/NavGraphPathPlanner.h"
-
+//#include "TrafficLightsBunch.h"
 
 
 namespace FusionCrowd
@@ -31,7 +31,7 @@ namespace FusionCrowd
 
 		ComponentId GetId() override { return ComponentIds::NAVGRAPH_ID; }
 
-		const float acceptanceRadius = 1.5f;
+		const float acceptanceRadius = 0.20f;
 	private:
 
 		struct AgentStruct
@@ -39,8 +39,12 @@ namespace FusionCrowd
 		public:
 			size_t id;
 			NavGraphRoute route;
+			NavGraphRoute shiftedRoute;
 			DirectX::SimpleMath::Vector2 goalPoint;
 			int pointsComplete;
+			//int currentLine;
+			bool needLineShift = false;
+			//bool currentEdgeIsOneSided = true;
 		};
 
 		void SetPrefVelocity(AgentSpatialInfo & agentInfo, AgentStruct & agentStruct, float timeStep);
