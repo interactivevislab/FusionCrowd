@@ -52,6 +52,7 @@ namespace FusionCrowd
 		NavMesh();
 		~NavMesh();
 		//Load
+		static std::shared_ptr<NavMesh> Load(const std::string& fileName);
 		static std::shared_ptr<NavMesh> Load(std::istream& f);
 
 		void clear();

@@ -1,34 +1,38 @@
 #pragma once
 
-#include "FusionCrowdWebApi.h"
+#include "FcWebApi.h"
 
 
 namespace FusionCrowdWeb
 {
+	/** Enum for request types. */
 	enum FC_WEB_API RequestCode : unsigned char
 	{
-		StartWithNavMesh,	// void InitBuilderByNavMeshName(const char* navMeshName) + void StartSimulation()
-		DoStep,				// void DoStep(float timeStep = 0.1f)
-		SetAgentOp,			// OperationStatus SetAgentOp(size_t agentId, ComponentId opId)
-		SetAgentStrategy,	// OperationStatus SetAgentStrategy(size_t agentId, ComponentId strategyId)
-		SetAgentGoal,		// OperationStatus SetAgentGoal(size_t agentId, float x, float y)
-		GetAgentCount,		// size_t GetAgentCount()
-		GetAgents,			// bool GetAgents(FCArray<AgentInfo> & output)
-		AddAgent,			// size_t AddAgent(float x, float y, ComponentId opId, ComponentId strategyId)
-		RemoveAgent			// OperationStatus RemoveAgent(size_t agentId)
+		InitSimulation,	/**< Initialization request. */ 
+		DoStep			/**< Simulation step request. */ 
 	};
 
+
+	/** Enum for response types. */
 	enum FC_WEB_API ResponseCode : unsigned char
 	{
-		Success,
-		NeedRunSimulation,
-		UnknowsRequestCode,
-		InnerFusionCrowdError
+		Success,	/**< Response that the operation succeeded. */ 
+		Error		/**< Response that the operation failed. */ 
 	};
 
+
+	/**
+	* \union WebCode
+	* \brief Union for request and response types.
+	*
+	* @see RequestCode, ResponseCode
+	*/
 	union FC_WEB_API WebCode
 	{
+		/** WebCode as RequestCode. */
 		RequestCode AsRequestCode;
+
+		/** WebCode as ResponseCode. */
 		ResponseCode AsResponseCode;
 
 		WebCode() {}
@@ -36,9 +40,25 @@ namespace FusionCrowdWeb
 		WebCode(ResponseCode inResponseCode) : AsResponseCode(inResponseCode) {}
 	};
 
+
+	/** Network data header. */
 	struct FC_WEB_API WebMessageHead
 	{
+		/** Message type. */
 		WebCode WebCode;
+
+		/** Message length in bytes. */
 		size_t MessageLength;
+	};
+
+
+	/** Network message. */
+	struct FC_WEB_API WebMessage
+	{
+		/** Message type. */
+		WebCode WebCode;
+
+		/** Pointer to raw data. */
+		const char* Data;
 	};
 }

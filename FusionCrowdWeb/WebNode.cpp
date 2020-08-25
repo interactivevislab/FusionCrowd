@@ -1,7 +1,5 @@
 #include "WebNode.h"
 
-#include "WsException.h"
-
 #include "Ws2tcpip.h"
 
 
@@ -34,12 +32,12 @@ namespace FusionCrowdWeb
 	}
 
 
-	void WebNode::StartServer(const char* inIpAdress, short inPort)
+	void WebNode::StartServer(WebAddress inAddress)
 	{
 		_ownServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(_ownServerSocket, "TCP socket creation failed");
 
-		auto address = GetSocketAddress(inIpAdress, inPort);
+		sockaddr_in address = inAddress;
 		auto result = bind(_ownServerSocket, (SOCKADDR*)&address, sizeof(address));
 		CheckWsResult(result, "Binding failed");
 
@@ -66,12 +64,12 @@ namespace FusionCrowdWeb
 	}
 
 
-	int WebNode::ConnectToServer(const char* inIpAdress, short inPort)
+	int WebNode::TryConnectToServer(WebAddress inAddress)
 	{
 		auto connectedSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(connectedSocket, "TCP socket creation failed");
 
-		auto address = GetSocketAddress(inIpAdress, inPort);
+		sockaddr_in address = inAddress;
 		auto result = connect(connectedSocket, (SOCKADDR*)&address, sizeof(address));
 		if (result == SOCKET_ERROR)
 		{
@@ -79,6 +77,22 @@ namespace FusionCrowdWeb
 		}
 
 		return SaveConnectedSocket(connectedSocket);
+	}
+
+
+	int WebNode::WaitForConnectionToServer(WebAddress inAddress)
+	{
+		while (true)
+		{
+			try
+			{
+				return TryConnectToServer(inAddress);
+			}
+			catch (WsException e)
+			{
+				//connection error - try again
+			}
+		}
 	}
 
 
@@ -99,27 +113,32 @@ namespace FusionCrowdWeb
 
 		WebMessageHead messageHead = { inWebCode, inDataSize };
 		auto bytesSended = send(destSocket, reinterpret_cast<const char*>(&messageHead), sizeof(WebMessageHead), 0);
-		CheckWsResult(bytesSended, "Sending failed");
+		CheckTransferredBytes(bytesSended, "Sending failed");
 
 		int totalBytesSended = 0;
 		int bytesleft = static_cast<int>(inDataSize);
 		while (totalBytesSended < inDataSize)
 		{
 			bytesSended = send(destSocket, inData + totalBytesSended, bytesleft, 0);
-			CheckWsResult(bytesSended, "Sending failed");
+			CheckTransferredBytes(bytesSended, "Sending failed");
 			totalBytesSended += bytesSended;
 			bytesleft -= bytesSended;
 		}
 	}
 
+	void WebNode::Send(int inSocketId, WebCode inWebCode)
+	{
+		Send(inSocketId, inWebCode, nullptr, 0);
+	}
 
-	std::pair<WebCode, const char*> WebNode::Receive(int inSocketId)
+
+	WebMessage WebNode::Receive(int inSocketId)
 	{
 		auto srcSocket = GetConnectedSocket(inSocketId);
 
 		WebMessageHead messageHead;
 		auto bytesRecieved = recv(srcSocket, reinterpret_cast<char*>(&messageHead), sizeof(WebMessageHead), 0);
-		CheckWsResult(bytesRecieved, "Receive data failed");
+		CheckTransferredBytes(bytesRecieved, "Receive data failed");
 
 		auto messageLength = messageHead.MessageLength;
 
@@ -138,28 +157,17 @@ namespace FusionCrowdWeb
 			while (totalBytesRecieved < messageLength)
 			{
 				auto bytesRecieved = recv(srcSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
-				CheckWsResult(bytesRecieved, "Receive data failed");
+				CheckTransferredBytes(bytesRecieved, "Receive data failed");
 				totalBytesRecieved += bytesRecieved;
 				bytesleft -= bytesRecieved;
 			}
 
-			return std::make_pair(messageHead.WebCode, _receiveBuffer);
+			return WebMessage { messageHead.WebCode, _receiveBuffer };
 		}
 		else
 		{
-			return std::make_pair(messageHead.WebCode, nullptr);
+			return WebMessage { messageHead.WebCode, nullptr };
 		}
-	}
-
-
-	sockaddr_in WebNode::GetSocketAddress(const char* inIpAdress, short inPort)
-	{
-		sockaddr_in address;
-		address.sin_family = AF_INET;
-		InetPton(AF_INET, inIpAdress, &(address.sin_addr.s_addr));
-		address.sin_port = htons(inPort);
-
-		return address;
 	}
 
 
@@ -175,11 +183,12 @@ namespace FusionCrowdWeb
 		auto clientSocketData = _connectedSockets.find(inSocketId);
 		if (clientSocketData == _connectedSockets.end())
 		{
-			throw FcWebException("Wrong client id");
+			throw FcWebException("Wrong socket id");
 		}
 
 		return clientSocketData->second;
 	}
+
 
 	std::vector<int> WebNode::GetAllConnectedSocketsIds()
 	{
@@ -208,5 +217,30 @@ namespace FusionCrowdWeb
 		{
 			throw WsException(inErrorMessage);
 		}
+	}
+
+
+	void WebNode::CheckTransferredBytes(int inBytesNum, const char* inErrorMessage)
+	{
+		if ((inBytesNum == SOCKET_ERROR) || (inBytesNum == 0))
+		{
+			throw WsException(inErrorMessage);
+		}
+	}
+
+
+	WebAddress::WebAddress(const char* inIpAddress, short inPort) : IpAddress(inIpAddress), Port(inPort)
+	{
+	}
+
+
+	WebAddress::operator sockaddr_in()
+	{
+		sockaddr_in address;
+		address.sin_family = AF_INET;
+		InetPton(AF_INET, IpAddress, &(address.sin_addr.s_addr));
+		address.sin_port = htons(Port);
+
+		return address;
 	}
 }

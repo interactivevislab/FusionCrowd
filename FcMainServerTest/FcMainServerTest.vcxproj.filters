@@ -15,15 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FcClientApi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FcClient.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="FcClient.cpp">
+    <ClCompile Include="FcMainServerTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

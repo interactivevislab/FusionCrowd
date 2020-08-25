@@ -21,6 +21,7 @@ namespace FusionCrowd
 			virtual const IRecordingSlice * End() const = 0;
 			virtual bool LoadFromFile(char const * path, size_t path_length) = 0;
 			virtual void Serialize(char const * destFilePath, size_t pathLen) const = 0;
+			virtual void MakeRecord(FCArray<AgentInfo> agentsInfos, float timeStep) = 0;
 
 			virtual ~IRecording() { }
 		};

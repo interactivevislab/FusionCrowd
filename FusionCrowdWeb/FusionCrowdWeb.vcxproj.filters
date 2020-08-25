@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FusionCrowdWebApi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="WsException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -27,12 +24,36 @@
     <ClInclude Include="WebNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FcWebApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FcWebData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FcFileWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WebDataSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleDataSerializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WsException.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WebNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FcFileWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WebDataSerializer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FcWebData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

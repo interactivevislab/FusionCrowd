@@ -32,6 +32,8 @@ namespace FusionCrowd
 
 			float goalX, goalY;
 
+			int serverId;
+
 			bool awaitsTeleportation;
 		};
 
@@ -97,11 +99,20 @@ namespace FusionCrowd
 			) = 0;
 
 			virtual size_t AddAgent(
+				float x, float y, float radius, float preferedVelocity,
+				ComponentId opId,
+				ComponentId tacticId,
+				ComponentId strategyId
+			) = 0;
+			
+			virtual size_t AddAgent(
 				float x, float y, float radius, float preferedVelocity, float customEdgePosition, float customDistribution, bool useCustomRandomizer, bool useRandomizer,
 				ComponentId opId,
 				ComponentId tacticId,
 				ComponentId strategyId
 			) = 0;
+
+			virtual size_t AddAgent(AgentInfo inAgentInfo, float inPreferedVelocity) = 0;
 
 			virtual bool UpdateAgent(AgentParams params) = 0;
 			virtual bool UpdateNeighbourSearchShape(size_t agentId, Disk disk) = 0;
@@ -165,5 +176,7 @@ namespace FusionCrowd
 		FUSION_CROWD_API ISimulatorBuilder* BuildSimulator();
 		FUSION_CROWD_API void BuilderDeleter(ISimulatorBuilder* builder);
 
+		FUSION_CROWD_API IRecording* BuildRecord();
+		FUSION_CROWD_API void RecordDeleter(IRecording* recording);
 	}
 }

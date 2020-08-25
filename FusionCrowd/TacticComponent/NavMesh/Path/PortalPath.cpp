@@ -127,8 +127,12 @@ namespace FusionCrowd
 		{
 			return currNodeID;
 		}
-		auto wayDist = (agent.GetPos() - _waypoints[_currPortal]).Length();
-		auto reachedWaypoint = wayDist < agent.radius * 2.5f;
+		auto reachedWaypoint = false;
+		if (_currPortal< _waypoints.size())
+		{
+			auto wayDist = (agent.GetPos() - _waypoints[_currPortal]).Length();
+			auto reachedWaypoint = wayDist < agent.radius * 2.5f;
+		}
 		if (!currNode->containsPoint(p) || reachedWaypoint)
 		{
 			// test to see if I've progressed to the next

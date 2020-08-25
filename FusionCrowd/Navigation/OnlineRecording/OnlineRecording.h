@@ -28,10 +28,9 @@ namespace FusionCrowd
 		const IRecordingSlice * End() const override;
 		bool LoadFromFile(char const * path, size_t path_length) override;
 		void Serialize(char const * destFilePath, size_t pathLen) const override;
+		void MakeRecord(FCArray<AgentInfo> agentsInfos, float timeStep) override;
 
 		size_t GetAgentCount() const;
-
-		void MakeRecord(FCArray<AgentInfo> agentsInfos, float timeStep);
 
 		void GetAgentIds(FCArray<size_t> & outIds);
 	private:

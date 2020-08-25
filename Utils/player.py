@@ -130,6 +130,9 @@ class Player:
     def show_item(self, item):
         self.canvas.itemconfigure(item, state='normal')
 
+    def recolor_item(self, item, color):
+        self.canvas.itemconfigure(item, fill=color)   
+
     def move_circle(self, item, target_pos):
         x, y = target_pos[0] * self.scale, target_pos[1] * self.scale
         cur = self.canvas.coords(item)

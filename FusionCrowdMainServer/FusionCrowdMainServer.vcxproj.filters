@@ -15,7 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FusionCrowdClientTest.cpp">
+    <ClInclude Include="FcMainServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FcMainServerApi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FcMainServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

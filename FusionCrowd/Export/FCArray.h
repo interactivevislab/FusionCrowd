@@ -46,8 +46,8 @@ namespace FusionCrowd
 	{
 		if(this != &other)
 		{
-			this.vals = other.vals;
-			this.len = other.len;
+			this->vals = other.vals;
+			this->len = other.len;
 
 			other.vals = nullptr;
 			other.len = 0;
@@ -71,11 +71,11 @@ namespace FusionCrowd
 	{
 		if(this != &other)
 		{
-			if(this.vals != nullptr)
-				delete[] this.vals;
+			if(this->vals != nullptr)
+				delete[] this->vals;
 
-			this.vals = new T[other.len + 1];
-			this.len = other.len;
+			this->vals = new T[other.len + 1];
+			this->len = other.len;
 
 			for(size_t i = 0; i < len; i++)
 			{

@@ -9,23 +9,26 @@ namespace FusionCrowdWeb
 	{
 	}
 
-	FcWebException::FcWebException(char const* const _Message) noexcept
+
+	FcWebException::FcWebException(char const* const inMessage) noexcept
 	{
-		auto len = strlen(_Message) + 1;
+		auto len = strlen(inMessage) + 1;
 		_message = new char[len];
-		strcpy_s(_message, len, _Message);
+		strcpy_s(_message, len, inMessage);
 	}
 
-	FcWebException::FcWebException(FcWebException const& _Other) noexcept
+
+	FcWebException::FcWebException(FcWebException const& inOther) noexcept
 	{
-		auto len = strlen(_Other._message) + 1;
+		auto len = strlen(inOther._message) + 1;
 		_message = new char[len];
-		strcpy_s(_message, len, _Other._message);
+		strcpy_s(_message, len, inOther._message);
 	}
 
-	FcWebException& FcWebException::operator=(FcWebException const& _Other) noexcept
+
+	FcWebException& FcWebException::operator=(FcWebException const& inOther) noexcept
 	{
-		if (this == &_Other)
+		if (this == &inOther)
 		{
 			return *this;
 		}
@@ -34,12 +37,13 @@ namespace FusionCrowdWeb
 		{
 			delete _message;
 		}
-		auto len = strlen(_Other._message) + 1;
+		auto len = strlen(inOther._message) + 1;
 		_message = new char[len];
-		strcpy_s(_message, len, _Other._message);
+		strcpy_s(_message, len, inOther._message);
 
 		return *this;
 	}
+
 
 	FcWebException::~FcWebException() noexcept
 	{
@@ -48,6 +52,7 @@ namespace FusionCrowdWeb
 			delete _message;
 		}
 	}
+
 
 	char const* FcWebException::What() const
 	{
@@ -59,6 +64,7 @@ namespace FusionCrowdWeb
 	{
 		_errorCode = WSAGetLastError();
 	}
+
 
 	int WsException::GetWsErrorCode() const
 	{

@@ -33,4 +33,11 @@ namespace FusionCrowd
 		virtual bool GetObstacles(FCArray<EdgeInfo> & output) = 0;
 		virtual bool ExportNavMeshToFile(char* file_name) = 0;
 	};
+
+
+	class FUSION_CROWD_API NavMeshHelper
+	{
+	public:
+		static FCArray<NavMeshVetrex> LoadNavMeshVertices(const char * inNavMeshfileName);
+	};
 }
