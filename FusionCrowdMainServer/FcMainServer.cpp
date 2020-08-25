@@ -127,7 +127,6 @@ namespace FusionCrowdWeb
 				if (_navMeshRegions[serverId].IsPointInsideBoundaryZone(agent.posX, agent.posY, _boundaryZoneDepth))
 				{
 					boundaryAgentsDataParts[serverId].push_back(agent);
-					break;
 				}
 			}
 		}
