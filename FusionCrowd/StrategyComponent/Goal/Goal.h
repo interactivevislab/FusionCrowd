@@ -13,6 +13,7 @@ namespace FusionCrowd
 	class Goal
 	{
 	public:
+		Goal();
 		Goal(const Goal & other);
 		Goal& operator=(const Goal & other);
 

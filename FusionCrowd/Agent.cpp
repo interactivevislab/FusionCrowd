@@ -7,7 +7,7 @@ using namespace DirectX::SimpleMath;
 
 namespace FusionCrowd
 {
-	Agent::Agent(size_t agentId, Goal goal) : id(agentId), currentGoal(std::move(goal)), _groupId(IGroup::NO_GROUP)
+	Agent::Agent(size_t agentId, Goal goal) : id(agentId), currentGoal(std::move(goal)), _groupId(IGroup::NO_GROUP), primaryGoal(std::move(goal))
 	{
 	}
 

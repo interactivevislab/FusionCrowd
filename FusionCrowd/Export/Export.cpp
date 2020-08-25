@@ -22,6 +22,7 @@
 #include "OperationComponent/BicycleComponent.h"
 #include "OperationComponent/StrictComponent.h"
 #include "OperationComponent/TransportOperationComponent.h"
+#include "OperationComponent/PassthroughComponent.h"
 
 
 #include "StrategyComponent/FSM/FsmStartegy.h"
@@ -61,9 +62,23 @@ namespace FusionCrowd
 			return OperationStatus::OK;
 		}
 
+
+		Point GetAgentGoal(size_t agentId)
+		{
+			Vector2 point = _sim->GetAgentGoal(agentId).getCentroid();
+			return Point(point.x,point.y);
+		}
+
 		OperationStatus SetAgentGoal(size_t agentId, Point p)
 		{
 			_sim->SetAgentGoal(agentId, _sim->GetGoalFactory().CreatePointGoal(p));
+
+			return OperationStatus::OK;
+		}
+
+		OperationStatus SetAgentPrimaryGoal(size_t agentId, Point p)
+		{
+			_sim->SetAgentPrimaryGoal(agentId, _sim->GetGoalFactory().CreatePointGoal(p));
 
 			return OperationStatus::OK;
 		}
@@ -111,6 +126,34 @@ namespace FusionCrowd
 			info.SetPos(Vector2(x, y));
 
 			return _sim->AddAgent(std::move(info), opId, tacticId, strategyId);
+		}
+		
+		size_t AddAgent(
+			float x, float y, float radius, float preferedVelocity, float customEdgePosition, float customDistribution, bool useCustomRandomizer, bool useRandomizer,
+			ComponentId opId,
+			ComponentId tacticId,
+			ComponentId strategyId
+		)
+		{
+			AgentSpatialInfo info;
+			info.radius = radius;
+			info.maxSpeed = preferedVelocity * 1.5f;
+			info.prefSpeed = preferedVelocity;
+			info.SetPos(Vector2(x, y));
+
+			info.customEdgePosition = customEdgePosition;
+			info.customDistribution = customDistribution;
+			info.useCustomRandomizer = useCustomRandomizer;
+			info.useRandomizer = useRandomizer;
+
+			return _sim->AddAgent(std::move(info), opId, tacticId, strategyId);
+		}
+
+		void SetAgentPosition(size_t agentId, float x, float y)
+		{
+
+			AgentSpatialInfo &info = _sim->GetSpatialInfo(agentId);
+			info.SetPos(Vector2(x, y));
 		}
 
 
@@ -172,6 +215,11 @@ namespace FusionCrowd
 			_sim->SetIsRecording(isRecording);
 		}
 
+		void SetRecordingTimeStep(float timeStep)
+		{
+			_sim->SetRecordingTimeStep(timeStep);
+		}
+
 		size_t GetAgentCount()
 		{
 			return _sim->GetAgentCount();
@@ -190,6 +238,11 @@ namespace FusionCrowd
 		INavMeshPublic* GetNavMesh() const
 		{
 			return _sim->GetNavSystem()->GetPublicNavMesh();
+		}
+
+		void AddTeleportalToNavMesh(float fromX, float fromY, float toX, float toY, size_t backwayId, size_t toRoomId)
+		{
+			_sim->GetNavSystem()->AddTeleportal(fromX, fromY, toX, toY, backwayId, toRoomId);
 		}
 
 		INavSystemPublic* GetNavSystem() const
@@ -354,6 +407,9 @@ namespace FusionCrowd
 					break;				
 				case ComponentIds::STRICT_ID:
 					sim->AddOpModel(std::make_shared<StrictComp::StrictComponent>(navSystem));
+					break;
+				case ComponentIds::PASSTHROUGH_ID:
+					sim->AddOpModel(std::make_shared<PassthroughComp::PassthroughComponent>(navSystem));
 					break;
 				default:
 					break;

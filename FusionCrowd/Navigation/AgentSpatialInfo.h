@@ -32,6 +32,13 @@ namespace FusionCrowd
 		float prefSpeed = 1.04f;
 		float maxAngVel = 1.0f;
 
+		float zPos = 0.0f;
+		bool awaitsTeleportation = false;
+		float customEdgePosition = 0.5f;
+		float customDistribution = 0;
+		bool useCustomRandomizer = false;
+		bool useRandomizer = true;
+
 		bool inertiaEnabled = true;
 
 		Type type = AGENT;
