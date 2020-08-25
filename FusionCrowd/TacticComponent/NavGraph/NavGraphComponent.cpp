@@ -202,7 +202,7 @@ namespace FusionCrowd
 		{
 			if ((curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::red ||
 				curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::yellow) &&
-				dist < agentInfo.radius * 25 && dist > agentInfo.radius * 12)
+				dist < agentInfo.radius * 15 && dist > agentInfo.radius * 12)
 			{
 				agentInfo.prefVelocity.setSpeed(1e-6);
 			}

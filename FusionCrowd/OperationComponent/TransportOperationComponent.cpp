@@ -121,7 +121,7 @@ namespace FusionCrowd
 				normalizedPrefVel.Normalize();
 				
 				float deltaAngle = acos(previousVel.Dot(newVel) / (newVel.Length() * previousVel.Length() + 1e-6))*180/3.14;
-				if (abs(deltaAngle) > angleSpeed*timeStep)
+				if (abs(deltaAngle) > angleSpeed*timeStep && speed > 1e-6)
 				{
 					newVel = previousVel.Lerp(previousVel, newVel, (angleSpeed*timeStep / abs(deltaAngle)));//smooth turn with angleSpeed
 				}
@@ -132,10 +132,10 @@ namespace FusionCrowd
 
 				curAgentInfo.velNew = newVel;
 
-				Vector2 vel = curAgentInfo.GetVel();
+				Vector2 vel = newVel;// curAgentInfo.GetVel();
 				float speedVel = vel.Length();
 				////PeopleAvoidance
-				if (neighbours.size() < 1)
+				if (neighbours.size() < 1 && speedVel > 1e-6)
 				{
 					speedVel += acceleration * timeStep;
 					if (speedVel > curAgentInfo.prefSpeed) speedVel = curAgentInfo.prefSpeed;
