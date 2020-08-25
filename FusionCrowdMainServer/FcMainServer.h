@@ -62,7 +62,7 @@ namespace FusionCrowdWeb
 
 	private:
 		/** Id of client socket. */
-		int _clientId;
+		int _clientId = -1;
 
 		/** Ids of computational servers' sockets. */
 		std::vector<int> _computationalServersIds;

@@ -229,7 +229,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	WebAddress::WebAddress(const char* inIpAddress, short inPort) : IpAddress(inIpAddress), Port(inPort)
+	WebAddress::WebAddress(const char* inIpAddress, u_short inPort) : IpAddress(inIpAddress), Port(inPort)
 	{
 	}
 

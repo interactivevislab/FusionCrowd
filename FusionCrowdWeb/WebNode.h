@@ -25,7 +25,7 @@ namespace FusionCrowdWeb
 		/** Port address part. */
 		u_short Port;
 
-		WebAddress(const char* inIpAddress, short inPort);
+		WebAddress(const char* inIpAddress, u_short inPort);
 		operator sockaddr_in();
 	};
 
@@ -171,7 +171,7 @@ namespace FusionCrowdWeb
 
 	private:
 		/** Socket for own server. */
-		SOCKET _ownServerSocket;
+		SOCKET _ownServerSocket {~(unsigned __int64)0};
 
 		/** Size of buffer for sending and receiving data. */
 		size_t _bufferSize = 512;

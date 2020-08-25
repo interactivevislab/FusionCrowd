@@ -37,10 +37,10 @@ namespace FusionCrowdWeb
 	{
 	public:
 		/** X coordinate of region's center. */
-		float CenterX;
+		float CenterX = 0;
 
 		/** Y coordinate of region's center. */
-		float CenterY;
+		float CenterY = 0;
 
 		/** Width of region. */
 		float Width = -1;

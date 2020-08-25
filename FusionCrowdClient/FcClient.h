@@ -50,6 +50,6 @@ namespace FusionCrowdWeb
 
 	private:
 		/** Id of main server socket. */
-		int _mainServerId;
+		int _mainServerId {-1};
 	};
 }
