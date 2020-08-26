@@ -65,18 +65,18 @@ namespace FusionCrowdWeb
 	}
 
 
-	int WebNode::AcceptInputConnection()
+	SOCKET WebNode::AcceptInputConnection()
 	{
 		sockaddr_in address;
 		int addressSize = sizeof(address);
 		auto clientSocket = accept(_ownServerSocket, (SOCKADDR*)&address, &addressSize);
 		CheckSocket(clientSocket, "Accept failed");
 
-		return SaveConnectedSocket(clientSocket);
+		return clientSocket;
 	}
 
 
-	int WebNode::TryConnectToServer(WebAddress inAddress)
+	SOCKET WebNode::TryConnectToServer(WebAddress inAddress)
 	{
 		auto connectedSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(connectedSocket, "TCP socket creation failed");
@@ -88,11 +88,11 @@ namespace FusionCrowdWeb
 			throw WsException("Connection failed");
 		}
 
-		return SaveConnectedSocket(connectedSocket);
+		return connectedSocket;
 	}
 
 
-	int WebNode::WaitForConnectionToServer(WebAddress inAddress)
+	SOCKET WebNode::WaitForConnectionToServer(WebAddress inAddress)
 	{
 		while (true)
 		{
@@ -108,48 +108,40 @@ namespace FusionCrowdWeb
 	}
 
 
-	void WebNode::Disconnect(int inSocketId)
+	void WebNode::Disconnect(SOCKET inSocket)
 	{
-		auto socket = GetConnectedSocket(inSocketId);
-
-		auto result = closesocket(socket);
+		auto result = closesocket(inSocket);
 		CheckWsResult(result, "Disconnect failed");
-
-		_connectedSockets.erase(inSocketId);
 	}
 
 
-	void WebNode::Send(int inSocketId, WebCode inWebCode, const char* inData, size_t inDataSize)
+	void WebNode::Send(SOCKET inSocket, WebCode inWebCode, const char* inData, size_t inDataSize)
 	{
-		auto destSocket = GetConnectedSocket(inSocketId);
-
 		WebMessageHead messageHead = { inWebCode, inDataSize };
-		auto bytesSended = send(destSocket, reinterpret_cast<const char*>(&messageHead), sizeof(WebMessageHead), 0);
+		auto bytesSended = send(inSocket, reinterpret_cast<const char*>(&messageHead), sizeof(WebMessageHead), 0);
 		CheckTransferredBytes(bytesSended, "Sending failed");
 
 		int totalBytesSended = 0;
 		int bytesleft = static_cast<int>(inDataSize);
 		while (totalBytesSended < inDataSize)
 		{
-			bytesSended = send(destSocket, inData + totalBytesSended, bytesleft, 0);
+			bytesSended = send(inSocket, inData + totalBytesSended, bytesleft, 0);
 			CheckTransferredBytes(bytesSended, "Sending failed");
 			totalBytesSended += bytesSended;
 			bytesleft -= bytesSended;
 		}
 	}
 
-	void WebNode::Send(int inSocketId, WebCode inWebCode)
+	void WebNode::Send(SOCKET inSocket, WebCode inWebCode)
 	{
-		Send(inSocketId, inWebCode, nullptr, 0);
+		Send(inSocket, inWebCode, nullptr, 0);
 	}
 
 
-	WebMessage WebNode::Receive(int inSocketId)
+	WebMessage WebNode::Receive(SOCKET inSocket)
 	{
-		auto srcSocket = GetConnectedSocket(inSocketId);
-
 		WebMessageHead messageHead;
-		auto bytesRecieved = recv(srcSocket, reinterpret_cast<char*>(&messageHead), sizeof(WebMessageHead), 0);
+		auto bytesRecieved = recv(inSocket, reinterpret_cast<char*>(&messageHead), sizeof(WebMessageHead), 0);
 		CheckTransferredBytes(bytesRecieved, "Receive data failed");
 
 		auto messageLength = messageHead.MessageLength;
@@ -168,7 +160,7 @@ namespace FusionCrowdWeb
 			int bytesleft = static_cast<int>(messageLength);
 			while (totalBytesRecieved < messageLength)
 			{
-				auto bytesRecieved = recv(srcSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
+				auto bytesRecieved = recv(inSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
 				CheckTransferredBytes(bytesRecieved, "Receive data failed");
 				totalBytesRecieved += bytesRecieved;
 				bytesleft -= bytesRecieved;
@@ -180,25 +172,6 @@ namespace FusionCrowdWeb
 		{
 			return WebMessage { messageHead.WebCode, nullptr };
 		}
-	}
-
-
-	int WebNode::SaveConnectedSocket(SOCKET inSocket)
-	{
-		_connectedSockets.insert({ _freeSocketId, inSocket });
-		return _freeSocketId++;
-	}
-
-
-	SOCKET WebNode::GetConnectedSocket(int inSocketId)
-	{
-		auto clientSocketData = _connectedSockets.find(inSocketId);
-		if (clientSocketData == _connectedSockets.end())
-		{
-			throw FcWebException("Wrong socket id");
-		}
-
-		return clientSocketData->second;
 	}
 
 
