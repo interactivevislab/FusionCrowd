@@ -43,7 +43,7 @@ namespace FusionCrowdWeb
 		* \fn StartServer
 		* \brief Starts server on this node.
 		*
-		* @param inAddress	Socket port to start.
+		* @param inPort	Socket port to start.
 		*/
 		void StartServer(u_short inPort);
 
@@ -184,6 +184,9 @@ namespace FusionCrowdWeb
 
 		/** Free id for web socket. */
 		int _freeSocketId = 0;
+
+		/** Flag to determine if Windows Sockets API is running. */
+		static bool _isWsaStarted;
 
 		/**
 		* \fn SaveConnectedSocket

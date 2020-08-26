@@ -11,48 +11,60 @@ int main()
 	FcMainServer::GlobalStartup();
 	cout << "---Fusion Crowd Main Server---" << endl << endl;
 
-	FcMainServer server;
 	u_short port = 49000;
-	server.StartServer(port);
-	cout << "Successfully started on localhost:" << port << endl;
-
 	vector<WebAddress> computationalServersAddresses {
-		WebAddress("127.0.0.1", 49001),
-		WebAddress("127.0.0.1", 49002)
+		WebAddress("127.0.0.1", 49001)
 	};
-	cout << "Connecting to computational servers... ";
-	server.ConnectToComputationalServers(computationalServersAddresses);
-	cout << "success" << endl;
-
-	server.AcceptClientConnection();
-	cout << "Client connected" << endl;
-
-	cout << "Processing init data... ";
-	server.InitComputation();
-	cout << "success" << endl;
-
-	cout << "Processing computation data... ";
-	try
+	
+	bool isVerboseRun = false;
+	if (!isVerboseRun)
 	{
-		while (true)
-		{
-			server.ProcessComputationRequest();
-		}
+		FcMainServer server;
+		cout << "Ordinary run starts on localhost:" << port << endl;
+		server.StartOrdinaryRun(port, computationalServersAddresses);
+		cout << "Ordinary run ends" << endl << endl;
 	}
-	catch (FusionCrowdWeb::FcWebException e)
+	else
 	{
+		FcMainServer server;
+
+		server.StartServer(port);
+		cout << "Successfully started on localhost:" << port << endl;
+
+		cout << "Connecting to computational servers... ";
+		server.ConnectToComputationalServers(computationalServersAddresses);
 		cout << "success" << endl;
-		//cout << "error: " << e.What() << endl;
-		cout << "Client disconnected" << endl;
 
-		server.SaveRecording(FcFileWrapper::GetFullNameForResource("debug_recording.csv"));
+		server.AcceptClientConnection();
+		cout << "Client connected" << endl;
+
+		cout << "Processing init data... ";
+		server.InitComputation();
+		cout << "success" << endl;
+
+		cout << "Processing computation data... ";
+		try
+		{
+			while (true)
+			{
+				server.ProcessComputationRequest();
+			}
+		}
+		catch (FusionCrowdWeb::FcWebException e)
+		{
+			cout << "success" << endl;
+			//cout << "error: " << e.What() << endl;
+			cout << "Client disconnected" << endl;
+
+			server.SaveRecording(FcFileWrapper::GetFullNameForResource("debug_recording.csv"));
+		}
+
+		server.DisconnectFromComputationalServers();
+		cout << "Disconnection from computational servers" << endl;
+
+		server.ShutdownServer();
+		cout << "Server shutdown" << endl << endl;
 	}
-
-	server.DisconnectFromComputationalServers();
-	cout << "Disconnection from computational servers" << endl;
-
-	server.ShutdownServer();
-	cout << "Server shutdown" << endl << endl;
 
 	FcMainServer::GlobalCleanup();
 

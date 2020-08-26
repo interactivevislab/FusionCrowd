@@ -229,4 +229,28 @@ namespace FusionCrowdWeb
 	{
 		_recording->Serialize(inRecordingFileName.c_str(), inRecordingFileName.size());
 	}
+
+
+	void FcMainServer::StartOrdinaryRun(u_short inPort, const std::vector<WebAddress>& computationalServersAddresses)
+	{
+		StartServer(inPort);
+		ConnectToComputationalServers(computationalServersAddresses);
+		AcceptClientConnection();
+		InitComputation();
+
+		try
+		{
+			while (true)
+			{
+				ProcessComputationRequest();
+			}
+		}
+		catch (FusionCrowdWeb::FcWebException e)
+		{
+			SaveRecording(FcFileWrapper::GetFullNameForResource("ordinary_run_recording.csv"));
+		}
+
+		DisconnectFromComputationalServers();
+		ShutdownServer();
+	}
 }

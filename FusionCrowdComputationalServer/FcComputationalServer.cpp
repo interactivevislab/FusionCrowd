@@ -118,4 +118,26 @@ namespace FusionCrowdWeb
 		Send(_mainServerId, ResponseCode::Success, outData);
 		Send(_mainServerId, ResponseCode::Success, newAgentIds);
 	}
+
+
+	void FcComputationalServer::StartOrdinaryRun(u_short inPort)
+	{
+		StartServer(inPort);
+		AcceptMainServerConnection();
+		InitComputation();
+
+		try
+		{
+			while (true)
+			{
+				ProcessComputationRequest();
+			}
+		}
+		catch (FusionCrowdWeb::FcWebException e)
+		{
+			//do nothing
+		}
+
+		ShutdownServer();
+	}
 }

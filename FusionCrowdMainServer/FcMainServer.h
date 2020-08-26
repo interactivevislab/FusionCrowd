@@ -60,6 +60,15 @@ namespace FusionCrowdWeb
 		*/
 		void SaveRecording(std::string inRecordingFileName);
 
+		/**
+		* \fn StartOrdinaryRun
+		* \brief Runs work according to the usual scenario.
+		*
+		* @param inPort	Socket port to start.
+		* @param computationalServersAddresses	Computing servers' addresses.
+		*/
+		void StartOrdinaryRun(u_short inPort, const std::vector<WebAddress>& computationalServersAddresses);
+
 	private:
 		/** Id of client socket. */
 		int _clientId = -1;

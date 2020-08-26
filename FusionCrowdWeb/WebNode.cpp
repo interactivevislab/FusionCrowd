@@ -5,6 +5,9 @@
 
 namespace FusionCrowdWeb
 {
+	bool WebNode::_isWsaStarted = false;
+
+	
 	WebNode::~WebNode()
 	{
 		if (_receiveBuffer != nullptr)
@@ -16,12 +19,19 @@ namespace FusionCrowdWeb
 
 	void WebNode::GlobalStartup()
 	{
+		if (_isWsaStarted)
+		{
+			return;
+		}
+		
 		WSADATA winsockData;
 		auto result = WSAStartup(MAKEWORD(2, 2), &winsockData);
 		if (result != 0)
 		{
 			throw FcWebException("WSAStartUp failed");
 		}
+
+		_isWsaStarted = true;
 	}
 
 
@@ -29,6 +39,8 @@ namespace FusionCrowdWeb
 	{
 		auto result = WSACleanup();
 		CheckWsResult(result, "WSACleanup failed");
+		
+		_isWsaStarted = false;
 	}
 
 

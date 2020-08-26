@@ -36,6 +36,14 @@ namespace FusionCrowdWeb
 		*/
 		void ProcessComputationRequest();
 
+		/**
+		* \fn StartOrdinaryRun
+		* \brief Runs work according to the usual scenario.
+		*
+		* @param inPort	Socket port to start.
+		*/
+		void StartOrdinaryRun(u_short inPort);
+
 	private:
 		/** Id of main server socket. */
 		int _mainServerId = -1;
