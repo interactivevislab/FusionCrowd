@@ -43,9 +43,9 @@ namespace FusionCrowdWeb
 		* \fn StartServer
 		* \brief Starts server on this node.
 		*
-		* @param inAddress	Socket address to start.
+		* @param inAddress	Socket port to start.
 		*/
-		void StartServer(WebAddress inAddress);
+		void StartServer(u_short inPort);
 
 		/**
 		* \fn ShutdownServer

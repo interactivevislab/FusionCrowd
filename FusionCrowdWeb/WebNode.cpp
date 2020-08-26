@@ -32,12 +32,12 @@ namespace FusionCrowdWeb
 	}
 
 
-	void WebNode::StartServer(WebAddress inAddress)
+	void WebNode::StartServer(u_short inPort)
 	{
 		_ownServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(_ownServerSocket, "TCP socket creation failed");
 
-		sockaddr_in address = inAddress;
+		sockaddr_in address = WebAddress("127.0.0.1", inPort);
 		auto result = bind(_ownServerSocket, (SOCKADDR*)&address, sizeof(address));
 		CheckWsResult(result, "Binding failed");
 

@@ -14,12 +14,12 @@ int main()
 
 	FcComputationalServer server1, server2;
 
-	auto address = WebAddress("127.0.0.1", 49001);
-	server1.StartServer(address);
-	cout << "1) Successfully started on " << address.IpAddress << ':' << address.Port << endl;
-	address = WebAddress("127.0.0.1", 49002);
-	server2.StartServer(address);
-	cout << "2) Successfully started on " << address.IpAddress << ':' << address.Port << endl;
+	u_short port = 49001;
+	server1.StartServer(port);
+	cout << "1) Successfully started on localhost:" << port << endl;
+	port =  49002;
+	server2.StartServer(port);
+	cout << "2) Successfully started on localhost:" << port << endl;
 
 	server1.AcceptMainServerConnection();
 	cout << "1) MainServer connected" << endl;

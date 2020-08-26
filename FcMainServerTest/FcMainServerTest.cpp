@@ -12,8 +12,9 @@ int main()
 	cout << "---Fusion Crowd Main Server---" << endl << endl;
 
 	FcMainServer server;
-	server.StartServer(WebAddress("127.0.0.1", 49000));
-	cout << "Successfully started" << endl;
+	u_short port = 49000;
+	server.StartServer(port);
+	cout << "Successfully started on localhost:" << port << endl;
 
 	vector<WebAddress> computationalServersAddresses {
 		WebAddress("127.0.0.1", 49001),
