@@ -8,7 +8,6 @@
 
 #include <WinSock2.h>
 #include <map>
-#include <vector>
 
 
 namespace FusionCrowdWeb
@@ -207,14 +206,6 @@ namespace FusionCrowdWeb
 		* @return	Data of saved socket.
 		*/
 		SOCKET GetConnectedSocket(int inSocketId);
-
-		/**
-		* \fn GetAllConnectedSocketsIds
-		* \brief Gets ids of all connected sockets.
-		*
-		* @return	Ids of saved sockets.
-		*/
-		std::vector<int> GetAllConnectedSocketsIds();
 
 		/**
 		* \fn CheckSocket

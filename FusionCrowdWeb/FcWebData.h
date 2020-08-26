@@ -4,8 +4,6 @@
 #include "Export/Export.h"
 #include "FcFileWrapper.h"
 
-#include <vector>
-
 
 namespace FusionCrowdWeb
 {
@@ -49,7 +47,7 @@ namespace FusionCrowdWeb
 		float Height = -1;
 
 		NavMeshRegion() = default;
-		NavMeshRegion(const std::string& inNavMeshPath);
+		NavMeshRegion(const char* inNavMeshPath);
 
 		/**
 		* \fn IsPointInside
@@ -82,16 +80,17 @@ namespace FusionCrowdWeb
 		*
 		* @return Parts of region.
 		*/
-		std::vector<NavMeshRegion> Split(size_t inNumParts);
+		FusionCrowd::FCArray<NavMeshRegion> Split(size_t inNumParts);
 
 	private:
 		/**
 		* \fn Split
 		* \brief Splits region into several parts with equal area.
 		*
-		* @param inNumParts	Number of parts to split into.
+		* @param inNumParts		Number of parts to split into.
+		* @param inNextIndex	Next index for part in array.
 		*/
-		void Split(size_t inNumParts, std::vector<NavMeshRegion>& outParts);
+		void Split(size_t inNumParts, size_t& inNextIndex, FusionCrowd::FCArray<NavMeshRegion>& outParts);
 	};
 
 
@@ -102,7 +101,7 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API InitComputingData
 	{
 		InitComputingData();
-		InitComputingData(const std::string& inNavMeshFileName, FusionCrowd::FCArray<AgentInitData> inAgentsData);
+		InitComputingData(const char* inNavMeshFileName, FusionCrowd::FCArray<AgentInitData> inAgentsData);
 
 		/** Wrapped file with navigation mesh. */
 		FcFileWrapper NavMeshFile;
@@ -125,7 +124,7 @@ namespace FusionCrowdWeb
 		InputComputingData(float inTimeStep);
 
 		/** Simulation step in seconds. */
-		float TimeStep;
+		float TimeStep = 0.1f;
 
 		/** Agents from other NavMeshRegions. */
 		FusionCrowd::FCArray<FusionCrowd::AgentInfo> NewAgents;

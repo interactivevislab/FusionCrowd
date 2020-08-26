@@ -202,18 +202,6 @@ namespace FusionCrowdWeb
 	}
 
 
-	std::vector<int> WebNode::GetAllConnectedSocketsIds()
-	{
-		std::vector<int> ids;
-		for (auto it = _connectedSockets.begin(); it != _connectedSockets.end(); ++it)
-		{
-			ids.push_back(it->first);
-		}
-
-		return ids;
-	}
-
-
 	void WebNode::CheckSocket(SOCKET inSocket, const char* inErrorMessage)
 	{
 		if (inSocket == INVALID_SOCKET)

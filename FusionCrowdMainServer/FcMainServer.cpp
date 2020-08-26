@@ -225,9 +225,9 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FcMainServer::SaveRecording(std::string inRecordingFileName)
+	void FcMainServer::SaveRecording(const char* inRecordingFileName)
 	{
-		_recording->Serialize(inRecordingFileName.c_str(), inRecordingFileName.size());
+		_recording->Serialize(inRecordingFileName, strlen(inRecordingFileName));
 	}
 
 

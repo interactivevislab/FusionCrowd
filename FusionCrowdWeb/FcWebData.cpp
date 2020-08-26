@@ -5,11 +5,11 @@
 
 namespace FusionCrowdWeb
 {
-	NavMeshRegion::NavMeshRegion(const std::string& inNavMeshPath)
+	NavMeshRegion::NavMeshRegion(const char* inNavMeshPath)
 	{
 		using namespace FusionCrowd;
 
-		auto vertices = NavMeshHelper::LoadNavMeshVertices(inNavMeshPath.c_str());
+		auto vertices = NavMeshHelper::LoadNavMeshVertices(inNavMeshPath);
 
 		if (vertices.size() == 0)
 		{
@@ -53,11 +53,11 @@ namespace FusionCrowdWeb
 	}
 
 
-	void NavMeshRegion::Split(size_t inNumParts, std::vector<NavMeshRegion>& outParts)
+	void NavMeshRegion::Split(size_t inNumParts, size_t& inNextIndex, FusionCrowd::FCArray<NavMeshRegion>& outParts)
 	{
 		if (inNumParts == 1)
 		{
-			outParts.push_back(*this);
+			outParts[inNextIndex++] = *this;
 			return;
 		}
 
@@ -90,15 +90,16 @@ namespace FusionCrowdWeb
 			part2.CenterY = CenterY + part2.Height / 2;
 		}
 
-		part1.Split(inNumParts / 2, outParts);
-		part2.Split(inNumParts - inNumParts / 2, outParts);
+		part1.Split(inNumParts / 2, inNextIndex, outParts);
+		part2.Split(inNumParts - inNumParts / 2, inNextIndex, outParts);
 	}
 
 
-	std::vector<NavMeshRegion> NavMeshRegion::Split(size_t inNumParts)
+	FusionCrowd::FCArray<NavMeshRegion> NavMeshRegion::Split(size_t inNumParts)
 	{
-		std::vector<NavMeshRegion> navMeshRegionsBuffer;
-		Split(inNumParts, navMeshRegionsBuffer);
+		FusionCrowd::FCArray<NavMeshRegion> navMeshRegionsBuffer(inNumParts);
+		size_t indexBuffer = 0;
+		Split(inNumParts, indexBuffer, navMeshRegionsBuffer);
 		return navMeshRegionsBuffer;
 	}
 
@@ -108,7 +109,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	InitComputingData::InitComputingData(const std::string& inNavMeshFileName, 
+	InitComputingData::InitComputingData(const char* inNavMeshFileName, 
 		FusionCrowd::FCArray<AgentInitData> inAgentsData)
 		: NavMeshFile(inNavMeshFileName), AgentsData(inAgentsData)
 	{

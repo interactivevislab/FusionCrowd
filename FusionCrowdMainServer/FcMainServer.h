@@ -58,7 +58,7 @@ namespace FusionCrowdWeb
 		*
 		* @param inRecordingFileName	Result file name.
 		*/
-		void SaveRecording(std::string inRecordingFileName);
+		void SaveRecording(const char* inRecordingFileName);
 
 		/**
 		* \fn StartOrdinaryRun
