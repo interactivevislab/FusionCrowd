@@ -44,6 +44,7 @@ namespace FusionCrowdWeb
 		auto navMeshFileName = FcFileWrapper::GetFullNameForResource("ms_navmesh.nav");
 		initData.NavMeshFile.Unwrap(navMeshFileName);
 		initData.NavMeshRegion = NavMeshRegion(navMeshFileName);
+		delete navMeshFileName;
 
 		auto serversNum = _computationalServersIds.size();
 		auto navMeshRegionsBuffer = initData.NavMeshRegion.Split(serversNum);
@@ -247,7 +248,9 @@ namespace FusionCrowdWeb
 		}
 		catch (FusionCrowdWeb::FcWebException e)
 		{
-			SaveRecording(FcFileWrapper::GetFullNameForResource("ordinary_run_recording.csv"));
+			auto recordingFileName = FcFileWrapper::GetFullNameForResource("ordinary_run_recording.csv");
+			SaveRecording(recordingFileName);
+			delete recordingFileName;
 		}
 
 		DisconnectFromComputationalServers();

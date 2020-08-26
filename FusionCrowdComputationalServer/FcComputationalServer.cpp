@@ -36,6 +36,7 @@ namespace FusionCrowdWeb
 		auto navMeshFileName = FcFileWrapper::GetFullNameForResource("cs_navmesh.nav");
 		data.NavMeshFile.Unwrap(navMeshFileName);
 		_builder->WithNavMesh(navMeshFileName);
+		delete navMeshFileName;
 
 		_simulator = std::shared_ptr<ISimulatorFacade>(_builder->Build(), [](ISimulatorFacade* inSimulatorFacade) {
 			SimulatorFacadeDeleter(inSimulatorFacade);

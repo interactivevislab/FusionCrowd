@@ -23,7 +23,9 @@ int main()
 	agentsData[0] = { -20.f, 0, 20.f, 0 };
 	agentsData[1] = { 20.f, 0, -20.f, 0 };
 
-	InitComputingData initData(FcFileWrapper::GetFullNameForResource("grid.nav"), agentsData);
+	auto navMeshFileName = FcFileWrapper::GetFullNameForResource("grid.nav");
+	InitComputingData initData(navMeshFileName, agentsData);
+	delete navMeshFileName;
 
 	client.InitComputation(initData);
 	cout << "Computation initialization requested" << endl;
