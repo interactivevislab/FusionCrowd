@@ -12,6 +12,7 @@
 #include "Math/Shapes/ConeShape.h"
 #include "Math/Shapes/DiskShape.h"
 #include "Math/consts.h"
+#include "PedestrianLightController.h"
 
 #include <random>
 
@@ -23,9 +24,11 @@ namespace FusionCrowd
 	class Simulator::SimulatorImpl
 	{
 	public:
-		SimulatorImpl()
+		SimulatorImpl(Simulator* interface_pointer)
 		{
+			_pedestrianLightController = std::make_unique<PedestrianLightController>();
 			_recording = OnlineRecording();
+			_interface_pointer = interface_pointer;
 		}
 
 		~SimulatorImpl() = default;
@@ -52,6 +55,7 @@ namespace FusionCrowd
 			}
 
 			_navSystem->Update(timeStep);
+			_pedestrianLightController->Update(_navSystem->GetTrafficLights(), _agents, _interface_pointer, _navSystem, _goalFactory);
 			if (_isRecording) _recording.MakeRecord(GetAgentsInfo(), timeStep);
 
 			return true;
@@ -575,6 +579,7 @@ namespace FusionCrowd
 		float _currentTime = 0;
 
 		std::shared_ptr<NavSystem> _navSystem;
+		std::unique_ptr<PedestrianLightController> _pedestrianLightController;
 		OnlineRecording _recording;
 		bool _isRecording = false;
 
@@ -583,6 +588,7 @@ namespace FusionCrowd
 		std::map<ComponentId, std::shared_ptr<IStrategyComponent>> _strategyComponents;
 		std::map<ComponentId, std::shared_ptr<ITacticComponent>> _tacticComponents;
 		std::map<ComponentId, std::shared_ptr<IOperationComponent>> _operComponents;
+		Simulator* _interface_pointer;
 
 		GoalFactory _goalFactory;
 
@@ -593,7 +599,7 @@ namespace FusionCrowd
 #pragma endregion
 
 #pragma region proxy methods
-	Simulator::Simulator() : pimpl(spimpl::make_unique_impl<SimulatorImpl>())
+	Simulator::Simulator() : pimpl(spimpl::make_unique_impl<SimulatorImpl>(this))
 	{
 	}
 

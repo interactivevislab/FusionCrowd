@@ -32,6 +32,7 @@
     <ClInclude Include="Navigation\TrafficLight.h" />
     <ClInclude Include="Navigation\TrafficLightsBunch.h" />
     <ClInclude Include="OperationComponent\TransportOperationComponent.h" />
+    <ClInclude Include="PedestrianLightController.h" />
     <ClInclude Include="TacticComponent\ExternalControl.h" />
     <ClInclude Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.h" />
     <ClInclude Include="Export\ComponentId.h" />
@@ -123,6 +124,7 @@
     <ClCompile Include="Navigation\TrafficLight.cpp" />
     <ClCompile Include="Navigation\TrafficLightsBunch.cpp" />
     <ClCompile Include="OperationComponent\TransportOperationComponent.cpp" />
+    <ClCompile Include="PedestrianLightController.cpp" />
     <ClCompile Include="TacticComponent\ExternalControl.cpp" />
     <ClCompile Include="Navigation\NavMesh\Modification\EdgeObstacleReplaner.cpp" />
     <ClCompile Include="Export\Export.cpp" />
@@ -316,7 +318,7 @@
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>

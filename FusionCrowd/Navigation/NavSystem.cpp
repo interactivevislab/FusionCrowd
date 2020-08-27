@@ -85,6 +85,11 @@ namespace FusionCrowd
 			_trafficLights.insert(std::make_pair(NavGraphsNodeId, newLight));
 		}
 
+
+		std::map<size_t, TrafficLightsBunch*>& GetTrafficLights() {
+			return _trafficLights;
+		}
+
 		TrafficLightsBunch* GetTrafficLights(size_t NavGraphsNodeId)
 		{
 			auto it = _trafficLights.find(NavGraphsNodeId);
@@ -324,6 +329,10 @@ namespace FusionCrowd
 	TrafficLightsBunch* NavSystem::GetTrafficLights(size_t id)
 	{
 		return pimpl->GetTrafficLights(id);
+	}
+
+	std::map<size_t, TrafficLightsBunch*>& const NavSystem::GetTrafficLights() {
+		return pimpl->GetTrafficLights();
 	}
 
 	AgentSpatialInfo & NavSystem::GetSpatialInfo(size_t agentId)

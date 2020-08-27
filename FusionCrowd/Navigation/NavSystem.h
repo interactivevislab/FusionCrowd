@@ -38,6 +38,7 @@ namespace FusionCrowd
 		void RemoveAgent(size_t id);
 		void AddTrafficLights(size_t nodeId);
 		TrafficLightsBunch* GetTrafficLights(size_t nodeId);
+		std::map<size_t,TrafficLightsBunch*>& GetTrafficLights();
 
 		AgentSpatialInfo & GetSpatialInfo(size_t agentId);
 

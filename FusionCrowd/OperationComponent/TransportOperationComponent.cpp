@@ -132,10 +132,10 @@ namespace FusionCrowd
 
 				curAgentInfo.velNew = newVel;
 
-				Vector2 vel = newVel;// curAgentInfo.GetVel();
+				Vector2 vel = curAgentInfo.GetVel();
 				float speedVel = vel.Length();
 				////PeopleAvoidance
-				if (neighbours.size() < 1 && speedVel > 1e-6)
+				if (neighbours.size() < 1 && speed > 1e-6)
 				{
 					speedVel += acceleration * timeStep;
 					if (speedVel > curAgentInfo.prefSpeed) speedVel = curAgentInfo.prefSpeed;
@@ -156,6 +156,8 @@ namespace FusionCrowd
 					//speed -= maxAcceleration;
 					speedVel -= acceleration * timeStep;
 				}
+
+				speedVel = speedVel < speed ? speedVel : speed;
 
 				curAgentInfo.velNew = Vector2(normalizedPrefVel.x * speedVel, normalizedPrefVel.y * speedVel);
 				////
