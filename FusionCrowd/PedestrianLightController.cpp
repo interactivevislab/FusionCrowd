@@ -19,7 +19,7 @@ namespace FusionCrowd {
 		if (lights.size() == 0) return;
 		std::vector<size_t> to_unstop;
 		for (auto& pair : _saved_goals) {
-			if (_blocks_lights.at(pair.first)->GetCurLight() == TrafficLight::Lights::red) {
+			if (_blocks_lights.at(pair.first)->GetCurLight() == TrafficLight::Lights::green) {
 				to_unstop.push_back(pair.first);
 			}
 		}
@@ -38,7 +38,7 @@ namespace FusionCrowd {
 				if (light_pos.Distance(light_pos, spatialInfo.GetPos()) > LIGHT_SENSITIVE_RADIUS) continue;
 				auto& light_bunch = light_pair.second;
 				auto light = light_bunch->GetProperLight(spatialInfo.GetVel());
-				if (light->GetCurLight() != TrafficLight::Lights::red) {
+				if (light->GetCurLight() != TrafficLight::Lights::green) {
 					_saved_goals.insert({ agent.id, agent.currentGoal });
 					_blocks_lights.insert({ agent.id, light });
 					auto goal = goalFactory.CreatePointGoal(spatialInfo.GetPos());
