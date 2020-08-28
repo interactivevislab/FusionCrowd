@@ -39,7 +39,7 @@ int main()
 		cout << "Successfully started on localhost:" << port << endl;
 
 		cout << "Connecting to computational servers... ";
-		server.ConnectToComputationalServers(computationalServersAddresses, 10.f);
+		server.ConnectToComputationalServers(computationalServersAddresses);
 		cout << "success" << endl;
 
 		server.AcceptClientConnection();

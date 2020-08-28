@@ -21,9 +21,8 @@ namespace FusionCrowdWeb
 		* \brief Establishes a connection with center of computing network.
 		*
 		* @param inAddress	Main server's address.
-		* @param inConnectionTimeout	Connection timeout in seconds.
 		*/
-		void ConnectToMainServer(WebAddress inAddress, float inConnectionTimeout);
+		void ConnectToMainServer(WebAddress inAddress);
 
 		/**
 		* \fn DisconnectFromMainServer

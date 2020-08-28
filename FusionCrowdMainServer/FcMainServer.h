@@ -25,9 +25,8 @@ namespace FusionCrowdWeb
 		* \brief Establishes a connections with computing servers.
 		*
 		* @param inAddresses			Computing servers' addresses.
-		* @param inConnectionTimeout	Connection timeout in seconds.
 		*/
-		void ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses, float inConnectionTimeout);
+		void ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses);
 
 		/**
 		* \fn DisconnectFromComputationalServers

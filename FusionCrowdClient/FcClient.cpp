@@ -7,9 +7,9 @@
 
 namespace FusionCrowdWeb
 {
-	void FusionCrowdClient::ConnectToMainServer(WebAddress inAddress, float inConnectionTimeout)
+	void FusionCrowdClient::ConnectToMainServer(WebAddress inAddress)
 	{
-		_mainServerSocket = WaitForConnectionToServer(inAddress, inConnectionTimeout);
+		_mainServerSocket = TryConnectToServer(inAddress);
 	}
 
 

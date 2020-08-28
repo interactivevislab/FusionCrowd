@@ -5,16 +5,37 @@
 #include "WsException.h"
 
 #include <algorithm>
+#include <sstream>
+#include <string>
 
 
 namespace FusionCrowdWeb
 {
-	void FcMainServer::ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses, float inConnectionTimeout)
+	void FcMainServer::ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses)
 	{
+		std::vector<WebAddress> failedConnections;
 		for (auto address : inAddresses)
 		{
-			auto serverId = WaitForConnectionToServer(address, inConnectionTimeout);
-			_computationalServersIds.push_back(serverId);
+			try
+			{
+				auto serverId = TryConnectToServer(address);
+				_computationalServersIds.push_back(serverId);
+			}
+			catch (WsException exception)
+			{
+				failedConnections.push_back(address);
+			}
+		}
+
+		if (failedConnections.size() > 0)
+		{
+			std::ostringstream errorMessage;
+			errorMessage << "Connection failed for computional servers: ";
+			for (auto failedConnection : failedConnections)
+			{
+				errorMessage << failedConnection.IpAddress << ":" << failedConnection.Port << ", ";
+			}
+			throw WsException(errorMessage.str().c_str());
 		}
 	}
 
@@ -235,7 +256,7 @@ namespace FusionCrowdWeb
 	void FcMainServer::StartOrdinaryRun(u_short inPort, const std::vector<WebAddress>& computationalServersAddresses)
 	{
 		StartServer(inPort);
-		ConnectToComputationalServers(computationalServersAddresses, 10.f);
+		ConnectToComputationalServers(computationalServersAddresses);
 		AcceptClientConnection();
 		InitComputation();
 
