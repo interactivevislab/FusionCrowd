@@ -21,8 +21,9 @@ namespace FusionCrowdWeb
 		* \brief Establishes a connection with center of computing network.
 		*
 		* @param inAddress	Main server's address.
+		* @param inConnectionTimeout	Connection timeout in seconds.
 		*/
-		void ConnectToMainServer(WebAddress inAddress);
+		void ConnectToMainServer(WebAddress inAddress, float inConnectionTimeout);
 
 		/**
 		* \fn DisconnectFromMainServer
@@ -49,7 +50,7 @@ namespace FusionCrowdWeb
 		OutputComputingData RequestComputation(const InputComputingData& inComputingData);
 
 	private:
-		/** Id of main server socket. */
-		int _mainServerId {-1};
+		/** Main server socket. */
+		SOCKET _mainServerSocket { INVALID_SOCKET };
 	};
 }

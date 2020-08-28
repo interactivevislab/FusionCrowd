@@ -9,11 +9,11 @@
 
 namespace FusionCrowdWeb
 {
-	void FcMainServer::ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses)
+	void FcMainServer::ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses, float inConnectionTimeout)
 	{
 		for (auto address : inAddresses)
 		{
-			auto serverId = WaitForConnectionToServer(address);
+			auto serverId = WaitForConnectionToServer(address, inConnectionTimeout);
 			_computationalServersIds.push_back(serverId);
 		}
 	}
@@ -31,14 +31,14 @@ namespace FusionCrowdWeb
 
 	void FcMainServer::AcceptClientConnection()
 	{
-		_clientId = AcceptInputConnection();
+		_clientSocket = AcceptInputConnection();
 	}
 
 
 	void FcMainServer::InitComputation()
 	{
 		//reception init data	
-		auto initData = Receive<InitComputingData>(_clientId, RequestCode::InitSimulation, "RequestError");
+		auto initData = Receive<InitComputingData>(_clientSocket, RequestCode::InitSimulation, "RequestError");
 
 		//init data processing
 		auto navMeshFileName = FcFileWrapper::GetFullNameForResource("ms_navmesh.nav");
@@ -104,7 +104,7 @@ namespace FusionCrowdWeb
 		using FusionCrowd::AgentInfo;
 
 		//reception input data
-		auto inData = Receive<InputComputingData>(_clientId, RequestCode::DoStep, "RequestError");
+		auto inData = Receive<InputComputingData>(_clientSocket, RequestCode::DoStep, "RequestError");
 
 		//input data processing
 		std::map<int, std::vector<AgentInfo>> newAgentsDataParts;
@@ -222,7 +222,7 @@ namespace FusionCrowdWeb
 		_recording->MakeRecord(_allAgents, inData.TimeStep);
 
 		//sending output data
-		Send(_clientId, ResponseCode::Success, OutputComputingData{ _allAgents });
+		Send(_clientSocket, ResponseCode::Success, OutputComputingData{ _allAgents });
 	}
 
 
@@ -235,7 +235,7 @@ namespace FusionCrowdWeb
 	void FcMainServer::StartOrdinaryRun(u_short inPort, const std::vector<WebAddress>& computationalServersAddresses)
 	{
 		StartServer(inPort);
-		ConnectToComputationalServers(computationalServersAddresses);
+		ConnectToComputationalServers(computationalServersAddresses, 10.f);
 		AcceptClientConnection();
 		InitComputation();
 

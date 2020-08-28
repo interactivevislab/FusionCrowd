@@ -101,7 +101,7 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API InitComputingData
 	{
 		InitComputingData();
-		InitComputingData(const char* inNavMeshFileName, FusionCrowd::FCArray<AgentInitData> inAgentsData);
+		InitComputingData(const char* inNavMeshFileName, const FusionCrowd::FCArray<AgentInitData>& inAgentsData);
 
 		/** Wrapped file with navigation mesh. */
 		FcFileWrapper NavMeshFile;

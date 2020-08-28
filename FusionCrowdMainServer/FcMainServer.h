@@ -24,9 +24,10 @@ namespace FusionCrowdWeb
 		* \fn ConnectToComputationalServers
 		* \brief Establishes a connections with computing servers.
 		*
-		* @param inAddresses	Computing servers' addresses.
+		* @param inAddresses			Computing servers' addresses.
+		* @param inConnectionTimeout	Connection timeout in seconds.
 		*/
-		void ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses);
+		void ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses, float inConnectionTimeout);
 
 		/**
 		* \fn DisconnectFromComputationalServers
@@ -70,8 +71,8 @@ namespace FusionCrowdWeb
 		void StartOrdinaryRun(u_short inPort, const std::vector<WebAddress>& computationalServersAddresses);
 
 	private:
-		/** Id of client socket. */
-		int _clientId = -1;
+		/** Client socket. */
+		SOCKET _clientSocket { INVALID_SOCKET };
 
 		/** Ids of computational servers' sockets. */
 		std::vector<int> _computationalServersIds;

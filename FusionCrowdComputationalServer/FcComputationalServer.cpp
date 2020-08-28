@@ -11,7 +11,7 @@ namespace FusionCrowdWeb
 {
 	void FcComputationalServer::AcceptMainServerConnection()
 	{
-		_mainServerId = AcceptInputConnection();
+		_mainServerSocket = AcceptInputConnection();
 	}
 
 
@@ -20,7 +20,7 @@ namespace FusionCrowdWeb
 		using namespace FusionCrowd;
 
 		//reading data
-		auto data = Receive<InitComputingData>(_mainServerId, RequestCode::InitSimulation, "RequestError");
+		auto data = Receive<InitComputingData>(_mainServerSocket, RequestCode::InitSimulation, "RequestError");
 		_navMeshRegion = data.NavMeshRegion;
 
 		//initing simulation
@@ -55,7 +55,7 @@ namespace FusionCrowdWeb
 			agentIds.Values[i] = agentId;
 		}
 
-		Send(_mainServerId, ResponseCode::Success, agentIds);
+		Send(_mainServerSocket, ResponseCode::Success, agentIds);
 	}
 
 
@@ -64,7 +64,7 @@ namespace FusionCrowdWeb
 		using namespace FusionCrowd;
 
 		//reading data
-		auto inData = Receive<InputComputingData>(_mainServerId, RequestCode::DoStep, "RequestError");
+		auto inData = Receive<InputComputingData>(_mainServerSocket, RequestCode::DoStep, "RequestError");
 
 		//adding agents
 		auto newAgentsNum = inData.NewAgents.size();
@@ -116,8 +116,8 @@ namespace FusionCrowdWeb
 			outData.DisplacedAgents[i] = displacedAgents[i];
 		}
 
-		Send(_mainServerId, ResponseCode::Success, outData);
-		Send(_mainServerId, ResponseCode::Success, newAgentIds);
+		Send(_mainServerSocket, ResponseCode::Success, outData);
+		Send(_mainServerSocket, ResponseCode::Success, newAgentIds);
 	}
 
 

@@ -73,11 +73,12 @@ namespace FusionCrowdWeb
 		* \fn TryConnectToServer
 		* \brief Repeatedly trying to connect to another node's server until success.
 		*
-		* @param inAddress	Socket address of other node's server.
+		* @param inAddress				Socket address of other node's server.
+		* @param inConnectionTimeout	Connection timeout in seconds.
 		*
 		* @return	Connected socket.
 		*/
-		SOCKET WaitForConnectionToServer(WebAddress inAddress);
+		SOCKET WaitForConnectionToServer(WebAddress inAddress, float inConnectionTimeout);
 
 		/**
 		* \fn TryConnectToServer
@@ -169,7 +170,7 @@ namespace FusionCrowdWeb
 
 	private:
 		/** Socket for own server. */
-		SOCKET _ownServerSocket {~(unsigned __int64)0};
+		SOCKET _ownServerSocket { INVALID_SOCKET };
 
 		/** Size of buffer for sending and receiving data. */
 		size_t _bufferSize = 512;

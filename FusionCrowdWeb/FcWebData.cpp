@@ -109,8 +109,8 @@ namespace FusionCrowdWeb
 	}
 
 
-	InitComputingData::InitComputingData(const char* inNavMeshFileName, 
-		FusionCrowd::FCArray<AgentInitData> inAgentsData)
+	InitComputingData::InitComputingData(const char* inNavMeshFileName,
+		const FusionCrowd::FCArray<AgentInitData>& inAgentsData)
 		: NavMeshFile(inNavMeshFileName), AgentsData(inAgentsData)
 	{
 	}

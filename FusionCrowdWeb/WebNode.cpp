@@ -1,5 +1,7 @@
 #include "WebNode.h"
 
+#include <chrono>
+
 #include "Ws2tcpip.h"
 
 
@@ -92,9 +94,12 @@ namespace FusionCrowdWeb
 	}
 
 
-	SOCKET WebNode::WaitForConnectionToServer(WebAddress inAddress)
+	SOCKET WebNode::WaitForConnectionToServer(WebAddress inAddress, float inConnectionTimeout)
 	{
-		while (true)
+		auto connectionStart = std::chrono::system_clock::now();
+
+		bool tryToConnect = true;
+		while (tryToConnect)
 		{
 			try
 			{
@@ -102,9 +107,13 @@ namespace FusionCrowdWeb
 			}
 			catch (WsException e)
 			{
-				//connection error - try again
+				auto now = std::chrono::system_clock::now();
+				std::chrono::duration<float> timePassed = now - connectionStart;
+				tryToConnect = timePassed.count() < inConnectionTimeout;
 			}
 		}
+
+		throw FcWebException("Connection timeout");
 	}
 
 

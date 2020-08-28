@@ -19,10 +19,17 @@ int main()
 	bool isVerboseRun = false;
 	if (!isVerboseRun)
 	{
-		FcMainServer server;
-		cout << "Ordinary run starts on localhost:" << port << endl;
-		server.StartOrdinaryRun(port, computationalServersAddresses);
-		cout << "Ordinary run ends" << endl << endl;
+		try
+		{
+			FcMainServer server;
+			cout << "Ordinary run starts on localhost:" << port << endl;
+			server.StartOrdinaryRun(port, computationalServersAddresses);
+			cout << "Ordinary run ends" << endl << endl;
+		}
+		catch(FcWebException exception)
+		{
+			cout << "FcWebException: " << exception.What() << endl << endl;
+		}
 	}
 	else
 	{
@@ -32,7 +39,7 @@ int main()
 		cout << "Successfully started on localhost:" << port << endl;
 
 		cout << "Connecting to computational servers... ";
-		server.ConnectToComputationalServers(computationalServersAddresses);
+		server.ConnectToComputationalServers(computationalServersAddresses, 10.f);
 		cout << "success" << endl;
 
 		server.AcceptClientConnection();

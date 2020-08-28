@@ -45,8 +45,8 @@ namespace FusionCrowdWeb
 		void StartOrdinaryRun(u_short inPort);
 
 	private:
-		/** Id of main server socket. */
-		int _mainServerId = -1;
+		/** Main server socket. */
+		SOCKET _mainServerSocket { INVALID_SOCKET };
 
 		/** ISimulatorFacade builder. */
 		std::shared_ptr<FusionCrowd::ISimulatorBuilder> _builder;

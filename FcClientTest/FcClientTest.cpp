@@ -16,7 +16,7 @@ int main()
 	FusionCrowdClient client;
 
 	cout << "Connecting to main server... ";
-	client.ConnectToMainServer(WebAddress("127.0.0.1", 49000));
+	client.ConnectToMainServer(WebAddress("127.0.0.1", 49000), 10.f);
 	cout << "success" << endl;
 
 	FusionCrowd::FCArray<AgentInitData> agentsData(2);
