@@ -64,7 +64,7 @@ int main()
 
 	FcComputationalServer::GlobalCleanup();
 
-	system("pause");
+	//system("pause");
 
 	return 0;
 }

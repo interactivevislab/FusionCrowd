@@ -49,7 +49,8 @@ namespace FusionCrowdWeb
 		for (int i = 0; i < agentsNum; i++)
 		{
 			auto& agentData = data.AgentsData[i];
-			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 1, 10,
+			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 0.25f, 10,
+				0.5f, 0.3f, true, true,
 				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
 			_simulator->SetAgentGoal(agentId, Point(agentData.GoalX, agentData.GoalY));
 			agentIds.Values[i] = agentId;

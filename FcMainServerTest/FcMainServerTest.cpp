@@ -77,7 +77,7 @@ int main()
 
 	FcMainServer::GlobalCleanup();
 
-	system("pause");
+	//system("pause");
 	
 	return 0;
 }
