@@ -18,8 +18,8 @@ namespace FusionCrowdWeb
 		{
 			try
 			{
-				auto serverId = TryConnectToServer(address);
-				_computationalServersIds.push_back(serverId);
+				auto serverSocket = TryConnectToServer(address);
+				_computationalServersSockets.push_back(serverSocket);
 			}
 			catch (WsException exception)
 			{
@@ -42,11 +42,11 @@ namespace FusionCrowdWeb
 
 	void FcMainServer::DisconnectFromComputationalServers()
 	{
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			Disconnect(serverId);
+			Disconnect(serverSocket);
 		}
-		_computationalServersIds.clear();
+		_computationalServersSockets.clear();
 	}
 
 
@@ -67,48 +67,48 @@ namespace FusionCrowdWeb
 		initData.NavMeshRegion = NavMeshRegion(navMeshFileName);
 		delete navMeshFileName;
 
-		auto serversNum = _computationalServersIds.size();
+		auto serversNum = _computationalServersSockets.size();
 		auto navMeshRegionsBuffer = initData.NavMeshRegion.Split(serversNum);
 		for (int i = 0; i < serversNum; i++)
 		{
-			_navMeshRegions[_computationalServersIds[i]] = navMeshRegionsBuffer[i];
+			_navMeshRegions[_computationalServersSockets[i]] = navMeshRegionsBuffer[i];
 		}
 
 		std::map<int, std::vector<AgentInitData>> initAgentsDataParts;
 		for (auto& agentInitData : initData.AgentsData)
 		{
-			for (auto serverId : _computationalServersIds)
+			for (auto serverSocket : _computationalServersSockets)
 			{
-				if (_navMeshRegions[serverId].IsPointInside(agentInitData.X, agentInitData.Y))
+				if (_navMeshRegions[serverSocket].IsPointInside(agentInitData.X, agentInitData.Y))
 				{
-					initAgentsDataParts[serverId].push_back(agentInitData);
+					initAgentsDataParts[serverSocket].push_back(agentInitData);
 					break;
 				}
 			}
 		}
 
 		//sending init data
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			auto& agentsData = initAgentsDataParts[serverId];
+			auto& agentsData = initAgentsDataParts[serverSocket];
 			initData.AgentsData = FusionCrowd::FCArray<AgentInitData>(agentsData.size());
 			for (int i = 0; i < agentsData.size(); i++)
 			{
 				initData.AgentsData[i] = agentsData[i];
 			}
 
-			initData.NavMeshRegion = _navMeshRegions[serverId];
+			initData.NavMeshRegion = _navMeshRegions[serverSocket];
 
-			Send(serverId, RequestCode::InitSimulation, initData);
+			Send(serverSocket, RequestCode::InitSimulation, initData);
 		}
 
 		//reception agents ids
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			auto agentIds = Receive<AgentsIds>(serverId, ResponseCode::Success, "ResponseError");
+			auto agentIds = Receive<AgentsIds>(serverSocket, ResponseCode::Success, "ResponseError");
 			for (auto id : agentIds.Values)
 			{
-				_agentsIds[serverId][id] = _freeId++;
+				_agentsIds[serverSocket][id] = _freeId++;
 			}
 		}
 
@@ -131,11 +131,11 @@ namespace FusionCrowdWeb
 		std::map<int, std::vector<AgentInfo>> newAgentsDataParts;
 		for (auto& displacedAgent : _displacedAgents)
 		{
-			for (auto serverId : _computationalServersIds)
+			for (auto serverSocket : _computationalServersSockets)
 			{
-				if (_navMeshRegions[serverId].IsPointInside(displacedAgent.posX, displacedAgent.posY))
+				if (_navMeshRegions[serverSocket].IsPointInside(displacedAgent.posX, displacedAgent.posY))
 				{
-					newAgentsDataParts[serverId].push_back(displacedAgent);
+					newAgentsDataParts[serverSocket].push_back(displacedAgent);
 					break;
 				}
 			}
@@ -144,75 +144,78 @@ namespace FusionCrowdWeb
 		std::map<int, std::vector<AgentInfo>> boundaryAgentsDataParts;
 		for (auto& agent : _allAgents)
 		{
-			for (auto serverId : _computationalServersIds)
+			for (auto serverSocket : _computationalServersSockets)
 			{
-				if (_navMeshRegions[serverId].IsPointInsideBoundaryZone(agent.posX, agent.posY, _boundaryZoneDepth))
+				if (_navMeshRegions[serverSocket].IsPointInsideBoundaryZone(agent.posX, agent.posY, _boundaryZoneDepth))
 				{
-					boundaryAgentsDataParts[serverId].push_back(agent);
+					boundaryAgentsDataParts[serverSocket].push_back(agent);
 				}
 			}
 		}
 
 		//sending input data
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			auto& newAgentsData = newAgentsDataParts[serverId];
+			auto& newAgentsData = newAgentsDataParts[serverSocket];
 			inData.NewAgents = FCArray<AgentInfo>(newAgentsData.size());
 			for (int i = 0; i < newAgentsData.size(); i++)
 			{
 				inData.NewAgents[i] = newAgentsData[i];
 			}
 
-			auto& boundaryAgentsData = boundaryAgentsDataParts[serverId];
+			auto& boundaryAgentsData = boundaryAgentsDataParts[serverSocket];
 			inData.BoundaryAgents = FCArray<AgentInfo>(boundaryAgentsData.size());
 			for (int i = 0; i < boundaryAgentsData.size(); i++)
 			{
 				inData.BoundaryAgents[i] = boundaryAgentsData[i];
 			}
 
-			Send(serverId, RequestCode::DoStep, inData);
+			Send(serverSocket, RequestCode::DoStep, inData);
 		}
 
 		//reception output data
 		std::map<int, OutputComputingData> outDataParts;
 		std::map<int, AgentsIds> outNewAgentIds;
 		size_t agentsNum = 0;
-		for (auto serverId : _computationalServersIds)
+		auto serversNum = _computationalServersSockets.size();
+		for (int i = 0; i < serversNum; i++)
 		{
-			auto outDataPart = Receive<OutputComputingData>(serverId, ResponseCode::Success, "ResponseError");
+			auto serverSocket = _computationalServersSockets[i];
+			
+			auto outDataPart = Receive<OutputComputingData>(serverSocket, ResponseCode::Success, "ResponseError");
 			for (auto& agentInfo : outDataPart.AgentInfos)
 			{
-				agentInfo.serverId = serverId;
+				agentInfo.serverId = i;
 			}
 			for (auto& agentInfo : outDataPart.DisplacedAgents)
 			{
-				agentInfo.serverId = serverId;
+				agentInfo.serverId = i;
 			}
-			outDataParts[serverId] = outDataPart;
+			outDataParts[serverSocket] = outDataPart;
 
-			auto newAgentIds = Receive<AgentsIds>(serverId, ResponseCode::Success, "ResponseError");
-			outNewAgentIds[serverId] = newAgentIds;
+			auto newAgentIds = Receive<AgentsIds>(serverSocket, ResponseCode::Success, "ResponseError");
+			outNewAgentIds[serverSocket] = newAgentIds;
 
 			agentsNum += outDataPart.AgentInfos.size() + outDataPart.DisplacedAgents.size();
 		}
 
 		//id updating
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			std::vector<AgentInfo>& currentDisplacedAgents = newAgentsDataParts[serverId];
-			FCArray<size_t>& currentDisplacedAgentsIds = outNewAgentIds[serverId].Values;
+			std::vector<AgentInfo>& currentDisplacedAgents = newAgentsDataParts[serverSocket];
+			FCArray<size_t>& currentDisplacedAgentsIds = outNewAgentIds[serverSocket].Values;
 			for (int i = 0; i < currentDisplacedAgents.size(); i++)
 			{
 				auto displacedAgent = currentDisplacedAgents[i];
 				auto newId = currentDisplacedAgentsIds[i];
-				_agentsIds[serverId][newId] = displacedAgent.id;
+				_agentsIds[serverSocket][newId] = displacedAgent.id;
 			}
 
-			for (auto& newDisplacedAgent : outDataParts[serverId].DisplacedAgents)
+			for (auto& newDisplacedAgent : outDataParts[serverSocket].DisplacedAgents)
 			{
 				auto oldId = newDisplacedAgent.id;
-				newDisplacedAgent.id = _agentsIds[serverId][oldId];
-				_agentsIds[serverId].erase(oldId);
+				newDisplacedAgent.id = _agentsIds[serverSocket][oldId];
+				_agentsIds[serverSocket].erase(oldId);
 			}
 		}
 
@@ -222,11 +225,11 @@ namespace FusionCrowdWeb
 		_displacedAgents.clear();
 		for (auto& outDataPart : outDataParts)
 		{
-			auto serverId	= outDataPart.first;
-			auto& data		= outDataPart.second;
+			auto serverSocket	= outDataPart.first;
+			auto& data			= outDataPart.second;
 			for (auto& agentInfo : data.AgentInfos)
 			{
-				agentInfo.id = _agentsIds[serverId][agentInfo.id];
+				agentInfo.id = _agentsIds[serverSocket][agentInfo.id];
 				_allAgents[infoIndex++] = agentInfo;
 			}
 			for (auto& agentInfo : data.DisplacedAgents)

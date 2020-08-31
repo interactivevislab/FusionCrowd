@@ -73,8 +73,8 @@ namespace FusionCrowdWeb
 		/** Client socket. */
 		SOCKET _clientSocket { INVALID_SOCKET };
 
-		/** Ids of computational servers' sockets. */
-		std::vector<int> _computationalServersIds;
+		/** Computational servers' sockets. */
+		std::vector<int> _computationalServersSockets;
 
 		/** Copy of all agents fron previous simulation step. */
 		FusionCrowd::FCArray<FusionCrowd::AgentInfo> _allAgents = FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0);
@@ -86,7 +86,7 @@ namespace FusionCrowdWeb
 		* \fn _agentsIds
 		* \brief Dictionary for translating local Id (on computing servers) to global (on main server).
 		*
-		* Key of outer map - id of computing server.
+		* Key of outer map - computing server socket.
 		* Key of inner map - id of agent on computing server.
 		* Value of inner map - id of agent on main server.
 		*/
