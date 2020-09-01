@@ -259,25 +259,30 @@ namespace FusionCrowdWeb
 	void FcMainServer::StartOrdinaryRun(u_short inPort, const std::vector<WebAddress>& computationalServersAddresses)
 	{
 		StartServer(inPort);
-		ConnectToComputationalServers(computationalServersAddresses);
-		AcceptClientConnection();
-		InitComputation();
 
-		try
+		while (true)
 		{
-			while (true)
+			ConnectToComputationalServers(computationalServersAddresses);
+			AcceptClientConnection();
+			InitComputation();
+
+			try
 			{
-				ProcessComputationRequest();
+				while (true)
+				{
+					ProcessComputationRequest();
+				}
 			}
-		}
-		catch (FusionCrowdWeb::FcWebException e)
-		{
-			auto recordingFileName = FcFileWrapper::GetFullNameForResource("ordinary_run_recording.csv");
-			SaveRecording(recordingFileName);
-			delete recordingFileName;
+			catch (FusionCrowdWeb::FcWebException e)
+			{
+				auto recordingFileName = FcFileWrapper::GetFullNameForResource("ordinary_run_recording.csv");
+				SaveRecording(recordingFileName);
+				delete recordingFileName;
+			}
+
+			DisconnectFromComputationalServers();
 		}
 
-		DisconnectFromComputationalServers();
 		ShutdownServer();
 	}
 }

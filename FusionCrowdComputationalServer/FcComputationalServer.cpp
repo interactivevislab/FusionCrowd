@@ -125,19 +125,23 @@ namespace FusionCrowdWeb
 	void FcComputationalServer::StartOrdinaryRun(u_short inPort)
 	{
 		StartServer(inPort);
-		AcceptMainServerConnection();
-		InitComputation();
+		
+		while (true)
+		{
+			AcceptMainServerConnection();
+			InitComputation();
 
-		try
-		{
-			while (true)
+			try
 			{
-				ProcessComputationRequest();
+				while (true)
+				{
+					ProcessComputationRequest();
+				}
 			}
-		}
-		catch (FusionCrowdWeb::FcWebException e)
-		{
-			//do nothing
+			catch (FusionCrowdWeb::FcWebException e)
+			{
+				//do nothing
+			}
 		}
 
 		ShutdownServer();
