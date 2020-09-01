@@ -118,14 +118,16 @@ namespace FusionCrowdWeb
 
 	InputComputingData::InputComputingData()
 		: NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
-		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
+		NewAgentsGoals(FusionCrowd::FCArray<ChangeGoalData>(0))
 	{
 	}
 
 
-	InputComputingData::InputComputingData(float inTimeStep)
+	InputComputingData::InputComputingData(float inTimeStep, const FusionCrowd::FCArray<ChangeGoalData>& inAgentsNewGoals)
 		: TimeStep(inTimeStep), NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
-		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
+		NewAgentsGoals(inAgentsNewGoals)
 	{
 	}
 

@@ -95,6 +95,23 @@ namespace FusionCrowdWeb
 
 
 	/**
+	* \struct ChangeGoalData
+	* \brief Data for changing agent's goal.
+	*/
+	struct FC_WEB_API ChangeGoalData
+	{
+		/** Agent's id. */
+		size_t AgentId;
+
+		/** X coordinate of agent's new goal position. */
+		float NewGoalX;
+
+		/** Y coordinate of agent's new goal position. */
+		float NewGoalY;
+	};
+
+	
+	/**
 	* \struct InitComputingData
 	* \brief Data for simulation initialization.
 	*/
@@ -121,7 +138,7 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API InputComputingData
 	{
 		InputComputingData();
-		InputComputingData(float inTimeStep);
+		InputComputingData(float inTimeStep, const FusionCrowd::FCArray<ChangeGoalData>& inAgentsNewGoals);
 
 		/** Simulation step in seconds. */
 		float TimeStep = 0.1f;
@@ -131,6 +148,9 @@ namespace FusionCrowdWeb
 
 		/** Agents from NavMeshRegion's boundary zone. */
 		FusionCrowd::FCArray<FusionCrowd::AgentInfo> BoundaryAgents;
+
+		/** Agents from NavMeshRegion's boundary zone. */
+		FusionCrowd::FCArray<ChangeGoalData> NewAgentsGoals;
 	};
 
 

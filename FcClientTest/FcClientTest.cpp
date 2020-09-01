@@ -35,7 +35,7 @@ int main()
 	vector<OutputComputingData> results;
 	for (int i = 0; i < stepsNum; i++)
 	{
-		auto result = client.RequestComputation(InputComputingData(0.1f));
+		auto result = client.RequestComputation(InputComputingData(0.1f, FusionCrowd::FCArray<ChangeGoalData>(0)));
 		results.push_back(result);
 	}
 	cout << "success" << endl;
