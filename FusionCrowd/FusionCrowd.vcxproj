@@ -66,6 +66,7 @@
     <ClInclude Include="TacticComponent\NavGraph\NavGraphComponent.h" />
     <ClInclude Include="TeleporterPortal.h" />
     <ClInclude Include="Util\ctpl_stl.h" />
+    <ClInclude Include="Util\FCArrayHelper.h" />
     <ClInclude Include="Util\RecordingSerializer.h" />
     <ClInclude Include="Export\FCArray.h" />
     <ClInclude Include="Math\Util.h" />

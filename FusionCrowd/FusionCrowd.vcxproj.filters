@@ -164,6 +164,7 @@
     <ClInclude Include="OperationComponent\TransportOperationComponent.h" />
     <ClInclude Include="TeleporterPortal.h" />
     <ClInclude Include="OperationComponent\PassthroughComponent.h" />
+    <ClInclude Include="Util\FCArrayHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

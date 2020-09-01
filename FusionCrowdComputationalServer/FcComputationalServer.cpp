@@ -84,6 +84,12 @@ namespace FusionCrowdWeb
 			boundaryAgentsIds.push_back(agentId);
 		}
 
+		//updating goals
+		for (auto& newGoalData : inData.NewAgentsGoals)
+		{
+			_simulator->SetAgentGoal(newGoalData.AgentId, Point(newGoalData.NewGoalX, newGoalData.NewGoalY));
+		}
+		
 		//step
 		_simulator->DoStep(inData.TimeStep);
 

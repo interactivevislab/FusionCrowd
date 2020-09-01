@@ -4,6 +4,8 @@
 #include "WebDataSerializer.h"
 #include "WsException.h"
 
+#include "Util/FCArrayHelper.h"
+
 #include <algorithm>
 #include <sstream>
 #include <string>
@@ -90,13 +92,7 @@ namespace FusionCrowdWeb
 		//sending init data
 		for (auto serverSocket : _computationalServersSockets)
 		{
-			auto& agentsData = initAgentsDataParts[serverSocket];
-			initData.AgentsData = FusionCrowd::FCArray<AgentInitData>(agentsData.size());
-			for (int i = 0; i < agentsData.size(); i++)
-			{
-				initData.AgentsData[i] = agentsData[i];
-			}
-
+			initData.AgentsData = FusionCrowd::VectorToFcArray<AgentInitData>(initAgentsDataParts[serverSocket]);
 			initData.NavMeshRegion = _navMeshRegions[serverSocket];
 
 			Send(serverSocket, RequestCode::InitSimulation, initData);
@@ -123,11 +119,29 @@ namespace FusionCrowdWeb
 	{
 		using FusionCrowd::FCArray;
 		using FusionCrowd::AgentInfo;
+		using FusionCrowd::VectorToFcArray;
 
 		//reception input data
 		auto inData = Receive<InputComputingData>(_clientSocket, RequestCode::DoStep, "RequestError");
 
 		//input data processing
+		std::map<int, ChangeGoalData> newAgentsGoals;
+		for (auto& newGoal : inData.NewAgentsGoals)
+		{
+			newAgentsGoals[newGoal.AgentId] = newGoal;
+		}
+
+		for (auto& displacedAgent : _displacedAgents)
+		{
+			auto newGoal = newAgentsGoals.find(displacedAgent.id);
+			if (newGoal != newAgentsGoals.end())
+			{
+				displacedAgent.goalX = newGoal->second.NewGoalX;
+				displacedAgent.goalY = newGoal->second.NewGoalY;
+				newAgentsGoals.erase(newGoal);
+			}
+		}
+		
 		std::map<int, std::vector<AgentInfo>> newAgentsDataParts;
 		for (auto& displacedAgent : _displacedAgents)
 		{
@@ -152,23 +166,32 @@ namespace FusionCrowdWeb
 				}
 			}
 		}
+		
+		std::map<int, std::vector<ChangeGoalData>> newGoalsDataParts;
+		for (auto serverSocket : _computationalServersSockets)
+		{
+			auto& serverAgentsIds = _agentsIds[serverSocket];
+			for (auto idPair : serverAgentsIds)
+			{
+				auto agentIdOnComputingServer	= idPair.first;
+				auto agentIdOnMainServer		= idPair.second;
+
+				auto newGoalData = newAgentsGoals.find(agentIdOnMainServer);
+				if (newGoalData != newAgentsGoals.end())
+				{
+					auto newGoal = newGoalData->second;
+					newGoal.AgentId = agentIdOnComputingServer;
+					newGoalsDataParts[serverSocket].push_back(newGoal);
+				}
+			}
+		}
 
 		//sending input data
 		for (auto serverSocket : _computationalServersSockets)
 		{
-			auto& newAgentsData = newAgentsDataParts[serverSocket];
-			inData.NewAgents = FCArray<AgentInfo>(newAgentsData.size());
-			for (int i = 0; i < newAgentsData.size(); i++)
-			{
-				inData.NewAgents[i] = newAgentsData[i];
-			}
-
-			auto& boundaryAgentsData = boundaryAgentsDataParts[serverSocket];
-			inData.BoundaryAgents = FCArray<AgentInfo>(boundaryAgentsData.size());
-			for (int i = 0; i < boundaryAgentsData.size(); i++)
-			{
-				inData.BoundaryAgents[i] = boundaryAgentsData[i];
-			}
+			inData.NewAgents = VectorToFcArray<AgentInfo>(newAgentsDataParts[serverSocket]);
+			inData.BoundaryAgents = VectorToFcArray<AgentInfo>(boundaryAgentsDataParts[serverSocket]);
+			inData.NewAgentsGoals = VectorToFcArray<ChangeGoalData>(newGoalsDataParts[serverSocket]);
 
 			Send(serverSocket, RequestCode::DoStep, inData);
 		}
