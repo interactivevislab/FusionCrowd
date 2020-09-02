@@ -85,10 +85,7 @@ namespace FusionCrowdWeb
 
 		sockaddr_in address = inAddress;
 		auto result = connect(connectedSocket, (SOCKADDR*)&address, sizeof(address));
-		if (result == SOCKET_ERROR)
-		{
-			throw WsException("Connection failed");
-		}
+		CheckWsResult(result, "Connection failed");
 
 		return connectedSocket;
 	}

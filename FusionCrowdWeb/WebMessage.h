@@ -8,7 +8,7 @@ namespace FusionCrowdWeb
 	/** Enum for request types. */
 	enum class FC_WEB_API RequestCode : unsigned char
 	{
-		Undefined,		/**< Unset value. */
+		Undefined = 0,	/**< Unset value. */
 		InitSimulation,	/**< Initialization request. */ 
 		DoStep			/**< Simulation step request. */ 
 	};
@@ -17,9 +17,9 @@ namespace FusionCrowdWeb
 	/** Enum for response types. */
 	enum class FC_WEB_API ResponseCode : unsigned char
 	{
-		Undefined,		/**< Unset value. */
-		Success,	/**< Response that the operation succeeded. */ 
-		Error		/**< Response that the operation failed. */ 
+		Undefined = 0,	/**< Unset value. */
+		Success,		/**< Response that the operation succeeded. */ 
+		Error			/**< Response that the operation failed. */ 
 	};
 
 
