@@ -37,7 +37,9 @@ namespace FusionCrowdWeb
 			{
 				errorMessage << failedConnection.IpAddress << ":" << failedConnection.Port << ", ";
 			}
-			throw WsException(errorMessage.str().c_str());
+			auto buffStr = errorMessage.str();
+			buffStr = buffStr.substr(0, buffStr.size() - 2);
+			throw WsException(buffStr.c_str());
 		}
 	}
 

@@ -18,12 +18,15 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API WebAddress
 	{
 		/** IPv4 address part as string. */
-		const char* IpAddress;
+		char* IpAddress = nullptr;
 
 		/** Port address part. */
 		u_short Port;
 
 		WebAddress(const char* inIpAddress, u_short inPort);
+		~WebAddress();
+		WebAddress(WebAddress const& inOther) noexcept;
+		WebAddress& operator=(WebAddress const& inOther) noexcept;
 		operator sockaddr_in();
 	};
 

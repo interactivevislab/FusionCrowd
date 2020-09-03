@@ -1,6 +1,7 @@
 #include "WebNode.h"
 
 #include <chrono>
+#include <string.h>
 
 #include "Ws2tcpip.h"
 
@@ -51,7 +52,7 @@ namespace FusionCrowdWeb
 		_ownServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(_ownServerSocket, "TCP socket creation failed");
 
-		sockaddr_in address = WebAddress("127.0.0.1", inPort);
+		sockaddr_in address = WebAddress("0.0.0.0", inPort);
 		auto result = bind(_ownServerSocket, (SOCKADDR*)&address, sizeof(address));
 		CheckWsResult(result, "Binding failed");
 
@@ -208,8 +209,61 @@ namespace FusionCrowdWeb
 	}
 
 
-	WebAddress::WebAddress(const char* inIpAddress, u_short inPort) : IpAddress(inIpAddress), Port(inPort)
+	WebAddress::WebAddress(const char* inIpAddress, u_short inPort) : Port(inPort)
 	{
+		if (inIpAddress != nullptr)
+		{
+			auto addressLen = strlen(inIpAddress) + 1;
+			IpAddress = new char[addressLen];
+			strcpy_s(IpAddress, addressLen, inIpAddress);
+		}
+	}
+
+
+	WebAddress::~WebAddress()
+	{
+		if (IpAddress != nullptr)
+		{
+			delete IpAddress;
+		}
+	}
+
+
+	WebAddress::WebAddress(WebAddress const& inOther) noexcept
+	{
+		if (inOther.IpAddress != nullptr)
+		{
+			auto addressLen = strlen(inOther.IpAddress) + 1;
+			IpAddress = new char[addressLen];
+			strcpy_s(IpAddress, addressLen, inOther.IpAddress);
+		}
+
+		Port = inOther.Port;
+	}
+
+
+	WebAddress& WebAddress::operator=(WebAddress const& inOther) noexcept
+	{
+		if (this == &inOther)
+		{
+			return *this;
+		}
+
+		if (IpAddress)
+		{
+			delete IpAddress;
+			IpAddress = nullptr;
+		}
+		if (inOther.IpAddress != nullptr)
+		{
+			auto addressLen = strlen(inOther.IpAddress) + 1;
+			IpAddress = new char[addressLen];
+			strcpy_s(IpAddress, addressLen, inOther.IpAddress);
+		}
+
+		Port = inOther.Port;
+
+		return *this;
 	}
 
 
