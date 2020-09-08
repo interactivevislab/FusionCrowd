@@ -10,6 +10,12 @@
 #include <sstream>
 #include <string>
 
+#define TIME_MEASURE
+
+#ifdef TIME_MEASURE
+#include <chrono> 
+#include <iostream> 
+#endif
 
 namespace FusionCrowdWeb
 {
@@ -123,8 +129,23 @@ namespace FusionCrowdWeb
 		using FusionCrowd::AgentInfo;
 		using FusionCrowd::VectorToFcArray;
 
+		#ifdef TIME_MEASURE
+		using namespace std::chrono;
+		
+		std::cout << "========================" << std::endl;
+		auto mainStart = high_resolution_clock::now();
+		auto start = mainStart;
+		#endif
+
 		//reception input data
 		auto inData = Receive<InputComputingData>(_clientSocket, RequestCode::DoStep, "RequestError");
+
+		#ifdef TIME_MEASURE
+		auto end = high_resolution_clock::now();
+		std::cout << "Receiving client data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
 
 		//input data processing
 		std::map<int, ChangeGoalData> newAgentsGoals;
@@ -188,6 +209,13 @@ namespace FusionCrowdWeb
 			}
 		}
 
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Processing client data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
+
 		//sending input data
 		for (auto serverSocket : _computationalServersSockets)
 		{
@@ -197,6 +225,13 @@ namespace FusionCrowdWeb
 
 			Send(serverSocket, RequestCode::DoStep, inData);
 		}
+
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Sending client data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
 
 		//reception output data
 		std::map<int, OutputComputingData> outDataParts;
@@ -223,6 +258,13 @@ namespace FusionCrowdWeb
 
 			agentsNum += outDataPart.AgentInfos.size() + outDataPart.DisplacedAgents.size();
 		}
+
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Receiving servers data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
 
 		//id updating
 		for (auto serverSocket : _computationalServersSockets)
@@ -270,8 +312,21 @@ namespace FusionCrowdWeb
 
 		_recording->MakeRecord(_allAgents, inData.TimeStep);
 
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Processing servers data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
+
 		//sending output data
 		Send(_clientSocket, ResponseCode::Success, OutputComputingData{ _allAgents });
+
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Sending servers data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+		std::cout << "TOTAL: " << duration_cast<microseconds>(end - mainStart).count() << " microseconds" << std::endl;
+		#endif
 	}
 
 

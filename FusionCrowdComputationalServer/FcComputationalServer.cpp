@@ -6,6 +6,12 @@
 #include "WebDataSerializer.h"
 #include "FcFileWrapper.h"
 
+#define TIME_MEASURE
+
+#ifdef TIME_MEASURE
+#include <chrono> 
+#include <iostream> 
+#endif
 
 namespace FusionCrowdWeb
 {
@@ -64,8 +70,23 @@ namespace FusionCrowdWeb
 	{
 		using namespace FusionCrowd;
 
+		#ifdef TIME_MEASURE
+		using namespace std::chrono;
+
+		std::cout << "========================" << std::endl;
+		auto mainStart = high_resolution_clock::now();
+		auto start = mainStart;
+		#endif
+
 		//reading data
 		auto inData = Receive<InputComputingData>(_mainServerSocket, RequestCode::DoStep, "RequestError");
+
+		#ifdef TIME_MEASURE
+		auto end = high_resolution_clock::now();
+		std::cout << "Receiving: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
 
 		//adding agents
 		auto newAgentsNum = inData.NewAgents.size();
@@ -123,8 +144,21 @@ namespace FusionCrowdWeb
 			outData.DisplacedAgents[i] = displacedAgents[i];
 		}
 
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Processing: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+		
+		start = high_resolution_clock::now();
+		#endif
+
 		Send(_mainServerSocket, ResponseCode::Success, outData);
 		Send(_mainServerSocket, ResponseCode::Success, newAgentIds);
+
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Sending: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl; 
+		std::cout << "TOTAL: " << duration_cast<microseconds>(end - mainStart).count() << " microseconds" << std::endl;
+		#endif
 	}
 
 
