@@ -100,6 +100,23 @@ namespace FusionCrowd
 			return AddAgent(std::move(info), opId, tacticId, strategyId);
 		}
 
+		//FCArray<DirectX::SimpleMath::Vector2> GetAgentRoute(size_t id)
+		//{
+		//	if (_agents.find(id) == _agents.end())
+		//	{
+		//		return FCArray<DirectX::SimpleMath::Vector2>(0);
+		//	}
+		//	auto& agent = _agents.find(id)->second;
+
+		//	if (agent.tacticComponent.lock()->GetId() != ComponentIds::NAVMESH_ID)
+		//	{
+		//		return FCArray<DirectX::SimpleMath::Vector2>(0);
+		//	}
+		//	auto tactic = agent.tacticComponent.lock();
+
+		//	return tactic->GetAgentRoute(id);
+		//}
+
 		size_t AddAgent(
 			AgentSpatialInfo props,
 			ComponentId opId,
@@ -190,6 +207,11 @@ namespace FusionCrowd
 		{
 			_navSystem->AddTrafficLights(nodeId);
 		}	
+
+		void AddTrafficLight(size_t nodeId, float northDirX, float northDirY, float westDirX, float westDirY, float northWidth, float westWidth)
+		{
+			_navSystem->AddTrafficLights(nodeId, northDirX, northDirY, westDirX, westDirY, northWidth, westWidth);
+		}
     
 		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk)
 		{
@@ -634,6 +656,11 @@ namespace FusionCrowd
 		pimpl->AddTrafficLight(nodeId);
 	}
 
+	void Simulator::AddTrafficLight(size_t nodeId, float northDirX, float northDirY, float westDirX, float westDirY, float northWidth, float westWidth)
+	{
+		pimpl->AddTrafficLight(nodeId, northDirX, northDirY, westDirX, westDirY, northWidth, westWidth);
+	}
+
 	bool Simulator::SetOperationComponent(size_t agentId, ComponentId newOperationComponent)
 	{
 		return pimpl->SetOperationComponent(agentId, newOperationComponent);
@@ -719,6 +746,11 @@ namespace FusionCrowd
 	{
 		return pimpl->AddAgent(std::move(props), opId, tacticId, strategyId);
 	}
+
+	//FCArray<DirectX::SimpleMath::Vector2> Simulator::GetAgentRoute(size_t id)
+	//{
+	//	return pimpl->GetAgentRoute(id);
+	//}
 
 	OperationStatus Simulator::RemoveAgent(size_t agentId)
 	{

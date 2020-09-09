@@ -85,6 +85,16 @@ namespace FusionCrowd
 			_trafficLights.insert(std::make_pair(NavGraphsNodeId, newLight));
 		}
 
+		void AddTrafficLights(size_t NavGraphsNodeId, float northDirX, float northDirY, float westDirX, float westDirY, float northWidth, float westWidth)
+		{
+			_lightsIds.insert(NavGraphsNodeId);
+			TrafficLightsBunch* newLight = new TrafficLightsBunch;
+			_trafficLights.insert(std::make_pair(NavGraphsNodeId, newLight));
+
+			newLight->ConstructPedestrianCheckZones(northDirX, northDirY, westDirX, westDirY, northWidth, westWidth);
+
+		}
+
 
 		std::map<size_t, TrafficLightsBunch*>& GetTrafficLights() {
 			return _trafficLights;
@@ -325,6 +335,10 @@ namespace FusionCrowd
 		pimpl->AddTrafficLights(id);
 	}
 
+	void NavSystem::AddTrafficLights(size_t id, float northDirX, float northDirY, float westDirX, float westDirY, float northWidth, float westWidth)
+	{
+		pimpl->AddTrafficLights(id, northDirX, northDirY, westDirX, westDirY, northWidth, westWidth);
+	}
 
 	TrafficLightsBunch* NavSystem::GetTrafficLights(size_t id)
 	{

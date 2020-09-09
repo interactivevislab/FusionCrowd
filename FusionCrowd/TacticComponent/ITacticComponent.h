@@ -4,6 +4,8 @@
 #include "Export/ComponentId.h"
 #include "Math/Util.h"
 
+#include "Export/FCArray.h"
+
 namespace FusionCrowd
 {
 	class FUSION_CROWD_API ITacticComponent
@@ -13,6 +15,8 @@ namespace FusionCrowd
 
 		virtual void AddAgent(size_t id) = 0;
 		virtual bool DeleteAgent(size_t id) = 0;
+
+		//virtual FCArray<DirectX::SimpleMath::Vector2> GetAgentRoute(size_t id) = 0;
 
 		virtual void Update(float timeStep) = 0;
 		virtual DirectX::SimpleMath::Vector2 GetClosestAvailablePoint(DirectX::SimpleMath::Vector2 p) = 0;

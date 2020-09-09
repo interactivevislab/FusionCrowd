@@ -82,10 +82,12 @@ namespace FusionCrowd
 
 		void SetAgentGoal(size_t agentId, Goal && goal);
 		Agent & GetAgent(size_t id);
+		//FCArray<DirectX::SimpleMath::Vector2> GetAgentRoute(size_t id);
 
 		size_t AddGridGroup(DirectX::SimpleMath::Vector2 origin, size_t agentsInRow, float interAgentDistance);
 		size_t AddGuidedGroup(size_t leaderId);
 		void AddTrafficLight(size_t nodeId);
+		void AddTrafficLight(size_t nodeId, float northDirX, float northDirY, float westDirX, float westDirY, float northWidth, float westWidth);
 
 		void SetGroupGoal(size_t groupId, DirectX::SimpleMath::Vector2 goalPos);
 

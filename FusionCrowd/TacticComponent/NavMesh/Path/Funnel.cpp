@@ -299,8 +299,8 @@ namespace FusionCrowd
 
 			path->setWaypoints(apex._id + 1, PORTAL_COUNT, goalPt, goalDir);
 		}
-		auto pr = PathRandomization();
-		pr.RandomizePath(path);
+		//////auto pr = PathRandomization();
+		//////pr.RandomizePath(path);
 #endif	// SIMPLE_FUNNEL
 	}
 }

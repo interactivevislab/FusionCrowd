@@ -2,8 +2,9 @@
 
 TrafficLight::TrafficLight(Lights currentLight)
 {
-	rTime = gTime = 10.0f;
+	gTime = 10.0f;
 	yTime = 3.0f;
+	rTime = 10.0f;
 	prevLight = curLight = currentLight;
 	timePassed = 0.0f;
 }
@@ -52,4 +53,9 @@ void TrafficLight::UpdateLights(float dt)
 		}
 		return;
 	}
+}
+
+void TrafficLight::SetTimePassed(float time)
+{
+	timePassed = time;
 }

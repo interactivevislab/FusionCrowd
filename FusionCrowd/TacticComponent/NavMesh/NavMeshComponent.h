@@ -27,6 +27,8 @@ namespace FusionCrowd
 		void AddAgent(size_t id) override;
 		bool DeleteAgent(size_t id) override;
 
+		//FCArray<DirectX::SimpleMath::Vector2> GetAgentRoute(size_t id) override;
+
 		std::shared_ptr<NavMesh> GetNavMesh() const;
 		std::shared_ptr<NavMeshLocalizer> GetLocalizer() const;
 

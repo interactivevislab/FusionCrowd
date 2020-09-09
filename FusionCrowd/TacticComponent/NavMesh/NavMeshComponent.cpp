@@ -49,6 +49,25 @@ namespace FusionCrowd
 		_agents.push_back(agtStruct);
 	}
 
+	//FCArray<DirectX::SimpleMath::Vector2> NavMeshComponent::GetAgentRoute(size_t id)
+	//{
+	//	FCArray<DirectX::SimpleMath::Vector2> routePoints(0);
+	//	for (int i = 0; i < _agents.size(); i++)
+	//	{
+	//		if (_agents[i].id == id)
+	//		{
+	//			auto routeLen = _agents[i].location.getPath()->getWayPointCount();
+	//			routePoints = FCArray<DirectX::SimpleMath::Vector2>(routeLen);
+	//			for (int j = 0; j < routeLen; j++)
+	//			{
+	//				routePoints[j] = _agents[i].location.getPath()->getWayPoint(j);
+	//			}
+	//			break;
+	//		}
+	//	}
+	//	return routePoints;
+	//}
+
 	bool NavMeshComponent::DeleteAgent(size_t id)
 	{
 		for (int i = 0; i < _agents.size(); i++) {
@@ -145,7 +164,7 @@ namespace FusionCrowd
 		auto & agentGoal = _simulator->GetAgentGoal(agentInfo.id);
 		auto path = agentStruct.location.getPath();
 
-		if (agentGoal.getGeometry()->containsPoint(agentInfo.GetPos()))
+		if (agentGoal.getGeometry()->squaredDistance(agentInfo.GetPos()) < agentInfo.radius * agentInfo.radius)
 		{
 			agentInfo.prefVelocity.setSpeed(0);
 			return;

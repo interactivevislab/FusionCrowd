@@ -117,6 +117,25 @@ namespace FusionCrowd
 			return _sim->UpdateAgentParams(params);
 		}
 
+		bool GetAgentRoute(size_t id, FCArray<size_t>& Xs, FCArray<size_t>& Ys)
+		{
+			//FCArray<DirectX::SimpleMath::Vector2> res =	_sim->GetAgentRoute(id);
+			//auto len = res.size();
+			//bool hasRoute = len > 0;
+			//if (hasRoute)
+			//{
+			//	Xs = FCArray<size_t>(len);
+			//	Ys = FCArray<size_t>(len);
+			//	for (size_t i = 0; i < len; i++)
+			//	{
+			//		Xs[i] = res[i].x;
+			//		Ys[i] = res[i].y;
+			//	}
+			//}
+			//return hasRoute;
+			return false;
+		}
+
 		bool UpdateNeighbourSearchShape(size_t agentId, Disk disk)
 		{
 			return _sim->UpdateNeighbourSearchShape(agentId, disk);
@@ -210,6 +229,11 @@ namespace FusionCrowd
 		{
 			_sim->AddTrafficLight(nodeId);
 		}
+
+	void AddTrafficLight(size_t nodeId, float northDirX, float northDirY, float westDirX, float westDirY, float northWidth, float westWidth)
+	{
+		_sim->AddTrafficLight(nodeId, northDirX, northDirY, westDirX, westDirY, northWidth, westWidth);
+	}
 
 	private:
 		std::shared_ptr<Simulator> _sim;

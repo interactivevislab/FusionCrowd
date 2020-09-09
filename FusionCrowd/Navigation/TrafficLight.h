@@ -9,6 +9,7 @@ public:
 	TrafficLight(float redTime, float yellowTime, float greenTime, Lights currentLight = Lights::red);
 	Lights GetCurLight();
 	void UpdateLights(float deltaTime);
+	void SetTimePassed(float time);
 
 	
 
