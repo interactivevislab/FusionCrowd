@@ -51,7 +51,7 @@ int main()
 	{
 		for (auto info : results[i].AgentInfos)
 		{
-			cout << setw(10) << info.id << setw(10) << info.posX << setw(10) << info.posY;
+			cout << setw(10) << info.Id << setw(10) << info.PosX << setw(10) << info.PosY;
 		}
 		cout << endl;
 	}

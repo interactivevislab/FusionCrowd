@@ -6,6 +6,8 @@
 #include "WebDataSerializer.h"
 #include "FcFileWrapper.h"
 
+#include "Util/FCArrayHelper.h"
+
 //#define TIME_MEASURE
 
 #ifdef TIME_MEASURE
@@ -123,7 +125,7 @@ namespace FusionCrowdWeb
 		FCArray<AgentInfo> agents(_simulator->GetAgentCount());
 		_simulator->GetAgents(agents);
 
-		std::vector<AgentInfo> displacedAgents;
+		std::vector<ShortAgentInfo> displacedAgents;
 		for (auto& agent : agents)
 		{
 			if (!_navMeshRegion.IsPointInside(agent.posX, agent.posY))
@@ -137,8 +139,8 @@ namespace FusionCrowdWeb
 		_simulator->GetAgents(agents);
 
 		OutputComputingData outData;
-		outData.AgentInfos = agents;
-		outData.DisplacedAgents = FCArray<AgentInfo>(displacedAgents.size());
+		outData.AgentInfos = ChangeArrayElementsType<AgentInfo, ShortAgentInfo>(agents);
+		outData.DisplacedAgents = FCArray<ShortAgentInfo>(displacedAgents.size());
 		for (int i = 0; i < displacedAgents.size(); i++)
 		{
 			outData.DisplacedAgents[i] = displacedAgents[i];

@@ -18,4 +18,16 @@ namespace FusionCrowd
 		}
 		return std::move(output);
 	}
+
+
+	template<typename TypeFrom, typename TypeTo>
+	static FCArray<TypeTo> ChangeArrayElementsType(const FCArray<TypeFrom>& inArray)
+	{
+		FCArray<TypeTo> output(inArray.size());
+		for (int i = 0; i < output.size(); i++)
+		{
+			output[i] = inArray[i];
+		}
+		return std::move(output);
+	}
 }

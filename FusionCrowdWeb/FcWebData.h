@@ -8,6 +8,42 @@
 namespace FusionCrowdWeb
 {
 	/**
+	* \struct ShortAgentInfo
+	* \brief Lightweight version of FusionCrowd::AgentInfo for network transmission.
+	*/
+	struct FC_WEB_API ShortAgentInfo
+	{
+		ShortAgentInfo();
+		ShortAgentInfo(FusionCrowd::AgentInfo inInfo);
+		operator FusionCrowd::AgentInfo();
+
+		size_t Id;
+
+		/** X coordinate of agent's position. */
+		float PosX;
+		/** X coordinate of agent's position. */
+		float PosY;
+
+		/** X coordinate of agent's velocity. */
+		float VelX;
+		/** Y coordinate of agent's velocity. */
+		float VelY;
+
+		/** X coordinate of agent's orient. */
+		float OrientX;
+		/** Y coordinate of agent's orient. */
+		float OrientY;
+
+		/** X coordinate of agent's goal. */
+		float GoalX;
+		/** Y coordinate of agent's goal. */
+		float GoalY;
+
+		/** Server's id where the agent is from. */
+		int ServerId;
+	};
+
+	/**
 	* \struct AgentInitData
 	* \brief Agent's initialization data for simulation.
 	*/
@@ -144,10 +180,10 @@ namespace FusionCrowdWeb
 		float TimeStep = 0.1f;
 
 		/** Agents from other NavMeshRegions. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> NewAgents;
+		FusionCrowd::FCArray<ShortAgentInfo> NewAgents;
 
 		/** Agents from NavMeshRegion's boundary zone. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> BoundaryAgents;
+		FusionCrowd::FCArray<ShortAgentInfo> BoundaryAgents;
 
 		/** Agents from NavMeshRegion's boundary zone. */
 		FusionCrowd::FCArray<ChangeGoalData> NewAgentsGoals;
@@ -161,13 +197,13 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API OutputComputingData
 	{
 		OutputComputingData();
-		OutputComputingData(FusionCrowd::FCArray<FusionCrowd::AgentInfo> inAgentInfos);
+		OutputComputingData(FusionCrowd::FCArray<ShortAgentInfo> inAgentInfos);
 
 		/** Data of agents in NavMeshRegion. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> AgentInfos;
+		FusionCrowd::FCArray<ShortAgentInfo> AgentInfos;
 
 		/** Data of agents that left NavMeshRegion. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> DisplacedAgents;
+		FusionCrowd::FCArray<ShortAgentInfo> DisplacedAgents;
 	};
 
 

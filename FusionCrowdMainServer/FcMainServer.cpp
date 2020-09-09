@@ -128,6 +128,7 @@ namespace FusionCrowdWeb
 		using FusionCrowd::FCArray;
 		using FusionCrowd::AgentInfo;
 		using FusionCrowd::VectorToFcArray;
+		using FusionCrowd::ChangeArrayElementsType;
 
 		#ifdef TIME_MEASURE
 		using namespace std::chrono;
@@ -156,21 +157,21 @@ namespace FusionCrowdWeb
 
 		for (auto& displacedAgent : _displacedAgents)
 		{
-			auto newGoal = newAgentsGoals.find(displacedAgent.id);
+			auto newGoal = newAgentsGoals.find(displacedAgent.Id);
 			if (newGoal != newAgentsGoals.end())
 			{
-				displacedAgent.goalX = newGoal->second.NewGoalX;
-				displacedAgent.goalY = newGoal->second.NewGoalY;
+				displacedAgent.GoalX = newGoal->second.NewGoalX;
+				displacedAgent.GoalY = newGoal->second.NewGoalY;
 				newAgentsGoals.erase(newGoal);
 			}
 		}
 		
-		std::map<int, std::vector<AgentInfo>> newAgentsDataParts;
+		std::map<int, std::vector<ShortAgentInfo>> newAgentsDataParts;
 		for (auto& displacedAgent : _displacedAgents)
 		{
 			for (auto serverSocket : _computationalServersSockets)
 			{
-				if (_navMeshRegions[serverSocket].IsPointInside(displacedAgent.posX, displacedAgent.posY))
+				if (_navMeshRegions[serverSocket].IsPointInside(displacedAgent.PosX, displacedAgent.PosY))
 				{
 					newAgentsDataParts[serverSocket].push_back(displacedAgent);
 					break;
@@ -178,12 +179,12 @@ namespace FusionCrowdWeb
 			}
 		}
 
-		std::map<int, std::vector<AgentInfo>> boundaryAgentsDataParts;
+		std::map<int, std::vector<ShortAgentInfo>> boundaryAgentsDataParts;
 		for (auto& agent : _allAgents)
 		{
 			for (auto serverSocket : _computationalServersSockets)
 			{
-				if (_navMeshRegions[serverSocket].IsPointInsideBoundaryZone(agent.posX, agent.posY, _boundaryZoneDepth))
+				if (_navMeshRegions[serverSocket].IsPointInsideBoundaryZone(agent.PosX, agent.PosY, _boundaryZoneDepth))
 				{
 					boundaryAgentsDataParts[serverSocket].push_back(agent);
 				}
@@ -219,8 +220,8 @@ namespace FusionCrowdWeb
 		//sending input data
 		for (auto serverSocket : _computationalServersSockets)
 		{
-			inData.NewAgents = VectorToFcArray<AgentInfo>(newAgentsDataParts[serverSocket]);
-			inData.BoundaryAgents = VectorToFcArray<AgentInfo>(boundaryAgentsDataParts[serverSocket]);
+			inData.NewAgents = VectorToFcArray<ShortAgentInfo>(newAgentsDataParts[serverSocket]);
+			inData.BoundaryAgents = VectorToFcArray<ShortAgentInfo>(boundaryAgentsDataParts[serverSocket]);
 			inData.NewAgentsGoals = VectorToFcArray<ChangeGoalData>(newGoalsDataParts[serverSocket]);
 
 			Send(serverSocket, RequestCode::DoStep, inData);
@@ -245,11 +246,11 @@ namespace FusionCrowdWeb
 			auto outDataPart = Receive<OutputComputingData>(serverSocket, ResponseCode::Success, "ResponseError");
 			for (auto& agentInfo : outDataPart.AgentInfos)
 			{
-				agentInfo.serverId = i;
+				agentInfo.ServerId = i;
 			}
 			for (auto& agentInfo : outDataPart.DisplacedAgents)
 			{
-				agentInfo.serverId = i;
+				agentInfo.ServerId = i;
 			}
 			outDataParts[serverSocket] = outDataPart;
 
@@ -269,25 +270,25 @@ namespace FusionCrowdWeb
 		//id updating
 		for (auto serverSocket : _computationalServersSockets)
 		{
-			std::vector<AgentInfo>& currentDisplacedAgents = newAgentsDataParts[serverSocket];
+			std::vector<ShortAgentInfo>& currentDisplacedAgents = newAgentsDataParts[serverSocket];
 			FCArray<size_t>& currentDisplacedAgentsIds = outNewAgentIds[serverSocket].Values;
 			for (int i = 0; i < currentDisplacedAgents.size(); i++)
 			{
 				auto displacedAgent = currentDisplacedAgents[i];
 				auto newId = currentDisplacedAgentsIds[i];
-				_agentsIds[serverSocket][newId] = displacedAgent.id;
+				_agentsIds[serverSocket][newId] = displacedAgent.Id;
 			}
 
 			for (auto& newDisplacedAgent : outDataParts[serverSocket].DisplacedAgents)
 			{
-				auto oldId = newDisplacedAgent.id;
-				newDisplacedAgent.id = _agentsIds[serverSocket][oldId];
+				auto oldId = newDisplacedAgent.Id;
+				newDisplacedAgent.Id = _agentsIds[serverSocket][oldId];
 				_agentsIds[serverSocket].erase(oldId);
 			}
 		}
 
 		//output data processing
-		_allAgents = FCArray<AgentInfo>(agentsNum);
+		_allAgents = FCArray<ShortAgentInfo>(agentsNum);
 		int infoIndex = 0;
 		_displacedAgents.clear();
 		for (auto& outDataPart : outDataParts)
@@ -296,7 +297,7 @@ namespace FusionCrowdWeb
 			auto& data			= outDataPart.second;
 			for (auto& agentInfo : data.AgentInfos)
 			{
-				agentInfo.id = _agentsIds[serverSocket][agentInfo.id];
+				agentInfo.Id = _agentsIds[serverSocket][agentInfo.Id];
 				_allAgents[infoIndex++] = agentInfo;
 			}
 			for (auto& agentInfo : data.DisplacedAgents)
@@ -310,7 +311,7 @@ namespace FusionCrowdWeb
 			return a.id < b.id;
 		});
 
-		_recording->MakeRecord(_allAgents, inData.TimeStep);
+		_recording->MakeRecord(ChangeArrayElementsType<ShortAgentInfo, AgentInfo>(_allAgents), inData.TimeStep);
 
 		#ifdef TIME_MEASURE
 		end = high_resolution_clock::now();

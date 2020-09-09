@@ -77,10 +77,10 @@ namespace FusionCrowdWeb
 		std::vector<int> _computationalServersSockets;
 
 		/** Copy of all agents fron previous simulation step. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> _allAgents = FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0);
+		FusionCrowd::FCArray<ShortAgentInfo> _allAgents = FusionCrowd::FCArray<ShortAgentInfo>(0);
 
 		/** Copy of agents which need to be moved between computing servers. */
-		std::vector<FusionCrowd::AgentInfo> _displacedAgents;
+		std::vector<ShortAgentInfo> _displacedAgents;
 
 		/**
 		* \fn _agentsIds

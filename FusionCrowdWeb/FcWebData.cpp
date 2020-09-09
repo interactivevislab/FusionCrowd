@@ -5,6 +5,44 @@
 
 namespace FusionCrowdWeb
 {
+	ShortAgentInfo::ShortAgentInfo()
+	{
+	}
+
+
+	ShortAgentInfo::ShortAgentInfo(FusionCrowd::AgentInfo inInfo)
+	{
+		Id			= inInfo.id;
+		PosX		= inInfo.posX;
+		PosY		= inInfo.posY;
+		VelX		= inInfo.velX;
+		VelY		= inInfo.velY;
+		OrientX		= inInfo.orientX;
+		OrientY		= inInfo.orientY;
+		GoalX		= inInfo.goalX;
+		GoalY		= inInfo.goalY;
+		ServerId	= inInfo.serverId;
+	}
+
+
+	ShortAgentInfo::operator FusionCrowd::AgentInfo()
+	{
+		FusionCrowd::AgentInfo info;
+		info.id			= Id;
+		info.posX		= PosX;
+		info.posY		= PosY;
+		info.velX		= VelX;
+		info.velY		= VelY;
+		info.orientX	= OrientX;
+		info.orientY	= OrientY;
+		info.goalX		= GoalX;
+		info.goalY		= GoalY;
+		info.serverId	= ServerId;
+
+		return info;
+	}
+
+
 	NavMeshRegion::NavMeshRegion(const char* inNavMeshPath)
 	{
 		using namespace FusionCrowd;
@@ -117,30 +155,30 @@ namespace FusionCrowdWeb
 
 
 	InputComputingData::InputComputingData()
-		: NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
-		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
+		: NewAgents(FusionCrowd::FCArray<ShortAgentInfo>(0)),
+		BoundaryAgents(FusionCrowd::FCArray<ShortAgentInfo>(0)),
 		NewAgentsGoals(FusionCrowd::FCArray<ChangeGoalData>(0))
 	{
 	}
 
 
 	InputComputingData::InputComputingData(float inTimeStep, const FusionCrowd::FCArray<ChangeGoalData>& inAgentsNewGoals)
-		: TimeStep(inTimeStep), NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
-		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
+		: TimeStep(inTimeStep), NewAgents(FusionCrowd::FCArray<ShortAgentInfo>(0)),
+		BoundaryAgents(FusionCrowd::FCArray<ShortAgentInfo>(0)),
 		NewAgentsGoals(inAgentsNewGoals)
 	{
 	}
 
 
 	OutputComputingData::OutputComputingData()
-		: AgentInfos(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
-		DisplacedAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+		: AgentInfos(FusionCrowd::FCArray<ShortAgentInfo>(0)),
+		DisplacedAgents(FusionCrowd::FCArray<ShortAgentInfo>(0))
 	{
 	}
 
 
-	OutputComputingData::OutputComputingData(FusionCrowd::FCArray<FusionCrowd::AgentInfo> inAgentInfos)
-		: AgentInfos(inAgentInfos), DisplacedAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+	OutputComputingData::OutputComputingData(FusionCrowd::FCArray<ShortAgentInfo> inAgentInfos)
+		: AgentInfos(inAgentInfos), DisplacedAgents(FusionCrowd::FCArray<ShortAgentInfo>(0))
 	{
 	}
 
