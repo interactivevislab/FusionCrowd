@@ -6,7 +6,7 @@
 #include "WebDataSerializer.h"
 #include "FcFileWrapper.h"
 
-#define TIME_MEASURE
+//#define TIME_MEASURE
 
 #ifdef TIME_MEASURE
 #include <chrono> 
