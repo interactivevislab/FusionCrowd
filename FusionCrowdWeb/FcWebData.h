@@ -17,30 +17,32 @@ namespace FusionCrowdWeb
 		ShortAgentInfo(FusionCrowd::AgentInfo inInfo);
 		operator FusionCrowd::AgentInfo();
 
-		size_t Id;
+		size_t Id = -1;
 
 		/** X coordinate of agent's position. */
-		float PosX;
-		/** X coordinate of agent's position. */
-		float PosY;
+		float PosX = 0;
+		/** Y coordinate of agent's position. */
+		float PosY = 0;
+		/** Z coordinate of agent's position. */
+		float PosZ = 0;
 
 		/** X coordinate of agent's velocity. */
-		float VelX;
+		float VelX = 0;
 		/** Y coordinate of agent's velocity. */
-		float VelY;
+		float VelY = 0;
 
 		/** X coordinate of agent's orient. */
-		float OrientX;
+		float OrientX = 0;
 		/** Y coordinate of agent's orient. */
-		float OrientY;
+		float OrientY = 0;
 
 		/** X coordinate of agent's goal. */
-		float GoalX;
+		float GoalX = 0;
 		/** Y coordinate of agent's goal. */
-		float GoalY;
+		float GoalY = 0;
 
 		/** Server's id where the agent is from. */
-		int ServerId;
+		int ServerId = -1;
 	};
 
 	/**

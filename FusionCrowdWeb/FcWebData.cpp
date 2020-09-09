@@ -15,6 +15,7 @@ namespace FusionCrowdWeb
 		Id			= inInfo.id;
 		PosX		= inInfo.posX;
 		PosY		= inInfo.posY;
+		PosZ		= inInfo.posZ;
 		VelX		= inInfo.velX;
 		VelY		= inInfo.velY;
 		OrientX		= inInfo.orientX;
@@ -31,6 +32,7 @@ namespace FusionCrowdWeb
 		info.id			= Id;
 		info.posX		= PosX;
 		info.posY		= PosY;
+		info.posZ		= PosZ;
 		info.velX		= VelX;
 		info.velY		= VelY;
 		info.orientX	= OrientX;
@@ -38,6 +40,12 @@ namespace FusionCrowdWeb
 		info.goalX		= GoalX;
 		info.goalY		= GoalY;
 		info.serverId	= ServerId;
+
+		info.radius		= 0.25f;
+
+		info.opCompId		= FusionCrowd::ComponentIds::ORCA_ID;
+		info.tacticCompId	= FusionCrowd::ComponentIds::NAVMESH_ID;
+		info.stratCompId	= FusionCrowd::ComponentIds::FSM_ID;
 
 		return info;
 	}
@@ -111,8 +119,8 @@ namespace FusionCrowdWeb
 			part1.Width = share * Width;
 			part2.Width = Width - part1.Width;
 
-			part1.CenterX = CenterX - part1.Width / 2;
-			part2.CenterX = CenterX + part2.Width / 2;
+			part1.CenterX = CenterX - part2.Width / 2;
+			part2.CenterX = CenterX + part1.Width / 2;
 		}
 		else
 		{
@@ -124,8 +132,8 @@ namespace FusionCrowdWeb
 			part1.Height = share * Height;
 			part2.Height = Height - part1.Height;
 
-			part1.CenterY = CenterY - part1.Height / 2;
-			part2.CenterY = CenterY + part2.Height / 2;
+			part1.CenterY = CenterY - part2.Height / 2;
+			part2.CenterY = CenterY + part1.Height / 2;
 		}
 
 		part1.Split(inNumParts / 2, inNextIndex, outParts);

@@ -311,7 +311,10 @@ namespace FusionCrowdWeb
 			return a.id < b.id;
 		});
 
-		_recording->MakeRecord(ChangeArrayElementsType<ShortAgentInfo, AgentInfo>(_allAgents), inData.TimeStep);
+		if (inData.TimeStep > 0)
+		{
+			_recording->MakeRecord(ChangeArrayElementsType<ShortAgentInfo, AgentInfo>(_allAgents), inData.TimeStep);
+		}
 
 		#ifdef TIME_MEASURE
 		end = high_resolution_clock::now();
