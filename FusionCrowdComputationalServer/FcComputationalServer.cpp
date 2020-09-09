@@ -59,7 +59,7 @@ namespace FusionCrowdWeb
 			auto& agentData = data.AgentsData[i];
 			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 0.25f, 10,
 				0.5f, 0.3f, true, true,
-				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
+				ComponentIds::PASSTHROUGH_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
 			_simulator->SetAgentGoal(agentId, Point(agentData.GoalX, agentData.GoalY));
 			agentIds.Values[i] = agentId;
 		}
@@ -166,10 +166,10 @@ namespace FusionCrowdWeb
 
 	void FcComputationalServer::StartOrdinaryRun(u_short inPort)
 	{
-		StartServer(inPort);
-		
 		while (true)
 		{
+			StartServer(inPort);
+
 			AcceptMainServerConnection();
 			InitComputation();
 
@@ -184,8 +184,8 @@ namespace FusionCrowdWeb
 			{
 				//do nothing
 			}
-		}
 
-		ShutdownServer();
+			ShutdownServer();
+		}
 	}
 }

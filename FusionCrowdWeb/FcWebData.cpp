@@ -43,7 +43,7 @@ namespace FusionCrowdWeb
 
 		info.radius		= 0.25f;
 
-		info.opCompId		= FusionCrowd::ComponentIds::ORCA_ID;
+		info.opCompId		= FusionCrowd::ComponentIds::PASSTHROUGH_ID;
 		info.tacticCompId	= FusionCrowd::ComponentIds::NAVMESH_ID;
 		info.stratCompId	= FusionCrowd::ComponentIds::FSM_ID;
 
