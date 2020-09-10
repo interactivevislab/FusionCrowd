@@ -100,16 +100,21 @@ namespace FusionCrowd
 		//float dist = Vector2::Distance(currentGoal + shift, agentInfo.GetPos());
 
 		int initialLinesShift = 4;
-		int linesShift = 4;
+		int initialLinesTurnShift = 4;
+		int linesShift = 8;
 		int calculatedShiftShift;
+		int calculatedTurnShiftShift;
 		bool lineShifted = false;
 		if (agentStruct.needLineShift)
 		{
 			auto inEdges	= _navGraph->GetInEdges(_navGraph->GetClosestNodeIdByPosition(currentGoal, _navGraph->GetAllNodes()));
 			auto outEdges	= _navGraph->GetOutEdges(_navGraph->GetClosestNodeIdByPosition(currentGoal, _navGraph->GetAllNodes()));
+			auto inFutureEdges = _navGraph->GetInEdges(_navGraph->GetClosestNodeIdByPosition(futureGoal, _navGraph->GetAllNodes()));
+			auto outFutureEdges = _navGraph->GetOutEdges(_navGraph->GetClosestNodeIdByPosition(futureGoal, _navGraph->GetAllNodes()));
 
 			auto previousNodeId = _navGraph->GetClosestNodeIdByPosition(previousGoal, _navGraph->GetAllNodes());
 			auto currentNodeId = _navGraph->GetClosestNodeIdByPosition(currentGoal, _navGraph->GetAllNodes());
+			auto futureNodeId = _navGraph->GetClosestNodeIdByPosition(futureGoal, _navGraph->GetAllNodes());
 
 			for (auto& outEdge : outEdges)
 			{
@@ -132,30 +137,143 @@ namespace FusionCrowd
 					break;
 				}
 			}
+
 			if (edgeFound)
 			{
-				if (currentEdge.weight < agentInfo.currentLine)
+				auto halfWeight = (int)currentEdge.weight / 2;
+				if (agentInfo.isCurrentLineOneWay)
 				{
-					auto halfWeight = (int)currentEdge.weight / 2;
-					if (agentInfo.isCurrentLineOneWay)
+					initialLinesShift = ((int)currentEdge.weight % 2 == 0 ? -4 : 0) - (halfWeight - ((int)currentEdge.weight % 2 == 0 ? 1 : 0)) * linesShift;
+					agentInfo.linesAvailable = currentEdge.weight;
+
+					if (agentInfo.linesAvailable <= agentInfo.currentLine)
 					{
+						//agentInfo.linesAvailable = currentEdge.weight;
 						agentInfo.currentLine = (currentEdge.weight == 1) ? 0 : (rand() % (int)(currentEdge.weight));
-						initialLinesShift = ((int)currentEdge.weight % 2 == 0 ? -4 : 0) - halfWeight * linesShift;
+						//initialLinesShift = ((int)currentEdge.weight % 2 == 0 ? -4 : 0) - halfWeight * linesShift;
+					}
+				}
+				else
+				{
+					initialLinesShift = currentEdge.weight > 1 ? 4 : 2;
+					agentInfo.linesAvailable = (halfWeight <= 1) ? 1 : halfWeight;
+					if (agentInfo.linesAvailable <= agentInfo.currentLine)
+					{
+						//agentInfo.linesAvailable = halfWeight;
+						agentInfo.currentLine = (halfWeight <= 1) ? 0 : (rand() % (int)(halfWeight));
+						//initialLinesShift = currentEdge.weight > 1 ? 4 : 2;
+					}
+				}
+				//////////if (currentEdge.weight <= agentInfo.currentLine)
+				//////////{
+				//////////	
+				//////////	if (agentInfo.isCurrentLineOneWay)
+				//////////	{
+				//////////		//agentInfo.linesAvailable = currentEdge.weight;
+				//////////		agentInfo.currentLine = (currentEdge.weight == 1) ? 0 : (rand() % (int)(currentEdge.weight));
+				//////////		//initialLinesShift = ((int)currentEdge.weight % 2 == 0 ? -4 : 0) - halfWeight * linesShift;
+				//////////	}
+				//////////	else
+				//////////	{
+				//////////		//agentInfo.linesAvailable = halfWeight;
+				//////////		agentInfo.currentLine = (halfWeight <= 1) ? 0 : (rand() % (int)(halfWeight));
+				//////////		//initialLinesShift = currentEdge.weight > 1 ? 4 : 2;
+				//////////	}
+				//////////}
+				//////////if (agentInfo.isCurrentLineOneWay)
+				//////////{
+				//////////	agentInfo.linesAvailable = currentEdge.weight;
+				//////////}
+				//////////else
+				//////////{
+				//////////	agentInfo.linesAvailable = (halfWeight <= 1) ? 1 : halfWeight;
+				//////////}
+				agentStruct.needLineShift = false;
+				lineShifted = true;
+			}
+
+			for (auto& outFutureEdge : outFutureEdges)
+			{
+				if (outFutureEdge.nodeTo == currentNodeId)
+				{
+					//agentStruct.currentEdgeIsOneSided = false;
+					agentInfo.isFutureLineOneWay = false;
+					break;
+				}
+			}
+
+			NavGraphEdge futureEdge;
+			bool futureEdgeFound = false;
+			for (auto& inFutureEdge : inFutureEdges)
+			{
+				if (inFutureEdge.nodeFrom == currentNodeId)
+				{
+					futureEdge = inFutureEdge;
+					futureEdgeFound = true;
+					break;
+				}
+			}
+
+			if (futureEdgeFound)
+			{
+				auto halfWeight = (int)futureEdge.weight / 2;
+				if (agentInfo.isFutureLineOneWay)
+				{
+					initialLinesTurnShift = ((int)futureEdge.weight % 2 == 0 ? -4 : 0) - (halfWeight - ((int)futureEdge.weight % 2 == 0 ? 1 : 0)) * linesShift;
+
+					if (futureEdge.weight <= agentInfo.currentLine)
+					{
+							//agentInfo.linesAvailable = currentEdge.weight;
+							agentInfo.futureLine = (currentEdge.weight == 1) ? 0 : (rand() % (int)(currentEdge.weight));
+							//initialLinesShift = ((int)currentEdge.weight % 2 == 0 ? -4 : 0) - halfWeight * linesShift;
 					}
 					else
 					{
-						agentInfo.currentLine = (halfWeight <= 1) ? 0 : (rand() % (int)(halfWeight));
-						initialLinesShift = 4;
+						agentInfo.futureLine = agentInfo.currentLine;
 					}
 				}
-				agentStruct.needLineShift = false;
-				lineShifted = true;
+				else
+				{
+					initialLinesTurnShift = futureEdge.weight > 1 ? 4 : 2;
+					if (((halfWeight <= 1) ? 1 : halfWeight) <= agentInfo.currentLine)
+					{
+							//agentInfo.linesAvailable = halfWeight;
+							agentInfo.futureLine = (halfWeight <= 1) ? 0 : (rand() % (int)(halfWeight));
+							//initialLinesShift = currentEdge.weight > 1 ? 4 : 2;
+					}
+					else
+					{
+						agentInfo.futureLine = agentInfo.currentLine;
+					}
+				}
+				////////////if (futureEdge.weight <= agentInfo.currentLine)
+				////////////{
+
+				////////////	if (agentInfo.isCurrentLineOneWay)
+				////////////	{
+				////////////		//agentInfo.linesAvailable = currentEdge.weight;
+				////////////		agentInfo.futureLine = (currentEdge.weight == 1) ? 0 : (rand() % (int)(currentEdge.weight));
+				////////////		//initialLinesShift = ((int)currentEdge.weight % 2 == 0 ? -4 : 0) - halfWeight * linesShift;
+				////////////	}
+				////////////	else
+				////////////	{
+				////////////		//agentInfo.linesAvailable = halfWeight;
+				////////////		agentInfo.futureLine = (halfWeight <= 1) ? 0 : (rand() % (int)(halfWeight));
+				////////////		//initialLinesShift = currentEdge.weight > 1 ? 4 : 2;
+				////////////	}
+				////////////}
+				///////////*else
+				//////////{
+				//////////	agentInfo.futureLine = agentInfo.currentLine;
+				//////////*/}
 			}
 		}
 
 		float turnDirection = ((currentGoal.x - previousGoal.x) * (futureGoal.y - previousGoal.y) - (currentGoal.y - previousGoal.y) * (futureGoal.x - previousGoal.x)) > 0 ? -1 : 1;
 
 		calculatedShiftShift = initialLinesShift + agentInfo.currentLine * linesShift;
+
+		calculatedTurnShiftShift = initialLinesTurnShift + agentInfo.futureLine * linesShift;
 
 		//Vector2 shift = { -1 * agentInfo.GetOrient().y, agentInfo.GetOrient().x };
 		//shift.Normalize();
@@ -168,7 +286,7 @@ namespace FusionCrowd
 		float dot = turnShift.Dot(futureShift);
 		float shiftCorrection = dot > 0 ? 1 - dot : 1;
 		Vector2 shift = { -1 * turnShift.y, turnShift.x };
-		turnShift *= agentInfo.radius * calculatedShiftShift * turnDirection * shiftCorrection;
+		turnShift *= agentInfo.radius * calculatedTurnShiftShift * turnDirection * shiftCorrection;
 		shift *= agentInfo.radius * calculatedShiftShift;
 
 		if (lineShifted)
@@ -178,14 +296,14 @@ namespace FusionCrowd
 
 		float dist = Vector2::Distance(currentGoalShifted/* + shift + turnShift*/, agentInfo.GetPos());
 
-		if(dist < agentInfo.prefSpeed * timeStep)
-		{
-			agentInfo.prefVelocity.setSpeed(dist);
-		} 
-		else
-		{
+		//if(dist < agentInfo.prefSpeed * timeStep)
+		//{
+		//	agentInfo.prefVelocity.setSpeed(/*dist*/agentInfo.prefSpeed * timeStep);
+		//} 
+		//else
+		//{
 			agentInfo.prefVelocity.setSpeed(agentInfo.prefSpeed);
-		}
+		//}
 
 		if (abs(dist) > 1e-6)
 		{
@@ -202,9 +320,22 @@ namespace FusionCrowd
 		{
 			if ((curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::red ||
 				curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::yellow) &&
-				dist < agentInfo.radius * 15 && dist > agentInfo.radius * 12)
+				dist < /*agentInfo.radius * */15 && dist > /*agentInfo.radius * */10)
 			{
 				agentInfo.prefVelocity.setSpeed(1e-6);
+			}
+		}
+		else
+		{
+			curLights = _navSystem->GetTrafficLights(_navGraph->GetClosestNodeIdByPosition(futureGoal, _navGraph->GetAllNodes()));
+			if (curLights)
+			{
+				if ((curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::red ||
+					curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::yellow) &&
+					dist < /*agentInfo.radius * */15 && dist > /*agentInfo.radius * */10)
+				{
+					agentInfo.prefVelocity.setSpeed(1e-6);
+				}
 			}
 		}
 
@@ -218,16 +349,34 @@ namespace FusionCrowd
 
 	void NavGraphComponent::UpdateLocation(AgentSpatialInfo & agentInfo, AgentStruct& agentStruct, float deltaTime) const
 	{
+		if (agentInfo.lineChangeAvoidanceRequired)
+		{
+			agentInfo.lineChangeAvoidanceRequired = false;
+			agentStruct.shiftedRoute.points.insert(agentStruct.shiftedRoute.points.begin() + agentStruct.pointsComplete,
+				agentInfo.GetPos() +
+				agentInfo.GetOrient() * agentInfo.radius * 6 -
+				Vector2(agentInfo.GetOrient().y, -agentInfo.GetOrient().x) * (agentInfo.preferredLine - agentInfo.currentLine) * agentInfo.radius * 8);
+
+			agentStruct.route.points.insert(agentStruct.route.points.begin() + agentStruct.pointsComplete,
+				agentStruct.route.points[agentStruct.pointsComplete - 1 >= 0 ? agentStruct.pointsComplete - 1 : 0]);
+
+			agentInfo.currentLine = agentInfo.preferredLine;
+			agentInfo.lineChangeAvoidanceInProcess = true;
+		}
+
+
 		Vector2 oldPos = agentInfo.GetPos() - agentInfo.GetVel() * deltaTime;
 
-		auto destination = agentStruct.shiftedRoute.points.size() > agentStruct.pointsComplete? agentStruct.shiftedRoute.points[agentStruct.pointsComplete] : agentStruct.route.points[agentStruct.pointsComplete];
+		auto destination = agentStruct.shiftedRoute.points.size() > agentStruct.pointsComplete ? agentStruct.shiftedRoute.points[agentStruct.pointsComplete] : agentStruct.route.points[agentStruct.pointsComplete];
 
 		float point_dist = Math::distanceToSegment(oldPos, agentInfo.GetPos(), destination);
-		if (abs(point_dist) < acceptanceRadius && agentStruct.pointsComplete < agentStruct.route.points.size() - 1) {
+		if (abs(point_dist) < (acceptanceRadius * agentInfo.prefSpeed*deltaTime) && agentStruct.pointsComplete < agentStruct.route.points.size() - 1) {
 			agentStruct.pointsComplete++;
 			agentStruct.needLineShift = true;
 			//agentStruct.currentEdgeIsOneSided = true;
 			agentInfo.isCurrentLineOneWay = true;
+			agentInfo.isFutureLineOneWay = true;
+			agentInfo.lineChangeAvoidanceInProcess = false;
 		}
 	}
 

@@ -33,8 +33,13 @@ namespace FusionCrowd
 		float maxAngVel = 1.0f;
 
 		int currentLine = 0;
+		int futureLine = 0;
 		int linesAvailable = 1;
 		bool isCurrentLineOneWay = true;
+		bool isFutureLineOneWay = true;
+		bool lineChangeAvoidanceRequired = false;
+		bool lineChangeAvoidanceInProcess = false;
+		int preferredLine = 0;
 
 
 		bool inertiaEnabled = true;

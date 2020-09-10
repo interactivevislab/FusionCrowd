@@ -46,20 +46,22 @@ namespace FusionCrowd
 
 			void ComputeNewVelocity(size_t agentId, float timeStep)
 			{
-				auto neighbours = _navSystem->GetNeighbours(agentId);
+				auto neighboursPeople = _navSystem->GetNeighbours(agentId);
+				std::vector<NeighborInfo> neighboursCars = {};
 
-				for (int i = 0; i < neighbours.size(); i++)
+				for (int i = 0; i < neighboursPeople.size(); i++)
 				{
-					auto pos = _agents.find(neighbours[i].id);
+					auto pos = _agents.find(neighboursPeople[i].id);
 					if (pos != _agents.end())
 					{
-						neighbours.erase(neighbours.begin()+i);
+						neighboursCars.push_back(neighboursPeople[i]);
+						neighboursPeople.erase(neighboursPeople.begin()+i);
 						i--;
 					}
 				}
 
 				float acceleration = 0.0f;
-				int forwardAgtId = GetForwardAgent(agentId);
+				int forwardAgtId = GetForwardAgent(agentId, 0.8f);
 				AgentSpatialInfo & curAgentInfo = _navSystem->GetSpatialInfo(agentId);
 				float speed = curAgentInfo.prefVelocity.getSpeed();
 				float safeDist = curAgentInfo.radius * 6;
@@ -68,30 +70,64 @@ namespace FusionCrowd
 				const float maxAcceleration = curAgentInfo.maxAccel * timeStep;
 				float distanceToTarget = Vector2::Distance(curAgentInfo.prefVelocity.getTarget(), curAgentInfo.GetPos());
 
-				if (forwardAgtId > 0)
+				if (forwardAgtId >= 0 && !curAgentInfo.lineChangeAvoidanceInProcess)
 				{
+					
 					AgentSpatialInfo & otherAgentInfo = _navSystem->GetSpatialInfo(forwardAgtId);
 
 					float d = curAgentInfo.GetPos().Distance(curAgentInfo.GetPos(), otherAgentInfo.GetPos());
 					float dv = speed - otherAgentInfo.prefVelocity.getSpeed();
+					float dot = otherAgentInfo.GetOrient().Dot(curAgentInfo.GetOrient());
 					if (d > safeDist)
 					{
 						acceleration = dv * dv / (2*(d - safeDist));
 						acceleration = dv >= -0.1 ? (-1.0 * acceleration) : 0.5f;
 					}
-
 					else
 					{
-						float dot = otherAgentInfo.GetOrient().Dot(curAgentInfo.GetOrient());
+						/*dot = otherAgentInfo.GetOrient().Dot(curAgentInfo.GetOrient());*/
 						float accelMulti = dot > 0 ? dot : 0 ;
 						acceleration = -1 * curAgentInfo.maxAccel;
 						curAgentInfo.prefSpeed = otherAgentInfo.prefVelocity.getSpeed() * accelMulti;
-					}			
+					}	
+					if (dot >= 0.8f)
+					{
+
+						bool leftLineBisy = curAgentInfo.currentLine == 0;
+						bool rightLineBisy = curAgentInfo.currentLine == curAgentInfo.linesAvailable - 1;
+						std::vector<size_t> nearestAgents = GetAllAgentsInRadius(agentId, 6.0f);
+
+						for (auto agentID : nearestAgents)
+						{
+							AgentSpatialInfo& info = _navSystem->GetSpatialInfo(agentID);
+							DirectX::SimpleMath::Vector2 distV = info.GetPos() - curAgentInfo.GetPos();
+							distV.Normalize();
+							float d = curAgentInfo.GetOrient().Dot(distV);
+							if (d > -0.2f)
+							{
+								leftLineBisy = leftLineBisy || info.currentLine == curAgentInfo.currentLine - 1;
+								rightLineBisy = rightLineBisy || info.currentLine == curAgentInfo.currentLine + 1;
+							}
+						}
+
+						if (!leftLineBisy)
+						{
+							curAgentInfo.lineChangeAvoidanceRequired = true;
+							curAgentInfo.preferredLine = curAgentInfo.currentLine - 1;
+						}
+
+						if (!rightLineBisy)
+						{
+							curAgentInfo.lineChangeAvoidanceRequired = true;
+							curAgentInfo.preferredLine = curAgentInfo.currentLine + 1;
+						}
+					}
+
 				}
 
 				else //increase speed if there no forward agent
 				{
-					acceleration = 0.5f;
+					acceleration = curAgentInfo.maxAccel;//0.5f;
 				}
 
 
@@ -135,7 +171,7 @@ namespace FusionCrowd
 				Vector2 vel = curAgentInfo.GetVel();
 				float speedVel = vel.Length();
 				////PeopleAvoidance
-				if (neighbours.size() < 1 && speed > 1e-6)
+				if (neighboursPeople.size() < 1 && speed > 1e-6)
 				{
 					speedVel += acceleration * timeStep;
 					if (speedVel > curAgentInfo.prefSpeed) speedVel = curAgentInfo.prefSpeed;
@@ -151,7 +187,7 @@ namespace FusionCrowd
 					speedVel = 0.0f;
 				}
 				float inCrowdSpeed = curAgentInfo.prefSpeed * 0.3f;
-				if (neighbours.size() >= 1 && speedVel > inCrowdSpeed)
+				if (neighboursPeople.size() >= 1 && speedVel > inCrowdSpeed)
 				{
 					//speed -= maxAcceleration;
 					speedVel -= acceleration * timeStep;
@@ -164,7 +200,7 @@ namespace FusionCrowd
 			}
 
 
-			int GetForwardAgent(size_t curAgentId)
+			int GetForwardAgent(size_t curAgentId, float dotAcceptance)
 			{
 				std::vector<size_t> nearestAgents = GetAllAgentsInRadius(curAgentId, 4.0f);
 				AgentSpatialInfo & curAgentInfo = _navSystem->GetSpatialInfo(curAgentId);
@@ -181,7 +217,7 @@ namespace FusionCrowd
 						DirectX::SimpleMath::Vector2 distV = info.GetPos() - curAgentInfo.GetPos();
 						distV.Normalize();
 						float d = curAgentInfo.GetOrient().Dot(distV);
-						if (d > 0.8f)
+						if (d > dotAcceptance)
 						{
 							distV = info.GetPos() - curAgentInfo.GetPos();
 
