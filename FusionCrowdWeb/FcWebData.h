@@ -4,11 +4,47 @@
 #include "Export/Export.h"
 #include "FcFileWrapper.h"
 
-#include <vector>
-
 
 namespace FusionCrowdWeb
 {
+	/**
+	* \struct ShortAgentInfo
+	* \brief Lightweight version of FusionCrowd::AgentInfo for network transmission.
+	*/
+	struct FC_WEB_API ShortAgentInfo
+	{
+		ShortAgentInfo();
+		ShortAgentInfo(FusionCrowd::AgentInfo inInfo);
+		operator FusionCrowd::AgentInfo();
+
+		size_t Id = -1;
+
+		/** X coordinate of agent's position. */
+		float PosX = 0;
+		/** Y coordinate of agent's position. */
+		float PosY = 0;
+		/** Z coordinate of agent's position. */
+		float PosZ = 0;
+
+		/** X coordinate of agent's velocity. */
+		float VelX = 0;
+		/** Y coordinate of agent's velocity. */
+		float VelY = 0;
+
+		/** X coordinate of agent's orient. */
+		float OrientX = 0;
+		/** Y coordinate of agent's orient. */
+		float OrientY = 0;
+
+		/** X coordinate of agent's goal. */
+		float GoalX = 0;
+		/** Y coordinate of agent's goal. */
+		float GoalY = 0;
+
+		/** Server's id where the agent is from. */
+		int ServerId = -1;
+	};
+
 	/**
 	* \struct AgentInitData
 	* \brief Agent's initialization data for simulation.
@@ -37,10 +73,10 @@ namespace FusionCrowdWeb
 	{
 	public:
 		/** X coordinate of region's center. */
-		float CenterX;
+		float CenterX = 0;
 
 		/** Y coordinate of region's center. */
-		float CenterY;
+		float CenterY = 0;
 
 		/** Width of region. */
 		float Width = -1;
@@ -49,7 +85,7 @@ namespace FusionCrowdWeb
 		float Height = -1;
 
 		NavMeshRegion() = default;
-		NavMeshRegion(const std::string& inNavMeshPath);
+		NavMeshRegion(const char* inNavMeshPath);
 
 		/**
 		* \fn IsPointInside
@@ -82,19 +118,37 @@ namespace FusionCrowdWeb
 		*
 		* @return Parts of region.
 		*/
-		std::vector<NavMeshRegion> Split(size_t inNumParts);
+		FusionCrowd::FCArray<NavMeshRegion> Split(size_t inNumParts);
 
 	private:
 		/**
 		* \fn Split
 		* \brief Splits region into several parts with equal area.
 		*
-		* @param inNumParts	Number of parts to split into.
+		* @param inNumParts		Number of parts to split into.
+		* @param inNextIndex	Next index for part in array.
 		*/
-		void Split(size_t inNumParts, std::vector<NavMeshRegion>& outParts);
+		void Split(size_t inNumParts, size_t& inNextIndex, FusionCrowd::FCArray<NavMeshRegion>& outParts);
 	};
 
 
+	/**
+	* \struct ChangeGoalData
+	* \brief Data for changing agent's goal.
+	*/
+	struct FC_WEB_API ChangeGoalData
+	{
+		/** Agent's id. */
+		size_t AgentId;
+
+		/** X coordinate of agent's new goal position. */
+		float NewGoalX;
+
+		/** Y coordinate of agent's new goal position. */
+		float NewGoalY;
+	};
+
+	
 	/**
 	* \struct InitComputingData
 	* \brief Data for simulation initialization.
@@ -102,7 +156,7 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API InitComputingData
 	{
 		InitComputingData();
-		InitComputingData(const std::string& inNavMeshFileName, FusionCrowd::FCArray<AgentInitData> inAgentsData);
+		InitComputingData(const char* inNavMeshFileName, const FusionCrowd::FCArray<AgentInitData>& inAgentsData);
 
 		/** Wrapped file with navigation mesh. */
 		FcFileWrapper NavMeshFile;
@@ -122,16 +176,19 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API InputComputingData
 	{
 		InputComputingData();
-		InputComputingData(float inTimeStep);
+		InputComputingData(float inTimeStep, const FusionCrowd::FCArray<ChangeGoalData>& inAgentsNewGoals);
 
 		/** Simulation step in seconds. */
-		float TimeStep;
+		float TimeStep = 0.1f;
 
 		/** Agents from other NavMeshRegions. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> NewAgents;
+		FusionCrowd::FCArray<ShortAgentInfo> NewAgents;
 
 		/** Agents from NavMeshRegion's boundary zone. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> BoundaryAgents;
+		FusionCrowd::FCArray<ShortAgentInfo> BoundaryAgents;
+
+		/** Agents from NavMeshRegion's boundary zone. */
+		FusionCrowd::FCArray<ChangeGoalData> NewAgentsGoals;
 	};
 
 
@@ -142,13 +199,13 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API OutputComputingData
 	{
 		OutputComputingData();
-		OutputComputingData(FusionCrowd::FCArray<FusionCrowd::AgentInfo> inAgentInfos);
+		OutputComputingData(FusionCrowd::FCArray<ShortAgentInfo> inAgentInfos);
 
 		/** Data of agents in NavMeshRegion. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> AgentInfos;
+		FusionCrowd::FCArray<ShortAgentInfo> AgentInfos;
 
 		/** Data of agents that left NavMeshRegion. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> DisplacedAgents;
+		FusionCrowd::FCArray<ShortAgentInfo> DisplacedAgents;
 	};
 
 

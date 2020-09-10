@@ -7,8 +7,6 @@
 #include "WebMessage.h"
 
 #include <WinSock2.h>
-#include <map>
-#include <vector>
 
 
 namespace FusionCrowdWeb
@@ -20,12 +18,15 @@ namespace FusionCrowdWeb
 	struct FC_WEB_API WebAddress
 	{
 		/** IPv4 address part as string. */
-		const char* IpAddress;
+		char* IpAddress = nullptr;
 
 		/** Port address part. */
 		u_short Port;
 
-		WebAddress(const char* inIpAddress, short inPort);
+		WebAddress(const char* inIpAddress, u_short inPort);
+		~WebAddress();
+		WebAddress(WebAddress const& inOther) noexcept;
+		WebAddress& operator=(WebAddress const& inOther) noexcept;
 		operator sockaddr_in();
 	};
 
@@ -43,9 +44,9 @@ namespace FusionCrowdWeb
 		* \fn StartServer
 		* \brief Starts server on this node.
 		*
-		* @param inAddress	Socket address to start.
+		* @param inPort	Socket port to start.
 		*/
-		void StartServer(WebAddress inAddress);
+		void StartServer(u_short inPort);
 
 		/**
 		* \fn ShutdownServer
@@ -57,9 +58,9 @@ namespace FusionCrowdWeb
 		* \fn AcceptInputConnection
 		* \brief Waits and accepts incoming connection from other node.
 		*
-		* @return	Connected socket id.
+		* @return	Connected socket.
 		*/
-		int AcceptInputConnection();
+		SOCKET AcceptInputConnection();
 
 		/**
 		* \fn TryConnectToServer
@@ -69,60 +70,61 @@ namespace FusionCrowdWeb
 		*
 		* @return	Connected socket id.
 		*/
-		int TryConnectToServer(WebAddress inAddress);
+		SOCKET TryConnectToServer(WebAddress inAddress);
 
 		/**
 		* \fn TryConnectToServer
 		* \brief Repeatedly trying to connect to another node's server until success.
 		*
-		* @param inAddress	Socket address of other node's server.
+		* @param inAddress				Socket address of other node's server.
+		* @param inConnectionTimeout	Connection timeout in seconds.
 		*
-		* @return	Connected socket id.
+		* @return	Connected socket.
 		*/
-		int WaitForConnectionToServer(WebAddress inAddress);
+		SOCKET WaitForConnectionToServer(WebAddress inAddress, float inConnectionTimeout);
 
 		/**
 		* \fn TryConnectToServer
 		* \brief Disconnects from other node.
 		*
-		* @param inSocketId	Id of socket to disconnect.
+		* @param inSocket	Socket to disconnect.
 		*/
-		void Disconnect(int inSocketId);
+		void Disconnect(SOCKET inSocket);
 
 		/**
 		* \fn Send
 		* \brief Sends data to other node.
 		*
-		* @param inSocketId	Id of socket to send data.
+		* @param inSocket	Socket to send data.
 		* @param inWebCode	WebCode for short data description.
 		* @param inData		Data to send.
 		* @param inDataSize	Size of data to send.
 		*/
-		void Send(int inSocketId, WebCode inWebCode, const char* inData, size_t inDataSize);
+		void Send(SOCKET inSocket, WebCode inWebCode, const char* inData, size_t inDataSize);
 
 		/**
 		* \fn Send
 		* \brief Sends data to other node.
 		*
-		* @param inSocketId	Id of socket to send data.
+		* @param inSocket	Socket to send data.
 		* @param inWebCode	WebCode for short data description.
 		*/
-		void Send(int inSocketId, WebCode inWebCode);
+		void Send(SOCKET inSocket, WebCode inWebCode);
 
 		/**
 		* \fn Send
 		* \brief Sends data to other node.
 		*
-		* @param inSocketId	Id of socket to send data.
+		* @param inSocket	Socket to send data.
 		* @param inWebCode	WebCode for short data description.
 		* @param inData		Data to send.
 		*/
 		template<typename DataType>
-		void Send(int inSocketId, WebCode inWebCode, const DataType& inData)
+		void Send(SOCKET inSocket, WebCode inWebCode, const DataType& inData)
 		{
 			char* rawData;
 			auto dataSize = WebDataSerializer<DataType>::Serialize(inData, rawData);
-			Send(inSocketId, inWebCode, rawData, dataSize);
+			Send(inSocket, inWebCode, rawData, dataSize);
 			delete[] rawData;
 		}
 
@@ -130,26 +132,26 @@ namespace FusionCrowdWeb
 		* \fn Receive
 		* \brief Receives data from other node.
 		*
-		* @param inSocketId	Id of socket to receive data from.
+		* @param inSocket	Socket to receive data from.
 		*
 		* @return	Received data.
 		*/
-		WebMessage Receive(int inSocketId);
+		WebMessage Receive(SOCKET inSocket);
 
 		/**
 		* \fn Receive
 		* \brief Receives data from other node.
 		*
-		* @param inSocketId			Id of socket to receive data from.
+		* @param inSocket			Socket to receive data from.
 		* @param inExpectedWebCode	WebCode which is expected to be received.
 		* @param inErrorMessage		Error message in case of receipt unexpected WebCode.
 		*
 		* @return	Received data.
 		*/
 		template<typename DataType>
-		DataType Receive(int inSocketId, WebCode inExpectedWebCode, char const* inErrorMessage)
+		DataType Receive(SOCKET inSocket, WebCode inExpectedWebCode, char const* inErrorMessage)
 		{
-			auto message = Receive(inSocketId);
+			auto message = Receive(inSocket);
 			if (message.WebCode.AsResponseCode != inExpectedWebCode.AsResponseCode)
 			{
 				throw FcWebException(inErrorMessage);
@@ -171,7 +173,7 @@ namespace FusionCrowdWeb
 
 	private:
 		/** Socket for own server. */
-		SOCKET _ownServerSocket;
+		SOCKET _ownServerSocket { INVALID_SOCKET };
 
 		/** Size of buffer for sending and receiving data. */
 		size_t _bufferSize = 512;
@@ -179,39 +181,11 @@ namespace FusionCrowdWeb
 		/** Buffer for sending and receiving data. */
 		char *_receiveBuffer = new char[_bufferSize + 1];
 
-		/** Map of connected sockets with keys-ids. */
-		std::map<int, SOCKET> _connectedSockets;
-
 		/** Free id for web socket. */
 		int _freeSocketId = 0;
 
-		/**
-		* \fn SaveConnectedSocket
-		* \brief Saves information about a connected socket.
-		*
-		* @param inSocket	Socket data.
-		*
-		* @return	Id of saved socket.
-		*/
-		int SaveConnectedSocket(SOCKET inSocket);
-
-		/**
-		* \fn GetConnectedSocket
-		* \brief Gets information about a connected socket by its id.
-		*
-		* @param inSocketId	Socket id.
-		*
-		* @return	Data of saved socket.
-		*/
-		SOCKET GetConnectedSocket(int inSocketId);
-
-		/**
-		* \fn GetAllConnectedSocketsIds
-		* \brief Gets ids of all connected sockets.
-		*
-		* @return	Ids of saved sockets.
-		*/
-		std::vector<int> GetAllConnectedSocketsIds();
+		/** Flag to determine if Windows Sockets API is running. */
+		static bool _isWsaStarted;
 
 		/**
 		* \fn CheckSocket

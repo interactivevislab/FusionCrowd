@@ -23,7 +23,9 @@ int main()
 	agentsData[0] = { -20.f, 0, 20.f, 0 };
 	agentsData[1] = { 20.f, 0, -20.f, 0 };
 
-	InitComputingData initData(FcFileWrapper::GetFullNameForResource("grid.nav"), agentsData);
+	auto navMeshFileName = FcFileWrapper::GetFullNameForResource("grid.nav");
+	InitComputingData initData(navMeshFileName, agentsData);
+	delete navMeshFileName;
 
 	client.InitComputation(initData);
 	cout << "Computation initialization requested" << endl;
@@ -33,7 +35,7 @@ int main()
 	vector<OutputComputingData> results;
 	for (int i = 0; i < stepsNum; i++)
 	{
-		auto result = client.RequestComputation(InputComputingData(0.1f));
+		auto result = client.RequestComputation(InputComputingData(0.1f, FusionCrowd::FCArray<ChangeGoalData>(0)));
 		results.push_back(result);
 	}
 	cout << "success" << endl;
@@ -49,7 +51,7 @@ int main()
 	{
 		for (auto info : results[i].AgentInfos)
 		{
-			cout << setw(10) << info.id << setw(10) << info.posX << setw(10) << info.posY;
+			cout << setw(10) << info.Id << setw(10) << info.PosX << setw(10) << info.PosY;
 		}
 		cout << endl;
 	}

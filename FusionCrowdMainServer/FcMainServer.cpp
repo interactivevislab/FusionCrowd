@@ -4,89 +4,115 @@
 #include "WebDataSerializer.h"
 #include "WsException.h"
 
-#include <algorithm>
+#include "Util/FCArrayHelper.h"
 
+#include <algorithm>
+#include <sstream>
+#include <string>
+
+//#define TIME_MEASURE
+
+#ifdef TIME_MEASURE
+#include <chrono> 
+#include <iostream> 
+#endif
 
 namespace FusionCrowdWeb
 {
 	void FcMainServer::ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses)
 	{
+		std::vector<WebAddress> failedConnections;
 		for (auto address : inAddresses)
 		{
-			auto serverId = WaitForConnectionToServer(address);
-			_computationalServersIds.push_back(serverId);
+			try
+			{
+				auto serverSocket = TryConnectToServer(address);
+				_computationalServersSockets.push_back(serverSocket);
+			}
+			catch (WsException exception)
+			{
+				failedConnections.push_back(address);
+			}
+		}
+
+		if (failedConnections.size() > 0)
+		{
+			std::ostringstream errorMessage;
+			errorMessage << "Connection failed for computional servers: ";
+			for (auto failedConnection : failedConnections)
+			{
+				errorMessage << failedConnection.IpAddress << ":" << failedConnection.Port << ", ";
+			}
+			auto buffStr = errorMessage.str();
+			buffStr = buffStr.substr(0, buffStr.size() - 2);
+			throw WsException(buffStr.c_str());
 		}
 	}
 
 
 	void FcMainServer::DisconnectFromComputationalServers()
 	{
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			Disconnect(serverId);
+			Disconnect(serverSocket);
 		}
-		_computationalServersIds.clear();
+		_computationalServersSockets.clear();
 	}
 
 
 	void FcMainServer::AcceptClientConnection()
 	{
-		_clientId = AcceptInputConnection();
+		_clientSocket = AcceptInputConnection();
 	}
 
 
 	void FcMainServer::InitComputation()
 	{
 		//reception init data	
-		auto initData = Receive<InitComputingData>(_clientId, RequestCode::InitSimulation, "RequestError");
+		auto initData = Receive<InitComputingData>(_clientSocket, RequestCode::InitSimulation, "RequestError");
 
 		//init data processing
 		auto navMeshFileName = FcFileWrapper::GetFullNameForResource("ms_navmesh.nav");
 		initData.NavMeshFile.Unwrap(navMeshFileName);
 		initData.NavMeshRegion = NavMeshRegion(navMeshFileName);
+		delete navMeshFileName;
 
-		auto serversNum = _computationalServersIds.size();
+		auto serversNum = _computationalServersSockets.size();
 		auto navMeshRegionsBuffer = initData.NavMeshRegion.Split(serversNum);
 		for (int i = 0; i < serversNum; i++)
 		{
-			_navMeshRegions[_computationalServersIds[i]] = navMeshRegionsBuffer[i];
+			_navMeshRegions[_computationalServersSockets[i]] = navMeshRegionsBuffer[i];
 		}
 
 		std::map<int, std::vector<AgentInitData>> initAgentsDataParts;
 		for (auto& agentInitData : initData.AgentsData)
 		{
-			for (auto serverId : _computationalServersIds)
+			for (auto serverSocket : _computationalServersSockets)
 			{
-				if (_navMeshRegions[serverId].IsPointInside(agentInitData.X, agentInitData.Y))
+				if (_navMeshRegions[serverSocket].IsPointInside(agentInitData.X, agentInitData.Y))
 				{
-					initAgentsDataParts[serverId].push_back(agentInitData);
+					initAgentsDataParts[serverSocket].push_back(agentInitData);
 					break;
 				}
 			}
 		}
 
 		//sending init data
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			auto& agentsData = initAgentsDataParts[serverId];
-			initData.AgentsData = FusionCrowd::FCArray<AgentInitData>(agentsData.size());
-			for (int i = 0; i < agentsData.size(); i++)
-			{
-				initData.AgentsData[i] = agentsData[i];
-			}
+			initData.AgentsData = FusionCrowd::VectorToFcArray<AgentInitData>(initAgentsDataParts[serverSocket]);
+			initData.NavMeshRegion = _navMeshRegions[serverSocket];
 
-			initData.NavMeshRegion = _navMeshRegions[serverId];
-
-			Send(serverId, RequestCode::InitSimulation, initData);
+			Send(serverSocket, RequestCode::InitSimulation, initData);
 		}
 
 		//reception agents ids
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			auto agentIds = Receive<AgentsIds>(serverId, ResponseCode::Success, "ResponseError");
+			auto agentIds = Receive<AgentsIds>(serverSocket, ResponseCode::Success, "ResponseError");
 			for (auto id : agentIds.Values)
 			{
-				_agentsIds[serverId][id] = _freeId++;
+				_agentsIds[serverSocket][id] = _freeId++;
 			}
 		}
 
@@ -101,110 +127,177 @@ namespace FusionCrowdWeb
 	{
 		using FusionCrowd::FCArray;
 		using FusionCrowd::AgentInfo;
+		using FusionCrowd::VectorToFcArray;
+		using FusionCrowd::ChangeArrayElementsType;
+
+		#ifdef TIME_MEASURE
+		using namespace std::chrono;
+		
+		std::cout << "========================" << std::endl;
+		auto mainStart = high_resolution_clock::now();
+		auto start = mainStart;
+		#endif
 
 		//reception input data
-		auto inData = Receive<InputComputingData>(_clientId, RequestCode::DoStep, "RequestError");
+		auto inData = Receive<InputComputingData>(_clientSocket, RequestCode::DoStep, "RequestError");
+
+		#ifdef TIME_MEASURE
+		auto end = high_resolution_clock::now();
+		std::cout << "Receiving client data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
 
 		//input data processing
-		std::map<int, std::vector<AgentInfo>> newAgentsDataParts;
+		std::map<int, ChangeGoalData> newAgentsGoals;
+		for (auto& newGoal : inData.NewAgentsGoals)
+		{
+			newAgentsGoals[newGoal.AgentId] = newGoal;
+		}
+
 		for (auto& displacedAgent : _displacedAgents)
 		{
-			for (auto serverId : _computationalServersIds)
+			auto newGoal = newAgentsGoals.find(displacedAgent.Id);
+			if (newGoal != newAgentsGoals.end())
 			{
-				if (_navMeshRegions[serverId].IsPointInside(displacedAgent.posX, displacedAgent.posY))
+				displacedAgent.GoalX = newGoal->second.NewGoalX;
+				displacedAgent.GoalY = newGoal->second.NewGoalY;
+				newAgentsGoals.erase(newGoal);
+			}
+		}
+		
+		std::map<int, std::vector<ShortAgentInfo>> newAgentsDataParts;
+		for (auto& displacedAgent : _displacedAgents)
+		{
+			for (auto serverSocket : _computationalServersSockets)
+			{
+				if (_navMeshRegions[serverSocket].IsPointInside(displacedAgent.PosX, displacedAgent.PosY))
 				{
-					newAgentsDataParts[serverId].push_back(displacedAgent);
+					newAgentsDataParts[serverSocket].push_back(displacedAgent);
 					break;
 				}
 			}
 		}
 
-		std::map<int, std::vector<AgentInfo>> boundaryAgentsDataParts;
+		std::map<int, std::vector<ShortAgentInfo>> boundaryAgentsDataParts;
 		for (auto& agent : _allAgents)
 		{
-			for (auto serverId : _computationalServersIds)
+			for (auto serverSocket : _computationalServersSockets)
 			{
-				if (_navMeshRegions[serverId].IsPointInsideBoundaryZone(agent.posX, agent.posY, _boundaryZoneDepth))
+				if (_navMeshRegions[serverSocket].IsPointInsideBoundaryZone(agent.PosX, agent.PosY, _boundaryZoneDepth))
 				{
-					boundaryAgentsDataParts[serverId].push_back(agent);
+					boundaryAgentsDataParts[serverSocket].push_back(agent);
+				}
+			}
+		}
+		
+		std::map<int, std::vector<ChangeGoalData>> newGoalsDataParts;
+		for (auto serverSocket : _computationalServersSockets)
+		{
+			auto& serverAgentsIds = _agentsIds[serverSocket];
+			for (auto idPair : serverAgentsIds)
+			{
+				auto agentIdOnComputingServer	= idPair.first;
+				auto agentIdOnMainServer		= idPair.second;
+
+				auto newGoalData = newAgentsGoals.find(agentIdOnMainServer);
+				if (newGoalData != newAgentsGoals.end())
+				{
+					auto newGoal = newGoalData->second;
+					newGoal.AgentId = agentIdOnComputingServer;
+					newGoalsDataParts[serverSocket].push_back(newGoal);
 				}
 			}
 		}
 
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Processing client data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
+
 		//sending input data
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			auto& newAgentsData = newAgentsDataParts[serverId];
-			inData.NewAgents = FCArray<AgentInfo>(newAgentsData.size());
-			for (int i = 0; i < newAgentsData.size(); i++)
-			{
-				inData.NewAgents[i] = newAgentsData[i];
-			}
+			inData.NewAgents = VectorToFcArray<ShortAgentInfo>(newAgentsDataParts[serverSocket]);
+			inData.BoundaryAgents = VectorToFcArray<ShortAgentInfo>(boundaryAgentsDataParts[serverSocket]);
+			inData.NewAgentsGoals = VectorToFcArray<ChangeGoalData>(newGoalsDataParts[serverSocket]);
 
-			auto& boundaryAgentsData = boundaryAgentsDataParts[serverId];
-			inData.BoundaryAgents = FCArray<AgentInfo>(boundaryAgentsData.size());
-			for (int i = 0; i < boundaryAgentsData.size(); i++)
-			{
-				inData.BoundaryAgents[i] = boundaryAgentsData[i];
-			}
-
-			Send(serverId, RequestCode::DoStep, inData);
+			Send(serverSocket, RequestCode::DoStep, inData);
 		}
+
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Sending client data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
 
 		//reception output data
 		std::map<int, OutputComputingData> outDataParts;
 		std::map<int, AgentsIds> outNewAgentIds;
 		size_t agentsNum = 0;
-		for (auto serverId : _computationalServersIds)
+		auto serversNum = _computationalServersSockets.size();
+		for (int i = 0; i < serversNum; i++)
 		{
-			auto outDataPart = Receive<OutputComputingData>(serverId, ResponseCode::Success, "ResponseError");
+			auto serverSocket = _computationalServersSockets[i];
+			
+			auto outDataPart = Receive<OutputComputingData>(serverSocket, ResponseCode::Success, "ResponseError");
 			for (auto& agentInfo : outDataPart.AgentInfos)
 			{
-				agentInfo.serverId = serverId;
+				agentInfo.ServerId = i;
 			}
 			for (auto& agentInfo : outDataPart.DisplacedAgents)
 			{
-				agentInfo.serverId = serverId;
+				agentInfo.ServerId = i;
 			}
-			outDataParts[serverId] = outDataPart;
+			outDataParts[serverSocket] = outDataPart;
 
-			auto newAgentIds = Receive<AgentsIds>(serverId, ResponseCode::Success, "ResponseError");
-			outNewAgentIds[serverId] = newAgentIds;
+			auto newAgentIds = Receive<AgentsIds>(serverSocket, ResponseCode::Success, "ResponseError");
+			outNewAgentIds[serverSocket] = newAgentIds;
 
 			agentsNum += outDataPart.AgentInfos.size() + outDataPart.DisplacedAgents.size();
 		}
 
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Receiving servers data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
+
 		//id updating
-		for (auto serverId : _computationalServersIds)
+		for (auto serverSocket : _computationalServersSockets)
 		{
-			std::vector<AgentInfo>& currentDisplacedAgents = newAgentsDataParts[serverId];
-			FCArray<size_t>& currentDisplacedAgentsIds = outNewAgentIds[serverId].Values;
+			std::vector<ShortAgentInfo>& currentDisplacedAgents = newAgentsDataParts[serverSocket];
+			FCArray<size_t>& currentDisplacedAgentsIds = outNewAgentIds[serverSocket].Values;
 			for (int i = 0; i < currentDisplacedAgents.size(); i++)
 			{
 				auto displacedAgent = currentDisplacedAgents[i];
 				auto newId = currentDisplacedAgentsIds[i];
-				_agentsIds[serverId][newId] = displacedAgent.id;
+				_agentsIds[serverSocket][newId] = displacedAgent.Id;
 			}
 
-			for (auto& newDisplacedAgent : outDataParts[serverId].DisplacedAgents)
+			for (auto& newDisplacedAgent : outDataParts[serverSocket].DisplacedAgents)
 			{
-				auto oldId = newDisplacedAgent.id;
-				newDisplacedAgent.id = _agentsIds[serverId][oldId];
-				_agentsIds[serverId].erase(oldId);
+				auto oldId = newDisplacedAgent.Id;
+				newDisplacedAgent.Id = _agentsIds[serverSocket][oldId];
+				_agentsIds[serverSocket].erase(oldId);
 			}
 		}
 
 		//output data processing
-		_allAgents = FCArray<AgentInfo>(agentsNum);
+		_allAgents = FCArray<ShortAgentInfo>(agentsNum);
 		int infoIndex = 0;
 		_displacedAgents.clear();
 		for (auto& outDataPart : outDataParts)
 		{
-			auto serverId	= outDataPart.first;
-			auto& data		= outDataPart.second;
+			auto serverSocket	= outDataPart.first;
+			auto& data			= outDataPart.second;
 			for (auto& agentInfo : data.AgentInfos)
 			{
-				agentInfo.id = _agentsIds[serverId][agentInfo.id];
+				agentInfo.Id = _agentsIds[serverSocket][agentInfo.Id];
 				_allAgents[infoIndex++] = agentInfo;
 			}
 			for (auto& agentInfo : data.DisplacedAgents)
@@ -218,15 +311,62 @@ namespace FusionCrowdWeb
 			return a.id < b.id;
 		});
 
-		_recording->MakeRecord(_allAgents, inData.TimeStep);
+		if (inData.TimeStep > 0)
+		{
+			_recording->MakeRecord(ChangeArrayElementsType<ShortAgentInfo, AgentInfo>(_allAgents), inData.TimeStep);
+		}
+
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Processing servers data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
 
 		//sending output data
-		Send(_clientId, ResponseCode::Success, OutputComputingData{ _allAgents });
+		Send(_clientSocket, ResponseCode::Success, OutputComputingData{ _allAgents });
+
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Sending servers data: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+		std::cout << "TOTAL: " << duration_cast<microseconds>(end - mainStart).count() << " microseconds" << std::endl;
+		#endif
 	}
 
 
-	void FcMainServer::SaveRecording(std::string inRecordingFileName)
+	void FcMainServer::SaveRecording(const char* inRecordingFileName)
 	{
-		_recording->Serialize(inRecordingFileName.c_str(), inRecordingFileName.size());
+		_recording->Serialize(inRecordingFileName, strlen(inRecordingFileName));
+	}
+
+
+	void FcMainServer::StartOrdinaryRun(u_short inPort, const std::vector<WebAddress>& computationalServersAddresses)
+	{
+		StartServer(inPort);
+
+		while (true)
+		{
+			ConnectToComputationalServers(computationalServersAddresses);
+			AcceptClientConnection();
+			InitComputation();
+
+			try
+			{
+				while (true)
+				{
+					ProcessComputationRequest();
+				}
+			}
+			catch (FusionCrowdWeb::FcWebException e)
+			{
+				auto recordingFileName = FcFileWrapper::GetFullNameForResource("ordinary_run_recording.csv");
+				SaveRecording(recordingFileName);
+				delete recordingFileName;
+			}
+
+			DisconnectFromComputationalServers();
+		}
+
+		ShutdownServer();
 	}
 }

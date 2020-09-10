@@ -41,14 +41,16 @@ namespace FusionCrowdWeb
 		using namespace FusionCrowd;
 
 		size_t dataSize = sizeof(float)
-			+ SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.NewAgents)
-			+ SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.BoundaryAgents);
+			+ SimpleDataSerializer<FCArray<ShortAgentInfo>>::SizeOf(inData.NewAgents)
+			+ SimpleDataSerializer<FCArray<ShortAgentInfo>>::SizeOf(inData.BoundaryAgents)
+			+ SimpleDataSerializer<FCArray<ChangeGoalData>>::SizeOf(inData.NewAgentsGoals);
 		outRawData = new char[dataSize];
 		auto iter = outRawData;
 
 		SimpleDataSerializer<float>::Serialize(inData.TimeStep, iter);
-		SimpleDataSerializer<FCArray<AgentInfo>>::Serialize(inData.NewAgents, iter);
-		SimpleDataSerializer<FCArray<AgentInfo>>::Serialize(inData.BoundaryAgents, iter);
+		SimpleDataSerializer<FCArray<ShortAgentInfo>>::Serialize(inData.NewAgents, iter);
+		SimpleDataSerializer<FCArray<ShortAgentInfo>>::Serialize(inData.BoundaryAgents, iter);
+		SimpleDataSerializer<FCArray<ChangeGoalData>>::Serialize(inData.NewAgentsGoals, iter);
 
 		return dataSize;
 	}
@@ -61,8 +63,9 @@ namespace FusionCrowdWeb
 		InputComputingData result;
 
 		result.TimeStep = SimpleDataSerializer<float>::Deserialize(inRawData);
-		result.NewAgents = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
-		result.BoundaryAgents = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
+		result.NewAgents = SimpleDataSerializer<FCArray<ShortAgentInfo>>::Deserialize(inRawData);
+		result.BoundaryAgents = SimpleDataSerializer<FCArray<ShortAgentInfo>>::Deserialize(inRawData);
+		result.NewAgentsGoals = SimpleDataSerializer<FCArray<ChangeGoalData>>::Deserialize(inRawData);
 
 		return std::move(result);
 	}
@@ -72,13 +75,13 @@ namespace FusionCrowdWeb
 	{
 		using namespace FusionCrowd;
 
-		size_t dataSize = SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.AgentInfos)
-			+ SimpleDataSerializer<FCArray<AgentInfo>>::SizeOf(inData.DisplacedAgents);
+		size_t dataSize = SimpleDataSerializer<FCArray<ShortAgentInfo>>::SizeOf(inData.AgentInfos)
+			+ SimpleDataSerializer<FCArray<ShortAgentInfo>>::SizeOf(inData.DisplacedAgents);
 		outRawData = new char[dataSize];
 		auto iter = outRawData;
 
-		SimpleDataSerializer<FCArray<AgentInfo>>::Serialize(inData.AgentInfos, iter);
-		SimpleDataSerializer<FCArray<AgentInfo>>::Serialize(inData.DisplacedAgents, iter);
+		SimpleDataSerializer<FCArray<ShortAgentInfo>>::Serialize(inData.AgentInfos, iter);
+		SimpleDataSerializer<FCArray<ShortAgentInfo>>::Serialize(inData.DisplacedAgents, iter);
 
 		return dataSize;
 	}
@@ -90,8 +93,8 @@ namespace FusionCrowdWeb
 
 		OutputComputingData result;
 
-		result.AgentInfos = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
-		result.DisplacedAgents = SimpleDataSerializer<FCArray<AgentInfo>>::Deserialize(inRawData);
+		result.AgentInfos = SimpleDataSerializer<FCArray<ShortAgentInfo>>::Deserialize(inRawData);
+		result.DisplacedAgents = SimpleDataSerializer<FCArray<ShortAgentInfo>>::Deserialize(inRawData);
 
 		return std::move(result);
 	}

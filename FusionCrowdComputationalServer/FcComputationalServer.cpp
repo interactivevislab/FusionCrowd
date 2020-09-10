@@ -6,12 +6,20 @@
 #include "WebDataSerializer.h"
 #include "FcFileWrapper.h"
 
+#include "Util/FCArrayHelper.h"
+
+//#define TIME_MEASURE
+
+#ifdef TIME_MEASURE
+#include <chrono> 
+#include <iostream> 
+#endif
 
 namespace FusionCrowdWeb
 {
 	void FcComputationalServer::AcceptMainServerConnection()
 	{
-		_mainServerId = AcceptInputConnection();
+		_mainServerSocket = AcceptInputConnection();
 	}
 
 
@@ -20,7 +28,7 @@ namespace FusionCrowdWeb
 		using namespace FusionCrowd;
 
 		//reading data
-		auto data = Receive<InitComputingData>(_mainServerId, RequestCode::InitSimulation, "RequestError");
+		auto data = Receive<InitComputingData>(_mainServerSocket, RequestCode::InitSimulation, "RequestError");
 		_navMeshRegion = data.NavMeshRegion;
 
 		//initing simulation
@@ -35,7 +43,8 @@ namespace FusionCrowdWeb
 
 		auto navMeshFileName = FcFileWrapper::GetFullNameForResource("cs_navmesh.nav");
 		data.NavMeshFile.Unwrap(navMeshFileName);
-		_builder->WithNavMesh(navMeshFileName.c_str());
+		_builder->WithNavMesh(navMeshFileName);
+		delete navMeshFileName;
 
 		_simulator = std::shared_ptr<ISimulatorFacade>(_builder->Build(), [](ISimulatorFacade* inSimulatorFacade) {
 			SimulatorFacadeDeleter(inSimulatorFacade);
@@ -48,13 +57,14 @@ namespace FusionCrowdWeb
 		for (int i = 0; i < agentsNum; i++)
 		{
 			auto& agentData = data.AgentsData[i];
-			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 1, 10,
-				ComponentIds::ORCA_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
+			auto agentId = _simulator->AddAgent(agentData.X, agentData.Y, 0.25f, 10,
+				0.5f, 0.3f, true, true,
+				ComponentIds::PASSTHROUGH_ID, ComponentIds::NAVMESH_ID, ComponentIds::FSM_ID);
 			_simulator->SetAgentGoal(agentId, Point(agentData.GoalX, agentData.GoalY));
 			agentIds.Values[i] = agentId;
 		}
 
-		Send(_mainServerId, ResponseCode::Success, agentIds);
+		Send(_mainServerSocket, ResponseCode::Success, agentIds);
 	}
 
 
@@ -62,8 +72,23 @@ namespace FusionCrowdWeb
 	{
 		using namespace FusionCrowd;
 
+		#ifdef TIME_MEASURE
+		using namespace std::chrono;
+
+		std::cout << "========================" << std::endl;
+		auto mainStart = high_resolution_clock::now();
+		auto start = mainStart;
+		#endif
+
 		//reading data
-		auto inData = Receive<InputComputingData>(_mainServerId, RequestCode::DoStep, "RequestError");
+		auto inData = Receive<InputComputingData>(_mainServerSocket, RequestCode::DoStep, "RequestError");
+
+		#ifdef TIME_MEASURE
+		auto end = high_resolution_clock::now();
+		std::cout << "Receiving: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+
+		start = high_resolution_clock::now();
+		#endif
 
 		//adding agents
 		auto newAgentsNum = inData.NewAgents.size();
@@ -82,6 +107,12 @@ namespace FusionCrowdWeb
 			boundaryAgentsIds.push_back(agentId);
 		}
 
+		//updating goals
+		for (auto& newGoalData : inData.NewAgentsGoals)
+		{
+			_simulator->SetAgentGoal(newGoalData.AgentId, Point(newGoalData.NewGoalX, newGoalData.NewGoalY));
+		}
+		
 		//step
 		_simulator->DoStep(inData.TimeStep);
 
@@ -94,7 +125,7 @@ namespace FusionCrowdWeb
 		FCArray<AgentInfo> agents(_simulator->GetAgentCount());
 		_simulator->GetAgents(agents);
 
-		std::vector<AgentInfo> displacedAgents;
+		std::vector<ShortAgentInfo> displacedAgents;
 		for (auto& agent : agents)
 		{
 			if (!_navMeshRegion.IsPointInside(agent.posX, agent.posY))
@@ -108,14 +139,53 @@ namespace FusionCrowdWeb
 		_simulator->GetAgents(agents);
 
 		OutputComputingData outData;
-		outData.AgentInfos = agents;
-		outData.DisplacedAgents = FCArray<AgentInfo>(displacedAgents.size());
+		outData.AgentInfos = ChangeArrayElementsType<AgentInfo, ShortAgentInfo>(agents);
+		outData.DisplacedAgents = FCArray<ShortAgentInfo>(displacedAgents.size());
 		for (int i = 0; i < displacedAgents.size(); i++)
 		{
 			outData.DisplacedAgents[i] = displacedAgents[i];
 		}
 
-		Send(_mainServerId, ResponseCode::Success, outData);
-		Send(_mainServerId, ResponseCode::Success, newAgentIds);
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Processing: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl;
+		
+		start = high_resolution_clock::now();
+		#endif
+
+		Send(_mainServerSocket, ResponseCode::Success, outData);
+		Send(_mainServerSocket, ResponseCode::Success, newAgentIds);
+
+		#ifdef TIME_MEASURE
+		end = high_resolution_clock::now();
+		std::cout << "Sending: " << duration_cast<microseconds>(end - start).count() << " microseconds" << std::endl; 
+		std::cout << "TOTAL: " << duration_cast<microseconds>(end - mainStart).count() << " microseconds" << std::endl;
+		#endif
+	}
+
+
+	void FcComputationalServer::StartOrdinaryRun(u_short inPort)
+	{
+		while (true)
+		{
+			StartServer(inPort);
+
+			AcceptMainServerConnection();
+			InitComputation();
+
+			try
+			{
+				while (true)
+				{
+					ProcessComputationRequest();
+				}
+			}
+			catch (FusionCrowdWeb::FcWebException e)
+			{
+				//do nothing
+			}
+
+			ShutdownServer();
+		}
 	}
 }

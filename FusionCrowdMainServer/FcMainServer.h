@@ -24,7 +24,7 @@ namespace FusionCrowdWeb
 		* \fn ConnectToComputationalServers
 		* \brief Establishes a connections with computing servers.
 		*
-		* @param inAddresses	Computing servers' addresses.
+		* @param inAddresses			Computing servers' addresses.
 		*/
 		void ConnectToComputationalServers(const std::vector<WebAddress>& inAddresses);
 
@@ -58,26 +58,35 @@ namespace FusionCrowdWeb
 		*
 		* @param inRecordingFileName	Result file name.
 		*/
-		void SaveRecording(std::string inRecordingFileName);
+		void SaveRecording(const char* inRecordingFileName);
+
+		/**
+		* \fn StartOrdinaryRun
+		* \brief Runs work according to the usual scenario.
+		*
+		* @param inPort	Socket port to start.
+		* @param computationalServersAddresses	Computing servers' addresses.
+		*/
+		void StartOrdinaryRun(u_short inPort, const std::vector<WebAddress>& computationalServersAddresses);
 
 	private:
-		/** Id of client socket. */
-		int _clientId;
+		/** Client socket. */
+		SOCKET _clientSocket { INVALID_SOCKET };
 
-		/** Ids of computational servers' sockets. */
-		std::vector<int> _computationalServersIds;
+		/** Computational servers' sockets. */
+		std::vector<int> _computationalServersSockets;
 
 		/** Copy of all agents fron previous simulation step. */
-		FusionCrowd::FCArray<FusionCrowd::AgentInfo> _allAgents = FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0);
+		FusionCrowd::FCArray<ShortAgentInfo> _allAgents = FusionCrowd::FCArray<ShortAgentInfo>(0);
 
 		/** Copy of agents which need to be moved between computing servers. */
-		std::vector<FusionCrowd::AgentInfo> _displacedAgents;
+		std::vector<ShortAgentInfo> _displacedAgents;
 
 		/**
 		* \fn _agentsIds
 		* \brief Dictionary for translating local Id (on computing servers) to global (on main server).
 		*
-		* Key of outer map - id of computing server.
+		* Key of outer map - computing server socket.
 		* Key of inner map - id of agent on computing server.
 		* Value of inner map - id of agent on main server.
 		*/

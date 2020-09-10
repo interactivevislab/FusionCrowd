@@ -36,9 +36,17 @@ namespace FusionCrowdWeb
 		*/
 		void ProcessComputationRequest();
 
+		/**
+		* \fn StartOrdinaryRun
+		* \brief Runs work according to the usual scenario.
+		*
+		* @param inPort	Socket port to start.
+		*/
+		void StartOrdinaryRun(u_short inPort);
+
 	private:
-		/** Id of main server socket. */
-		int _mainServerId;
+		/** Main server socket. */
+		SOCKET _mainServerSocket { INVALID_SOCKET };
 
 		/** ISimulatorFacade builder. */
 		std::shared_ptr<FusionCrowd::ISimulatorBuilder> _builder;

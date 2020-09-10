@@ -2,9 +2,6 @@
 
 #include "FcWebApi.h"
 
-#include <stdexcept>
-#include <string.h>
-
 
 namespace FusionCrowdWeb
 {

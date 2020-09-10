@@ -1,10 +1,16 @@
 #include "WebNode.h"
 
+#include <chrono>
+#include <string.h>
+
 #include "Ws2tcpip.h"
 
 
 namespace FusionCrowdWeb
 {
+	bool WebNode::_isWsaStarted = false;
+
+	
 	WebNode::~WebNode()
 	{
 		if (_receiveBuffer != nullptr)
@@ -16,12 +22,19 @@ namespace FusionCrowdWeb
 
 	void WebNode::GlobalStartup()
 	{
+		if (_isWsaStarted)
+		{
+			return;
+		}
+		
 		WSADATA winsockData;
 		auto result = WSAStartup(MAKEWORD(2, 2), &winsockData);
 		if (result != 0)
 		{
 			throw FcWebException("WSAStartUp failed");
 		}
+
+		_isWsaStarted = true;
 	}
 
 
@@ -29,15 +42,17 @@ namespace FusionCrowdWeb
 	{
 		auto result = WSACleanup();
 		CheckWsResult(result, "WSACleanup failed");
+		
+		_isWsaStarted = false;
 	}
 
 
-	void WebNode::StartServer(WebAddress inAddress)
+	void WebNode::StartServer(u_short inPort)
 	{
 		_ownServerSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(_ownServerSocket, "TCP socket creation failed");
 
-		sockaddr_in address = inAddress;
+		sockaddr_in address = WebAddress("0.0.0.0", inPort);
 		auto result = bind(_ownServerSocket, (SOCKADDR*)&address, sizeof(address));
 		CheckWsResult(result, "Binding failed");
 
@@ -53,36 +68,36 @@ namespace FusionCrowdWeb
 	}
 
 
-	int WebNode::AcceptInputConnection()
+	SOCKET WebNode::AcceptInputConnection()
 	{
 		sockaddr_in address;
 		int addressSize = sizeof(address);
 		auto clientSocket = accept(_ownServerSocket, (SOCKADDR*)&address, &addressSize);
 		CheckSocket(clientSocket, "Accept failed");
 
-		return SaveConnectedSocket(clientSocket);
+		return clientSocket;
 	}
 
 
-	int WebNode::TryConnectToServer(WebAddress inAddress)
+	SOCKET WebNode::TryConnectToServer(WebAddress inAddress)
 	{
 		auto connectedSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		CheckSocket(connectedSocket, "TCP socket creation failed");
 
 		sockaddr_in address = inAddress;
 		auto result = connect(connectedSocket, (SOCKADDR*)&address, sizeof(address));
-		if (result == SOCKET_ERROR)
-		{
-			throw WsException("Connection failed");
-		}
+		CheckWsResult(result, "Connection failed");
 
-		return SaveConnectedSocket(connectedSocket);
+		return connectedSocket;
 	}
 
 
-	int WebNode::WaitForConnectionToServer(WebAddress inAddress)
+	SOCKET WebNode::WaitForConnectionToServer(WebAddress inAddress, float inConnectionTimeout)
 	{
-		while (true)
+		auto connectionStart = std::chrono::system_clock::now();
+
+		bool tryToConnect = true;
+		while (tryToConnect)
 		{
 			try
 			{
@@ -90,54 +105,50 @@ namespace FusionCrowdWeb
 			}
 			catch (WsException e)
 			{
-				//connection error - try again
+				auto now = std::chrono::system_clock::now();
+				std::chrono::duration<float> timePassed = now - connectionStart;
+				tryToConnect = timePassed.count() < inConnectionTimeout;
 			}
 		}
+
+		throw FcWebException("Connection timeout");
 	}
 
 
-	void WebNode::Disconnect(int inSocketId)
+	void WebNode::Disconnect(SOCKET inSocket)
 	{
-		auto socket = GetConnectedSocket(inSocketId);
-
-		auto result = closesocket(socket);
+		auto result = closesocket(inSocket);
 		CheckWsResult(result, "Disconnect failed");
-
-		_connectedSockets.erase(inSocketId);
 	}
 
 
-	void WebNode::Send(int inSocketId, WebCode inWebCode, const char* inData, size_t inDataSize)
+	void WebNode::Send(SOCKET inSocket, WebCode inWebCode, const char* inData, size_t inDataSize)
 	{
-		auto destSocket = GetConnectedSocket(inSocketId);
-
 		WebMessageHead messageHead = { inWebCode, inDataSize };
-		auto bytesSended = send(destSocket, reinterpret_cast<const char*>(&messageHead), sizeof(WebMessageHead), 0);
+		auto bytesSended = send(inSocket, reinterpret_cast<const char*>(&messageHead), sizeof(WebMessageHead), 0);
 		CheckTransferredBytes(bytesSended, "Sending failed");
 
 		int totalBytesSended = 0;
 		int bytesleft = static_cast<int>(inDataSize);
 		while (totalBytesSended < inDataSize)
 		{
-			bytesSended = send(destSocket, inData + totalBytesSended, bytesleft, 0);
+			bytesSended = send(inSocket, inData + totalBytesSended, bytesleft, 0);
 			CheckTransferredBytes(bytesSended, "Sending failed");
 			totalBytesSended += bytesSended;
 			bytesleft -= bytesSended;
 		}
 	}
 
-	void WebNode::Send(int inSocketId, WebCode inWebCode)
+	void WebNode::Send(SOCKET inSocket, WebCode inWebCode)
 	{
-		Send(inSocketId, inWebCode, nullptr, 0);
+		Send(inSocket, inWebCode, nullptr, 0);
 	}
 
 
-	WebMessage WebNode::Receive(int inSocketId)
+	WebMessage WebNode::Receive(SOCKET inSocket)
 	{
-		auto srcSocket = GetConnectedSocket(inSocketId);
-
 		WebMessageHead messageHead;
-		auto bytesRecieved = recv(srcSocket, reinterpret_cast<char*>(&messageHead), sizeof(WebMessageHead), 0);
+		auto bytesRecieved = recv(inSocket, reinterpret_cast<char*>(&messageHead), sizeof(WebMessageHead), 0);
 		CheckTransferredBytes(bytesRecieved, "Receive data failed");
 
 		auto messageLength = messageHead.MessageLength;
@@ -156,7 +167,7 @@ namespace FusionCrowdWeb
 			int bytesleft = static_cast<int>(messageLength);
 			while (totalBytesRecieved < messageLength)
 			{
-				auto bytesRecieved = recv(srcSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
+				auto bytesRecieved = recv(inSocket, _receiveBuffer + totalBytesRecieved, bytesleft, 0);
 				CheckTransferredBytes(bytesRecieved, "Receive data failed");
 				totalBytesRecieved += bytesRecieved;
 				bytesleft -= bytesRecieved;
@@ -168,37 +179,6 @@ namespace FusionCrowdWeb
 		{
 			return WebMessage { messageHead.WebCode, nullptr };
 		}
-	}
-
-
-	int WebNode::SaveConnectedSocket(SOCKET inSocket)
-	{
-		_connectedSockets.insert({ _freeSocketId, inSocket });
-		return _freeSocketId++;
-	}
-
-
-	SOCKET WebNode::GetConnectedSocket(int inSocketId)
-	{
-		auto clientSocketData = _connectedSockets.find(inSocketId);
-		if (clientSocketData == _connectedSockets.end())
-		{
-			throw FcWebException("Wrong socket id");
-		}
-
-		return clientSocketData->second;
-	}
-
-
-	std::vector<int> WebNode::GetAllConnectedSocketsIds()
-	{
-		std::vector<int> ids;
-		for (auto it = _connectedSockets.begin(); it != _connectedSockets.end(); ++it)
-		{
-			ids.push_back(it->first);
-		}
-
-		return ids;
 	}
 
 
@@ -229,8 +209,61 @@ namespace FusionCrowdWeb
 	}
 
 
-	WebAddress::WebAddress(const char* inIpAddress, short inPort) : IpAddress(inIpAddress), Port(inPort)
+	WebAddress::WebAddress(const char* inIpAddress, u_short inPort) : Port(inPort)
 	{
+		if (inIpAddress != nullptr)
+		{
+			auto addressLen = strlen(inIpAddress) + 1;
+			IpAddress = new char[addressLen];
+			strcpy_s(IpAddress, addressLen, inIpAddress);
+		}
+	}
+
+
+	WebAddress::~WebAddress()
+	{
+		if (IpAddress != nullptr)
+		{
+			delete IpAddress;
+		}
+	}
+
+
+	WebAddress::WebAddress(WebAddress const& inOther) noexcept
+	{
+		if (inOther.IpAddress != nullptr)
+		{
+			auto addressLen = strlen(inOther.IpAddress) + 1;
+			IpAddress = new char[addressLen];
+			strcpy_s(IpAddress, addressLen, inOther.IpAddress);
+		}
+
+		Port = inOther.Port;
+	}
+
+
+	WebAddress& WebAddress::operator=(WebAddress const& inOther) noexcept
+	{
+		if (this == &inOther)
+		{
+			return *this;
+		}
+
+		if (IpAddress)
+		{
+			delete IpAddress;
+			IpAddress = nullptr;
+		}
+		if (inOther.IpAddress != nullptr)
+		{
+			auto addressLen = strlen(inOther.IpAddress) + 1;
+			IpAddress = new char[addressLen];
+			strcpy_s(IpAddress, addressLen, inOther.IpAddress);
+		}
+
+		Port = inOther.Port;
+
+		return *this;
 	}
 
 

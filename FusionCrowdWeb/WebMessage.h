@@ -6,18 +6,20 @@
 namespace FusionCrowdWeb
 {
 	/** Enum for request types. */
-	enum FC_WEB_API RequestCode : unsigned char
+	enum class FC_WEB_API RequestCode : unsigned char
 	{
+		Undefined = 0,	/**< Unset value. */
 		InitSimulation,	/**< Initialization request. */ 
 		DoStep			/**< Simulation step request. */ 
 	};
 
 
 	/** Enum for response types. */
-	enum FC_WEB_API ResponseCode : unsigned char
+	enum class FC_WEB_API ResponseCode : unsigned char
 	{
-		Success,	/**< Response that the operation succeeded. */ 
-		Error		/**< Response that the operation failed. */ 
+		Undefined = 0,	/**< Unset value. */
+		Success,		/**< Response that the operation succeeded. */ 
+		Error			/**< Response that the operation failed. */ 
 	};
 
 
@@ -30,7 +32,7 @@ namespace FusionCrowdWeb
 	union FC_WEB_API WebCode
 	{
 		/** WebCode as RequestCode. */
-		RequestCode AsRequestCode;
+		RequestCode AsRequestCode = RequestCode::Undefined;
 
 		/** WebCode as ResponseCode. */
 		ResponseCode AsResponseCode;
@@ -48,7 +50,7 @@ namespace FusionCrowdWeb
 		WebCode WebCode;
 
 		/** Message length in bytes. */
-		size_t MessageLength;
+		size_t MessageLength = 0;
 	};
 
 
@@ -59,6 +61,6 @@ namespace FusionCrowdWeb
 		WebCode WebCode;
 
 		/** Pointer to raw data. */
-		const char* Data;
+		const char* Data = nullptr;
 	};
 }

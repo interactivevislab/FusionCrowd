@@ -8,7 +8,7 @@
 
 namespace FusionCrowdWeb
 {
-	FcFileWrapper::FcFileWrapper(const std::string& inFileName)
+	FcFileWrapper::FcFileWrapper(const char* inFileName)
 	{
 		SetFileName(inFileName);
 
@@ -68,15 +68,15 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FcFileWrapper::SetFileName(const std::string& inFileName)
+	void FcFileWrapper::SetFileName(const char* inFileName)
 	{
 		if (_fileName != nullptr)
 		{
 			delete[] _fileName;
 		}
-		_fileNameSize = inFileName.length() + 1;
+		_fileNameSize = std::strlen(inFileName) + 1;
 		_fileName = new char[_fileNameSize];
-		std::memcpy(_fileName, inFileName.c_str(), _fileNameSize);
+		std::memcpy(_fileName, inFileName, _fileNameSize);
 	}
 
 
@@ -110,7 +110,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	void FcFileWrapper::Unwrap(const std::string& inFileName)
+	void FcFileWrapper::Unwrap(const char* inFileName)
 	{
 		std::ofstream file;
 		file.open(inFileName, std::ifstream::binary);
@@ -119,7 +119,7 @@ namespace FusionCrowdWeb
 	}
 
 
-	size_t FcFileWrapper::GetFileSize(const std::string& inFileName)
+	size_t FcFileWrapper::GetFileSize(const char* inFileName)
 	{
 		std::ifstream file;
 		file.open(inFileName, std::ios::binary | std::ios::ate);
@@ -129,11 +129,15 @@ namespace FusionCrowdWeb
 	}
 
 
-	std::string FcFileWrapper::GetFullNameForResource(const std::string& inFileName)
+	const char* FcFileWrapper::GetFullNameForResource(const char* inFileName)
 	{
 		char exePath[MAX_PATH];
 		GetModuleFileName(NULL, exePath, MAX_PATH);
-		std::string::size_type pos = std::string(exePath).find_last_of("\\/");
-		return std::string(exePath).substr(0, pos + 1).append("Resources\\").append(inFileName);
+		auto pos = std::string(exePath).find_last_of("\\/");
+		auto pathString = std::string(exePath).substr(0, pos + 1).append("Resources\\").append(inFileName);
+
+		char* path = new char[pathString.size() + 1];
+		strcpy_s(path, pathString.size() + 1, pathString.c_str());
+		return path;
 	}
 }

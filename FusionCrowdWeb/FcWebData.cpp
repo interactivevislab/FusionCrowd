@@ -5,11 +5,57 @@
 
 namespace FusionCrowdWeb
 {
-	NavMeshRegion::NavMeshRegion(const std::string& inNavMeshPath)
+	ShortAgentInfo::ShortAgentInfo()
+	{
+	}
+
+
+	ShortAgentInfo::ShortAgentInfo(FusionCrowd::AgentInfo inInfo)
+	{
+		Id			= inInfo.id;
+		PosX		= inInfo.posX;
+		PosY		= inInfo.posY;
+		PosZ		= inInfo.posZ;
+		VelX		= inInfo.velX;
+		VelY		= inInfo.velY;
+		OrientX		= inInfo.orientX;
+		OrientY		= inInfo.orientY;
+		GoalX		= inInfo.goalX;
+		GoalY		= inInfo.goalY;
+		ServerId	= inInfo.serverId;
+	}
+
+
+	ShortAgentInfo::operator FusionCrowd::AgentInfo()
+	{
+		FusionCrowd::AgentInfo info;
+		info.id			= Id;
+		info.posX		= PosX;
+		info.posY		= PosY;
+		info.posZ		= PosZ;
+		info.velX		= VelX;
+		info.velY		= VelY;
+		info.orientX	= OrientX;
+		info.orientY	= OrientY;
+		info.goalX		= GoalX;
+		info.goalY		= GoalY;
+		info.serverId	= ServerId;
+
+		info.radius		= 0.25f;
+
+		info.opCompId		= FusionCrowd::ComponentIds::PASSTHROUGH_ID;
+		info.tacticCompId	= FusionCrowd::ComponentIds::NAVMESH_ID;
+		info.stratCompId	= FusionCrowd::ComponentIds::FSM_ID;
+
+		return info;
+	}
+
+
+	NavMeshRegion::NavMeshRegion(const char* inNavMeshPath)
 	{
 		using namespace FusionCrowd;
 
-		auto vertices = NavMeshHelper::LoadNavMeshVertices(inNavMeshPath.c_str());
+		auto vertices = NavMeshHelper::LoadNavMeshVertices(inNavMeshPath);
 
 		if (vertices.size() == 0)
 		{
@@ -53,11 +99,11 @@ namespace FusionCrowdWeb
 	}
 
 
-	void NavMeshRegion::Split(size_t inNumParts, std::vector<NavMeshRegion>& outParts)
+	void NavMeshRegion::Split(size_t inNumParts, size_t& inNextIndex, FusionCrowd::FCArray<NavMeshRegion>& outParts)
 	{
 		if (inNumParts == 1)
 		{
-			outParts.push_back(*this);
+			outParts[inNextIndex++] = *this;
 			return;
 		}
 
@@ -73,8 +119,8 @@ namespace FusionCrowdWeb
 			part1.Width = share * Width;
 			part2.Width = Width - part1.Width;
 
-			part1.CenterX = CenterX - part1.Width / 2;
-			part2.CenterX = CenterX + part2.Width / 2;
+			part1.CenterX = CenterX - part2.Width / 2;
+			part2.CenterX = CenterX + part1.Width / 2;
 		}
 		else
 		{
@@ -86,19 +132,20 @@ namespace FusionCrowdWeb
 			part1.Height = share * Height;
 			part2.Height = Height - part1.Height;
 
-			part1.CenterY = CenterY - part1.Height / 2;
-			part2.CenterY = CenterY + part2.Height / 2;
+			part1.CenterY = CenterY - part2.Height / 2;
+			part2.CenterY = CenterY + part1.Height / 2;
 		}
 
-		part1.Split(inNumParts / 2, outParts);
-		part2.Split(inNumParts - inNumParts / 2, outParts);
+		part1.Split(inNumParts / 2, inNextIndex, outParts);
+		part2.Split(inNumParts - inNumParts / 2, inNextIndex, outParts);
 	}
 
 
-	std::vector<NavMeshRegion> NavMeshRegion::Split(size_t inNumParts)
+	FusionCrowd::FCArray<NavMeshRegion> NavMeshRegion::Split(size_t inNumParts)
 	{
-		std::vector<NavMeshRegion> navMeshRegionsBuffer;
-		Split(inNumParts, navMeshRegionsBuffer);
+		FusionCrowd::FCArray<NavMeshRegion> navMeshRegionsBuffer(inNumParts);
+		size_t indexBuffer = 0;
+		Split(inNumParts, indexBuffer, navMeshRegionsBuffer);
 		return navMeshRegionsBuffer;
 	}
 
@@ -108,36 +155,38 @@ namespace FusionCrowdWeb
 	}
 
 
-	InitComputingData::InitComputingData(const std::string& inNavMeshFileName, 
-		FusionCrowd::FCArray<AgentInitData> inAgentsData)
+	InitComputingData::InitComputingData(const char* inNavMeshFileName,
+		const FusionCrowd::FCArray<AgentInitData>& inAgentsData)
 		: NavMeshFile(inNavMeshFileName), AgentsData(inAgentsData)
 	{
 	}
 
 
 	InputComputingData::InputComputingData()
-		: NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
-		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+		: NewAgents(FusionCrowd::FCArray<ShortAgentInfo>(0)),
+		BoundaryAgents(FusionCrowd::FCArray<ShortAgentInfo>(0)),
+		NewAgentsGoals(FusionCrowd::FCArray<ChangeGoalData>(0))
 	{
 	}
 
 
-	InputComputingData::InputComputingData(float inTimeStep)
-		: TimeStep(inTimeStep), NewAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
-		BoundaryAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+	InputComputingData::InputComputingData(float inTimeStep, const FusionCrowd::FCArray<ChangeGoalData>& inAgentsNewGoals)
+		: TimeStep(inTimeStep), NewAgents(FusionCrowd::FCArray<ShortAgentInfo>(0)),
+		BoundaryAgents(FusionCrowd::FCArray<ShortAgentInfo>(0)),
+		NewAgentsGoals(inAgentsNewGoals)
 	{
 	}
 
 
 	OutputComputingData::OutputComputingData()
-		: AgentInfos(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0)),
-		DisplacedAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+		: AgentInfos(FusionCrowd::FCArray<ShortAgentInfo>(0)),
+		DisplacedAgents(FusionCrowd::FCArray<ShortAgentInfo>(0))
 	{
 	}
 
 
-	OutputComputingData::OutputComputingData(FusionCrowd::FCArray<FusionCrowd::AgentInfo> inAgentInfos)
-		: AgentInfos(inAgentInfos), DisplacedAgents(FusionCrowd::FCArray<FusionCrowd::AgentInfo>(0))
+	OutputComputingData::OutputComputingData(FusionCrowd::FCArray<ShortAgentInfo> inAgentInfos)
+		: AgentInfos(inAgentInfos), DisplacedAgents(FusionCrowd::FCArray<ShortAgentInfo>(0))
 	{
 	}
 

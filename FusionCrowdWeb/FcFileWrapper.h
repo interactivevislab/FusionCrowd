@@ -2,8 +2,6 @@
 
 #include "FcWebApi.h"
 
-#include <string>
-
 
 namespace FusionCrowdWeb
 {
@@ -15,7 +13,7 @@ namespace FusionCrowdWeb
 	{
 	public:
 		FcFileWrapper() = default;
-		explicit FcFileWrapper(const std::string& inFileName);
+		explicit FcFileWrapper(const char* inFileName);
 
 		FcFileWrapper(FcFileWrapper &&);
 		FcFileWrapper & operator=(FcFileWrapper &&);
@@ -26,7 +24,7 @@ namespace FusionCrowdWeb
 		size_t GetSize() const;
 
 		/** Changing wrapper's name for file. */
-		void SetFileName(const std::string& inFileName);
+		void SetFileName(const char* inFileName);
 
 		/** Return wrapper's name for file. */
 		const char* GetFileName();
@@ -38,13 +36,13 @@ namespace FusionCrowdWeb
 		void ReadFromMemory(const char*& outMemoryIterator);
 
 		/** Create file using current wrapper's content. */
-		void Unwrap(const std::string& inFileName);
+		void Unwrap(const char* inFileName);
 
 		/** Calculates file size in bytes. */
-		static size_t GetFileSize(const std::string& inFileName);
+		static size_t GetFileSize(const char* inFileName);
 
 		/** Determines full path for file in resource folder. */
-		static std::string GetFullNameForResource(const std::string& inFileName);
+		static const char* GetFullNameForResource(const char* inFileName);
 
 	private:
 		/** Wrapper's name for file. */

@@ -9,27 +9,27 @@ namespace FusionCrowdWeb
 {
 	void FusionCrowdClient::ConnectToMainServer(WebAddress inAddress)
 	{
-		_mainServerId = WaitForConnectionToServer(inAddress);
+		_mainServerSocket = TryConnectToServer(inAddress);
 	}
 
 
 	void FusionCrowdClient::DisconnectFromMainServer()
 	{
-		Disconnect(_mainServerId);
+		Disconnect(_mainServerSocket);
 	}
 
 
 	void FusionCrowdClient::InitComputation(const InitComputingData& inInitData)
 	{
-		Send(_mainServerId, RequestCode::InitSimulation, inInitData);
+		Send(_mainServerSocket, RequestCode::InitSimulation, inInitData);
 	}
 
 
 	OutputComputingData FusionCrowdClient::RequestComputation(const InputComputingData& inComputingData)
 	{
-		Send(_mainServerId, RequestCode::DoStep, inComputingData);
+		Send(_mainServerSocket, RequestCode::DoStep, inComputingData);
 
-		auto result = Receive<OutputComputingData>(_mainServerId, ResponseCode::Success, "ResponseError");
+		auto result = Receive<OutputComputingData>(_mainServerSocket, ResponseCode::Success, "ResponseError");
 
 		return result;
 	}

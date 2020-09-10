@@ -49,7 +49,7 @@ namespace FusionCrowdWeb
 		OutputComputingData RequestComputation(const InputComputingData& inComputingData);
 
 	private:
-		/** Id of main server socket. */
-		int _mainServerId;
+		/** Main server socket. */
+		SOCKET _mainServerSocket { INVALID_SOCKET };
 	};
 }
