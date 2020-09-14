@@ -189,8 +189,20 @@ namespace FusionCrowd
 				float inCrowdSpeed = curAgentInfo.prefSpeed * 0.3f;
 				if (neighboursPeople.size() >= 1 && speedVel > inCrowdSpeed)
 				{
+					for (auto man : neighboursPeople)
+					{
+						AgentSpatialInfo& manInfo = _navSystem->GetSpatialInfo(man.id);
+						DirectX::SimpleMath::Vector2 distV = manInfo.GetPos() - curAgentInfo.GetPos();
+						distV.Normalize();
+						float d = curAgentInfo.GetOrient().Dot(distV);
+						if (d > 0.8f)
+						{
+							speedVel -= acceleration * timeStep;
+							break;
+						}
+					}
 					//speed -= maxAcceleration;
-					speedVel -= acceleration * timeStep;
+					////speedVel -= acceleration * timeStep;
 				}
 
 				speedVel = speedVel < speed ? speedVel : speed;

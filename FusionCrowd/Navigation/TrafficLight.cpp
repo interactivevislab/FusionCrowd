@@ -2,9 +2,9 @@
 
 TrafficLight::TrafficLight(Lights currentLight)
 {
-	gTime = 10.0f;
-	yTime = 3.0f;
-	rTime = 10.0f;
+	gTime = 15.0f;
+	yTime = 5.0f;
+	rTime = 15.0f;
 	prevLight = curLight = currentLight;
 	timePassed = 0.0f;
 }

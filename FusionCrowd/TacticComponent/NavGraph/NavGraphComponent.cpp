@@ -320,7 +320,7 @@ namespace FusionCrowd
 		{
 			if ((curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::red ||
 				curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::yellow) &&
-				dist < /*agentInfo.radius * */15 && dist > /*agentInfo.radius * */10)
+				dist < /*agentInfo.radius * */15 && dist > /*agentInfo.radius * */12)
 			{
 				agentInfo.prefVelocity.setSpeed(1e-6);
 			}
@@ -332,7 +332,7 @@ namespace FusionCrowd
 			{
 				if ((curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::red ||
 					curLights->GetProperLight(agentInfo.GetOrient())->GetCurLight() == TrafficLight::Lights::yellow) &&
-					dist < /*agentInfo.radius * */15 && dist > /*agentInfo.radius * */10)
+					dist < /*agentInfo.radius * */15 && dist > /*agentInfo.radius * */12)
 				{
 					agentInfo.prefVelocity.setSpeed(1e-6);
 				}
@@ -370,7 +370,7 @@ namespace FusionCrowd
 		auto destination = agentStruct.shiftedRoute.points.size() > agentStruct.pointsComplete ? agentStruct.shiftedRoute.points[agentStruct.pointsComplete] : agentStruct.route.points[agentStruct.pointsComplete];
 
 		float point_dist = Math::distanceToSegment(oldPos, agentInfo.GetPos(), destination);
-		if (abs(point_dist) < (acceptanceRadius * agentInfo.prefSpeed*deltaTime) && agentStruct.pointsComplete < agentStruct.route.points.size() - 1) {
+		if (abs(point_dist) < (acceptanceRadius * agentInfo.prefSpeed) && agentStruct.pointsComplete < agentStruct.route.points.size() - 1) {
 			agentStruct.pointsComplete++;
 			agentStruct.needLineShift = true;
 			//agentStruct.currentEdgeIsOneSided = true;
